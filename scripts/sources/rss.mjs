@@ -56,3 +56,24 @@ export async function collectFeeds(feeds, log) {
   }
   return { docs, stats: { items: docs.length } };
 }
+
+// Review sites (Bat Digest and others). Keeps articles that look like slowpitch bat reviews.
+export async function collectReviewFeeds(feeds, log) {
+  const http = createClient({ delayMs: 1500, log });
+  const articles = [];
+  for (const feed of feeds || []) {
+    try {
+      const items = parseFeed(await http.text(feed.url));
+      const need = (feed.requireWords || []).map((w) => w.toLowerCase());
+      const kept = items.filter((it) => {
+        const hay = `${it.title} ${it.text}`.toLowerCase();
+        return /review|tested|hands[- ]on/i.test(it.title) && (!need.length || need.some((w) => hay.includes(w)));
+      });
+      for (const it of kept) articles.push({ title: it.title, url: it.link, date: it.date, source: feed.name, kind: feed.kind || "expert" });
+      log(`  ${feed.name}: ${kept.length} of ${items.length} items look like slowpitch reviews`);
+    } catch (err) {
+      log(`  ${feed.name}: ${err.message}`);
+    }
+  }
+  return articles;
+}

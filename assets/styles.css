@@ -265,6 +265,42 @@ input[type="range"] { width: 100%; accent-color: var(--accent); }
 .icon-btn svg { width: 16px; height: 16px; }
 .empty { padding: 48px 0; color: var(--muted); display: grid; gap: 12px; justify-items: start; }
 
+/* Published reviews */
+.rv {
+  font: 500 0.75rem/1 var(--mono);
+  color: var(--ink);
+  text-decoration: none;
+  border: 1px solid var(--ink);
+  border-radius: 3px;
+  padding: 3px 5px;
+  white-space: nowrap;
+}
+a.rv:hover { background: var(--ink); color: var(--paper); }
+.rv.line { border-style: dashed; border-color: var(--line-strong); color: var(--muted); }
+.new {
+  font: 600 0.625rem/1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: var(--ball);
+  color: var(--ball-ink);
+  border-radius: 3px;
+  padding: 3px 5px 2px;
+  margin-left: 8px;
+  vertical-align: 1px;
+}
+.pub-list { list-style: none; margin: 0; padding: 0; }
+.pub { display: grid; gap: 6px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.pub-head { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; }
+.pub-title { font-weight: 600; color: var(--ink); text-decoration: none; }
+.pub-title:hover { color: var(--accent); }
+.pub-meta { display: flex; flex-wrap: wrap; gap: 4px 10px; color: var(--muted); font-size: var(--step--1); align-items: center; }
+.pub p { max-width: 68ch; }
+.kind { font: 600 0.6875rem/1 var(--mono); text-transform: uppercase; letter-spacing: 0.06em; padding: 3px 5px; border-radius: 3px; border: 1px solid var(--line-strong); color: var(--muted); white-space: nowrap; }
+.kind.expert, .kind.customer { border-color: var(--ink); color: var(--ink); }
+.rating { font: 600 var(--step--1) var(--mono); color: var(--ink); }
+details.more > summary { cursor: pointer; font-weight: 600; padding: 8px 0; color: var(--ink); }
+details.more > summary:hover { color: var(--accent); }
+
 /* Community pulse */
 .pulse {
   display: inline-flex; align-items: center; gap: 6px;

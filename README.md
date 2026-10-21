@@ -4,8 +4,9 @@ A simple site for buying a slowpitch softball bat. It lists every current USSSA,
 
 ## What's in it
 
-- **Bats**: 95 bats from 12 brands (Easton, DeMarini, Miken, Worth, Louisville Slugger, Monsta, Suncoast, Victus, Axe, Marucci, Anarchy, Anderson). You can filter by stamp, brand, end-load or balanced, one-piece or two-piece, material, barrel length, year and price.
-- **Bat pages**: specs, a plain-English "who it fits", what players say (tone, topics, quotes with links to the original posts), links to compare prices, other versions and similar bats.
+- **Bats**: 121 bats from 13 brands (Easton, DeMarini, Miken, Worth, Louisville Slugger, Monsta, Suncoast, Victus, Axe, Marucci, Combat, Anarchy, Anderson). Bats from the newest model year are marked New. You can filter by stamp, brand, end-load or balanced, one-piece or two-piece, material, barrel length, year and price.
+- **Reviews from around the web**: tested reviews (Bat Digest), review sites, retailer write-ups, customer ratings (JustBats, Dick's) and review videos, linked to the exact bat or to its line. Filter to bats that have reviews, or sort by most reviewed.
+- **Bat pages**: specs, a plain-English "who it fits", published reviews, what players say (tone, topics, quotes with links to the original posts), links to compare prices, other versions and similar bats.
 - **Bat Finder**: five questions (league, hitter type, feel, budget, priority) that return a ranked short list, with the reason each bat fits.
 - **Compare**: up to four bats side by side, with the differences highlighted.
 - **Saved**: a shortlist that stays on your device.
@@ -23,7 +24,18 @@ npm test           # catalog checks, matcher, scoring, finder
 
 Use a local server like the one above. Opening `index.html` directly won't load the data files.
 
-## How reviews are collected
+## Published reviews
+
+`data/reviews.json` lists reviews published elsewhere. Each entry links to the original and is attached to specific bats (`bats`) or to a whole line (`families`). Summaries only describe what the source says.
+
+The weekly run adds new entries automatically:
+
+- **YouTube review videos** for every bat line (needs `YOUTUBE_API_KEY`). A video is matched to an exact bat when its title is specific enough ("2026 Miken KP23 2-Piece Maxload USA/ASA Review"). Otherwise it goes to the whole line.
+- **Review sites** listed under `reviewFeeds` in `scripts/sources.json` (Bat Digest by default). Only articles that look like slowpitch reviews are kept.
+
+Entries you add by hand are never changed by the collector.
+
+## How player talk is collected
 
 `scripts/aggregate.mjs` collects posts, matches each one to a bat line ("Freak", "Ronin", "Bedlam"…), scores its tone and topics, and writes `data/community.json`, which the site reads. It also keeps `data/mentions.json` so data builds up week over week.
 

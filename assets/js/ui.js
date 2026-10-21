@@ -81,15 +81,26 @@ export function toast(message) {
   toastTimer = setTimeout(() => (el.hidden = true), 2400);
 }
 
+export function reviewsChip(bat) {
+  if (bat.reviewCount) return `<a class="rv" href="#bat-${esc(bat.id)}" title="Published reviews of this bat">${bat.reviewCount} review${bat.reviewCount === 1 ? "" : "s"}</a>`;
+  if (bat.lineReviews.length) return `<span class="rv line" title="Reviews of other versions in this line">${bat.lineReviews.length} for this line</span>`;
+  return "";
+}
+
+export function newBadge(bat) {
+  return bat.isNew ? '<span class="new">New</span>' : "";
+}
+
 export function batRowHTML(bat, { extra = "" } = {}) {
   return `<li class="bat-row" data-id="${esc(bat.id)}">
     <div class="bat-row-main">
-      <span class="bat-brand">${esc(bat.brand)}</span>
+      <span class="bat-brand">${esc(bat.brand)}${newBadge(bat)}</span>
       <a class="bat-name" href="#bat-${esc(bat.id)}">${esc(bat.model)}</a>
       <div class="bat-meta">${stampsHTML(bat)}${specLine(bat)}</div>
       ${extra}
     </div>
     <div class="bat-side">
+      ${reviewsChip(bat)}
       ${pulseHTML(bat)}
       ${priceHTML(bat)}
       ${actionButtons(bat)}

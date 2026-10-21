@@ -12,7 +12,8 @@ import { dirname, join } from "node:path";
 import { buildMatchers } from "./lib/match.mjs";
 import { assignThreadFamilies, extractMentions, mergeMentions, summarize } from "./lib/aggregate.mjs";
 import { collectReddit } from "./sources/reddit.mjs";
-import { collectFeeds } from "./sources/rss.mjs";
+import { collectFeeds, collectReviewFeeds } from "./sources/rss.mjs";
+import { matchReview, mergeReviews } from "./lib/reviews.mjs";
 import { collectYouTube } from "./sources/youtube.mjs";
 import { collectImports } from "./sources/imports.mjs";
 
@@ -39,6 +40,8 @@ const only = typeof args.only === "string" ? new Set(args.only.split(",")) : nul
 const want = (name) => !only || only.has(name);
 
 let docs = [];
+let videos = [];
+let articles = [];
 const stats = {};
 if (args.docs) {
   docs = await readJSON(args.docs, []);
@@ -49,6 +52,7 @@ if (args.docs) {
     ["rss", () => collectFeeds(config.feeds, log)],
     ["youtube", () => collectYouTube(config.youtube, families, log)],
     ["imports", () => collectImports(join(root, "data/imports"), log)],
+    ["reviews", async () => ({ docs: [], stats: { articles: (articles = await collectReviewFeeds(config.reviewFeeds, log)).length } })],
   ];
   for (const [name, run] of steps) {
     if (!want(name)) continue;
@@ -56,6 +60,7 @@ if (args.docs) {
     try {
       const res = await run();
       docs.push(...res.docs);
+      if (res.videos) videos.push(...res.videos);
       stats[name] = res.stats;
     } catch (err) {
       log(`  ${name} failed: ${err.message}`);
@@ -97,10 +102,32 @@ const top = Object.entries(summary)
   .map(([id, f]) => `  ${id.padEnd(28)} ${String(f.mentions).padStart(4)} posts  score ${f.score}`);
 log(top.join("\n") || "  No bat lines matched yet");
 
+// Published reviews: review videos and review-site articles, matched to bats.
+const catalog = (await readJSON(join(root, "data/bats.json"), { bats: [] })).bats;
+const newestYear = Math.max(...catalog.map((b) => b.year));
+const reviewsPath = join(root, "data/reviews.json");
+const reviewFile = await readJSON(reviewsPath, { reviews: [] });
+const foundReviews = [];
+for (const item of [...videos.map((v) => ({ ...v, kind: "video", source: v.channel ? `YouTube · ${v.channel}` : "YouTube" })), ...articles]) {
+  const year = Number((item.title.match(/\b(20\d\d)\b/) || [])[1]);
+  if (year && year < newestYear - 2) continue; // old models
+  const match = matchReview(item.title, catalog, matchers);
+  if (!match) continue;
+  foundReviews.push({ kind: item.kind, title: item.title, url: item.url, source: item.source, date: item.date || null, rating: null, bats: match.bats, families: match.families, summary: null, auto: true });
+}
+const mergedReviews = mergeReviews(reviewFile.reviews || [], foundReviews);
+log(`Published reviews: ${foundReviews.length} matched, ${mergedReviews.added} new`);
+
 if (args["dry-run"]) {
   log("Dry run: nothing written");
-} else if (!fresh.length && !previous.length) {
-  log("Nothing collected, so data/community.json was left as it is.");
+} else {
+  if (mergedReviews.added) {
+    await writeFile(reviewsPath, JSON.stringify({ ...reviewFile, updated: new Date().toISOString().slice(0, 10), reviews: mergedReviews.reviews }, null, 2) + "\n");
+    log(`Wrote data/reviews.json (${mergedReviews.reviews.length} reviews)`);
+  }
+}
+if (args["dry-run"] || (!fresh.length && !previous.length)) {
+  if (!args["dry-run"]) log("No posts collected, so data/community.json was left as it is.");
 } else {
   await writeFile(mentionsPath, JSON.stringify(merged, null, 0).replace(/\},\{/g, "},\n{") + "\n");
   await writeFile(join(root, "data/community.json"), JSON.stringify(community, null, 2) + "\n");

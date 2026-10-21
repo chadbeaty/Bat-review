@@ -111,3 +111,21 @@ test("parses pasted Facebook posts", () => {
   assert.equal(entries[0].text, "My Bedlam XL is fire");
   assert.equal(entries[1].text, "Ronin cracked? never heard of that");
 });
+
+test("review titles match the exact bat when specific enough", async () => {
+  const { matchReview, mergeReviews } = await import("../lib/reviews.mjs");
+  const { bats } = JSON.parse(readFileSync(new URL("../../data/bats.json", import.meta.url)));
+  const m1 = matchReview("2026 Miken KP23 2-Piece Maxload USA/ASA Review", bats, matchers);
+  assert.deepEqual(m1.bats, ["miken-kp23-maxload-usa-2026"]);
+  const m2 = matchReview("Worth Bedlam XXL Josh Riley USSSA Bat Review", bats, matchers);
+  assert.deepEqual(m2.bats, ["worth-bedlam-xxl-usssa-2026"]);
+  // Vague titles fall back to the whole line.
+  const m3 = matchReview("Hitting the Miken Freak, is it worth it?", bats, matchers);
+  assert.deepEqual(m3.bats, []);
+  assert.deepEqual(m3.families, ["miken-freak"]);
+  assert.equal(matchReview("Best fishing reels of 2026", bats, matchers), null);
+
+  const merged = mergeReviews([{ id: "r007", url: "https://a" }], [{ url: "https://a" }, { url: "https://b" }]);
+  assert.equal(merged.added, 1);
+  assert.equal(merged.reviews.at(-1).id, "r008");
+});

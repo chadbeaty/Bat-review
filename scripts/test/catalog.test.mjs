@@ -54,3 +54,17 @@ test("finder power picks favor end-loaded bats", () => {
   const power = rankBats(prepared, { league: "USSSA", hitter: "power", feel: "2pc", budget: "any", priority: "pop" });
   assert.ok(power.slice(0, 5).every((r) => r.bat.load !== "balanced"));
 });
+
+test("published reviews point at real bats and lines", () => {
+  const { reviews } = JSON.parse(readFileSync(new URL("../../data/reviews.json", import.meta.url)));
+  const batIds = new Set(bats.map((b) => b.id));
+  const ids = new Set();
+  for (const r of reviews) {
+    assert.ok(!ids.has(r.id), `duplicate review id ${r.id}`);
+    ids.add(r.id);
+    assert.doesNotThrow(() => new URL(r.url), `${r.id} url`);
+    assert.ok(["expert", "site", "video", "customer", "retailer", "forum"].includes(r.kind), `${r.id} kind`);
+    for (const b of r.bats) assert.ok(batIds.has(b), `${r.id} unknown bat ${b}`);
+    for (const f of r.families) assert.ok(familyIds.has(f), `${r.id} unknown line ${f}`);
+  }
+});

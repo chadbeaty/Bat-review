@@ -265,7 +265,10 @@
         "freak fire",
         "freak ice",
         "freak splatter",
-        "tunnel to towers"
+        "tunnel to towers",
+        "freak30",
+        "freak12",
+        "freak lucky"
       ],
       "needsContext": true,
       "notes": [
@@ -276,9 +279,9 @@
       "exclude": [
         "freak athlete",
         "freak accident",
-        "freak out",
         "freaked",
-        "freaking"
+        "freaking",
+        "freak out"
       ]
     },
     {
@@ -419,18 +422,6 @@
         "Louisville Slugger's main USSSA line, with many signature and paint versions.",
         "Sits at the premium end of USSSA prices.",
         "2026 versions use a double-wall barrel and the QWK 2.0 two-piece connection."
-      ]
-    },
-    {
-      "id": "ls-supra",
-      "brand": "Louisville Slugger",
-      "name": "Supra",
-      "aliases": [
-        "supra"
-      ],
-      "needsContext": true,
-      "notes": [
-        "Balanced USSSA bat for 2027 with a $399 list price."
       ]
     },
     {
@@ -576,9 +567,11 @@
     {
       "id": "anarchy-omen",
       "brand": "Anarchy",
-      "name": "Omen",
+      "name": "Omen / PTSD Awareness (Senior)",
       "aliases": [
-        "anarchy omen"
+        "anarchy omen",
+        "ptsd awareness",
+        "zatopek"
       ],
       "needsContext": true,
       "notes": [
@@ -594,6 +587,70 @@
       ],
       "notes": [
         "Long-running Anderson alloy with a dual stamp. A durable, no-break-in bat."
+      ]
+    },
+    {
+      "id": "demarini-stadium",
+      "brand": "DeMarini",
+      "name": "Stadium",
+      "aliases": [
+        "demarini stadium",
+        "stadium usssa",
+        "stadium 13"
+      ],
+      "notes": [
+        "13\" end-loaded USSSA two-piece, sold in 2026 and 2027 versions."
+      ]
+    },
+    {
+      "id": "demarini-kingpin",
+      "brand": "DeMarini",
+      "name": "Kingpin (Senior)",
+      "aliases": [
+        "kingpin"
+      ],
+      "needsContext": true,
+      "notes": [
+        "DeMarini's one-piece SSUSA senior bat."
+      ]
+    },
+    {
+      "id": "marucci-cat",
+      "brand": "Marucci",
+      "name": "CAT 1776",
+      "aliases": [
+        "cat 1776",
+        "marucci cat"
+      ],
+      "notes": [
+        "Loaded USA model released for the country's 250th anniversary."
+      ]
+    },
+    {
+      "id": "victus-beacon",
+      "brand": "Victus",
+      "name": "Beacon",
+      "aliases": [
+        "victus beacon",
+        "beacon bomb pop",
+        "travis clark beacon"
+      ],
+      "notes": [
+        "Victus's first slowpitch line. Mostly one-piece with a Ya-Ya end-load, plus a heavier Big Boy Load version."
+      ]
+    },
+    {
+      "id": "combat-cr1",
+      "brand": "Combat",
+      "name": "CR-1 Bradley Jones",
+      "aliases": [
+        "cr-1",
+        "cr1",
+        "bradley jones",
+        "combat cr"
+      ],
+      "notes": [
+        "Combat is back in slowpitch with three CR-1 versions, all with a 0.5 oz end-load. The two-piece is said to sting less."
       ]
     }
   ]

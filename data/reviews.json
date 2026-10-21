@@ -1,0 +1,886 @@
+{
+  "updated": "2026-10-21",
+  "note": "Published reviews found across the web: tested reviews, review sites, retailer write-ups, customer ratings and review videos. Summaries describe what each source says and link to it. Review videos are listed by title; watch them for the verdict.",
+  "reviews": [
+    {
+      "kind": "expert",
+      "title": "Best Slowpitch Softball Bats",
+      "source": "Bat Digest",
+      "url": "https://batdigest.com/best-slow-pitch-softball-bats/",
+      "date": "2026-09-10",
+      "rating": null,
+      "families": [
+        "monsta-torch",
+        "miken-vicious",
+        "demarini-juggy"
+      ],
+      "bats": [],
+      "summary": "Bat Digest's slowpitch guide (updated September 2026) names the Monsta Torch its best overall slowpitch bat, the Juggy its pick for contact hitters and the Miken Vicious its pick under $200. The Torch score (95/100) comes from its testing of the 2023 model.",
+      "id": "r001"
+    },
+    {
+      "kind": "site",
+      "title": "2026 Worth Bedlam Josh Riley XL Slowpitch Review",
+      "source": "The National Pastime Museum",
+      "url": "https://www.thenationalpastimemuseum.com/?p=6831",
+      "rating": "8.0/10",
+      "bats": [
+        "worth-riley-bedlam-black-xl-usssa-2026"
+      ],
+      "families": [
+        "worth-bedlam"
+      ],
+      "summary": "Rates it 8.0/10. Calls the Miken KP23 its closest USSSA rival and gives the Bedlam the edge on barrel consistency. Reports no significant breakage patterns.",
+      "date": null,
+      "id": "r002"
+    },
+    {
+      "kind": "site",
+      "title": "2026 Worth KReCHeR XL USSSA Review",
+      "source": "The National Pastime Museum",
+      "url": "https://www.thenationalpastimemuseum.com/?p=6229",
+      "rating": "8.0/10",
+      "bats": [
+        "worth-krecher-xl-usssa-2026"
+      ],
+      "families": [],
+      "summary": "Rates it 8.0/10: performance 8.5, the best in Worth's lineup, and durability 7.8, the lowest. Recommends it for USSSA power hitters who make consistent contact rather than heavy cage users.",
+      "date": null,
+      "id": "r003"
+    },
+    {
+      "kind": "site",
+      "title": "Miken Slowpitch Bat Reviews 2026: KP23 + Freak Splatter",
+      "source": "The National Pastime Museum",
+      "url": "https://www.thenationalpastimemuseum.com/miken-slowpitch-bat-reviews/",
+      "rating": null,
+      "bats": [
+        "miken-kp23-2pc-maxload-usssa-2026",
+        "miken-freak-splatter-maxload-usssa-2026"
+      ],
+      "families": [],
+      "summary": "Picks the KP23 2-piece 12.5\" USSSA and the Freak Splatter Maxload as Miken's top 2026 bats.",
+      "date": null,
+      "id": "r004"
+    },
+    {
+      "kind": "customer",
+      "title": "Worth Bedlam 13\" Balanced USSSA",
+      "source": "JustBats customer reviews",
+      "url": "https://www.justbats.com/products/approved%20for~usssa/softball%20bats~slow%20pitch/",
+      "rating": "5.0/5 (4 reviews)",
+      "bats": [
+        "worth-bedlam-balanced-usssa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "id": "r005"
+    },
+    {
+      "kind": "customer",
+      "title": "DeMarini Twisted Mistress V2",
+      "source": "JustBats customer reviews",
+      "url": "https://www.justbats.com/bat-reviews/year~2026/",
+      "rating": "3.0/5 (1 review)",
+      "bats": [
+        "demarini-twisted-mistress-v2-usssa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "id": "r006"
+    },
+    {
+      "kind": "customer",
+      "title": "DeMarini Stadium 13\" End-Loaded",
+      "source": "JustBats customer reviews",
+      "url": "https://www.justbats.com/bat-reviews/year~2026/",
+      "rating": "5.0/5 (2 reviews)",
+      "bats": [
+        "demarini-stadium-13-endload-usssa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "id": "r007"
+    },
+    {
+      "kind": "customer",
+      "title": "Easton Tantrum 13\" End-Loaded Senior",
+      "source": "JustBats customer reviews",
+      "url": "https://www.justbats.com/bat-reviews/year~2026/",
+      "rating": "4.5/5 (2 reviews)",
+      "bats": [
+        "easton-tantrum-motherload-1pc-senior-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "id": "r008"
+    },
+    {
+      "kind": "customer",
+      "title": "Miken Vicious",
+      "source": "JustBats customer reviews",
+      "url": "https://www.justbats.com/bat-reviews/softball%20bats~slow%20pitch/",
+      "rating": "4.0/5 (34 reviews)",
+      "bats": [
+        "miken-vicious-maxload-dual-2026"
+      ],
+      "families": [],
+      "summary": "Among the most-reviewed slowpitch bats on JustBats.",
+      "date": null,
+      "id": "r009"
+    },
+    {
+      "kind": "customer",
+      "title": "Easton Ronin 240 USA/USSSA",
+      "source": "Dick's Sporting Goods customer reviews",
+      "url": "https://www.dickssportinggoods.com/p/easton-ronin-240-usa-usssa-slowpitch-bat-21etsarnn240llyspspb/21etsarnn240llyspspb",
+      "rating": "3.7/5 (12 reviews)",
+      "bats": [],
+      "families": [
+        "easton-ronin"
+      ],
+      "summary": "60% of reviewers recommend it. One long-term owner reports line drives, good control and years of use by teammates. These reviews are for the earlier balanced Ronin 240 (SP21RA240).",
+      "date": null,
+      "id": "r010"
+    },
+    {
+      "kind": "retailer",
+      "title": "2026 Combat MFG CR-1 Outdoor Bradley Jones Slowpitch Bats: All 3 Models Compared",
+      "source": "Smash It Sports",
+      "url": "https://smashitsports.com/blogs/smash-it-sports-blog/2026-combat-mfg-cr-1-outdoor-bradley-jones-slowpitch-bats-all-3-models-compared-smash-it-sports",
+      "rating": null,
+      "bats": [],
+      "families": [
+        "combat-cr1"
+      ],
+      "summary": "Compares the three CR-1 versions. All have a 0.5 oz end-load and differ mainly in feel; the two-piece is described as smoother, with less sting.",
+      "date": null,
+      "id": "r011"
+    },
+    {
+      "kind": "retailer",
+      "title": "2026 Worth Slowpitch Bats: Complete Lineup Guide",
+      "source": "Smash It Sports",
+      "url": "https://smashitsports.com/blogs/smash-it-sports-blog/2026-worth-slowpitch-bats",
+      "rating": null,
+      "bats": [],
+      "families": [
+        "worth-bedlam",
+        "worth-krecher"
+      ],
+      "summary": "Lineup guide for Worth's 2026 bats. Notes the Bedlam XL USSSA is the only one offered in 28 oz.",
+      "date": null,
+      "id": "r012"
+    },
+    {
+      "kind": "site",
+      "title": "Easton Alpha 2-PC Loaded 12.75\" USSSA",
+      "source": "Slopitch Central",
+      "url": "https://slopitchcentral.com/product-reviews/easton-alpha-2-pc-loaded-1275-usssa",
+      "rating": null,
+      "bats": [],
+      "families": [
+        "easton-alpha"
+      ],
+      "summary": "Product review of the 2025 Alpha two-piece loaded (ESU5ALL).",
+      "date": null,
+      "id": "r013"
+    },
+    {
+      "kind": "retailer",
+      "title": "Victus Beacon Slowpitch Softball Bat: A New Player Has Entered the Game",
+      "source": "CheapBats",
+      "url": "https://cheapbats.com/blogs/news/victus-beacon-slowpitch-softball-bat-a-new-player-has-entered-the-game",
+      "rating": null,
+      "bats": [],
+      "families": [
+        "victus-beacon"
+      ],
+      "summary": "Introduces Victus's first slowpitch bat. Says the end-load gives it a heavier swing weight that suits hitters with fast hands and strong mechanics.",
+      "date": null,
+      "id": "r014"
+    },
+    {
+      "kind": "video",
+      "title": "2026 Easton Tantrum 2-Piece Loaded",
+      "url": "https://www.youtube.com/watch?v=mxqFK2dIHzc",
+      "source": "YouTube",
+      "bats": [
+        "easton-tantrum-2pc-loaded-usssa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r015"
+    },
+    {
+      "kind": "video",
+      "title": "2026 Easton Tantrum 1-Piece Loaded",
+      "url": "https://www.youtube.com/watch?v=GrVA9J8JJxI",
+      "source": "YouTube",
+      "bats": [
+        "easton-tantrum-1pc-loaded-usssa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r016"
+    },
+    {
+      "kind": "video",
+      "title": "2026 Easton Tantrum 13 Inch 2-Piece Balanced",
+      "url": "https://www.youtube.com/watch?v=RA8HEQpwTkA",
+      "source": "YouTube",
+      "bats": [
+        "easton-tantrum-2pc-balanced-usssa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r017"
+    },
+    {
+      "kind": "video",
+      "title": "This 2026 Easton Tantrum Doesn't Quit",
+      "url": "https://www.youtube.com/watch?v=7wOWY856vz4",
+      "source": "YouTube",
+      "bats": [],
+      "families": [
+        "easton-tantrum"
+      ],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r018"
+    },
+    {
+      "kind": "video",
+      "title": "Gold Series Breakdown (Miken Freak, Easton Tantrum, Worth Bedlam)",
+      "url": "https://www.youtube.com/watch?v=og5xSG-kJA0",
+      "source": "YouTube",
+      "bats": [],
+      "families": [
+        "miken-freak",
+        "easton-tantrum",
+        "worth-bedlam"
+      ],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r019"
+    },
+    {
+      "kind": "video",
+      "title": "2026 Easton Alpha USA/ASA Slowpitch Softball Bat Review",
+      "url": "https://www.youtube.com/watch?v=lKXeb84PrUw",
+      "source": "YouTube",
+      "bats": [
+        "easton-alpha-2pc-loaded-usa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r020"
+    },
+    {
+      "kind": "video",
+      "title": "Easton Alpha | Found My New Gamer",
+      "url": "https://www.youtube.com/watch?v=J9y4v_QDyUM",
+      "source": "YouTube",
+      "bats": [],
+      "families": [
+        "easton-alpha"
+      ],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r021"
+    },
+    {
+      "kind": "video",
+      "title": "Easton Marsh | 1-Piece & 2-Piece USSSA Slowpitch Bat Review",
+      "url": "https://www.youtube.com/watch?v=HVcKhpOdjLI",
+      "source": "YouTube",
+      "bats": [
+        "easton-marsh-1pc-loaded-usssa-2026",
+        "easton-marsh-2pc-loaded-usssa-2026"
+      ],
+      "families": [],
+      "summary": "The video notes that its one-piece sample was mislabeled as a Marsh and is actually Easton's 232 model.",
+      "date": null,
+      "rating": null,
+      "id": "r022"
+    },
+    {
+      "kind": "video",
+      "title": "2026 Miken Freak USA Review",
+      "url": "https://www.youtube.com/watch?v=Nxn0wNEfFp4",
+      "source": "YouTube",
+      "bats": [],
+      "families": [
+        "miken-freak"
+      ],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r023"
+    },
+    {
+      "kind": "video",
+      "title": "2026 Miken Freak30 2-Piece Maxload USSSA (SIS exclusive)",
+      "url": "https://www.youtube.com/watch?v=p3rvlphvmwA",
+      "source": "YouTube",
+      "bats": [
+        "miken-freak30-maxload-usssa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r024"
+    },
+    {
+      "kind": "video",
+      "title": "Freak Ice Review: 2026 Miken 12.75\" Maxload 1-Piece USSSA",
+      "url": "https://www.youtube.com/watch?v=mbM_pnAfXHA",
+      "source": "YouTube",
+      "bats": [
+        "miken-freak-ice-usssa-2026"
+      ],
+      "families": [],
+      "summary": "Covers specs, a compression test, tee swings, live swings and final rankings.",
+      "date": null,
+      "rating": null,
+      "id": "r025"
+    },
+    {
+      "kind": "video",
+      "title": "2026 Miken Freak Splatter 2-Piece Maxload USA/ASA Review",
+      "url": "https://www.youtube.com/watch?v=4VI8DKQ5hwc",
+      "source": "YouTube",
+      "bats": [
+        "miken-freak-splatter-maxload-usa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r026"
+    },
+    {
+      "kind": "video",
+      "title": "Is the Miken Freak Splatter a New Gamer?! USSSA Review",
+      "url": "https://www.youtube.com/watch?v=37Usfc4h1c0",
+      "source": "YouTube",
+      "bats": [
+        "miken-freak-splatter-maxload-usssa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r027"
+    },
+    {
+      "kind": "video",
+      "title": "Miken Freak Fire & Ice Maxload Review",
+      "url": "https://www.youtube.com/watch?v=SzAWNu-JADk",
+      "source": "YouTube",
+      "bats": [
+        "miken-freak-ice-usssa-2026"
+      ],
+      "families": [
+        "miken-freak"
+      ],
+      "summary": "Compares the one-piece and two-piece versions.",
+      "date": null,
+      "rating": null,
+      "id": "r028"
+    },
+    {
+      "kind": "video",
+      "title": "2026 Miken Freak Cancer Awareness Maxload USSSA Review",
+      "url": "https://www.youtube.com/watch?v=XnkORh2vpIo",
+      "source": "YouTube",
+      "bats": [],
+      "families": [
+        "miken-freak"
+      ],
+      "summary": "Limited edition, numbered out of 400.",
+      "date": null,
+      "rating": null,
+      "id": "r029"
+    },
+    {
+      "kind": "video",
+      "title": "2026 Miken KP23 12.5\" 2-Piece Maxload",
+      "url": "https://www.youtube.com/watch?v=UHGPhWmvnGU",
+      "source": "YouTube",
+      "bats": [
+        "miken-kp23-2pc-maxload-usssa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r030"
+    },
+    {
+      "kind": "video",
+      "title": "Miken KP23 14\" & 12.75\" 1-Piece",
+      "url": "https://www.youtube.com/watch?v=nuL_M7EKvqo",
+      "source": "YouTube",
+      "bats": [
+        "miken-kp23-1pc-maxload-usssa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r031"
+    },
+    {
+      "kind": "video",
+      "title": "2026 Miken KP23 2-Piece Maxload USA/ASA Review",
+      "url": "https://www.youtube.com/watch?v=zqPbeJhzqt0",
+      "source": "YouTube",
+      "bats": [
+        "miken-kp23-maxload-usa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r032"
+    },
+    {
+      "kind": "video",
+      "title": "This KP23 Is Different: Miken's First 1-Piece Non-Linear ASA Bat",
+      "url": "https://www.youtube.com/watch?v=kRz0vGBrYFM",
+      "source": "YouTube",
+      "bats": [],
+      "families": [
+        "miken-kp23"
+      ],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r033"
+    },
+    {
+      "kind": "video",
+      "title": "Miken KP23 \"Neon\"",
+      "url": "https://www.youtube.com/watch?v=UCaSMObskeA",
+      "source": "YouTube",
+      "bats": [],
+      "families": [
+        "miken-kp23"
+      ],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r034"
+    },
+    {
+      "kind": "video",
+      "title": "Hitting the Miken KP23 & Worth Bedlam",
+      "url": "https://www.youtube.com/watch?v=orIY4V4jgZI",
+      "source": "YouTube",
+      "bats": [],
+      "families": [
+        "miken-kp23",
+        "worth-bedlam"
+      ],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r035"
+    },
+    {
+      "kind": "video",
+      "title": "2026 Worth Bedlam Black XL 2-Piece USA/ASA Review",
+      "url": "https://www.youtube.com/watch?v=Tm6nLGZ4w6U",
+      "source": "YouTube",
+      "bats": [
+        "worth-bedlam-black-xl-usa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r036"
+    },
+    {
+      "kind": "video",
+      "title": "Worth Bedlam Black | USA/ASA & USSSA Slowpitch Bat Review",
+      "url": "https://www.youtube.com/watch?v=H9TgEEGav64",
+      "source": "YouTube",
+      "bats": [
+        "worth-bedlam-black-xl-usa-2026",
+        "worth-riley-bedlam-black-xl-usssa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r037"
+    },
+    {
+      "kind": "video",
+      "title": "Worth Bedlam Josh Riley 12.5\" XL",
+      "url": "https://www.youtube.com/watch?v=e3TRhOK_57s",
+      "source": "YouTube",
+      "bats": [
+        "worth-riley-bedlam-black-xl-usssa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r038"
+    },
+    {
+      "kind": "video",
+      "title": "Worth Bedlam Josh Riley XL 13.5\"",
+      "url": "https://www.youtube.com/watch?v=KZ6n0makQec",
+      "source": "YouTube",
+      "bats": [],
+      "families": [
+        "worth-bedlam"
+      ],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r039"
+    },
+    {
+      "kind": "video",
+      "title": "Worth Bedlam XXL Josh Riley USSSA Bat Review",
+      "url": "https://www.youtube.com/watch?v=P7lZhFXa3Ck",
+      "source": "YouTube",
+      "bats": [
+        "worth-bedlam-xxl-usssa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r040"
+    },
+    {
+      "kind": "video",
+      "title": "Worth Bedlam Josh Riley Balanced",
+      "url": "https://www.youtube.com/watch?v=KLhxxHAd3u8",
+      "source": "YouTube",
+      "bats": [
+        "worth-bedlam-balanced-usssa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r041"
+    },
+    {
+      "kind": "video",
+      "title": "Hitting the Worth 2-Piece Phil Matte Signature Bedlam XL & Balanced",
+      "url": "https://www.youtube.com/watch?v=eIn9V0U21NA",
+      "source": "YouTube",
+      "bats": [],
+      "families": [
+        "worth-bedlam"
+      ],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r042"
+    },
+    {
+      "kind": "video",
+      "title": "Slugger Slowpitch: Matt Brady Genesis",
+      "url": "https://www.youtube.com/watch?v=UklyRDYat4g",
+      "source": "YouTube",
+      "bats": [
+        "ls-genesis-brady-12-maxload-usssa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r043"
+    },
+    {
+      "kind": "video",
+      "title": "Slugger Genesis Scott Hartling",
+      "url": "https://www.youtube.com/watch?v=iF_wlgLivyY",
+      "source": "YouTube",
+      "bats": [
+        "ls-genesis-hartling-13-endload-usssa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r044"
+    },
+    {
+      "kind": "video",
+      "title": "Slugger Genesis Love the Moment",
+      "url": "https://www.youtube.com/watch?v=L7vYsphUBpk",
+      "source": "YouTube",
+      "bats": [],
+      "families": [
+        "ls-genesis"
+      ],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r045"
+    },
+    {
+      "kind": "video",
+      "title": "Louisville Slugger Genesis City Connect",
+      "url": "https://www.youtube.com/watch?v=bXPLcfzbWhU",
+      "source": "YouTube",
+      "bats": [],
+      "families": [
+        "ls-genesis"
+      ],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r046"
+    },
+    {
+      "kind": "video",
+      "title": "New 2027 DeMarini Slowpitch Bats Review",
+      "url": "https://www.youtube.com/watch?v=jrm77agd3s8",
+      "source": "YouTube",
+      "bats": [
+        "demarini-vanilla-gorilla-usssa-2027",
+        "demarini-the-culture-usssa-2027",
+        "demarini-the-standard-usssa-2027"
+      ],
+      "families": [],
+      "summary": "Cage test of DeMarini's 2027 lineup. The description reports exit velocities in the mid-to-high 90s for the Vanilla Gorilla.",
+      "date": null,
+      "rating": null,
+      "id": "r047"
+    },
+    {
+      "kind": "video",
+      "title": "2027 DeMarini Twisted Mistress Jeremy Yates Review",
+      "url": "https://www.youtube.com/watch?v=T11L7Z809bw",
+      "source": "YouTube",
+      "bats": [],
+      "families": [
+        "demarini-twisted-mistress"
+      ],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r048"
+    },
+    {
+      "kind": "video",
+      "title": "2027 DeMarini Stadium USSSA Slowpitch Bat",
+      "url": "https://www.youtube.com/watch?v=YGANZrYsyV0",
+      "source": "YouTube",
+      "bats": [
+        "demarini-stadium-usssa-2027"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r049"
+    },
+    {
+      "kind": "video",
+      "title": "2026 DeMarini Stadium",
+      "url": "https://www.youtube.com/watch?v=MGLFXvEwvJI",
+      "source": "YouTube",
+      "bats": [
+        "demarini-stadium-13-endload-usssa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r050"
+    },
+    {
+      "kind": "video",
+      "title": "DeMarini Vanilla Gorilla Review",
+      "url": "https://www.youtube.com/watch?v=iFHkzt6pRC8",
+      "source": "YouTube",
+      "bats": [],
+      "families": [
+        "demarini-vanilla-gorilla"
+      ],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r051"
+    },
+    {
+      "kind": "video",
+      "title": "Hitting the BSC tribute DeMarini \"The Culture\"",
+      "url": "https://www.youtube.com/watch?v=-2RCP213uCA",
+      "source": "YouTube",
+      "bats": [],
+      "families": [
+        "demarini-culture"
+      ],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r052"
+    },
+    {
+      "kind": "video",
+      "title": "2026 DeMarini \"Kingpin\" Senior Slowpitch Bat Review",
+      "url": "https://www.youtube.com/watch?v=bh5fwlZFYfE",
+      "source": "YouTube",
+      "bats": [
+        "demarini-kingpin-senior-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r053"
+    },
+    {
+      "kind": "video",
+      "title": "Hitting the DeMarini Kingpin Senior Slowpitch Bat",
+      "url": "https://www.youtube.com/watch?v=qt_PG-wc3xQ",
+      "source": "YouTube",
+      "bats": [
+        "demarini-kingpin-senior-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r054"
+    },
+    {
+      "kind": "video",
+      "title": "Hitting the Victus Vibe (Everett Williams): USSSA Review",
+      "url": "https://www.youtube.com/watch?v=BZHJYDFRDXU",
+      "source": "YouTube",
+      "bats": [],
+      "families": [
+        "victus-vibe"
+      ],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r055"
+    },
+    {
+      "kind": "video",
+      "title": "Senior Softball Test: Victus Vibe (Balanced) Goes Deep Out of the Gate",
+      "url": "https://www.youtube.com/watch?v=a9xOgxhqJyk",
+      "source": "YouTube",
+      "bats": [],
+      "families": [
+        "victus-vibe"
+      ],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r056"
+    },
+    {
+      "kind": "video",
+      "title": "2026 Marucci RCKLESS America SSUSA Bat Review",
+      "url": "https://www.youtube.com/watch?v=U0gwkS3UbU8",
+      "source": "YouTube",
+      "bats": [
+        "marucci-rckless-america-senior-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r057"
+    },
+    {
+      "kind": "video",
+      "title": "2026 Marucci CAT 1776 Loaded USA/ASA Review",
+      "url": "https://www.youtube.com/watch?v=PvITtYD_mKM",
+      "source": "YouTube",
+      "bats": [
+        "marucci-cat-1776-loaded-usa-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r058"
+    },
+    {
+      "kind": "video",
+      "title": "2026 Anarchy PTSD Awareness 1-Piece End Loaded SSUSA Senior Review",
+      "url": "https://www.youtube.com/watch?v=7xRRwEiMMVE",
+      "source": "YouTube",
+      "bats": [
+        "anarchy-ptsd-zatopek-senior-2026"
+      ],
+      "families": [],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r059"
+    },
+    {
+      "kind": "video",
+      "title": "Monsta vs Easton",
+      "url": "https://www.youtube.com/watch?v=zm9jvVubH0Y",
+      "source": "YouTube",
+      "bats": [],
+      "families": [
+        "monsta-torch",
+        "monsta-trippin"
+      ],
+      "summary": null,
+      "date": null,
+      "rating": null,
+      "id": "r060"
+    },
+    {
+      "kind": "video",
+      "title": "Balanced Slowpitch Bat Reviews: 6 Models (USSSA & USA/ASA)",
+      "url": "https://www.youtube.com/watch?v=plQnwO7tMFs",
+      "source": "YouTube",
+      "bats": [],
+      "families": [],
+      "summary": "Roundup of six balanced 2026 bats.",
+      "date": null,
+      "rating": null,
+      "id": "r061"
+    },
+    {
+      "kind": "video",
+      "title": "Short Reviews of 7 Dual Stamp Slow Pitch Bats",
+      "url": "https://www.youtube.com/watch?v=ik7HMC72Fv8",
+      "source": "YouTube",
+      "bats": [],
+      "families": [],
+      "summary": "Roundup of dual-stamp (USA and USSSA) bats.",
+      "date": null,
+      "rating": null,
+      "id": "r062"
+    }
+  ]
+}

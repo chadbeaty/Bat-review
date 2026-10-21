@@ -33,6 +33,15 @@ const DEFAULT_WEIGHTS = { USSSA: [25, 26, 27, 28], USA: [26, 27, 28], SSUSA: [25
 
 export const MIN_MENTIONS_FOR_SCORE = 5;
 
+export const REVIEW_KINDS = {
+  expert: "Tested review",
+  site: "Review site",
+  video: "Video review",
+  customer: "Customer ratings",
+  retailer: "Retailer write-up",
+  forum: "Forum thread",
+};
+
 async function getJSON(url, fallback) {
   try {
     const res = await fetch(url, { cache: "no-cache" });
@@ -44,14 +53,18 @@ async function getJSON(url, fallback) {
 }
 
 export async function loadData() {
-  const [catalog, fam, community] = await Promise.all([
+  const [catalog, fam, community, published] = await Promise.all([
     getJSON("data/bats.json", { bats: [] }),
     getJSON("data/families.json", { families: [] }),
     getJSON("data/community.json", { generatedAt: null, families: {} }),
+    getJSON("data/reviews.json", { reviews: [] }),
   ]);
 
   const families = new Map(fam.families.map((f) => [f.id, f]));
   const pulse = community.families || {};
+  const newestYear = Math.max(...catalog.bats.map((b) => b.year));
+  const familyOf = new Map(catalog.bats.map((b) => [b.id, b.family]));
+  const reviews = published.reviews || [];
 
   const bats = catalog.bats.map((b) => {
     const family = families.get(b.family) || null;
@@ -60,6 +73,11 @@ export async function loadData() {
     const dual = stamps.includes("USA") && stamps.includes("USSSA");
     const weights = b.weights || DEFAULT_WEIGHTS[stamps[0]] || [26, 27, 28];
     const effectivePrice = b.salePrice ?? b.price ?? null;
+    // Reviews of this exact bat, then reviews of the line or of its other versions.
+    const direct = reviews.filter((r) => r.bats.includes(b.id));
+    const line = reviews.filter(
+      (r) => !r.bats.includes(b.id) && (r.families.includes(b.family) || r.bats.some((id) => familyOf.get(id) === b.family))
+    );
     return {
       ...b,
       name: `${b.brand} ${b.model}`,
@@ -70,6 +88,10 @@ export async function loadData() {
       effectivePrice,
       score: talk && talk.mentions >= MIN_MENTIONS_FOR_SCORE ? talk.score : null,
       mentions: talk ? talk.mentions : 0,
+      isNew: b.year === newestYear,
+      reviews: direct,
+      lineReviews: line,
+      reviewCount: direct.length,
       searchText: [b.brand, b.model, b.year, family?.name, ...(family?.aliases || []), ...stamps, b.sku, BUILD[b.build], MATERIAL[b.material], LOAD[b.load], b.loadName]
         .filter(Boolean)
         .join(" ")
@@ -79,6 +101,11 @@ export async function loadData() {
 
   return {
     bats,
+    newestYear,
+    roundups: reviews.filter((r) => !r.bats.length && !r.families.length),
+    reviewsNote: published.note,
+    reviewsUpdated: published.updated,
+    reviewTotal: reviews.length,
     byId: new Map(bats.map((b) => [b.id, b])),
     families,
     community,

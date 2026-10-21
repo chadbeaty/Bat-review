@@ -1,6 +1,6 @@
-import { LEAGUES, BUILD, MATERIAL, LOAD, TOPICS, STAMPS, MIN_MENTIONS_FOR_SCORE } from "./data.js";
+import { LEAGUES, BUILD, MATERIAL, LOAD, TOPICS, STAMPS, MIN_MENTIONS_FOR_SCORE, REVIEW_KINDS } from "./data.js";
 import { store } from "./store.js";
-import { esc, stampsHTML, priceHTML, specLine, pulseHTML, batRowHTML, actionButtons, money, toneLabel, formatDate, icons } from "./ui.js";
+import { esc, stampsHTML, priceHTML, specLine, pulseHTML, batRowHTML, actionButtons, money, toneLabel, formatDate, icons, newBadge } from "./ui.js";
 import { reviewsBackend, renderReviews } from "./reviews.js";
 
 /* ---------- Shared filter state (the URL hash can't carry it, so it lives here) ---------- */
@@ -9,6 +9,7 @@ export const emptyFilters = () => ({
   q: "",
   leagues: [],
   dualOnly: false,
+  reviewedOnly: false,
   brands: [],
   builds: [],
   materials: [],
@@ -39,6 +40,7 @@ function matches(bat, f, skip) {
   }
   if (skip !== "leagues" && f.leagues.length && !f.leagues.some((l) => bat.stamps.includes(l))) return false;
   if (f.dualOnly && !bat.dual) return false;
+  if (f.reviewedOnly && !bat.reviewCount) return false;
   if (skip !== "brands" && f.brands.length && !f.brands.includes(bat.brand)) return false;
   if (skip !== "builds" && f.builds.length && !f.builds.includes(bat.build)) return false;
   if (skip !== "materials" && f.materials.length && !f.materials.includes(bat.material)) return false;
@@ -50,6 +52,7 @@ function matches(bat, f, skip) {
 }
 
 const SORTS = {
+  reviewed: { label: "Most reviewed", fn: (a, b) => b.reviewCount - a.reviewCount || b.lineReviews.length - a.lineReviews.length || b.year - a.year },
   talked: { label: "Most talked about", fn: (a, b) => b.mentions - a.mentions || b.year - a.year },
   score: { label: "Best community score", fn: (a, b) => (b.score ?? -1) - (a.score ?? -1) || b.mentions - a.mentions },
   newest: { label: "Newest", fn: (a, b) => b.year - a.year || a.name.localeCompare(b.name) },
@@ -62,9 +65,12 @@ const SORTS = {
 
 export function homeView(data) {
   const hasTalk = data.bats.some((b) => b.mentions > 0);
-  const topTalk = hasTalk
-    ? uniqueByFamily([...data.bats].sort(SORTS.talked.fn)).slice(0, 6)
-    : data.bats.filter((b) => b.year === 2027).slice(0, 6);
+  const topTalk = hasTalk ? uniqueByFamily([...data.bats].sort(SORTS.talked.fn)).slice(0, 5) : [];
+  const newReviewed = uniqueByFamily(
+    data.bats
+      .filter((b) => b.year >= data.newestYear - 1 && b.reviewCount)
+      .sort((a, b) => b.reviewCount + (b.isNew ? 1 : 0) - (a.reviewCount + (a.isNew ? 1 : 0)) || b.year - a.year)
+  ).slice(0, 6);
   const brands = new Set(data.bats.map((b) => b.brand)).size;
 
   return {
@@ -109,11 +115,25 @@ export function homeView(data) {
 
     <section class="section">
       <div class="section-head">
-        <h2 class="h2">${hasTalk ? "Most talked about" : "New for 2027"}</h2>
-        <a href="#bats" data-sort="${hasTalk ? "talked" : "newest"}">See all bats</a>
+        <h2 class="h2">New bats with reviews</h2>
+        <a href="#bats" data-sort="reviewed">All reviewed bats</a>
       </div>
+      <p class="muted small">${data.reviewTotal} published reviews linked so far: review videos, tested reviews, review sites and customer ratings. New ones are added every week.</p>
+      <ul class="bat-list">${newReviewed.map((b) => batRowHTML(b)).join("")}</ul>
+      ${
+        data.roundups.length
+          ? `<div style="display:grid;gap:8px"><h3 class="eyebrow">Multi-bat roundups</h3>${pubList(data.roundups)}</div>`
+          : ""
+      }
+    </section>
+    ${
+      hasTalk
+        ? `<section class="section">
+      <div class="section-head"><h2 class="h2">Most talked about</h2><a href="#bats" data-sort="talked">See all bats</a></div>
       <ul class="bat-list">${topTalk.map((b) => batRowHTML(b)).join("")}</ul>
-    </section>`,
+    </section>`
+        : ""
+    }`,
     mount(root, nav) {
       root.querySelector("#home-search").addEventListener("submit", (e) => {
         e.preventDefault();
@@ -127,9 +147,9 @@ export function homeView(data) {
           nav("bats");
         })
       );
-      root.querySelector("[data-sort]")?.addEventListener("click", (e) => {
-        setFilters({ sort: e.currentTarget.dataset.sort });
-      });
+      root.querySelectorAll("a[data-sort]").forEach((a) =>
+        a.addEventListener("click", () => setFilters({ sort: a.dataset.sort, reviewedOnly: a.dataset.sort === "reviewed" }))
+      );
     },
   };
 }
@@ -143,7 +163,7 @@ function uniqueByFamily(list) {
 
 export function listView(data) {
   const hasTalk = data.bats.some((b) => b.mentions > 0);
-  if (!filters.sort) filters.sort = hasTalk ? "talked" : "newest";
+  if (!filters.sort) filters.sort = hasTalk ? "talked" : "reviewed";
   const brands = [...new Set(data.bats.map((b) => b.brand))].sort();
   const years = [...new Set(data.bats.map((b) => String(b.year)))].sort().reverse();
   const prices = data.bats.map((b) => b.effectivePrice).filter((x) => x != null);
@@ -171,6 +191,7 @@ export function listView(data) {
         </div>
         <div class="filter-group">
           <label class="check"><input type="checkbox" id="f-dual" ${filters.dualOnly ? "checked" : ""}> Dual stamp only (USA + USSSA)</label>
+          <label class="check"><input type="checkbox" id="f-reviewed" ${filters.reviewedOnly ? "checked" : ""}> Has published reviews</label>
         </div>
         ${groups
           .map(
@@ -238,6 +259,7 @@ export function listView(data) {
         const chips = [];
         if (filters.q) chips.push({ key: "q", label: `“${filters.q}”` });
         if (filters.dualOnly) chips.push({ key: "dualOnly", label: "Dual stamp" });
+        if (filters.reviewedOnly) chips.push({ key: "reviewedOnly", label: "Has reviews" });
         for (const g of groups) for (const v of filters[g.key]) chips.push({ key: g.key, v, label: labelFor(g.key, v) });
         if (filters.maxPrice != null) chips.push({ key: "maxPrice", label: `Up to ${money(filters.maxPrice)}` });
         active.innerHTML = chips
@@ -260,6 +282,10 @@ export function listView(data) {
 
       root.querySelector("#f-q").addEventListener("input", (e) => {
         filters.q = e.target.value.trim();
+        render();
+      });
+      root.querySelector("#f-reviewed").addEventListener("change", (e) => {
+        filters.reviewedOnly = e.target.checked;
         render();
       });
       root.querySelector("#f-dual").addEventListener("change", (e) => {
@@ -296,9 +322,9 @@ export function listView(data) {
         if (key === "q") {
           filters.q = "";
           root.querySelector("#f-q").value = "";
-        } else if (key === "dualOnly") {
-          filters.dualOnly = false;
-          root.querySelector("#f-dual").checked = false;
+        } else if (key === "dualOnly" || key === "reviewedOnly") {
+          filters[key] = false;
+          root.querySelector(key === "dualOnly" ? "#f-dual" : "#f-reviewed").checked = false;
         } else if (key === "maxPrice") {
           filters.maxPrice = null;
           range.value = range.max;
@@ -377,6 +403,39 @@ function verdict(t) {
   if (ratio > 0.25) return ["good", "Mostly positive"];
   if (ratio < -0.25) return ["bad", "Mostly negative"];
   return ["mixed", "Mixed"];
+}
+
+export function pubList(list) {
+  return `<ul class="pub-list">${list
+    .map(
+      (r) => `<li class="pub">
+      <div class="pub-head"><span class="kind ${esc(r.kind)}">${esc(REVIEW_KINDS[r.kind] || "Review")}</span><a class="pub-title" href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r.title)} ${icons.external}</a></div>
+      <div class="pub-meta"><span>${esc(r.source)}</span>${r.rating ? `<span class="rating">${esc(r.rating)}</span>` : ""}${r.date ? `<span>${esc(formatDate(r.date))}</span>` : ""}${r.kind === "site" ? "<span>Scoring method not published</span>" : ""}${r.auto ? "<span>Found automatically</span>" : ""}</div>
+      ${r.summary ? `<p>${esc(r.summary)}</p>` : ""}
+    </li>`
+    )
+    .join("")}</ul>`;
+}
+
+function publishedHTML(bat) {
+  const fam = bat.familyInfo?.name || "this line";
+  const yt = `https://www.youtube.com/results?search_query=${encodeURIComponent(`${bat.year} ${bat.name} slowpitch review`)}`;
+  const direct = bat.reviews;
+  const line = bat.lineReviews;
+  return `<div class="block" id="published">
+    <div class="section-head"><h2 class="h2">Reviews from around the web</h2><span class="small muted">${direct.length} for this bat${line.length ? ` · ${line.length} for other ${esc(fam)} versions` : ""}</span></div>
+    ${
+      direct.length
+        ? pubList(direct)
+        : `<p class="muted">No published review of this exact bat yet.${line.length ? ` Reviews of other ${esc(fam)} versions are below, and they often share the same barrel.` : ""} New bats usually get review videos within a few weeks of release. The weekly collector checks YouTube and review sites.</p>`
+    }
+    ${
+      line.length
+        ? `<details class="more" ${direct.length ? "" : "open"}><summary>Other ${esc(fam)} versions (${line.length})</summary>${pubList(line)}</details>`
+        : ""
+    }
+    <p class="small"><a href="${esc(yt)}" target="_blank" rel="noopener noreferrer">Search YouTube for newer reviews ${icons.external}</a></p>
+  </div>`;
 }
 
 function communityHTML(bat, data) {
@@ -484,7 +543,7 @@ export function batView(data, id) {
     html: `
     <a class="back" href="#bats">← All bats</a>
     <header class="bat-head">
-      <p class="eyebrow">${esc(bat.brand)} · ${esc(bat.year)}</p>
+      <p class="eyebrow">${esc(bat.brand)} · ${esc(bat.year)}${newBadge(bat)}</p>
       <h1 class="h1">${esc(bat.model)}</h1>
       <div class="bat-meta">${stampsHTML(bat)}${specLine(bat)}</div>
       <div class="bat-actions">
@@ -501,6 +560,7 @@ export function batView(data, id) {
           <h2 class="h2">Who it fits</h2>
           <ul class="fit-list">${fitNotes(bat).map(([cls, t]) => `<li class="${cls}">${esc(t)}</li>`).join("")}</ul>
         </div>
+        ${publishedHTML(bat)}
         ${communityHTML(bat, data)}
         <div class="block" id="reviews">
           <div class="section-head"><h2 class="h2">Your reviews</h2><span class="small muted">${reviewsBackend().shared ? "Shared with everyone" : "Saved on this device"}</span></div>
@@ -559,6 +619,7 @@ export function compareView(data) {
     ["Barrel", (b) => (b.barrel ? `${b.barrel}"` : "—")],
     ["Weights", (b) => b.weights.join(", ") + " oz"],
     ["Community score", (b) => (b.score != null ? b.score : "Not enough posts")],
+    ["Published reviews", (b) => b.reviewCount + (b.lineReviews.length ? ` (+${b.lineReviews.length} for the line)` : "")],
     ["Posts collected", (b) => b.mentions],
   ];
   return {
@@ -721,6 +782,9 @@ export function aboutView(data) {
           ? `<p>Last collected ${esc(formatDate(c.generatedAt))}. ${counted} posts matched across ${Object.keys(c.families || {}).length} bat lines.</p>${sourceRows ? `<dl class="kv">${sourceRows}</dl>` : ""}`
           : `<p class="notice">No posts have been collected yet. Until the first run, each bat shows short starter notes (AI-written summaries, labeled as such) and links to search Reddit, Facebook, SoftballFans and YouTube yourself.</p>`
       }
+      <h2 class="h2">Published reviews</h2>
+      <p>Each bat page also lists reviews published elsewhere: tested reviews (Bat Digest), review sites, retailer write-ups, customer ratings (JustBats, Dick's) and review videos. Summaries only describe what each source says, and every one links to the original. ${data.reviewTotal} reviews are listed now, last checked ${esc(formatDate(data.reviewsUpdated))}. The weekly collector adds new review videos and expert reviews automatically.</p>
+      <p>Review sites marked “Scoring method not published” give scores without explaining how they test, so weigh them lightly.</p>
       <h2 class="h2">Specs and prices</h2>
       <p>${esc(data.catalogNote)} Catalog updated ${esc(formatDate(data.catalogUpdated))}. Prices marked “~” are typical retail prices, not a quote.</p>
     </div>`,

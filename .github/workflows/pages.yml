@@ -32,7 +32,7 @@ jobs:
           mkdir _site
           cp -r index.html assets _site/
           mkdir _site/data
-          cp data/bats.json data/families.json data/community.json _site/data/
+          cp data/bats.json data/families.json data/community.json data/reviews.json _site/data/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
       - id: deployment

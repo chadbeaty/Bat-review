@@ -123,6 +123,10 @@ export function rankBats(bats, answers, limit = 8) {
       if (bat.score >= 65) why.push(`Players rate it ${bat.score}/100`);
     }
     score += bat.year >= 2027 ? 0.5 : bat.year === 2026 ? 0.25 : 0;
+    if (bat.reviewCount) {
+      score += 0.3;
+      why.push(`${bat.reviewCount} published review${bat.reviewCount === 1 ? "" : "s"}`);
+    }
     if (budget && bat.effectivePrice != null) why.push(`$${Math.round(bat.effectivePrice)} fits your budget`);
 
     scored.push({ bat, score, why, match: Math.max(1, Math.min(99, Math.round((score / max) * 100))) });
