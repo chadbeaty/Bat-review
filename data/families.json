@@ -1,0 +1,600 @@
+{
+  "note": "Starter notes are short summaries of points that come up again and again when players talk about these lines. They were compiled by AI from general knowledge and retailer descriptions, not copied from any post. Real quotes with links replace them as the aggregator collects posts (see data/community.json).",
+  "families": [
+    {
+      "id": "easton-tantrum",
+      "brand": "Easton",
+      "name": "Tantrum",
+      "aliases": [
+        "tantrum",
+        "motherload tantrum",
+        "tantrum gold"
+      ],
+      "notes": [
+        "Easton's widest slowpitch line, so it comes in one-piece, two-piece, balanced, loaded and senior versions.",
+        "Break-in reports vary: some say it is ready early, others say it took a few hundred swings.",
+        "The Gold version is alloy, which suits players who want durability and no break-in."
+      ]
+    },
+    {
+      "id": "easton-alpha",
+      "brand": "Easton",
+      "name": "Alpha",
+      "aliases": [
+        "easton alpha",
+        "alpha loaded",
+        "alpha 1 piece",
+        "alpha 2 piece"
+      ],
+      "needsContext": true,
+      "notes": [
+        "Built with Resmondo input. The one-piece is known as a stiff bat with a lot of feedback.",
+        "Usually priced a little under Easton's flagship models."
+      ]
+    },
+    {
+      "id": "easton-hype-fire",
+      "brand": "Easton",
+      "name": "Hype Fire",
+      "aliases": [
+        "hype fire",
+        "hypefire"
+      ],
+      "notes": [
+        "Uses the composite from Easton's Hype baseball bats.",
+        "Newer to slowpitch, so there is less long-term durability talk so far."
+      ]
+    },
+    {
+      "id": "easton-marsh",
+      "brand": "Easton",
+      "name": "Marsh",
+      "aliases": [
+        "easton marsh",
+        "marsh loaded"
+      ],
+      "needsContext": true,
+      "notes": [
+        "Loaded USSSA model in one-piece and two-piece versions."
+      ]
+    },
+    {
+      "id": "easton-power-brigade",
+      "brand": "Easton",
+      "name": "Power Brigade",
+      "aliases": [
+        "power brigade"
+      ],
+      "notes": [
+        "Compact one-piece, loaded. Released fall 2026."
+      ]
+    },
+    {
+      "id": "easton-thing",
+      "brand": "Easton",
+      "name": "Thing",
+      "aliases": [
+        "easton thing"
+      ],
+      "notes": [
+        "Two-piece loaded USSSA bat. Often on sale well under list price."
+      ]
+    },
+    {
+      "id": "easton-stealth",
+      "brand": "Easton",
+      "name": "Stealth",
+      "aliases": [
+        "easton stealth",
+        "stealth camo"
+      ],
+      "notes": [
+        "Revived name on a 2027 one-piece end-loaded USSSA bat."
+      ]
+    },
+    {
+      "id": "easton-ronin",
+      "brand": "Easton",
+      "name": "Ronin",
+      "aliases": [
+        "ronin 240",
+        "ronin"
+      ],
+      "notes": [
+        "Alloy and dual-stamped, so it is legal in both USA and USSSA play.",
+        "Players often buy it as a backup, a cold-weather bat or a first bat because alloy needs no break-in.",
+        "Expect less pop than a broken-in composite."
+      ]
+    },
+    {
+      "id": "easton-rival",
+      "brand": "Easton",
+      "name": "Rival",
+      "aliases": [
+        "easton rival"
+      ],
+      "notes": [
+        "Entry-level alloy with a dual stamp. A rec-league bat."
+      ]
+    },
+    {
+      "id": "easton-empire",
+      "brand": "Easton",
+      "name": "Empire (Senior)",
+      "aliases": [
+        "easton empire",
+        "empire connell",
+        "empire rulli"
+      ],
+      "notes": [
+        "Easton's SSUSA senior line, with Greg Connell and Dennis Rulli signature models."
+      ]
+    },
+    {
+      "id": "demarini-twisted-mistress",
+      "brand": "DeMarini",
+      "name": "Twisted Mistress",
+      "aliases": [
+        "twisted mistress",
+        "mistress"
+      ],
+      "notes": [
+        "DeMarini's best-known end-loaded USSSA power bat, sold in several versions.",
+        "The 2027 mid-load version suits hitters who find the full end-load too heavy."
+      ]
+    },
+    {
+      "id": "demarini-standard",
+      "brand": "DeMarini",
+      "name": "Standard / Standard Issue",
+      "aliases": [
+        "standard issue",
+        "demarini standard"
+      ],
+      "needsContext": true,
+      "notes": [
+        "Lower-priced DeMarini USSSA option."
+      ]
+    },
+    {
+      "id": "demarini-culture",
+      "brand": "DeMarini",
+      "name": "The Culture",
+      "aliases": [
+        "demarini culture",
+        "the culture usssa",
+        "the culture bat"
+      ],
+      "needsContext": true,
+      "notes": [
+        "USSSA two-piece in DeMarini's 2026 and 2027 lineups."
+      ]
+    },
+    {
+      "id": "demarini-vanilla-gorilla",
+      "brand": "DeMarini",
+      "name": "Vanilla Gorilla",
+      "aliases": [
+        "vanilla gorilla",
+        "jason magnum"
+      ],
+      "notes": [
+        "Jason Magnum signature USSSA model."
+      ]
+    },
+    {
+      "id": "demarini-mercy",
+      "brand": "DeMarini",
+      "name": "Mercy / Merciless",
+      "aliases": [
+        "mercy",
+        "merciless"
+      ],
+      "needsContext": true,
+      "notes": [
+        "The Mercy is DeMarini's balanced USA model and is often suggested for rec and church leagues.",
+        "The Merciless is the end-loaded version."
+      ],
+      "exclude": [
+        "mercy rule",
+        "mercy'd",
+        "mercied",
+        "mercy-rule",
+        "mercy them",
+        "mercy us"
+      ]
+    },
+    {
+      "id": "demarini-juggy",
+      "brand": "DeMarini",
+      "name": "Juggy",
+      "aliases": [
+        "juggy"
+      ],
+      "notes": [
+        "Long-running DeMarini USA line. Extended means a longer barrel."
+      ]
+    },
+    {
+      "id": "demarini-flipper",
+      "brand": "DeMarini",
+      "name": "Flipper",
+      "aliases": [
+        "flipper"
+      ],
+      "needsContext": true,
+      "notes": [
+        "USA-stamped DeMarini power model."
+      ]
+    },
+    {
+      "id": "demarini-corndog",
+      "brand": "DeMarini",
+      "name": "CornDog (wood composite)",
+      "aliases": [
+        "corndog",
+        "corn dog"
+      ],
+      "notes": [
+        "Maple wood composite with a dual stamp. It is about as durable as slowpitch bats get.",
+        "Popular for batting practice, cold-weather games and wood-bat tournaments.",
+        "Much less pop than a hot composite."
+      ]
+    },
+    {
+      "id": "demarini-uprising",
+      "brand": "DeMarini",
+      "name": "Uprising",
+      "aliases": [
+        "uprising"
+      ],
+      "needsContext": true,
+      "notes": [
+        "Dual-stamp DeMarini value bat."
+      ]
+    },
+    {
+      "id": "miken-freak",
+      "brand": "Miken",
+      "name": "Freak",
+      "aliases": [
+        "freak",
+        "super freak",
+        "freak black",
+        "freak whiteout",
+        "freak fire",
+        "freak ice",
+        "freak splatter",
+        "tunnel to towers"
+      ],
+      "needsContext": true,
+      "notes": [
+        "One of the most talked-about USSSA lines. The Maxload (about 0.5 oz end-load) versions are aimed at power hitters.",
+        "Miken releases many paint schemes each year. Players often point out that several share the same platform underneath.",
+        "Comes in 12\" to 14\" barrels, in one-piece and two-piece."
+      ],
+      "exclude": [
+        "freak athlete",
+        "freak accident",
+        "freak out",
+        "freaked",
+        "freaking"
+      ]
+    },
+    {
+      "id": "miken-kp23",
+      "brand": "Miken",
+      "name": "KP23",
+      "aliases": [
+        "kp23",
+        "kp 23",
+        "kyle pearson"
+      ],
+      "notes": [
+        "Kyle Pearson signature line, sold in 12.5\" two-piece and 14\" one-piece versions."
+      ]
+    },
+    {
+      "id": "miken-mv1",
+      "brand": "Miken",
+      "name": "MV1",
+      "aliases": [
+        "mv1",
+        "mv 1"
+      ],
+      "notes": [
+        "13\" Maxload USSSA bat, new in fall 2026."
+      ]
+    },
+    {
+      "id": "miken-hb12",
+      "brand": "Miken",
+      "name": "HB12",
+      "aliases": [
+        "hb12"
+      ],
+      "notes": [
+        "12.5\" end-loaded USSSA model with a retro paint job."
+      ]
+    },
+    {
+      "id": "miken-vicious",
+      "brand": "Miken",
+      "name": "Vicious (alloy)",
+      "aliases": [
+        "miken vicious",
+        "vicious maxload"
+      ],
+      "needsContext": true,
+      "notes": [
+        "Dual-stamp alloy that budget guides often pick first.",
+        "It should not crack the way composite does, but it has less pop than Miken's composites."
+      ]
+    },
+    {
+      "id": "miken-ultra",
+      "brand": "Miken",
+      "name": "Ultra Gamer (Senior)",
+      "aliases": [
+        "ultra gamer",
+        "miken ultra"
+      ],
+      "notes": [
+        "SSUSA senior bat in Maxload and Supermax versions. Often discounted."
+      ]
+    },
+    {
+      "id": "worth-bedlam",
+      "brand": "Worth",
+      "name": "Bedlam",
+      "aliases": [
+        "bedlam"
+      ],
+      "notes": [
+        "Worth's core two-piece line. XL means about a 0.5 oz end-load and XXL means heavier.",
+        "The Bedlam XL USA is the only USA-stamped bat in Worth's 2026 core lineup."
+      ]
+    },
+    {
+      "id": "worth-krecher",
+      "brand": "Worth",
+      "name": "Krecher / Silverback",
+      "aliases": [
+        "krecher",
+        "silverback"
+      ],
+      "notes": [
+        "One-piece Worth USSSA bats, so they feel stiffer than two-pieces."
+      ]
+    },
+    {
+      "id": "worth-legit",
+      "brand": "Worth",
+      "name": "Legit",
+      "aliases": [
+        "worth legit",
+        "2 legit",
+        "legit highlighter"
+      ],
+      "needsContext": true,
+      "notes": [
+        "Comes in USSSA and USA versions, one-piece and two-piece."
+      ]
+    },
+    {
+      "id": "worth-thumper",
+      "brand": "Worth",
+      "name": "Thumper",
+      "aliases": [
+        "thumper"
+      ],
+      "needsContext": true,
+      "notes": [
+        "13.5\" two-piece end-loaded USSSA bat with a wood-look finish."
+      ]
+    },
+    {
+      "id": "worth-amp",
+      "brand": "Worth",
+      "name": "AMP (alloy)",
+      "aliases": [
+        "worth amp"
+      ],
+      "notes": [
+        "Cheapest dual-stamp option here. Fine for casual rec play."
+      ]
+    },
+    {
+      "id": "ls-genesis",
+      "brand": "Louisville Slugger",
+      "name": "Genesis",
+      "aliases": [
+        "genesis",
+        "geny",
+        "royal geny",
+        "iron man 5.0"
+      ],
+      "needsContext": true,
+      "notes": [
+        "Louisville Slugger's main USSSA line, with many signature and paint versions.",
+        "Sits at the premium end of USSSA prices.",
+        "2026 versions use a double-wall barrel and the QWK 2.0 two-piece connection."
+      ]
+    },
+    {
+      "id": "ls-supra",
+      "brand": "Louisville Slugger",
+      "name": "Supra",
+      "aliases": [
+        "supra"
+      ],
+      "needsContext": true,
+      "notes": [
+        "Balanced USSSA bat for 2027 with a $399 list price."
+      ]
+    },
+    {
+      "id": "monsta-trippin",
+      "brand": "Monsta",
+      "name": "Trippin'",
+      "aliases": [
+        "trippin",
+        "trippin'",
+        "buttload"
+      ],
+      "needsContext": true,
+      "notes": [
+        "Monsta's 2026 USSSA two-piece, priced well under most big-brand USSSA bats. It often sells out."
+      ],
+      "exclude": [
+        "you're trippin",
+        "you trippin",
+        "ur trippin",
+        "youre trippin"
+      ]
+    },
+    {
+      "id": "monsta-torch",
+      "brand": "Monsta",
+      "name": "Torch",
+      "aliases": [
+        "torch"
+      ],
+      "needsContext": true,
+      "notes": [
+        "Monsta's best-known USA bat. Its MX composite is often called a premium choice for USA play.",
+        "Monsta is a smaller brand, so expect pre-orders and stock gaps."
+      ]
+    },
+    {
+      "id": "monsta-usa",
+      "brand": "Monsta",
+      "name": "DNA / King of Diamonds",
+      "aliases": [
+        "monsta dna",
+        "king of diamonds",
+        "kod"
+      ],
+      "needsContext": true,
+      "notes": [
+        "Other Monsta USA composites in the same family as the Torch."
+      ]
+    },
+    {
+      "id": "suncoast-melee",
+      "brand": "Suncoast",
+      "name": "Melee (Senior)",
+      "aliases": [
+        "melee",
+        "melee 3",
+        "megaload"
+      ],
+      "needsContext": true,
+      "notes": [
+        "Comes up constantly in senior softball talk.",
+        "Stamped SSUSA and ISA only, so it is not legal in USA or USSSA adult leagues."
+      ]
+    },
+    {
+      "id": "victus-vibe",
+      "brand": "Victus",
+      "name": "Vibe / Nox",
+      "aliases": [
+        "victus vibe",
+        "vibe 36",
+        "vibe 44",
+        "victus nox"
+      ],
+      "notes": [
+        "Victus is a baseball wood brand that recently moved into slowpitch.",
+        "Ya-Ya Load is their name for an end-load."
+      ]
+    },
+    {
+      "id": "axe-fury",
+      "brand": "Axe",
+      "name": "Fury Bravo",
+      "aliases": [
+        "fury bravo",
+        "axe fury",
+        "axe bravo"
+      ],
+      "notes": [
+        "Sold with either the oval Axe handle or a conventional flared handle. Players tend to love or hate the Axe handle, so try one first if you can.",
+        "Stamped USSSA, NSA and ISA."
+      ]
+    },
+    {
+      "id": "axe-dabacle",
+      "brand": "Axe",
+      "name": "Dabacle",
+      "aliases": [
+        "dabacle"
+      ],
+      "notes": [
+        "Dual-stamp balanced Axe model."
+      ]
+    },
+    {
+      "id": "marucci-rckless",
+      "brand": "Marucci",
+      "name": "Rckless Resmondo",
+      "aliases": [
+        "rckless",
+        "reckless resmondo",
+        "marucci resmondo"
+      ],
+      "notes": [
+        "Marucci's slowpitch line, built with Resmondo. Launched September 2026.",
+        "Stamped USSSA, NSA and ISA. Available in one-piece and two-piece."
+      ]
+    },
+    {
+      "id": "marucci-gridlock",
+      "brand": "Marucci",
+      "name": "Gridlock",
+      "aliases": [
+        "gridlock"
+      ],
+      "needsContext": true,
+      "notes": [
+        "Marucci's loaded USA model."
+      ]
+    },
+    {
+      "id": "anarchy-groovy",
+      "brand": "Anarchy",
+      "name": "Groovy",
+      "aliases": [
+        "anarchy groovy"
+      ],
+      "needsContext": true,
+      "notes": [
+        "Balanced two-piece in USSSA and senior versions."
+      ]
+    },
+    {
+      "id": "anarchy-omen",
+      "brand": "Anarchy",
+      "name": "Omen",
+      "aliases": [
+        "anarchy omen"
+      ],
+      "needsContext": true,
+      "notes": [
+        "End-loaded senior model."
+      ]
+    },
+    {
+      "id": "anderson-rocketech",
+      "brand": "Anderson",
+      "name": "Rocketech",
+      "aliases": [
+        "rocketech"
+      ],
+      "notes": [
+        "Long-running Anderson alloy with a dual stamp. A durable, no-break-in bat."
+      ]
+    }
+  ]
+}

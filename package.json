@@ -1,0 +1,13 @@
+{
+  "name": "barrel-talk",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Slowpitch softball bat catalog with aggregated player reviews.",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "aggregate": "node scripts/aggregate.mjs",
+    "test": "node --test scripts/test/*.test.mjs"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "reddit": {
+    "subreddits": ["Softball", "slowpitch", "SlowPitchSoftball"],
+    "pagesPerSubreddit": 3,
+    "maxThreads": 250
+  },
+  "feeds": [
+    { "name": "SoftballFans", "url": "https://forums.softballfans.com/index.php?forums/-/index.rss", "softball": true }
+  ],
+  "youtube": {
+    "videosPerFamily": 3,
+    "commentsPerVideo": 100,
+    "maxAgeDays": 730
+  }
+}

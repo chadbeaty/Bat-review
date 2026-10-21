@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Barrel Talk</title>
+<meta name="description" content="Every USSSA, USA, NSA, ISA and senior slowpitch bat in one place, with what players actually say about them.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Public+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<a class="skip" href="#app">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="wordmark" href="#home" aria-label="Barrel Talk home">Barrel<span>Talk</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="#bats" data-nav="bats">Bats</a>
+      <a href="#finder" data-nav="finder">Bat Finder</a>
+      <a href="#compare" data-nav="compare">Compare <span class="count" id="compare-count" hidden></span></a>
+      <a href="#saved" data-nav="saved">Saved <span class="count" id="saved-count" hidden></span></a>
+      <a href="#guide" data-nav="guide">Guide</a>
+    </nav>
+  </div>
+</header>
+<main id="app" class="wrap" tabindex="-1">
+  <p class="loading">Loading bats…</p>
+</main>
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>Specs come from manufacturer and retailer listings. Always check the stamp on the barrel and your league's approved list before you buy.</p>
+    <p><a href="#about">Where the reviews come from</a> · <a href="#guide">Buying guide</a></p>
+  </div>
+</footer>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<script type="module" src="assets/js/app.js"></script>
+</body>
+</html>
