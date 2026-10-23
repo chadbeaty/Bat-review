@@ -178,8 +178,22 @@
               </div>
               <div class="label-band"></div>
               <div class="label-body">
-                <p class="label-name" id="label-name">Your Sauce</p>
-                <div class="label-heat"><span id="label-meter"></span><span id="label-shu"></span></div>
+                <div class="label-title">
+                  <p class="label-name" id="label-name">Your Sauce</p>
+                  <div class="label-heat"><span id="label-meter"></span><span id="label-shu"></span></div>
+                </div>
+
+                <div class="stage">
+                  <div class="stage-row" id="stage-row">
+                    <div class="vessel" id="vessel"></div>
+                    <ol class="legend" id="legend" aria-label="What's in your bottle"></ol>
+                  </div>
+                  <div class="stage-foot">
+                    <p class="stage-hint" id="stage-hint" aria-live="polite"></p>
+                    <button type="button" class="mix-btn" id="mix-btn" aria-pressed="false">Shake it up</button>
+                  </div>
+                </div>
+
                 <p class="label-ingredients"><b>Ingredients:</b> <span id="label-ingredients"></span></p>
                 <p class="label-contains" id="label-contains"></p>
                 <div class="label-foot"><span id="label-net"></span><span>Made to order</span></div>
@@ -187,15 +201,14 @@
             </div>
 
             <div class="buy">
-              <div class="qty-row">
-                <span>Quantity</span>
-                <div class="qty">
+              <div class="buy-row">
+                <div class="qty" role="group" aria-label="Quantity">
                   <button type="button" id="qty-minus" aria-label="Decrease quantity">−</button>
-                  <output id="qty-value">1</output>
+                  <output id="qty-value" aria-label="Quantity">1</output>
                   <button type="button" id="qty-plus" aria-label="Increase quantity">+</button>
                 </div>
+                <div class="buy-total"><span>Total</span><strong id="builder-total">$0</strong></div>
               </div>
-              <div class="buy-total"><span>Total</span><strong id="builder-total">$0</strong></div>
               <button type="button" class="btn btn-primary btn-block" id="add-btn">Add to order</button>
               <p class="toast" id="toast" role="status" aria-live="polite"></p>
             </div>
@@ -306,7 +319,8 @@
   </footer>
 
   <div class="mobile-bar" id="mobile-bar" hidden>
-    <div class="mobile-bar-total"><span>Total</span><strong id="mobile-total">$0</strong></div>
+    <div class="vessel vessel-mini" id="mini-vessel" aria-hidden="true"></div>
+    <div class="mobile-bar-total"><span id="mobile-count">Empty bottle</span><strong id="mobile-total">$0</strong></div>
     <button type="button" class="btn btn-primary" id="mobile-add-btn">Add to order</button>
   </div>
 

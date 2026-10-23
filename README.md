@@ -10,7 +10,7 @@ The storefront for Chaddy Daddy's Hot Sauce, where customers build a custom hot 
 4. **Flavors.** Up to 4 from 22, grouped as aromatics, fruit & citrus, herbs & spice, and sweet & deep.
 5. **Size & name.** 5 or 10 fl oz, and an optional name printed on the label.
 
-A bottle label fills in as they go: sauce name, heat, a real ingredient statement, the allergen line and net volume. They can add several bottles to one order, then check out with name, email and shipping address, confirming the tree-nut notice. The site also has How it works, Why almonds, FAQ and footer sections.
+A bottle on the label fills up as they choose: each ingredient pours in as its own colored layer, labeled beside the bottle, and "Shake it up" blends it into the finished sauce color. The label also fills in: sauce name, heat, a real ingredient statement, the allergen line and net volume. They can add several bottles to one order, then check out with name, email and shipping address, confirming the tree-nut notice. The site also has How it works, Why almonds, FAQ and footer sections.
 
 ## Running it
 
