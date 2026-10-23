@@ -676,14 +676,22 @@ input:focus, textarea:focus { outline: none; border-color: var(--iron); }
 .legend li::before { content: ""; flex: none; width: 12px; height: 1.5px; margin-left: -8px; background: var(--iron); }
 .legend i { flex: none; width: 11px; height: 11px; border: 1.5px solid var(--iron); border-radius: 3px; }
 
-.stage-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.stage-hint { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.35; }
-.mix-btn {
-  flex: none;
-  padding: 7px 14px;
+.stage-hint { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.35; text-align: center; text-wrap: balance; }
+
+.view-switch {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-self: center;
+  padding: 3px;
   border: 1.5px solid var(--iron);
   border-radius: 999px;
   background: var(--card);
+}
+.view-switch button {
+  padding: 6px 14px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
   color: var(--iron);
   font: inherit;
   font-size: 12px;
@@ -693,8 +701,90 @@ input:focus, textarea:focus { outline: none; border-color: var(--iron); }
   text-transform: uppercase;
   cursor: pointer;
 }
-.mix-btn:disabled { opacity: .4; cursor: default; }
-.mix-btn[aria-pressed="true"] { background: var(--iron); color: var(--mustard); }
+.view-switch button[aria-pressed="true"] { background: var(--iron); color: var(--mustard); }
+.view-switch button:disabled { opacity: .35; cursor: default; }
+
+/* Label view: the bottle steps forward and wears its printed front label. */
+.stage-row.labeled { margin-left: 0; }
+.stage-row.labeled .legend { display: none; }
+
+.label-zoom { display: none; position: relative; align-self: center; width: 100%; max-width: 190px; aspect-ratio: 94 / 119; }
+.stage-row.labeled .label-zoom { display: block; animation: zoom-in .4s cubic-bezier(.25, 1.3, .5, 1); }
+.label-zoom .front-label { inset: 0; width: 100%; height: 100%; opacity: 1; transform: none; box-shadow: 4px 4px 0 var(--iron); }
+@keyframes zoom-in { from { opacity: 0; transform: translateX(-12px) scale(.9); } }
+
+.front-label {
+  position: absolute;
+  left: 19%;
+  top: 52%;
+  width: 62%;
+  height: 40%;
+  container-type: inline-size;
+  border: 2px solid var(--iron);
+  border-radius: 4px;
+  background: var(--bone);
+  text-align: center;
+  opacity: 0;
+  transform: translateY(8%) scale(.94);
+  transition: opacity .35s, transform .45s cubic-bezier(.25, 1.3, .5, 1);
+  pointer-events: none;
+}
+.vessel.labeled .front-label { opacity: 1; transform: none; }
+.fl-body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  padding: 19cqw 6cqw 0;
+}
+.fl-mark {
+  position: absolute;
+  top: -17cqw;
+  left: 33cqw;
+  width: 34cqw;
+  height: 34cqw;
+}
+.fl-wordmark { flex: none; width: 88cqw; aspect-ratio: 760 / 262; height: auto; }
+.fl-kind {
+  margin-top: 1cqw;
+  padding: .5cqw 3cqw;
+  background: var(--iron);
+  color: var(--mustard);
+  font-size: 6cqw;
+  font-stretch: 125%;
+  font-weight: 900;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+.fl-name {
+  display: grid;
+  flex: 1;
+  place-items: center;
+  margin-top: 2cqw;
+  font-size: 12cqw;
+  font-stretch: 112%;
+  font-weight: 900;
+  line-height: 1;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+.fl-name.long { font-size: 9cqw; }
+.fl-heat .meter { gap: 1.5cqw; }
+.fl-heat .meter i { width: 8cqw; height: 3cqw; }
+.fl-net {
+  align-self: stretch;
+  margin: 3cqw -6cqw 0;
+  padding: 2cqw 0;
+  background: var(--label-c);
+  color: var(--bone);
+  font-size: 6cqw;
+  font-stretch: 75%;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
 
 .buy { display: grid; gap: 12px; }
 .buy-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }

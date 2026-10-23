@@ -149,7 +149,7 @@
     return `rgb(${rgb.map(Math.round).join(",")})`;
   }
 
-  function buildVessel(node) {
+  function buildVessel(node, withLabel) {
     node.innerHTML =
       '<div class="vessel-glass"><div class="vessel-fill"></div><div class="vessel-pour"></div></div>' +
       '<svg class="vessel-outline" viewBox="0 0 200 400" aria-hidden="true">' +
@@ -159,12 +159,24 @@
       '<rect x="80" y="2" width="40" height="40" rx="6" fill="#2b2622"/>' +
       '<path d="M88 10V34M96 10V34M104 10V34M112 10V34" stroke="#4a423c" stroke-width="3"/>' +
       '<rect x="82" y="46" width="36" height="9" rx="3" fill="#2b2622"/>' +
-      "</svg>";
+      "</svg>" +
+      (withLabel ? FRONT_LABEL : "");
     return { fill: node.querySelector(".vessel-fill"), pour: node.querySelector(".vessel-pour") };
   }
 
-  const bigVessel = buildVessel($("vessel"));
-  const miniVessel = buildVessel($("mini-vessel"));
+  // The front label exactly as it gets printed. Shown on the bottle in the
+  // Label view, with a close-up copy beside it.
+  const FRONT_LABEL =
+    '<div class="front-label" aria-hidden="true"><div class="fl-body">' +
+    '<svg class="fl-mark"><use href="#dad"/></svg>' +
+    '<svg class="fl-wordmark"><use href="#wordmark"/></svg>' +
+    '<span class="fl-kind">Hot Sauce</span>' +
+    '<span class="fl-name"></span><span class="fl-heat"></span><span class="fl-net"></span>' +
+    "</div></div>";
+
+  const bigVessel = buildVessel($("vessel"), true);
+  const miniVessel = buildVessel($("mini-vessel"), false);
+  $("label-zoom").innerHTML = FRONT_LABEL;
   let lastLayers = new Map();
   let legendTimer;
 
@@ -245,32 +257,50 @@
       v.style.setProperty("--scale", info.size.id === shop.sizes[0].id ? 0.88 : 1);
     });
     $("stage-row").style.setProperty("--scale", info.size.id === shop.sizes[0].id ? 0.88 : 1);
-    $("mix-btn").disabled = layers.length === 0;
-    if (!layers.length) setMixed(false);
+    document.querySelector('#view-switch [data-view="mixed"]').disabled = layers.length === 0;
+    if (!layers.length && view === "mixed") setView("layers");
 
-    const hint = !info.pepper
-      ? "Pick a pepper to start filling your bottle."
-      : !info.base
-        ? "Now pour in a base."
-        : !info.almond
-          ? "Almonds or no almonds?"
-          : info.addIns.length < shop.maxAddIns
-            ? `Add up to ${shop.maxAddIns - info.addIns.length} more flavor${shop.maxAddIns - info.addIns.length === 1 ? "" : "s"}, or add it to your order.`
-            : "Full bottle. Ready when you are.";
-    $("stage-hint").textContent = hint;
+    document.querySelectorAll(".front-label").forEach((label) => {
+      const name = label.querySelector(".fl-name");
+      name.textContent = info.title;
+      name.classList.toggle("long", info.title.length > 14);
+      label.querySelector(".fl-heat").replaceChildren(meter(info.pepper ? info.pepper.heat : 0));
+      label.querySelector(".fl-net").textContent = `${info.size.name} · ${info.size.volume}`;
+      label.style.setProperty("--label-c", info.pepper ? info.pepper.color : "#2b2622");
+    });
+
+    $("stage-hint").textContent = hintFor(info);
 
     const count = layers.length;
     $("mobile-count").textContent = count ? `${count} ingredient${count === 1 ? "" : "s"}` : "Empty bottle";
   }
 
-  let mixed = false;
-  function setMixed(on) {
-    mixed = on;
-    $("vessel").classList.toggle("mixed", on);
-    $("mini-vessel").classList.toggle("mixed", on);
-    $("legend").classList.toggle("dim", on);
-    $("mix-btn").setAttribute("aria-pressed", String(on));
-    $("mix-btn").textContent = on ? "Show the layers" : "Shake it up";
+  function hintFor(info) {
+    if (view === "label") {
+      return state.label
+        ? "This is the front label we'll print on your bottle."
+        : "This is your front label. Name your sauce in step 5 to put your own name on it.";
+    }
+    if (!info.pepper) return "Pick a pepper to start filling your bottle.";
+    if (!info.base) return "Now pour in a base.";
+    if (!info.almond) return "Almonds or no almonds?";
+    const left = shop.maxAddIns - info.addIns.length;
+    return left ? `Add up to ${left} more flavor${left === 1 ? "" : "s"}, or add it to your order.` : "Full bottle. Ready when you are.";
+  }
+
+  // Three ways to look at the bottle: separate layers, shaken (the real
+  // blended color), or shaken with the printed front label on it.
+  let view = "layers";
+  function setView(next) {
+    view = next;
+    const blended = next !== "layers";
+    $("vessel").classList.toggle("mixed", blended);
+    $("mini-vessel").classList.toggle("mixed", blended);
+    $("vessel").classList.toggle("labeled", next === "label");
+    $("stage-row").classList.toggle("labeled", next === "label");
+    $("legend").classList.toggle("dim", next === "mixed");
+    document.querySelectorAll("#view-switch button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.view === next)));
+    $("stage-hint").textContent = hintFor(describe(state));
   }
 
   function shake() {
@@ -394,7 +424,7 @@
 
     // Shake and blend the finished bottle, then start the next one empty.
     busy = true;
-    setMixed(true);
+    setView("mixed");
     shake();
     [$("add-btn"), $("mobile-add-btn")].forEach((b) => {
       b.disabled = true;
@@ -406,7 +436,7 @@
       $("label-input").value = "";
       document.querySelectorAll('#builder-form input[name="pepper"], #builder-form input[name="base"], #builder-form input[name="almond"], #builder-form input[name="addin"]')
         .forEach((input) => (input.checked = false));
-      setMixed(false);
+      setView("layers");
       renderSummary();
     }, 1400);
   }
@@ -425,8 +455,11 @@
 
     $("builder-form").addEventListener("submit", (e) => e.preventDefault());
 
+    // Naming the sauce shows it on the front label as it's typed.
+    $("label-input").addEventListener("focus", () => view !== "label" && setView("label"));
     $("label-input").addEventListener("input", (e) => {
       state.label = e.target.value.trim();
+      if (view !== "label") setView("label");
       renderSummary();
     });
 
@@ -443,13 +476,15 @@
 
     $("mobile-add-btn").addEventListener("click", addToOrder);
 
-    $("mix-btn").addEventListener("click", () => {
-      setMixed(!mixed);
-      shake();
+    $("view-switch").addEventListener("click", (e) => {
+      const button = e.target.closest("button");
+      if (!button || button.dataset.view === view) return;
+      if (view === "layers") shake(); // blending the layers gets a shake
+      setView(button.dataset.view);
     });
 
-    // Changing anything while blended goes back to the layered view.
-    $("builder-form").addEventListener("change", () => mixed && setMixed(false));
+    // Picking ingredients while shaken goes back to the layers so the pour shows.
+    $("builder-form").addEventListener("change", () => view === "mixed" && setView("layers"));
 
     window.addEventListener("resize", () => renderLegend(layersFor(describe(state))));
   }

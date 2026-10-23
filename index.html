@@ -161,7 +161,7 @@
               <legend><span class="step-num">5</span> Size &amp; name</legend>
               <div class="options options-2" id="size-options"></div>
               <label class="field" for="label-input">
-                <span>Name your sauce <em>(optional, printed on the label)</em></span>
+                <span>Name your sauce <em>(optional, printed on the front label)</em></span>
                 <input type="text" id="label-input" maxlength="28" placeholder="e.g. Dad's Fire" autocomplete="off">
               </label>
             </fieldset>
@@ -184,14 +184,17 @@
                 </div>
 
                 <div class="stage">
+                  <div class="view-switch" id="view-switch" role="group" aria-label="Bottle view">
+                    <button type="button" data-view="layers" aria-pressed="true">Layers</button>
+                    <button type="button" data-view="mixed" aria-pressed="false">Shaken</button>
+                    <button type="button" data-view="label" aria-pressed="false">Label</button>
+                  </div>
                   <div class="stage-row" id="stage-row">
                     <div class="vessel" id="vessel"></div>
                     <ol class="legend" id="legend" aria-label="What's in your bottle"></ol>
+                    <div class="label-zoom" id="label-zoom"></div>
                   </div>
-                  <div class="stage-foot">
-                    <p class="stage-hint" id="stage-hint" aria-live="polite"></p>
-                    <button type="button" class="mix-btn" id="mix-btn" aria-pressed="false">Shake it up</button>
-                  </div>
+                  <p class="stage-hint" id="stage-hint" aria-live="polite"></p>
                 </div>
 
                 <p class="label-ingredients"><b>Ingredients:</b> <span id="label-ingredients"></span></p>
