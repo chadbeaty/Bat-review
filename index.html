@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ember &amp; Almond — Build Your Hot Sauce</title>
+  <meta name="description" content="Custom hot sauce made with almonds for protein. Pick your pepper and flavors, and we make it for you.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="#" class="brand" data-shop-name>Ember &amp; Almond</a>
+    <a href="#order" class="cart-link">Order <span class="cart-count" id="cart-count">0</span></a>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Your hot sauce,<br>your way.</h1>
+      <p data-shop-tagline>Hot sauce with a protein kick. Made to order, just for you.</p>
+    </section>
+
+    <section class="builder" id="build" aria-label="Build your sauce">
+      <form id="builder-form" class="steps">
+        <fieldset class="step">
+          <legend><span class="step-num">1</span> Pick your pepper</legend>
+          <div class="options options-2" id="pepper-options"></div>
+        </fieldset>
+
+        <fieldset class="step">
+          <legend><span class="step-num">2</span> Choose your almonds</legend>
+          <p class="hint">Every bottle is made with almonds for plant protein.</p>
+          <div class="options options-2" id="almond-options"></div>
+        </fieldset>
+
+        <fieldset class="step">
+          <legend><span class="step-num">3</span> Add flavors <span class="legend-note" id="addin-note"></span></legend>
+          <div class="options options-chips" id="addin-options"></div>
+        </fieldset>
+
+        <fieldset class="step">
+          <legend><span class="step-num">4</span> Size &amp; name</legend>
+          <div class="options options-2" id="size-options"></div>
+          <label class="field">
+            <span>Name your sauce <em>(optional)</em></span>
+            <input type="text" id="label-input" maxlength="28" placeholder="e.g. Dad's Fire" autocomplete="off">
+          </label>
+        </fieldset>
+      </form>
+
+      <aside class="summary" aria-live="polite">
+        <div class="bottle" aria-hidden="true">
+          <div class="bottle-cap"></div>
+          <div class="bottle-neck"></div>
+          <div class="bottle-body" id="bottle-body">
+            <div class="bottle-label">
+              <span class="bottle-brand" data-shop-name>Ember &amp; Almond</span>
+              <span class="bottle-name" id="bottle-name">Your Sauce</span>
+              <span class="bottle-heat" id="bottle-heat"></span>
+            </div>
+          </div>
+        </div>
+        <ul class="summary-list" id="summary-list"></ul>
+        <div class="qty-row">
+          <span>Quantity</span>
+          <div class="qty">
+            <button type="button" id="qty-minus" aria-label="Decrease quantity">−</button>
+            <output id="qty-value">1</output>
+            <button type="button" id="qty-plus" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+        <div class="summary-total">
+          <span>Total</span>
+          <strong id="builder-total">$0</strong>
+        </div>
+        <button type="button" class="btn btn-primary" id="add-btn">Add to order</button>
+        <p class="toast" id="toast" role="status"></p>
+      </aside>
+    </section>
+
+    <section class="order" id="order" aria-label="Your order">
+      <h2>Your order</h2>
+      <p class="empty" id="cart-empty">No bottles yet. Build one above.</p>
+      <ul class="cart" id="cart-list"></ul>
+      <div class="cart-total" id="cart-total-row" hidden>
+        <span>Subtotal</span>
+        <strong id="cart-total">$0</strong>
+      </div>
+
+      <form class="checkout" id="checkout-form" hidden>
+        <h3>Where should we send it?</h3>
+        <label class="field"><span>Full name</span><input name="name" required autocomplete="name"></label>
+        <label class="field"><span>Email</span><input name="email" type="email" required autocomplete="email"></label>
+        <label class="field"><span>Shipping address</span><textarea name="address" rows="3" required autocomplete="street-address"></textarea></label>
+        <label class="field"><span>Notes <em>(optional)</em></span><textarea name="notes" rows="2"></textarea></label>
+        <label class="check">
+          <input type="checkbox" name="allergen" required>
+          <span>I understand this product contains tree nuts (almonds).</span>
+        </label>
+        <button type="submit" class="btn btn-primary" id="place-btn">Place order</button>
+        <p class="form-error" id="form-error" role="alert"></p>
+      </form>
+
+      <div class="thanks" id="thanks" hidden>
+        <h3>Thank you!</h3>
+        <p>Your order <strong id="order-id"></strong> is in. We'll start mixing and email you when it ships.</p>
+        <button type="button" class="btn" id="new-order-btn">Build another</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p><strong>Allergen notice:</strong> all of our sauces contain tree nuts (almonds).</p>
+    <p>&copy; <span id="year"></span> <span data-shop-name>Ember &amp; Almond</span>. Small-batch, made to order.</p>
+  </footer>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
