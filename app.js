@@ -151,7 +151,7 @@
 
   function buildVessel(node, withLabel) {
     node.innerHTML =
-      '<div class="vessel-glass"><div class="vessel-fill"></div><div class="vessel-pour"></div></div>' +
+      '<div class="vessel-glass"><div class="vessel-fill"></div><div class="vessel-full"></div><div class="vessel-pour"></div></div>' +
       '<svg class="vessel-outline" viewBox="0 0 200 400" aria-hidden="true">' +
       `<path d="${BOTTLE_PATH}" fill="none" stroke="#2b2622" stroke-width="7" stroke-linejoin="round"/>` +
       '<path d="M46 196V352" stroke="#fff" stroke-opacity=".55" stroke-width="9" stroke-linecap="round"/>' +
@@ -160,7 +160,7 @@
       '<path d="M88 10V34M96 10V34M104 10V34M112 10V34" stroke="#4a423c" stroke-width="3"/>' +
       '<rect x="82" y="46" width="36" height="9" rx="3" fill="#2b2622"/>' +
       "</svg>" +
-      (withLabel ? FRONT_LABEL : "");
+      (withLabel ? PRODUCT_SHOT + FRONT_LABEL + BACK_LABEL : "");
     return { fill: node.querySelector(".vessel-fill"), pour: node.querySelector(".vessel-pour") };
   }
 
@@ -174,9 +174,47 @@
     '<span class="fl-name"></span><span class="fl-heat"></span><span class="fl-net"></span>' +
     "</div></div>";
 
+  const BACK_LABEL =
+    '<div class="back-label" aria-hidden="true"><div class="bl-body">' +
+    '<svg class="bl-wordmark"><use href="#wordmark"/></svg>' +
+    '<p class="bl-ingredients"><b>Ingredients:</b> <span class="bl-list"></span></p>' +
+    '<p class="bl-contains"></p>' +
+    '<p class="bl-care">Refrigerate after opening. Shake well.</p>' +
+    '<div class="bl-foot"><span class="bl-net"></span><span class="bl-batch"></span></div>' +
+    "<p class=\"bl-made\">Made to order by Chaddy Daddy's</p>" +
+    "</div></div>";
+
+  // Finished view: glass shading, shine, a shrink band over the cap and a
+  // shadow, so the bottle reads like the real thing on a shelf.
+  const PRODUCT_SHOT =
+    '<svg class="vessel-real" viewBox="0 0 200 400" aria-hidden="true"><defs>' +
+    '<linearGradient id="rl-cyl" x1="0" x2="1"><stop offset="0" stop-opacity=".5"/><stop offset=".14" stop-opacity=".12"/>' +
+    '<stop offset=".3" stop-color="#fff" stop-opacity=".25"/><stop offset=".42" stop-color="#fff" stop-opacity=".04"/>' +
+    '<stop offset=".72" stop-opacity=".06"/><stop offset=".9" stop-opacity=".32"/><stop offset="1" stop-opacity=".55"/></linearGradient>' +
+    '<linearGradient id="rl-cap" x1="0" x2="1"><stop offset="0" stop-color="#14110f"/><stop offset=".35" stop-color="#4d453f"/>' +
+    '<stop offset=".6" stop-color="#2b2622"/><stop offset="1" stop-color="#0f0c0a"/></linearGradient>' +
+    '<linearGradient id="rl-band" x1="0" x2="1"><stop offset="0" stop-color="#5e2416"/><stop offset=".35" stop-color="#b8553c"/>' +
+    '<stop offset=".6" stop-color="#9e432e"/><stop offset="1" stop-color="#4a1c12"/></linearGradient>' +
+    `<clipPath id="rl-clip"><path d="${BOTTLE_PATH}"/></clipPath></defs>` +
+    '<g clip-path="url(#rl-clip)">' +
+    '<rect x="30" y="140" width="140" height="250" fill="url(#rl-cyl)"/>' +
+    '<rect x="86" y="40" width="28" height="110" fill="url(#rl-cyl)"/>' +
+    '<rect x="49" y="196" width="10" height="170" rx="5" fill="#fff" opacity=".45"/>' +
+    '<rect x="62" y="200" width="22" height="160" rx="11" fill="#fff" opacity=".1"/>' +
+    '<rect x="91" y="70" width="4" height="60" rx="2" fill="#fff" opacity=".4"/>' +
+    '<rect x="30" y="374" width="140" height="16" fill="#fff" opacity=".12"/>' +
+    "</g>" +
+    `<path d="${BOTTLE_PATH}" fill="none" stroke="#1b1714" stroke-opacity=".7" stroke-width="2.5"/>` +
+    '<rect x="80" y="2" width="40" height="34" rx="5" fill="url(#rl-cap)"/>' +
+    '<path d="M86 6V30M92 6V30M98 6V30M104 6V30M110 6V30M116 6V30" stroke="#000" stroke-opacity=".35" stroke-width="1.5"/>' +
+    '<rect x="80" y="28" width="40" height="34" rx="3" fill="url(#rl-band)"/>' +
+    '<path d="M81 45H119" stroke="#f2e6d6" stroke-opacity=".6" stroke-width="1.2" stroke-dasharray="2 2"/>' +
+    '<path d="M84 32V58" stroke="#fff" stroke-opacity=".25" stroke-width="3" stroke-linecap="round"/>' +
+    "</svg>";
+
   const bigVessel = buildVessel($("vessel"), true);
   const miniVessel = buildVessel($("mini-vessel"), false);
-  $("label-zoom").innerHTML = FRONT_LABEL;
+  $("label-zoom").innerHTML = FRONT_LABEL + BACK_LABEL;
   let lastLayers = new Map();
   let legendTimer;
 
@@ -268,6 +306,13 @@
       label.querySelector(".fl-net").textContent = `${info.size.name} · ${info.size.volume}`;
       label.style.setProperty("--label-c", info.pepper ? info.pepper.color : "#2b2622");
     });
+    document.querySelectorAll(".back-label").forEach((label) => {
+      label.querySelector(".bl-list").textContent = info.ingredients;
+      label.querySelector(".bl-contains").textContent = containsLine(info);
+      label.querySelector(".bl-net").textContent = `Net ${info.size.name} (${info.size.volume})`;
+      label.querySelector(".bl-batch").textContent = $("batch").textContent;
+    });
+    renderProfile(info);
 
     $("stage-hint").textContent = hintFor(info);
 
@@ -275,12 +320,44 @@
     $("mobile-count").textContent = count ? `${count} ingredient${count === 1 ? "" : "s"}` : "Empty bottle";
   }
 
+  const containsLine = (info) =>
+    info.hasAlmonds ? "Contains: tree nuts (almonds)." : "Made in a kitchen that handles tree nuts.";
+
+  // ---------- Flavor profile ----------
+
+  function profileFor(info) {
+    const ids = [info.pepper, info.base, info.almond].concat(info.addIns).filter(Boolean).map((x) => x.id);
+    const notes = { Heat: info.pepper ? info.pepper.heat : 0 };
+    Object.entries(shop.tasteNotes).forEach(([note, points]) => {
+      notes[note] = Math.min(5, ids.reduce((sum, id) => sum + (points[id] || 0), 0));
+    });
+    return notes;
+  }
+
+  function renderProfile(info) {
+    const notes = profileFor(info);
+    $("profile").replaceChildren(
+      ...Object.entries(notes).map(([note, score]) => {
+        const pips = el("dd", { "aria-label": `${score} of 5` });
+        for (let i = 1; i <= 5; i++) pips.append(el("i", { className: i <= score ? "on" : "" }));
+        return el("div", {}, [el("dt", { text: note }), pips]);
+      })
+    );
+    const top = Object.entries(notes)
+      .filter(([, score]) => score > 0)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 2)
+      .map(([note]) => shop.pairings[note]);
+    $("pairs").textContent = !info.pepper
+      ? "Your flavor profile builds as you pick."
+      : top.length > 1
+        ? `Great on ${top[0]}. Also try it with ${top[1]}.`
+        : `Great on ${top[0]}.`;
+  }
+
   function hintFor(info) {
-    if (view === "label") {
-      return state.label
-        ? "This is the front label we'll print on your bottle."
-        : "This is your front label. Name your sauce in step 5 to put your own name on it.";
-    }
+    if (view === "label" && side === "back") return "Your back label, as printed.";
+    if (view === "label") return state.label ? "Your front label, as printed." : "Your front label. Name it in step 5.";
     if (!info.pepper) return "Pick a pepper to start filling your bottle.";
     if (!info.base) return "Now pour in a base.";
     if (!info.almond) return "Almonds or no almonds?";
@@ -291,8 +368,19 @@
   // Three ways to look at the bottle: separate layers, shaken (the real
   // blended color), or shaken with the printed front label on it.
   let view = "layers";
+  let side = "front";
+  function setSide(next) {
+    side = next;
+    $("vessel").classList.toggle("back", next === "back");
+    $("label-zoom").classList.toggle("back", next === "back");
+    $("turn-btn").textContent = next === "back" ? "↻ Turn to the front" : "↻ Turn it around";
+    $("stage-hint").textContent = hintFor(describe(state));
+  }
+
   function setView(next) {
     view = next;
+    $("turn-btn").hidden = next !== "label";
+    if (next !== "label" && side !== "front") setSide("front");
     const blended = next !== "layers";
     $("vessel").classList.toggle("mixed", blended);
     $("mini-vessel").classList.toggle("mixed", blended);
@@ -380,12 +468,8 @@
     $("label-name").textContent = info.title;
     $("label-meter").replaceChildren(meter(info.pepper ? info.pepper.heat : 0));
     $("label-shu").textContent = info.pepper ? `${info.pepper.shu} SHU` : "Heat: pick a pepper";
-    $("label-ingredients").textContent = info.ingredients;
-    $("label-contains").textContent = info.hasAlmonds
-      ? "Contains: tree nuts (almonds)."
-      : "Made in a kitchen that handles tree nuts.";
+    $("label-contains").textContent = containsLine(info);
     renderBottle(info);
-    $("label-net").textContent = `Net ${info.size.name} (${info.size.volume})`;
 
     const total = money.format(info.unitPrice * state.qty);
     $("qty-value").textContent = state.qty;
@@ -395,7 +479,7 @@
 
     // Say exactly what's missing instead of a dead button.
     const ready = info.complete && !busy;
-    const prompt = !info.pepper ? "Pick a pepper" : !info.base ? "Pick a base" : !info.almond ? "Almonds or not?" : "Add to order";
+    const prompt = !info.pepper ? "Pick a pepper" : !info.base ? "Pick a base" : !info.almond ? "Almonds or not?" : `Add to order · ${total}`;
     [$("add-btn"), $("mobile-add-btn")].forEach((button) => {
       button.disabled = !ready;
       if (!busy) button.textContent = prompt;
@@ -456,7 +540,20 @@
     $("builder-form").addEventListener("submit", (e) => e.preventDefault());
 
     // Naming the sauce shows it on the front label as it's typed.
-    $("label-input").addEventListener("focus", () => view !== "label" && setView("label"));
+    $("label-input").addEventListener("focus", () => {
+      if (view !== "label") setView("label");
+      if (side !== "front") setSide("front");
+    });
+
+    // Spin the bottle to show the back label, and back again.
+    $("turn-btn").addEventListener("click", () => {
+      [$("vessel"), $("label-zoom")].forEach((node) => {
+        node.classList.remove("turning");
+        void node.offsetWidth;
+        node.classList.add("turning");
+      });
+      setTimeout(() => setSide(side === "front" ? "back" : "front"), 250);
+    });
     $("label-input").addEventListener("input", (e) => {
       state.label = e.target.value.trim();
       if (view !== "label") setView("label");
@@ -497,6 +594,20 @@
     toastTimer = setTimeout(() => toast.replaceChildren(), 5000);
   }
 
+  // The builder panel can be taller than the window. Pin it so its bottom
+  // (the price and add button) always stays on screen while scrolling.
+  function bindStickyPanel() {
+    const panel = $("summary");
+    const place = () => {
+      const header = document.querySelector(".site-header").getBoundingClientRect().height;
+      const room = window.innerHeight - panel.getBoundingClientRect().height - 16;
+      panel.style.top = `${Math.min(header + 20, room)}px`;
+    };
+    if ("ResizeObserver" in window) new ResizeObserver(place).observe(panel);
+    window.addEventListener("resize", place);
+    place();
+  }
+
   // Phones: keep the price and add button in reach while choosing,
   // until the full label and button scroll into view.
   function bindMobileBar() {
@@ -515,6 +626,12 @@
   }
 
   // ---------- Cart & checkout ----------
+
+  function cartBottle(color) {
+    const node = el("span", { className: "cart-bottle", "aria-hidden": "true" });
+    node.style.setProperty("--mix", color);
+    return node;
+  }
 
   function cartTotal() {
     return cart.reduce((sum, item) => sum + describe(item).unitPrice * item.qty, 0);
@@ -545,7 +662,7 @@
           renderCart();
         });
         return el("li", {}, [
-          el("span", { className: "cart-swatch", style: { background: info.pepper.color } }),
+          cartBottle(mixColor(layersFor(info))),
           el("div", {}, [
             el("div", { className: "cart-title", text: `${item.qty} × ${info.title}` }),
             el("div", { className: "cart-meta", text: `${info.size.name} · ${info.recipe}` }),
@@ -642,6 +759,12 @@
       node.href = `mailto:${shop.contactEmail}`;
     });
     $("from-price").textContent = `From ${money.format(lowest)} a bottle`;
+    const ship = new Date(now);
+    for (let days = shop.shipDays; days > 0; ) {
+      ship.setDate(ship.getDate() + 1);
+      if (ship.getDay() !== 0 && ship.getDay() !== 6) days--;
+    }
+    $("ship-note").textContent = `Made by hand to order · Ships by ${ship.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}`;
     $("batch").textContent = `Batch ${String(now.getFullYear()).slice(2)}-${String(dayOfYear).padStart(3, "0")}`;
     $("year").textContent = now.getFullYear();
   }
@@ -652,5 +775,6 @@
   renderCart();
   bindBuilder();
   bindMobileBar();
+  bindStickyPanel();
   bindCheckout();
 })();

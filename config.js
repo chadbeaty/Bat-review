@@ -6,6 +6,7 @@ window.SHOP = {
   tagline: "Small-batch hot sauce with almonds for body and plant protein, or without. You pick every ingredient. We make it by hand and put your name on the label.",
   contactEmail: "hello@chaddydaddys.com",
   shipsWithin: "5 business days",
+  shipDays: 5, // business days, used for the estimated ship date shown at checkout
 
   // Where orders are sent. Paste a form endpoint here (e.g. a Formspree,
   // Basin or Getform URL) and every order is POSTed to it as JSON.
@@ -93,6 +94,25 @@ window.SHOP = {
       ],
     },
   ],
+
+  // Flavor profile shown with each bottle. Each note scores 0–5 from the
+  // ingredients listed under it (id: points). Heat comes from the pepper.
+  tasteNotes: {
+    Smoky: { chipotle: 3, smoked: 2, paprika: 2, "black-garlic": 1, coffee: 1, cacao: 1, cumin: 1 },
+    Sweet: { honey: 3, maple: 3, "brown-sugar": 3, mango: 2, pineapple: 2, peach: 2, "scotch-bonnet": 1, cacao: 1 },
+    Tangy: { distilled: 3, cider: 2, rice: 2, lime: 3, fermented: 4, "lime-zest": 1, tamarind: 2, "blood-orange": 1, pineapple: 1 },
+    Fruity: { mango: 3, pineapple: 3, peach: 3, "blood-orange": 3, habanero: 1, "scotch-bonnet": 2, fresno: 1, "lime-zest": 1, tamarind: 1 },
+    Savory: { garlic: 2, "black-garlic": 3, shallot: 2, cumin: 2, smooth: 1, crunchy: 1, smoked: 1, fermented: 1, poblano: 1, ginger: 1, turmeric: 1 },
+  },
+  // What to pour it on, by the bottle's strongest notes.
+  pairings: {
+    Heat: "wings",
+    Smoky: "brisket and burgers",
+    Sweet: "fried chicken",
+    Tangy: "tacos and eggs",
+    Fruity: "fish tacos and shrimp",
+    Savory: "pizza and noodles",
+  },
 
   // Step 5: bottle size and base price.
   sizes: [

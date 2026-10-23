@@ -187,19 +187,24 @@
                   <div class="view-switch" id="view-switch" role="group" aria-label="Bottle view">
                     <button type="button" data-view="layers" aria-pressed="true">Layers</button>
                     <button type="button" data-view="mixed" aria-pressed="false">Shaken</button>
-                    <button type="button" data-view="label" aria-pressed="false">Label</button>
+                    <button type="button" data-view="label" aria-pressed="false">Finished</button>
                   </div>
                   <div class="stage-row" id="stage-row">
                     <div class="vessel" id="vessel"></div>
                     <ol class="legend" id="legend" aria-label="What's in your bottle"></ol>
                     <div class="label-zoom" id="label-zoom"></div>
                   </div>
-                  <p class="stage-hint" id="stage-hint" aria-live="polite"></p>
+                  <div class="stage-foot">
+                    <p class="stage-hint" id="stage-hint" aria-live="polite"></p>
+                    <button type="button" class="turn-btn" id="turn-btn" hidden>↻ Turn it around</button>
+                  </div>
                 </div>
 
-                <p class="label-ingredients"><b>Ingredients:</b> <span id="label-ingredients"></span></p>
+                <div class="profile-block">
+                  <dl class="profile" id="profile" aria-label="Flavor profile"></dl>
+                  <p class="pairs" id="pairs"></p>
+                </div>
                 <p class="label-contains" id="label-contains"></p>
-                <div class="label-foot"><span id="label-net"></span><span>Made to order</span></div>
               </div>
             </div>
 
@@ -213,6 +218,7 @@
                 <div class="buy-total"><span>Total</span><strong id="builder-total">$0</strong></div>
               </div>
               <button type="button" class="btn btn-primary btn-block" id="add-btn">Add to order</button>
+              <p class="ship-note" id="ship-note"></p>
               <p class="toast" id="toast" role="status" aria-live="polite"></p>
             </div>
           </aside>

@@ -582,7 +582,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--iron); }
 }
 
 .stage-row {
-  --h: clamp(220px, 33vh, 300px);
+  --h: clamp(210px, 30vh, 290px);
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
   gap: 16px;
@@ -676,6 +676,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--iron); }
 .legend li::before { content: ""; flex: none; width: 12px; height: 1.5px; margin-left: -8px; background: var(--iron); }
 .legend i { flex: none; width: 11px; height: 11px; border: 1.5px solid var(--iron); border-radius: 3px; }
 
+.stage-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 12px; }
 .stage-hint { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.35; text-align: center; text-wrap: balance; }
 
 .view-switch {
@@ -729,7 +730,147 @@ input:focus, textarea:focus { outline: none; border-color: var(--iron); }
   transition: opacity .35s, transform .45s cubic-bezier(.25, 1.3, .5, 1);
   pointer-events: none;
 }
-.vessel.labeled .front-label { opacity: 1; transform: none; }
+.vessel.labeled:not(.back) .front-label,
+.vessel.labeled.back .back-label { opacity: 1; transform: none; }
+
+/* On the bottle, labels pick up the glass's curve and light. */
+.vessel .front-label::after, .vessel .back-label::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0, 0, 0, .3), rgba(0, 0, 0, 0) 16%, rgba(255, 255, 255, .22) 30%, rgba(255, 255, 255, 0) 44%, rgba(0, 0, 0, 0) 74%, rgba(0, 0, 0, .32));
+  pointer-events: none;
+}
+.vessel .front-label, .vessel .back-label { border-width: 1px; border-radius: 2px; }
+
+/* Finished view: the product shot. Full to the neck, real glass, shadow. */
+.vessel-full {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 3%;
+  height: 77%;
+  background: var(--mix);
+  opacity: 0;
+  transition: opacity .5s;
+}
+.vessel.labeled .vessel-full { opacity: 1; }
+.vessel-real { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; opacity: 0; transition: opacity .4s; }
+.vessel.labeled .vessel-real { opacity: 1; }
+.vessel.labeled .vessel-outline { opacity: 0; }
+.vessel-outline { transition: opacity .4s; }
+.vessel::before {
+  content: "";
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  bottom: -2%;
+  height: 6%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(43, 38, 34, .45), transparent);
+  opacity: 0;
+  transition: opacity .4s;
+}
+.vessel.labeled::before { opacity: 1; }
+
+.back-label {
+  position: absolute;
+  left: 19%;
+  top: 52%;
+  width: 62%;
+  height: 40%;
+  container-type: inline-size;
+  border: 2px solid var(--iron);
+  border-radius: 4px;
+  background: var(--bone);
+  opacity: 0;
+  transition: opacity .3s;
+  pointer-events: none;
+}
+.bl-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5cqw;
+  height: 100%;
+  padding: 6cqw 6cqw 0;
+  overflow: hidden;
+  font-size: 5.6cqw;
+  line-height: 1.3;
+  text-align: left;
+}
+.bl-body p { margin: 0; }
+.bl-wordmark { flex: none; width: 52cqw; aspect-ratio: 760 / 262; height: auto; }
+.bl-contains { font-weight: 800; }
+.bl-care { color: var(--muted); }
+.bl-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 4cqw;
+  margin-top: auto;
+  padding-top: 2cqw;
+  border-top: 1px solid var(--iron);
+  font-size: 5cqw;
+  font-stretch: 75%;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.bl-made {
+  margin: 0 -6cqw !important;
+  padding: 2cqw 0;
+  background: var(--iron);
+  color: var(--mustard);
+  font-size: 5cqw;
+  font-stretch: 87.5%;
+  font-weight: 700;
+  text-align: center;
+}
+
+.label-zoom .back-label { display: none; inset: 0; width: 100%; height: 100%; opacity: 1; box-shadow: 4px 4px 0 var(--iron); }
+.label-zoom.back .back-label { display: block; }
+.label-zoom.back .front-label { display: none; }
+
+.vessel.turning, .label-zoom.turning { animation: turn .5s ease-in-out; }
+@keyframes turn {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(.04); }
+}
+
+.turn-btn {
+  padding: 6px 14px;
+  border: 1.5px solid var(--iron);
+  border-radius: 999px;
+  background: var(--card);
+  color: var(--iron);
+  font: inherit;
+  font-size: 12px;
+  font-stretch: 112%;
+  font-weight: 800;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+/* Flavor profile, scored from the recipe */
+.profile-block { display: grid; gap: 8px; }
+.profile {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px 14px;
+  margin: 0;
+}
+.profile div { display: grid; gap: 4px; }
+.profile dt {
+  font-size: 11px;
+  font-stretch: 75%;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.profile dd { display: flex; gap: 3px; margin: 0; }
+.profile dd i { flex: 1; height: 6px; border-radius: 2px; background: var(--line); }
+.profile dd i.on { background: var(--paprika); }
+.pairs { margin: 0; font-size: 13px; font-weight: 600; }
 .fl-body {
   position: relative;
   display: flex;
@@ -822,7 +963,9 @@ input:focus, textarea:focus { outline: none; border-color: var(--iron); }
   font-variant-numeric: tabular-nums;
 }
 
-.toast { min-height: 22px; margin: 0; color: var(--muted); font-size: 14px; text-align: center; }
+.ship-note { margin: -2px 0 0; color: var(--muted); font-size: 13px; text-align: center; }
+.toast:empty { display: none; }
+.toast { margin: 0; color: var(--muted); font-size: 14px; text-align: center; }
 
 /* ---------- Almonds ---------- */
 .almonds { background: var(--olive); color: var(--bone); border-bottom: 1.5px solid var(--iron); }
@@ -877,13 +1020,22 @@ input:focus, textarea:focus { outline: none; border-color: var(--iron); }
 .cart { margin: 20px 0 0; padding: 0; list-style: none; }
 .cart li {
   display: grid;
-  grid-template-columns: 12px minmax(0, 1fr) auto;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
   gap: 16px;
   align-items: start;
   padding: 18px 0;
   border-bottom: 1px solid var(--line);
 }
-.cart-swatch { width: 12px; height: 40px; margin-top: 3px; border-radius: 3px; }
+.cart-bottle {
+  position: relative;
+  width: 26px;
+  height: 52px;
+  background: var(--mix);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 400'%3E%3Crect x='80' y='2' width='40' height='60' rx='5'/%3E%3Cpath d='M86 40H114V118C114 140 170 150 170 186V368Q170 388 150 388H50Q30 388 30 368V186C30 150 86 140 86 118Z'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 400'%3E%3Crect x='80' y='2' width='40' height='60' rx='5'/%3E%3Cpath d='M86 40H114V118C114 140 170 150 170 186V368Q170 388 150 388H50Q30 388 30 368V186C30 150 86 140 86 118Z'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+}
+.cart-bottle::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 15%; background: var(--paprika); }
+.cart-bottle::after { content: ""; position: absolute; left: 19%; right: 19%; top: 52%; height: 38%; background: var(--bone); }
 .cart-title { font-weight: 800; }
 .cart-meta { color: var(--muted); font-size: 14px; }
 .cart-side { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -977,9 +1129,6 @@ input:focus, textarea:focus { outline: none; border-color: var(--iron); }
   .mobile-bar { display: none !important; }
 }
 
-@media (max-height: 760px) {
-  .summary { position: static; }
-}
 
 @media (prefers-reduced-motion: reduce) {
   .vessel-pour.go, .vessel.shaking { animation: none; }
