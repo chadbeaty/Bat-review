@@ -3,7 +3,7 @@
    centered column; the builder is a two-column workbench (choices | sticky
    bottle label) that stacks on phones.
    Brand: muted pantry colors (mustard, paprika, cast iron, olive on bone),
-   Shrikhand script wordmark, Archivo in expanded/condensed widths for the
+   a hand-built painted-sign wordmark, Archivo in expanded/condensed widths for the
    rest, like a printed hot sauce label. */
 :root {
   --bone: #eeeae3;
@@ -17,7 +17,6 @@
   --olive: #5c6440;
   --sauce: #b46c3c;
 
-  --font-script: "Shrikhand", "Cooper Black", Georgia, serif;
   --font-body: "Archivo", -apple-system, "Segoe UI", Roboto, system-ui, sans-serif;
 
   --gutter: 24px;
@@ -118,12 +117,10 @@ section[id] { scroll-margin-top: calc(var(--header-h) + 16px); }
   text-decoration: none;
 }
 .brand-mark { width: 46px; height: 46px; }
-.brand-word {
-  font-family: var(--font-script);
-  font-size: 24px;
-  line-height: 1;
-  color: var(--paprika);
-}
+.brand-wordmark { width: 154px; height: 53px; }
+
+/* Wordmark pieces that the CSS can recolor per background. */
+.wm-ridge { fill: none; stroke: #d9b48a; stroke-width: 2.5; stroke-linecap: round; }
 
 .nav { display: flex; gap: 26px; margin-left: auto; }
 .nav a, .cart-link {
@@ -212,12 +209,10 @@ section[id] { scroll-margin-top: calc(var(--header-h) + 16px); }
 
 .lockup { display: grid; gap: 10px; margin: 0; }
 .lockup-word {
-  font-family: var(--font-script);
-  font-size: clamp(64px, 10.5vw, 132px);
-  font-weight: 400;
-  line-height: .86;
-  color: var(--paprika);
-  letter-spacing: -0.01em;
+  display: block;
+  width: min(100%, 620px);
+  aspect-ratio: 760 / 262; height: auto;
+  margin-left: -14px;
 }
 .lockup-sub {
   display: inline-block;
@@ -311,7 +306,7 @@ section[id] { scroll-margin-top: calc(var(--header-h) + 16px); }
   letter-spacing: .08em;
   text-transform: uppercase;
 }
-.mini-label small:first-child { color: var(--paprika); font-family: var(--font-script); font-size: 9px; letter-spacing: 0; text-transform: none; white-space: nowrap; }
+.mini-wordmark { width: 92%; aspect-ratio: 760 / 262; height: auto; justify-self: center; margin-bottom: 2px; }
 .mini-label b { font-size: 12px; font-stretch: 110%; font-weight: 900; text-transform: uppercase; }
 
 /* ---------- Ticker ---------- */
@@ -346,10 +341,9 @@ section[id] { scroll-margin-top: calc(var(--header-h) + 16px); }
 .how-num {
   display: block;
   color: var(--paprika);
-  font-family: var(--font-script);
   font-size: 44px;
-  font-stretch: 100%;
-  font-weight: 400;
+  font-stretch: 125%;
+  font-weight: 900;
   letter-spacing: 0;
   line-height: 1;
 }
@@ -534,7 +528,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--iron); }
 .label-head { align-items: center; justify-content: flex-start; flex-wrap: nowrap; }
 .label-head > div { display: grid; }
 .label-mark { flex: none; width: 54px; height: 54px; }
-.label-brand { font-family: var(--font-script); font-size: 24px; line-height: 1.1; color: var(--mustard); }
+.label-wordmark { width: 150px; aspect-ratio: 760 / 262; height: auto; margin-bottom: 2px; --wm-fill: var(--mustard); --wm-shadow: var(--paprika); }
 .label-kind { color: var(--bone); font-size: 11px; }
 .label-band { height: 14px; background: var(--sauce); border-bottom: 2px solid var(--iron); transition: background .3s; }
 .label-body { display: grid; gap: 14px; padding: 18px 20px 16px; }
@@ -637,7 +631,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--iron); }
   border-bottom: 1px solid rgba(238, 234, 227, .3);
 }
 .facts div:first-child { border-top: 1px solid rgba(238, 234, 227, .3); }
-.facts dt { font-family: var(--font-script); font-size: 30px; line-height: 1.1; color: var(--mustard); }
+.facts dt { font-size: 28px; font-stretch: 125%; font-weight: 900; line-height: 1.1; color: var(--mustard); text-transform: uppercase; }
 .facts dd { margin: 0; color: #dcd8cb; }
 
 /* ---------- FAQ ---------- */
@@ -710,7 +704,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--iron); }
 }
 .footer-brand { display: flex; align-items: center; gap: 18px; }
 .footer-mark { flex: none; width: 104px; height: 104px; }
-.footer-word { margin: 0 0 4px; font-family: var(--font-script); font-size: 30px; line-height: 1.1; color: var(--mustard); }
+.footer-wordmark { display: block; width: 210px; aspect-ratio: 760 / 262; height: auto; margin-bottom: 6px; --wm-fill: var(--mustard); --wm-shadow: var(--paprika); }
 .footer-brand p:last-child { margin: 0; }
 .footer-label { margin: 0 0 10px; color: var(--mustard); font-size: 12px; }
 .footer-links { display: grid; gap: 8px; align-content: start; }
@@ -769,7 +763,7 @@ input:focus, textarea:focus { outline: none; border-color: var(--iron); }
 @media (max-width: 760px) {
   :root { --gutter: 16px; --header-h: 60px; }
   .brand-mark { width: 40px; height: 40px; }
-  .brand-word { font-size: 21px; }
+  .brand-wordmark { width: 128px; height: 44px; }
   .cart-link { padding-left: 12px; }
   .hero-inner { grid-template-columns: 1fr; gap: 8px; padding-top: 44px; }
   .hero-copy { padding-bottom: 8px; }
