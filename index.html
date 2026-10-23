@@ -3,54 +3,89 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Ember &amp; Almond — Custom Small-Batch Hot Sauce</title>
-  <meta name="description" content="Build your own small-batch hot sauce. Choose from 10 peppers, 5 bases and 22 flavors, with almonds for plant protein or without. Made to order with your name on the label.">
-  <meta name="theme-color" content="#ebe8e1">
+  <title>Chaddy Daddy's Hot Sauce — Build Your Own Bottle</title>
+  <meta name="description" content="Chaddy Daddy's Hot Sauce: build your own small-batch hot sauce. Pick from 10 peppers, 5 bases and 22 flavors, with almonds for plant protein or without. Made to order with your name on the label.">
+  <meta name="theme-color" content="#c9a14c">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Ember &amp; Almond — Custom Small-Batch Hot Sauce">
-  <meta property="og:description" content="Choose every ingredient. We make it by hand and put your name on the label.">
+  <meta property="og:site_name" content="Chaddy Daddy's Hot Sauce">
+  <meta property="og:title" content="Chaddy Daddy's Hot Sauce — Build Your Own Bottle">
+  <meta property="og:description" content="Built by you. Made by Daddy. Small-batch hot sauce with your name on the label.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Shrikhand&display=swap">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <!-- Brand seal, drawn once and reused with <use>. -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="seal" viewBox="0 0 200 200">
+      <path id="seal-ring" d="M100,100 m-71,0 a71,71 0 1,1 142,0 a71,71 0 1,1 -142,0" fill="none"/>
+      <circle cx="100" cy="100" r="97" fill="var(--seal-bg, #2b2622)"/>
+      <circle cx="100" cy="100" r="89" fill="none" stroke="currentColor" stroke-width="2"/>
+      <circle cx="100" cy="100" r="53" fill="none" stroke="currentColor" stroke-width="1.5"/>
+      <text fill="currentColor" font-family="Archivo, sans-serif" font-size="15" font-weight="800" style="font-stretch: 100%">
+        <textPath href="#seal-ring" textLength="438" lengthAdjust="spacing">CHADDY DADDY'S ✦ HOT SAUCE ✦ EST. 2026 ✦</textPath>
+      </text>
+      <path d="M99 71c-1-7 3-12 11-14" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
+      <path d="M90 74c9-6 22-3 25 9 4 15-3 33-21 49-4 3-8 1-7-3 4-14 4-29-1-41-3-7-1-12 4-14Z" fill="var(--seal-chili, #9e432e)"/>
+    </symbol>
+  </svg>
+
   <a class="skip-link" href="#build">Skip to the sauce builder</a>
+
+  <div class="announce">
+    <p class="wrap">Every bottle made to order · Ships in <span data-ships-within>5 business days</span></p>
+  </div>
 
   <header class="site-header">
     <div class="wrap header-inner">
-      <a href="#top" class="brand">
-        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 3c5 5 9 10 9 16a9 9 0 0 1-18 0c0-6 4-11 9-16Z" fill="currentColor"/><path d="M16 13c2.2 2.4 3.5 4.6 3.5 7a3.5 3.5 0 0 1-7 0c0-2.4 1.3-4.6 3.5-7Z" fill="var(--paper)"/></svg>
-        <span data-shop-name>Ember &amp; Almond</span>
+      <a href="#top" class="brand" aria-label="Chaddy Daddy's Hot Sauce, home">
+        <svg class="brand-seal"><use href="#seal"/></svg>
+        <span class="brand-word">Chaddy Daddy's</span>
       </a>
       <nav class="nav" aria-label="Main">
         <a href="#how">How it works</a>
-        <a href="#build">Build</a>
-        <a href="#almonds">Almonds</a>
-        <a href="#faq">FAQ</a>
+        <a href="#build">Build a bottle</a>
+        <a href="#almonds">The almonds</a>
+        <a href="#faq">Ask Daddy</a>
       </nav>
       <a href="#order" class="cart-link">Order <span class="cart-count" id="cart-count">0</span></a>
     </div>
   </header>
 
   <main id="top">
-    <section class="hero wrap">
-      <div class="hero-copy">
-        <p class="eyebrow">Small-batch · Made to order</p>
-        <h1>Hot sauce, built by you.</h1>
-        <p class="lede" data-shop-tagline></p>
-        <div class="hero-actions">
-          <a class="btn btn-primary" href="#build">Build your sauce</a>
-          <span class="from" id="from-price"></span>
+    <section class="hero">
+      <div class="wrap hero-inner">
+        <div class="hero-copy">
+          <p class="eyebrow">Est. 2026 · Small-batch · Made to order</p>
+          <h1 class="lockup">
+            <span class="lockup-word">Chaddy<br>Daddy's</span>
+            <span class="lockup-sub">Hot Sauce</span>
+          </h1>
+          <p class="hero-line">Built by you.<br>Made by Daddy.</p>
+          <p class="lede" data-shop-tagline></p>
+          <div class="hero-actions">
+            <a class="btn btn-dark" href="#build">Build your bottle</a>
+            <span class="from" id="from-price"></span>
+          </div>
+        </div>
+
+        <div class="shelf" aria-hidden="true">
+          <svg class="hero-seal"><use href="#seal"/></svg>
+          <div class="bottle" style="--c:#5c6440; --h:156px"><i class="cap"></i><i class="neck"></i><span class="body"><span class="mini-label"><small>Chaddy Daddy's</small><b>Jalapeño</b><small>Lime Zest</small></span></span></div>
+          <div class="bottle" style="--c:#9e432e; --h:196px"><i class="cap"></i><i class="neck"></i><span class="body"><span class="mini-label"><small>Chaddy Daddy's</small><b>Habanero</b><small>Almond</small></span></span></div>
+          <div class="bottle" style="--c:#5a2a25; --h:172px"><i class="cap"></i><i class="neck"></i><span class="body"><span class="mini-label"><small>Chaddy Daddy's</small><b>Ghost</b><small>Black Garlic</small></span></span></div>
         </div>
       </div>
-      <div class="shelf" aria-hidden="true">
-        <div class="bottle" style="--c:#6f7d4a; --h:150px"><i class="cap"></i><i class="neck"></i><span class="body"><span class="mini-label"><b>Jalapeño</b>Lime Zest</span></span></div>
-        <div class="bottle" style="--c:#b46c3c; --h:190px"><i class="cap"></i><i class="neck"></i><span class="body"><span class="mini-label"><b>Habanero</b>Almond</span></span></div>
-        <div class="bottle" style="--c:#8b3a34; --h:165px"><i class="cap"></i><i class="neck"></i><span class="body"><span class="mini-label"><b>Ghost</b>Black Garlic</span></span></div>
-      </div>
     </section>
+
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker-track">
+        <span>Small batch</span><span>Made to order</span><span>Almonds optional</span><span>10 peppers</span><span>22 flavors</span><span>Your name on the label</span><span>Dad-approved heat</span>
+        <span>Small batch</span><span>Made to order</span><span>Almonds optional</span><span>10 peppers</span><span>22 flavors</span><span>Your name on the label</span><span>Dad-approved heat</span>
+      </div>
+    </div>
 
     <section class="how wrap" id="how" aria-labelledby="how-title">
       <h2 id="how-title" class="section-title">How it works</h2>
@@ -58,12 +93,12 @@
         <li>
           <span class="how-num">1</span>
           <h3>You build it</h3>
-          <p>Pick from <span data-count="peppers">10</span> peppers, <span data-count="bases">5</span> bases and <span data-count="flavors">22</span> flavors. Add almonds or leave them out.</p>
+          <p>Pick from <span data-count="peppers">10</span> peppers, <span data-count="bases">5</span> bases and <span data-count="flavors">22</span> flavors. Almonds in or out, your call.</p>
         </li>
         <li>
           <span class="how-num">2</span>
-          <h3>We make it</h3>
-          <p>Your recipe is blended, bottled and labeled by hand in a small batch.</p>
+          <h3>Daddy makes it</h3>
+          <p>Your recipe is blended, bottled and labeled by hand in a small batch. Nothing sits on a shelf.</p>
         </li>
         <li>
           <span class="how-num">3</span>
@@ -76,31 +111,32 @@
     <section class="builder-section" id="build" aria-labelledby="build-title">
       <div class="wrap">
         <div class="section-head">
-          <h2 id="build-title" class="section-title">Build your sauce</h2>
-          <p>Five quick choices. Your label fills in as you go.</p>
+          <p class="eyebrow eyebrow-dark">The Sauce Builder</p>
+          <h2 id="build-title" class="section-title">Build your bottle</h2>
+          <p>Five choices. Your label fills in as you go.</p>
         </div>
 
         <div class="builder">
           <form id="builder-form" class="steps">
             <fieldset class="step">
-              <legend><span class="step-num">1</span> Pepper</legend>
+              <legend><span class="step-num">1</span> Pick your pepper</legend>
               <p class="hint">Heat is shown in Scoville heat units (SHU).</p>
               <div class="options options-2" id="pepper-options"></div>
             </fieldset>
 
             <fieldset class="step">
-              <legend><span class="step-num">2</span> Base</legend>
+              <legend><span class="step-num">2</span> Pick your base</legend>
               <div class="options options-2" id="base-options"></div>
             </fieldset>
 
             <fieldset class="step">
-              <legend><span class="step-num">3</span> Almonds</legend>
-              <p class="hint">Almonds add body and plant protein. They're optional.</p>
+              <legend><span class="step-num">3</span> Almonds?</legend>
+              <p class="hint">Almonds add body and plant protein. Totally optional.</p>
               <div class="options options-2" id="almond-options"></div>
             </fieldset>
 
             <fieldset class="step">
-              <legend><span class="step-num">4</span> Flavors <span class="legend-note" id="addin-note"></span></legend>
+              <legend><span class="step-num">4</span> Add flavors <span class="legend-note" id="addin-note"></span></legend>
               <div class="flavor-groups" id="addin-options"></div>
             </fieldset>
 
@@ -116,9 +152,12 @@
 
           <aside class="summary" id="summary" aria-label="Your bottle">
             <div class="label">
+              <div class="label-head">
+                <span class="label-brand">Chaddy Daddy's</span>
+                <span class="label-kind">Hot Sauce · <span id="batch"></span></span>
+              </div>
               <div class="label-band"></div>
               <div class="label-body">
-                <div class="label-top"><span data-shop-name>Ember &amp; Almond</span><span id="batch"></span></div>
                 <p class="label-name" id="label-name">Your Sauce</p>
                 <div class="label-heat"><span id="label-meter"></span><span id="label-shu"></span></div>
                 <p class="label-ingredients"><b>Ingredients:</b> <span id="label-ingredients"></span></p>
@@ -145,21 +184,25 @@
       </div>
     </section>
 
-    <section class="almonds wrap" id="almonds" aria-labelledby="almonds-title">
-      <div class="almonds-copy">
-        <h2 id="almonds-title" class="section-title">Why almonds?</h2>
-        <p>Almonds give a hot sauce a rounder body. They soften sharp heat, carry flavor, and add plant protein to whatever you pour it on.</p>
-        <p>Not for you? Choose <b>No Almonds</b> in step 3 and we'll leave them out.</p>
+    <section class="almonds" id="almonds" aria-labelledby="almonds-title">
+      <div class="wrap almonds-inner">
+        <div class="almonds-copy">
+          <p class="eyebrow eyebrow-dark">The secret ingredient</p>
+          <h2 id="almonds-title" class="section-title">Why the almonds?</h2>
+          <p>Almonds give a hot sauce a rounder body. They soften sharp heat, carry flavor, and add plant protein to whatever you pour it on.</p>
+          <p>Not for you? Choose <b>No Almonds</b> in step 3 and Daddy leaves them out.</p>
+        </div>
+        <dl class="facts">
+          <div><dt>~6 g</dt><dd>protein in one ounce of almonds</dd></div>
+          <div><dt>3 ways</dt><dd>smooth, crunchy or smoked</dd></div>
+          <div><dt>0 pressure</dt><dd>almonds are optional in every recipe</dd></div>
+        </dl>
       </div>
-      <dl class="facts">
-        <div><dt>~6 g</dt><dd>protein in one ounce of almonds</dd></div>
-        <div><dt>3 ways</dt><dd>smooth, crunchy or smoked</dd></div>
-        <div><dt>Optional</dt><dd>in every recipe</dd></div>
-      </dl>
     </section>
 
     <section class="faq wrap" id="faq" aria-labelledby="faq-title">
-      <h2 id="faq-title" class="section-title">Questions</h2>
+      <p class="eyebrow eyebrow-dark">Questions</p>
+      <h2 id="faq-title" class="section-title">Ask Daddy</h2>
       <div class="faq-list">
         <details>
           <summary>Do I have to get almonds?</summary>
@@ -195,7 +238,7 @@
       <p class="cart-note" id="cart-note" hidden>We'll email you to confirm your total with shipping and arrange payment.</p>
 
       <form class="checkout" id="checkout-form" hidden>
-        <h3>Where should we send it?</h3>
+        <h3>Where should Daddy send it?</h3>
         <label class="field" for="co-name"><span>Full name</span><input id="co-name" name="name" required autocomplete="name"></label>
         <label class="field" for="co-email"><span>Email</span><input id="co-email" name="email" type="email" required autocomplete="email"></label>
         <label class="field" for="co-address"><span>Shipping address</span><textarea id="co-address" name="address" rows="3" required autocomplete="street-address"></textarea></label>
@@ -209,8 +252,8 @@
       </form>
 
       <div class="thanks" id="thanks" hidden>
-        <h3>Thank you. Your order is in.</h3>
-        <p>Order <strong id="order-id"></strong>. We'll email you to confirm the details, then start mixing.</p>
+        <h3>Thanks! Daddy's on it.</h3>
+        <p>Order <strong id="order-id"></strong> is in. We'll email you to confirm the details, then start mixing.</p>
         <a class="btn" href="#build" id="new-order-btn">Build another</a>
       </div>
     </section>
@@ -219,22 +262,26 @@
   <footer class="site-footer">
     <div class="wrap footer-inner">
       <div class="footer-brand">
-        <p class="footer-name" data-shop-name>Ember &amp; Almond</p>
-        <p>Small-batch hot sauce, made to order.</p>
+        <svg class="footer-seal"><use href="#seal"/></svg>
+        <div>
+          <p class="footer-word">Chaddy Daddy's</p>
+          <p>Hot sauce built by you, made by Daddy.</p>
+        </div>
       </div>
       <nav class="footer-links" aria-label="Footer">
+        <p class="footer-label">Shop</p>
+        <a href="#build">Build a bottle</a>
         <a href="#how">How it works</a>
-        <a href="#build">Build your sauce</a>
-        <a href="#faq">Questions</a>
+        <a href="#faq">Ask Daddy</a>
       </nav>
       <div class="footer-contact">
-        <p>Contact</p>
-        <a data-shop-email href="#">hello@emberandalmond.com</a>
+        <p class="footer-label">Say hi</p>
+        <a data-shop-email href="#">hello@chaddydaddys.com</a>
       </div>
     </div>
     <div class="wrap footer-legal">
       <p><b>Allergen notice:</b> all sauces are made in a kitchen that handles tree nuts.</p>
-      <p>&copy; <span id="year"></span> <span data-shop-name>Ember &amp; Almond</span></p>
+      <p>&copy; <span id="year"></span> Chaddy Daddy's Hot Sauce</p>
     </div>
   </footer>
 

@@ -1,9 +1,10 @@
 // Everything a shop owner needs to change lives in this file:
 // brand name, ingredients, sizes, prices and where orders are sent.
 window.SHOP = {
-  name: "Ember & Almond",
-  tagline: "Small-batch hot sauce with almonds for body and plant protein. You choose every ingredient. We make it by hand and put your name on the label.",
-  contactEmail: "hello@emberandalmond.com",
+  name: "Chaddy Daddy's",
+  fullName: "Chaddy Daddy's Hot Sauce",
+  tagline: "Small-batch hot sauce with almonds for body and plant protein, or without. You pick every ingredient. We make it by hand and put your name on the label.",
+  contactEmail: "hello@chaddydaddys.com",
   shipsWithin: "5 business days",
 
   // Where orders are sent. Paste a form endpoint here (e.g. a Formspree,

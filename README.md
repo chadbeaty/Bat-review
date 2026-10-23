@@ -1,6 +1,6 @@
-# Ember & Almond — Build-Your-Own Hot Sauce
+# Chaddy Daddy's Hot Sauce
 
-A minimal storefront where customers build a custom hot sauce, with almonds for body and plant protein or without, and place an order. Plain HTML, CSS and JavaScript, with no build step. Fonts load from Google Fonts.
+The storefront for Chaddy Daddy's Hot Sauce, where customers build a custom hot sauce, with almonds for body and plant protein or without, and place an order. Plain HTML, CSS and JavaScript, with no build step. Fonts load from Google Fonts.
 
 ## How customers use it
 
@@ -26,7 +26,7 @@ To publish it, upload the folder to any static host (GitHub Pages, Netlify, Verc
 
 Everything you'd change is in **`config.js`**:
 
-- `name`, `tagline`, `contactEmail`, `shipsWithin`: brand text shown across the site.
+- `name`, `tagline`, `contactEmail`, `shipsWithin`: brand text shown across the site. The logo, wordmark and brand copy live in `index.html`; brand colors and fonts are the variables at the top of `styles.css`.
 - `peppers`, `bases`, `almondStyles`, `addInGroups`, `sizes`: add, remove, rename or reprice ingredients. `price` is added per bottle (`0` = free). `ingredient` is how the item reads on the label's ingredient list. The counts on the page ("10 peppers, 5 bases…") update automatically.
 - `maxAddIns`: how many flavors a customer can pick.
 - `orderEndpoint`: **where orders go.** Out of the box this is empty (demo mode), so orders only show a confirmation on screen. To receive orders, create a free form endpoint (e.g. [Formspree](https://formspree.io)) and paste its URL here. Each order is POSTed as JSON with the customer details, every bottle's recipe, quantities and the total.

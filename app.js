@@ -2,7 +2,7 @@
   "use strict";
 
   const shop = window.SHOP;
-  const CART_KEY = "ea-cart-v2";
+  const CART_KEY = "cd-cart";
   const $ = (id) => document.getElementById(id);
   const byId = (list, id) => list.find((item) => item.id === id);
   const allAddIns = shop.addInGroups.flatMap((group) => group.items);
@@ -324,7 +324,7 @@
   function buildOrder(form) {
     const data = new FormData(form);
     return {
-      id: "EA-" + Date.now().toString(36).toUpperCase(),
+      id: "CD-" + Date.now().toString(36).toUpperCase(),
       placedAt: new Date().toISOString(),
       customer: {
         name: data.get("name").trim(),
