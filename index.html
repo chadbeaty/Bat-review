@@ -17,18 +17,31 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- Brand seal, drawn once and reused with <use>. -->
+  <!-- Brand mark: Chaddy Daddy himself. Dad cap, aviators and a handlebar
+       mustache made of two almonds. Drawn once and reused with <use>. -->
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <symbol id="seal" viewBox="0 0 200 200">
-      <path id="seal-ring" d="M100,100 m-71,0 a71,71 0 1,1 142,0 a71,71 0 1,1 -142,0" fill="none"/>
-      <circle cx="100" cy="100" r="97" fill="var(--seal-bg, #2b2622)"/>
-      <circle cx="100" cy="100" r="89" fill="none" stroke="currentColor" stroke-width="2"/>
-      <circle cx="100" cy="100" r="53" fill="none" stroke="currentColor" stroke-width="1.5"/>
-      <text fill="currentColor" font-family="Archivo, sans-serif" font-size="15" font-weight="800" style="font-stretch: 100%">
-        <textPath href="#seal-ring" textLength="438" lengthAdjust="spacing">CHADDY DADDY'S ✦ HOT SAUCE ✦ EST. 2026 ✦</textPath>
-      </text>
-      <path d="M99 71c-1-7 3-12 11-14" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>
-      <path d="M90 74c9-6 22-3 25 9 4 15-3 33-21 49-4 3-8 1-7-3 4-14 4-29-1-41-3-7-1-12 4-14Z" fill="var(--seal-chili, #9e432e)"/>
+    <symbol id="dad" viewBox="0 0 200 200">
+      <circle cx="100" cy="100" r="97" fill="var(--badge-bg, #c9a14c)"/>
+      <circle cx="100" cy="100" r="89" fill="none" stroke="#2b2622" stroke-width="3"/>
+      <!-- cap -->
+      <path d="M46 92C46 52 71 33 100 33s54 19 54 59Z" fill="#9e432e" stroke="#2b2622" stroke-width="4" stroke-linejoin="round"/>
+      <circle cx="100" cy="32" r="5.5" fill="#2b2622"/>
+      <rect x="78" y="52" width="44" height="27" rx="5" fill="#eeeae3" stroke="#2b2622" stroke-width="3"/>
+      <text x="100" y="72.5" text-anchor="middle" fill="#9e432e" font-family="Archivo, sans-serif" font-size="19" font-weight="900" letter-spacing="1">CD</text>
+      <path d="M34 92Q100 76 166 92Q170 102 157 104Q100 92 43 104Q30 102 34 92Z" fill="#2b2622"/>
+      <!-- aviators -->
+      <path d="M44 108L52 110M156 108L148 110" stroke="#2b2622" stroke-width="4" stroke-linecap="round"/>
+      <path d="M52 110h40q4 0 4 4q0 22-19 25q-21 3-25-17z" fill="#2b2622"/>
+      <path d="M148 110h-40q-4 0-4 4q0 22 19 25q21 3 25-17z" fill="#2b2622"/>
+      <path d="M96 113q4-5 8 0" fill="none" stroke="#2b2622" stroke-width="3.5"/>
+      <path d="M60 117l9-4M116 117l9-4" stroke="#eeeae3" stroke-width="3" stroke-linecap="round" opacity=".75"/>
+      <!-- almond mustache -->
+      <g fill="#a46d3f" stroke="#2b2622" stroke-width="3.5" stroke-linejoin="round">
+        <path d="M100 152C100 163 88 169 73 167C60 165 50 155 44 135C56 141 69 140 82 141C94 142 100 146 100 152Z"/>
+        <path d="M100 152C100 163 112 169 127 167C140 165 150 155 156 135C144 141 131 140 118 141C106 142 100 146 100 152Z"/>
+      </g>
+      <path d="M96 154C84 156 64 152 51 141M104 154C116 156 136 152 149 141" fill="none" stroke="#c99a6b" stroke-width="2" stroke-linecap="round"/>
+      <path d="M92 161C80 163 66 159 58 151M108 161C120 163 134 159 142 151M90 147C80 146 68 145 60 142M110 147C120 146 132 145 140 142" fill="none" stroke="#7d5230" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 5"/>
     </symbol>
   </svg>
 
@@ -41,7 +54,7 @@
   <header class="site-header">
     <div class="wrap header-inner">
       <a href="#top" class="brand" aria-label="Chaddy Daddy's Hot Sauce, home">
-        <svg class="brand-seal"><use href="#seal"/></svg>
+        <svg class="brand-mark"><use href="#dad"/></svg>
         <span class="brand-word">Chaddy Daddy's</span>
       </a>
       <nav class="nav" aria-label="Main">
@@ -72,7 +85,7 @@
         </div>
 
         <div class="shelf" aria-hidden="true">
-          <svg class="hero-seal"><use href="#seal"/></svg>
+          <svg class="hero-badge"><use href="#dad"/></svg>
           <div class="bottle" style="--c:#5c6440; --h:156px"><i class="cap"></i><i class="neck"></i><span class="body"><span class="mini-label"><small>Chaddy Daddy's</small><b>Jalapeño</b><small>Lime Zest</small></span></span></div>
           <div class="bottle" style="--c:#9e432e; --h:196px"><i class="cap"></i><i class="neck"></i><span class="body"><span class="mini-label"><small>Chaddy Daddy's</small><b>Habanero</b><small>Almond</small></span></span></div>
           <div class="bottle" style="--c:#5a2a25; --h:172px"><i class="cap"></i><i class="neck"></i><span class="body"><span class="mini-label"><small>Chaddy Daddy's</small><b>Ghost</b><small>Black Garlic</small></span></span></div>
@@ -153,8 +166,11 @@
           <aside class="summary" id="summary" aria-label="Your bottle">
             <div class="label">
               <div class="label-head">
-                <span class="label-brand">Chaddy Daddy's</span>
-                <span class="label-kind">Hot Sauce · <span id="batch"></span></span>
+                <svg class="label-mark" aria-hidden="true"><use href="#dad"/></svg>
+                <div>
+                  <span class="label-brand">Chaddy Daddy's</span>
+                  <span class="label-kind">Hot Sauce · <span id="batch"></span></span>
+                </div>
               </div>
               <div class="label-band"></div>
               <div class="label-body">
@@ -262,7 +278,7 @@
   <footer class="site-footer">
     <div class="wrap footer-inner">
       <div class="footer-brand">
-        <svg class="footer-seal"><use href="#seal"/></svg>
+        <svg class="footer-mark"><use href="#dad"/></svg>
         <div>
           <p class="footer-word">Chaddy Daddy's</p>
           <p>Hot sauce built by you, made by Daddy.</p>
