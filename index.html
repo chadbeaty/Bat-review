@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Chaddy Daddy's Hot Sauce — Build Your Own Bottle</title>
+  <meta name="description" content="Chaddy Daddy's Hot Sauce: build your own small-batch hot sauce. Pick from 10 peppers, 5 bases and 22 flavors, with almonds for plant protein or without. Made to order with your name on the label.">
+  <meta name="theme-color" content="#c9a14c">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Chaddy Daddy's Hot Sauce">
+  <meta property="og:title" content="Chaddy Daddy's Hot Sauce — Build Your Own Bottle">
+  <meta property="og:description" content="Built by you. Made by Daddy. Small-batch hot sauce with your name on the label.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Brand mark: Chaddy Daddy himself. Dad cap, aviators and a handlebar
+       mustache made of two almonds. Drawn once and reused with <use>. -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="dad" viewBox="0 0 200 200">
+      <circle cx="100" cy="100" r="97" fill="var(--badge-bg, #c9a14c)"/>
+      <circle cx="100" cy="100" r="89" fill="none" stroke="#2b2622" stroke-width="3"/>
+      <!-- cap -->
+      <path d="M46 92C46 52 71 33 100 33s54 19 54 59Z" fill="#9e432e" stroke="#2b2622" stroke-width="4" stroke-linejoin="round"/>
+      <circle cx="100" cy="32" r="5.5" fill="#2b2622"/>
+      <rect x="78" y="52" width="44" height="27" rx="5" fill="#eeeae3" stroke="#2b2622" stroke-width="3"/>
+      <text x="100" y="72.5" text-anchor="middle" fill="#9e432e" font-family="Archivo, sans-serif" font-size="19" font-weight="900" letter-spacing="1">CD</text>
+      <path d="M34 92Q100 76 166 92Q170 102 157 104Q100 92 43 104Q30 102 34 92Z" fill="#2b2622"/>
+      <!-- aviators -->
+      <path d="M44 108L52 110M156 108L148 110" stroke="#2b2622" stroke-width="4" stroke-linecap="round"/>
+      <path d="M52 110h40q4 0 4 4q0 22-19 25q-21 3-25-17z" fill="#2b2622"/>
+      <path d="M148 110h-40q-4 0-4 4q0 22 19 25q21 3 25-17z" fill="#2b2622"/>
+      <path d="M96 113q4-5 8 0" fill="none" stroke="#2b2622" stroke-width="3.5"/>
+      <path d="M60 117l9-4M116 117l9-4" stroke="#eeeae3" stroke-width="3" stroke-linecap="round" opacity=".75"/>
+      <!-- almond mustache -->
+      <g fill="#a46d3f" stroke="#2b2622" stroke-width="3.5" stroke-linejoin="round">
+        <path d="M100 152C100 163 88 169 73 167C60 165 50 155 44 135C56 141 69 140 82 141C94 142 100 146 100 152Z"/>
+        <path d="M100 152C100 163 112 169 127 167C140 165 150 155 156 135C144 141 131 140 118 141C106 142 100 146 100 152Z"/>
+      </g>
+      <path d="M96 154C84 156 64 152 51 141M104 154C116 156 136 152 149 141" fill="none" stroke="#c99a6b" stroke-width="2" stroke-linecap="round"/>
+      <path d="M92 161C80 163 66 159 58 151M108 161C120 163 134 159 142 151M90 147C80 146 68 145 60 142M110 147C120 146 132 145 140 142" fill="none" stroke="#7d5230" stroke-width="2" stroke-linecap="round" stroke-dasharray="2 5"/>
+    </symbol>
+    <!-- Wordmark: hand-built letters (heavy rounded strokes, dome "A" like the cap,
+         almond apostrophe), painted-sign outline and drop shadow. -->
+    <defs><g id="wm-letters" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M77 22A40 37 0 1 0 77 78" transform="translate(0 -2) rotate(-2 46.0 50)"/><path d="M13 13V87M83 13V87M13 50H83" transform="translate(96 2) rotate(1.5 48.0 50)"/><path d="M13 87V46A35 33 0 0 1 83 46V87M13 62H83" transform="translate(196 -3) rotate(-1 48.0 50)"/><path d="M13 13V87H45A38 37 0 0 0 45 13Z" transform="translate(296 1) rotate(2 48.0 50)"/><path d="M13 13V87H45A38 37 0 0 0 45 13Z" transform="translate(396 -1) rotate(-1.5 48.0 50)"/><path d="M13 13L48 50L83 13M48 50V87" transform="translate(496 2) rotate(2 48.0 50)"/><path d="M13 13V87H45A38 37 0 0 0 45 13Z" transform="translate(46 114) rotate(-1 48.0 50)"/><path d="M13 87V46A35 33 0 0 1 83 46V87M13 62H83" transform="translate(146 117) rotate(1.5 48.0 50)"/><path d="M13 13V87H45A38 37 0 0 0 45 13Z" transform="translate(246 114) rotate(-2 48.0 50)"/><path d="M13 13V87H45A38 37 0 0 0 45 13Z" transform="translate(346 118) rotate(1 48.0 50)"/><path d="M13 13L48 50L83 13M48 50V87" transform="translate(446 116) rotate(-1.5 48.0 50)"/><path d="M81 23C73 13 58 12 44 13C25 14 15 24 17 36C19 49 34 51 50 53C67 55 82 58 81 70C80 83 68 87 52 87C37 87 23 85 14 75" transform="translate(600 115) rotate(0 48.0 50)"/></g><g id="wm-almond"><g transform="translate(556 104) scale(1.5) rotate(16 13 22)"><path d="M13 0C22 6 27 18 24 30C22 38 17 44 11 46C9 38 3 30 2 21C1 11 5 4 13 0Z"/><path class="wm-ridge" d="M14 6C17 18 16 30 11 40"/></g></g></defs>
+    <symbol id="wordmark" viewBox="-42 -14 760 262"><g transform="skewX(-8)"><use href="#wm-letters" transform="translate(7 8)" stroke="var(--wm-shadow, #2b2622)" stroke-width="36"/><use href="#wm-almond" transform="translate(7 8)" fill="var(--wm-shadow, #2b2622)" stroke="var(--wm-shadow, #2b2622)" stroke-width="10"/><use href="#wm-letters" stroke="var(--wm-line, #2b2622)" stroke-width="36"/><use href="#wm-letters" stroke="var(--wm-fill, #9e432e)" stroke-width="24"/><use href="#wm-almond" class="wm-almond" fill="#a46d3f" stroke="var(--wm-line, #2b2622)" stroke-width="5" stroke-linejoin="round"/></g></symbol>
+  </svg>
+
+  <a class="skip-link" href="#build">Skip to the sauce builder</a>
+
+  <div class="announce">
+    <p class="wrap">Every bottle made to order · Ships in <span data-ships-within>5 business days</span></p>
+  </div>
+
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a href="#top" class="brand" aria-label="Chaddy Daddy's Hot Sauce, home">
+        <svg class="brand-mark"><use href="#dad"/></svg>
+        <svg class="brand-wordmark" aria-hidden="true"><use href="#wordmark"/></svg>
+      </a>
+      <nav class="nav" aria-label="Main">
+        <a href="#how">How it works</a>
+        <a href="#build">Build a bottle</a>
+        <a href="#almonds">The almonds</a>
+        <a href="#faq">Ask Daddy</a>
+      </nav>
+      <a href="#order" class="cart-link">Order <span class="cart-count" id="cart-count">0</span></a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="wrap hero-inner">
+        <div class="hero-copy">
+          <p class="eyebrow">Est. 2026 · Small-batch · Made to order</p>
+          <h1 class="lockup">
+            <svg class="lockup-word" role="img" aria-label="Chaddy Daddy's"><use href="#wordmark"/></svg>
+            <span class="lockup-sub">Hot Sauce</span>
+          </h1>
+          <p class="hero-line">Built by you.<br>Made by Daddy.</p>
+          <p class="lede" data-shop-tagline></p>
+          <div class="hero-actions">
+            <a class="btn btn-dark" href="#build">Build your bottle</a>
+            <span class="from" id="from-price"></span>
+          </div>
+        </div>
+
+        <div class="shelf" aria-hidden="true">
+          <svg class="hero-badge"><use href="#dad"/></svg>
+          <div class="bottle" style="--c:#5c6440; --h:156px"><i class="cap"></i><i class="neck"></i><span class="body"><span class="mini-label"><svg class="mini-wordmark"><use href="#wordmark"/></svg><b>Jalapeño</b><small>Lime Zest</small></span></span></div>
+          <div class="bottle" style="--c:#9e432e; --h:196px"><i class="cap"></i><i class="neck"></i><span class="body"><span class="mini-label"><svg class="mini-wordmark"><use href="#wordmark"/></svg><b>Habanero</b><small>Almond</small></span></span></div>
+          <div class="bottle" style="--c:#5a2a25; --h:172px"><i class="cap"></i><i class="neck"></i><span class="body"><span class="mini-label"><svg class="mini-wordmark"><use href="#wordmark"/></svg><b>Ghost</b><small>Black Garlic</small></span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker-track">
+        <span>Small batch</span><span>Made to order</span><span>Almonds optional</span><span>10 peppers</span><span>22 flavors</span><span>Your name on the label</span><span>Dad-approved heat</span>
+        <span>Small batch</span><span>Made to order</span><span>Almonds optional</span><span>10 peppers</span><span>22 flavors</span><span>Your name on the label</span><span>Dad-approved heat</span>
+      </div>
+    </div>
+
+    <section class="how wrap" id="how" aria-labelledby="how-title">
+      <h2 id="how-title" class="section-title">How it works</h2>
+      <ol class="how-steps">
+        <li>
+          <span class="how-num">1</span>
+          <h3>You build it</h3>
+          <p>Pick from <span data-count="peppers">10</span> peppers, <span data-count="bases">5</span> bases and <span data-count="flavors">22</span> flavors. Almonds in or out, your call.</p>
+        </li>
+        <li>
+          <span class="how-num">2</span>
+          <h3>Daddy makes it</h3>
+          <p>Your recipe is blended, bottled and labeled by hand in a small batch. Nothing sits on a shelf.</p>
+        </li>
+        <li>
+          <span class="how-num">3</span>
+          <h3>It ships to you</h3>
+          <p>Your bottle arrives with your sauce's name on the label, usually within <span data-ships-within>5 business days</span>.</p>
+        </li>
+      </ol>
+    </section>
+
+    <section class="builder-section" id="build" aria-labelledby="build-title">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow eyebrow-dark">The Sauce Builder</p>
+          <h2 id="build-title" class="section-title">Build your bottle</h2>
+          <p>Five choices. Your label fills in as you go.</p>
+        </div>
+
+        <div class="builder">
+          <form id="builder-form" class="steps">
+            <fieldset class="step">
+              <legend><span class="step-num">1</span> Pick your pepper</legend>
+              <p class="hint">Heat is shown in Scoville heat units (SHU).</p>
+              <div class="options options-2" id="pepper-options"></div>
+            </fieldset>
+
+            <fieldset class="step">
+              <legend><span class="step-num">2</span> Pick your base</legend>
+              <div class="options options-2" id="base-options"></div>
+            </fieldset>
+
+            <fieldset class="step">
+              <legend><span class="step-num">3</span> Almonds?</legend>
+              <p class="hint">Almonds add body and plant protein. Totally optional.</p>
+              <div class="options options-2" id="almond-options"></div>
+            </fieldset>
+
+            <fieldset class="step">
+              <legend><span class="step-num">4</span> Add flavors <span class="legend-note" id="addin-note"></span></legend>
+              <div class="flavor-groups" id="addin-options"></div>
+            </fieldset>
+
+            <fieldset class="step">
+              <legend><span class="step-num">5</span> Size &amp; name</legend>
+              <div class="options options-2" id="size-options"></div>
+              <label class="field" for="label-input">
+                <span>Name your sauce <em>(optional, printed on the front label)</em></span>
+                <input type="text" id="label-input" maxlength="28" placeholder="e.g. Dad's Fire" autocomplete="off">
+              </label>
+            </fieldset>
+          </form>
+
+          <aside class="summary" id="summary" aria-label="Your bottle">
+            <div class="label">
+              <div class="label-head">
+                <svg class="label-mark" aria-hidden="true"><use href="#dad"/></svg>
+                <div>
+                  <svg class="label-wordmark" role="img" aria-label="Chaddy Daddy's"><use href="#wordmark"/></svg>
+                  <span class="label-kind">Hot Sauce · <span id="batch"></span></span>
+                </div>
+              </div>
+              <div class="label-band"></div>
+              <div class="label-body">
+                <div class="label-title">
+                  <p class="label-name" id="label-name">Your Sauce</p>
+                  <div class="label-heat"><span id="label-meter"></span><span id="label-shu"></span></div>
+                </div>
+
+                <div class="stage">
+                  <div class="view-switch" id="view-switch" role="group" aria-label="Bottle view">
+                    <button type="button" data-view="layers" aria-pressed="true">Layers</button>
+                    <button type="button" data-view="mixed" aria-pressed="false">Shaken</button>
+                    <button type="button" data-view="label" aria-pressed="false">Finished</button>
+                  </div>
+                  <div class="stage-row" id="stage-row">
+                    <div class="vessel" id="vessel"></div>
+                    <ol class="legend" id="legend" aria-label="What's in your bottle"></ol>
+                    <div class="label-zoom" id="label-zoom"></div>
+                  </div>
+                  <div class="stage-foot">
+                    <p class="stage-hint" id="stage-hint" aria-live="polite"></p>
+                    <button type="button" class="turn-btn" id="turn-btn" hidden>↻ Turn it around</button>
+                  </div>
+                </div>
+
+                <div class="profile-block">
+                  <dl class="profile" id="profile" aria-label="Flavor profile"></dl>
+                  <p class="pairs" id="pairs"></p>
+                </div>
+                <p class="label-contains" id="label-contains"></p>
+              </div>
+            </div>
+
+            <div class="buy">
+              <div class="buy-row">
+                <div class="qty" role="group" aria-label="Quantity">
+                  <button type="button" id="qty-minus" aria-label="Decrease quantity">−</button>
+                  <output id="qty-value" aria-label="Quantity">1</output>
+                  <button type="button" id="qty-plus" aria-label="Increase quantity">+</button>
+                </div>
+                <div class="buy-total"><span>Total</span><strong id="builder-total">$0</strong></div>
+              </div>
+              <button type="button" class="btn btn-primary btn-block" id="add-btn">Add to order</button>
+              <p class="ship-note" id="ship-note"></p>
+              <p class="toast" id="toast" role="status" aria-live="polite"></p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="almonds" id="almonds" aria-labelledby="almonds-title">
+      <div class="wrap almonds-inner">
+        <div class="almonds-copy">
+          <p class="eyebrow eyebrow-dark">The secret ingredient</p>
+          <h2 id="almonds-title" class="section-title">Why the almonds?</h2>
+          <p>Almonds give a hot sauce a rounder body. They soften sharp heat, carry flavor, and add plant protein to whatever you pour it on.</p>
+          <p>Not for you? Choose <b>No Almonds</b> in step 3 and Daddy leaves them out.</p>
+        </div>
+        <dl class="facts">
+          <div><dt>~6 g</dt><dd>protein in one ounce of almonds</dd></div>
+          <div><dt>3 ways</dt><dd>smooth, crunchy or smoked</dd></div>
+          <div><dt>0 pressure</dt><dd>almonds are optional in every recipe</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="faq wrap" id="faq" aria-labelledby="faq-title">
+      <p class="eyebrow eyebrow-dark">Questions</p>
+      <h2 id="faq-title" class="section-title">Ask Daddy</h2>
+      <div class="faq-list">
+        <details>
+          <summary>Do I have to get almonds?</summary>
+          <p>No. Choose No Almonds in step 3 and your sauce is made without them.</p>
+        </details>
+        <details>
+          <summary>Is your kitchen nut-free?</summary>
+          <p>No. Every sauce, including those without almonds, is made in a kitchen that handles tree nuts. If you have a tree nut allergy, our sauces are not safe for you.</p>
+        </details>
+        <details>
+          <summary>How long until my order ships?</summary>
+          <p>Every bottle is made to order. Most orders ship within <span data-ships-within>5 business days</span>.</p>
+        </details>
+        <details>
+          <summary>Can I order more than one recipe?</summary>
+          <p>Yes. Build a bottle, add it to your order, then build another. Each one can have its own name.</p>
+        </details>
+        <details>
+          <summary>How should I store it?</summary>
+          <p>Refrigerate after opening and shake before use. Sauces with almonds can settle a little, which is normal.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="order wrap" id="order" aria-labelledby="order-title">
+      <h2 id="order-title" class="section-title">Your order</h2>
+      <p class="empty" id="cart-empty">No bottles yet. <a href="#build">Build your first one.</a></p>
+      <ul class="cart" id="cart-list"></ul>
+      <div class="cart-total" id="cart-total-row" hidden>
+        <span>Subtotal</span>
+        <strong id="cart-total">$0</strong>
+      </div>
+      <p class="cart-note" id="cart-note" hidden>We'll email you to confirm your total with shipping and arrange payment.</p>
+
+      <form class="checkout" id="checkout-form" hidden>
+        <h3>Where should Daddy send it?</h3>
+        <label class="field" for="co-name"><span>Full name</span><input id="co-name" name="name" required autocomplete="name"></label>
+        <label class="field" for="co-email"><span>Email</span><input id="co-email" name="email" type="email" required autocomplete="email"></label>
+        <label class="field" for="co-address"><span>Shipping address</span><textarea id="co-address" name="address" rows="3" required autocomplete="street-address"></textarea></label>
+        <label class="field" for="co-notes"><span>Notes <em>(optional)</em></span><textarea id="co-notes" name="notes" rows="2"></textarea></label>
+        <label class="check" for="co-allergen">
+          <input type="checkbox" id="co-allergen" name="allergen" required>
+          <span id="allergen-text">I understand these sauces are made in a kitchen that handles tree nuts.</span>
+        </label>
+        <button type="submit" class="btn btn-primary btn-block" id="place-btn">Place order</button>
+        <p class="form-error" id="form-error" role="alert"></p>
+      </form>
+
+      <div class="thanks" id="thanks" hidden>
+        <h3>Thanks! Daddy's on it.</h3>
+        <p>Order <strong id="order-id"></strong> is in. We'll email you to confirm the details, then start mixing.</p>
+        <a class="btn" href="#build" id="new-order-btn">Build another</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-inner">
+      <div class="footer-brand">
+        <svg class="footer-mark"><use href="#dad"/></svg>
+        <div>
+          <svg class="footer-wordmark" role="img" aria-label="Chaddy Daddy's"><use href="#wordmark"/></svg>
+          <p>Hot sauce built by you, made by Daddy.</p>
+        </div>
+      </div>
+      <nav class="footer-links" aria-label="Footer">
+        <p class="footer-label">Shop</p>
+        <a href="#build">Build a bottle</a>
+        <a href="#how">How it works</a>
+        <a href="#faq">Ask Daddy</a>
+      </nav>
+      <div class="footer-contact">
+        <p class="footer-label">Say hi</p>
+        <a data-shop-email href="#">hello@chaddydaddys.com</a>
+      </div>
+    </div>
+    <div class="wrap footer-legal">
+      <p><b>Allergen notice:</b> all sauces are made in a kitchen that handles tree nuts.</p>
+      <p>&copy; <span id="year"></span> Chaddy Daddy's Hot Sauce</p>
+    </div>
+  </footer>
+
+  <div class="mobile-bar" id="mobile-bar" hidden>
+    <div class="vessel vessel-mini" id="mini-vessel" aria-hidden="true"></div>
+    <div class="mobile-bar-total"><span id="mobile-count">Empty bottle</span><strong id="mobile-total">$0</strong></div>
+    <button type="button" class="btn btn-primary" id="mobile-add-btn">Add to order</button>
+  </div>
+
+  <noscript><p class="noscript">Please turn on JavaScript to build your sauce.</p></noscript>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
