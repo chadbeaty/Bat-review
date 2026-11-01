@@ -83,7 +83,7 @@ suite("new bat signals", () => {
     await db.owner("insert into user_roles (user_id, role) values ($1, 'moderator')", [moderator.id]);
     [{ id: batsCategory }] = await db.owner<{ id: string }>("select id from product_categories where slug = 'bats'");
     products = (
-      await db.owner<{ id: string }>("select id from products where catalog_status = 'published' order by slug limit 10")
+      await db.owner<{ id: string }>("select id from products where catalog_status = 'published' order by slug limit 12")
     ).map((r) => r.id);
   }, 60_000);
 
@@ -246,6 +246,38 @@ suite("new bat signals", () => {
       ).rejects.toThrow(/check constraint/);
     });
 
+    it("removes the verified-owner mark when the order is refunded", async () => {
+      const orderId = await orderFor(product(10), "completed");
+      expect((await fileReport(buyer, product(10))).ownership_verified).toBe(true);
+      await db.as("service", "update orders set order_status = 'refunded' where id = $1", [orderId]);
+      const [row] = await db.owner<{ ownership_verified: boolean; ownership_verified_via: string | null }>(
+        "select ownership_verified, ownership_verified_via from owner_reports where user_id = $1 and product_id = $2",
+        [buyer.id, product(10)]
+      );
+      expect(row).toEqual({ ownership_verified: false, ownership_verified_via: null });
+    });
+
+    it("keeps the mark after a refund when the member has another completed order for that bat, or a staff photo check", async () => {
+      const first = await orderFor(product(11), "completed");
+      await orderFor(product(11), "completed");
+      expect((await fileReport(buyer, product(11))).ownership_verified).toBe(true);
+      await db.as("service", "update orders set order_status = 'refunded' where id = $1", [first]);
+      const [stillVerified] = await db.owner<{ ownership_verified: boolean }>(
+        "select ownership_verified from owner_reports where user_id = $1 and product_id = $2",
+        [buyer.id, product(11)]
+      );
+      expect(stillVerified.ownership_verified).toBe(true);
+
+      // A report verified by staff from a photo is not affected by a refund.
+      const orderId = await orderFor(product(3), "completed");
+      await db.as("service", "update orders set order_status = 'cancelled' where id = $1", [orderId]);
+      const photoChecked = await db.owner<{ ownership_verified_via: string }>(
+        "select ownership_verified_via from owner_reports where user_id = $1 and product_id = $2 and ownership_verified",
+        [buyer.id, product(3)]
+      );
+      expect(photoChecked.map((r) => r.ownership_verified_via)).toContain("staff_photo_review");
+    });
+
     it("shows published reports to visitors but hidden ones only to the owner and moderators", async () => {
       const [r] = await db.owner<{ id: string }>("select id from owner_reports where user_id = $1 and product_id = $2", [stranger.id, product(2)]);
       expect((await db.as("anon", "select id from owner_reports where id = $1", [r.id])).length).toBe(1);
@@ -353,7 +385,13 @@ suite("new bat signals", () => {
       expect(await maturity(fresh)).toEqual({ maturity: "early_reports", reporting_owners: 5 });
     });
 
-    it("calls a bat established once it is past the 120-day window", async () => {
+    it("calls an older bat with too few owner reports limited data, not established", async () => {
+      await db.owner("update products set release_date = current_date - 400, release_status = 'released' where id = $1", [undated]);
+      expect(await maturity(undated)).toEqual({ maturity: "limited_data", reporting_owners: 0 });
+      await db.owner("update products set release_date = null, release_status = null where id = $1", [undated]);
+    });
+
+    it("calls a bat established once it is past the 120-day window with at least 5 owners", async () => {
       await db.owner("update products set release_date = current_date - 121 where id = $1", [fresh]);
       expect((await maturity(fresh)).maturity).toBe("established");
       await db.owner("update products set release_date = current_date - 120 where id = $1", [fresh]);

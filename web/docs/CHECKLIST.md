@@ -34,6 +34,16 @@
 - ✅ CI workflow (`.github/workflows/web-ci.yml`)
 - 🟡 Hosted environment: needs your Supabase project (paused) and a Vercel project
 
+## New-bat signals (database done, pages come with Phase 6)
+
+- ✅ Release date and status; maturity labels new release / early reports / established / limited data
+- ✅ First Swings owner check-ins (one per week, no edits or deletes), automatic verified-owner mark from completed orders, removed on refund
+- ✅ Durability tracker (needs at least 3 owners, no user ids), lineage links, review alerts
+- ✅ Lineage map for 2026–27 bats (`data/lineage.json`) and research notes (`docs/NEW-BAT-RESEARCH.md`)
+- ⬜ Load `data/lineage.json` into `product_lineage` and add release dates for 2026–27 models
+- ⬜ Model page sections: release badge, "What changed from last year", predecessor reviews (labeled), First Swings form and results, durability chart, reviewed alternatives, warranty line, alert button
+- ⬜ Alert notifier (after Resend is set up)
+
 ## Phase 2: Catalog and listings (next)
 
 - ⬜ Shop and category pages with search and filters (Postgres full-text plus trigram search for misspellings)

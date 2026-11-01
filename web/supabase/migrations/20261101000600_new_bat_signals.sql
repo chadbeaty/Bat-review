@@ -174,6 +174,33 @@ create trigger orders_verify_owner_reports after update of order_status on publi
   for each row when (new.order_status = 'completed' and old.order_status is distinct from 'completed')
   execute function public.verify_owner_reports_for_order();
 
+-- A refunded or cancelled order no longer proves ownership. Reports verified through a marketplace order lose
+-- the mark unless the member has another completed order for that model. Staff photo checks are kept.
+create or replace function public.unverify_owner_reports_for_order()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  update public.owner_reports r
+  set ownership_verified = false, ownership_verified_via = null
+  where r.user_id = new.buyer_id
+    and r.ownership_verified_via = 'marketplace_order'
+    and r.product_id in (select oi.product_id from public.order_items oi where oi.order_id = new.id)
+    and not exists (
+      select 1 from public.orders o
+      join public.order_items oi on oi.order_id = o.id
+      where o.buyer_id = new.buyer_id and o.order_status = 'completed' and o.id <> new.id and oi.product_id = r.product_id
+    );
+  return null;
+end;
+$$;
+
+create trigger orders_unverify_owner_reports after update of order_status on public.orders
+  for each row when (new.order_status in ('refunded', 'cancelled') and old.order_status is distinct from new.order_status)
+  execute function public.unverify_owner_reports_for_order();
+
 -- ---------------------------------------------------------------------------
 -- Review alerts: "tell me when this bat gets its first review / enough early reports / its first listing".
 -- The server's notifier reads these and sets last_notified_at.
@@ -237,7 +264,8 @@ create policy "Own review alerts" on public.review_alerts
 --   new_release   announced, on pre-order, or released within new_release_window_days, with fewer than
 --                 early_report_threshold owners reporting
 --   early_reports still inside that window, with at least early_report_threshold owners reporting
---   established   released longer ago than the window
+--   established   released longer ago than the window, with at least early_report_threshold owners reporting
+--   limited_data  released longer ago than the window, but too few owners have reported to say much
 --   null          no release date or status recorded, so we don't claim either way
 -- "Owners reporting" counts distinct members with a published report, so check-ins don't inflate it.
 create view public.product_review_maturity
@@ -269,7 +297,8 @@ select
   case
     when p.release_status in ('announced', 'pre_order') or p.release_date >= current_date - s.window_days then
       case when coalesce(c.reporting_owners, 0) < s.threshold then 'new_release' else 'early_reports' end
-    when p.release_date is not null then 'established'
+    when p.release_date is not null then
+      case when coalesce(c.reporting_owners, 0) >= s.threshold then 'established' else 'limited_data' end
   end as maturity
 from public.products p
 cross join settings s
