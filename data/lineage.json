@@ -1,0 +1,1891 @@
+{
+ "generated": "2026-11-01",
+ "entries": [
+  {
+   "bat_id": "easton-alpha-2pc-loaded-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2025 Easton Alpha 2-Piece Loaded 12.75\" USSSA (ESU5ALL)"
+   },
+   "siblings": [],
+   "changes": [
+    "barrel 12.75\" (2025) -> 12.5\" (2026)",
+    "barrel tech named '232 Technology' (2025) vs '232 Flex+' (2026) in retailer listings",
+    "carbon: HDK23 (2025) vs HDK50 cited by one 2026 retailer listing (unconfirmed)",
+    "CXN MC+ connection listed for both years"
+   ],
+   "confidence": "medium",
+   "basis": "Same line, stamp, two-piece end-load build in consecutive years per retailer listings; the catalog's 2025 Alpha is a 1-piece balanced bat, so it is not the predecessor.",
+   "sources": [
+    "https://cheapbats.com/products/2026-easton-alpha-loaded-usssa-slowpitch-softball-bat-2-piece-12-5-barrel-esu6all",
+    "https://www.closeoutbats.com/easton-alpha-esu5all.html",
+    "https://reach.dog/shop/hb-sports-inc/products/2025-easton-alpha-12-75-loaded-usssa-slowpitch-softball-bat-esu5all",
+    "https://slopitchcentral.com/product-reviews/easton-alpha-2-pc-loaded-1275-usssa"
+   ]
+  },
+  {
+   "bat_id": "easton-alpha-2pc-loaded-usa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2025 Easton Alpha Loaded 2-Piece USA (ESA5ALL)"
+   },
+   "siblings": [],
+   "changes": [
+    "barrel 12.75\" (2025, per Easton) -> 12.5\" (2026)",
+    "other construction changes unknown"
+   ],
+   "confidence": "medium",
+   "basis": "Same line, USA stamp, two-piece 0.5 oz end-load build in consecutive years; Easton lists the 2025 ESA5ALL with a 12.75\" barrel.",
+   "sources": [
+    "https://easton.rawlings.com/product/ESA5ALL.html",
+    "https://www.closeoutbats.com/easton-alpha-esa5all.html",
+    "https://cheapbats.com/collections/slowpitch-softball-bats/products/2026-easton-alpha-loaded-usa-slowpitch-softball-bat-2-piece-12-5-barrel-esa6all"
+   ]
+  },
+  {
+   "bat_id": "easton-empire-connell-senior-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "easton-empire-rulli-senior-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "easton-hype-fire-1pc-loaded-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "easton-hype-fire-2pc-usa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "easton-marsh-1pc-loaded-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "easton-marsh-2pc-loaded-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "easton-power-brigade-1pc-loaded-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "easton-rival-1pc-dual-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "easton-ronin-240-alloy-dual-2027",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "load: the earlier Ronin 240 (SP21RA240, 2021) is balanced; the 2027 ESD7RNL is end-loaded",
+    "both are one-piece ATAC alloy with a 12\" barrel per listings"
+   ],
+   "confidence": "low",
+   "basis": "The only earlier Ronin 240 found is a 2021 balanced model, so there is no like-for-like previous-year predecessor.",
+   "sources": [
+    "https://easton.rawlings.com/product/SP21RA240.html",
+    "https://cheapbats.com/products/2027-easton-ronin-240-alloy-slowpitch-softball-bat-loaded-esd7rnl"
+   ]
+  },
+  {
+   "bat_id": "easton-stealth-camo-1pc-loaded-usssa-2027",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No predecessor found; its SKU ESU6STHC1L uses Easton's 2026 code ('ESU6'), which hints at a 2026-season build, but no source ties it to a specific 2026 model.",
+   "sources": []
+  },
+  {
+   "bat_id": "easton-tantrum-2pc-balanced-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "easton-tantrum-2pc-loaded-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2025 Easton Tantrum 2-Piece 13\" Loaded USSSA (ESU5TNTL)"
+   },
+   "siblings": [],
+   "changes": [
+    "barrel length unclear: our data says 12.75\", but Easton lists both ESU5TNTL and the 2026 ESU6TNTL with 13\" barrels",
+    "G4orce barrel: one review calls it the 2026 upgrade, but 2025 Tantrum listings already name G4S G4orce, so the change is unconfirmed",
+    "Flex 180 handle listed on Easton's 2026 page; 2025 handle unknown"
+   ],
+   "confidence": "medium",
+   "basis": "Same line, USSSA stamp and two-piece loaded build in consecutive years; barrel length in our data conflicts with Easton's listing.",
+   "sources": [
+    "https://easton.rawlings.com/product/ESU6TNTL.html",
+    "https://easton.rawlings.com/product/ESU5TNTL.html",
+    "https://closeoutbats.com/easton-tantrum-esu5tntl.html",
+    "https://www.thenationalpastimemuseum.com/?p=6824"
+   ]
+  },
+  {
+   "bat_id": "easton-tantrum-1pc-balanced-usa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "easton-tantrum-black-loaded-usa-2026",
+   "predecessor": {
+    "bat_id": "easton-tantrum-2pc-loaded-usa-2025",
+    "name": "2025 Easton Tantrum 2-Piece 12.75\" Loaded USA (ESA5TNTL)"
+   },
+   "siblings": [],
+   "changes": [
+    "same barrel (12.75\"), build, load and price in our data",
+    "new Black finish",
+    "technology changes unknown"
+   ],
+   "confidence": "medium",
+   "basis": "Same line, USA stamp and same specs in our data in consecutive years.",
+   "sources": [
+    "https://easton.rawlings.com/product/ESA5TNTL.html",
+    "https://smashitsports.com/products/2026-easton-tantrum-black-2-piece-loaded-usa-asa-slowpitch-softball-bat-esa6tntbkl"
+   ]
+  },
+  {
+   "bat_id": "easton-tantrum-motherload-1pc-senior-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "easton-tantrum-1pc-loaded-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2025 Easton Tantrum 12.75\" 1-Piece Loaded USSSA (ESU5TNT1L)"
+   },
+   "siblings": [],
+   "changes": [
+    "barrel 12.75\" both years",
+    "Flex 150 handle listed for both years",
+    "G4S G4orce barrel already listed on the 2025 model",
+    "price: Easton listed 2025 at $279.99; our 2026 price is $299.99"
+   ],
+   "confidence": "medium",
+   "basis": "Same line, stamp, one-piece loaded build and 12.75\" barrel in consecutive years per Easton and retailer listings; no source states it is the same platform.",
+   "sources": [
+    "https://easton.rawlings.com/product/ESU5TNT1L.html",
+    "https://closeoutbats.com/easton-tantrum-esu5tnt1l.html",
+    "https://smashitsports.com/products/2026-easton-tantrum-12-75-1-piece-loaded-usssa-slowpitch-softball-bat-esu6tnt1l"
+   ]
+  },
+  {
+   "bat_id": "easton-thing-2pc-loaded-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "demarini-corndog-pro-maple-dual-2027",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2026 DeMarini CornDog Wood Composite USA/USSSA"
+   },
+   "siblings": [],
+   "changes": [
+    "unknown (no 2026 or 2027 spec sheet found)"
+   ],
+   "confidence": "low",
+   "basis": "Same line and dual stamp in consecutive years per retailer listings; barrel and load of the 2026 version are not confirmed.",
+   "sources": [
+    "https://www.dickssportinggoods.com/p/demarini-corndog-wood-composite-usa-usssa-slowpitch-bat-26demasoftcrndgwdccws/26demasoftcrndgwdccws",
+    "https://www.als.com/demarini-corndog-slowpitch-softball-bat-2027-10627573/p"
+   ]
+  },
+  {
+   "bat_id": "demarini-the-culture-usssa-2027",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2026 DeMarini The Culture 13\" End-Loaded USSSA"
+   },
+   "siblings": [],
+   "changes": [
+    "unknown (no 2026 spec sheet found)"
+   ],
+   "confidence": "low",
+   "basis": "Our families data puts The Culture in DeMarini's 2026 lineup and only a reseller listing names a 2026 13\" end-loaded version; the line began with a 2025 13\" end-loaded model (WBD2570010).",
+   "sources": [
+    "https://reach.dog/shop/hb-sports-inc/products/2025-demarini-the-culture-13-usssa-slowpitch-softball-bat-wbd2570010"
+   ]
+  },
+  {
+   "bat_id": "demarini-flipper-usa-2027",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2026 DeMarini Flipper OG USA 13\" End-Loaded (WBD2613010)"
+   },
+   "siblings": [],
+   "changes": [
+    "load: 2026 Flipper OG is end-loaded; 2027 is listed as mid-loaded (Headbanger) or balanced (Closeout Bats)",
+    "2026 OG listed with Divergence composite barrel and ZnX alloy handle; 2027 construction unknown",
+    "price: 2026 MSRP $319.95 -> 2027 about $299.95"
+   ],
+   "confidence": "low",
+   "basis": "Previous-year Flipper with the same USA stamp and 13\" two-piece build, but the swing weight changed, so it is not a like-for-like replacement.",
+   "sources": [
+    "https://spcsports.com/products/2026-demarini-flipper-og-asa-usa-slowpitch-softball-bat-wbd2613010",
+    "https://www.headbangersports.com/products/2027-demarini-flipper-13-mid-loaded-usa-slowpitch-softball-bat",
+    "https://www.closeoutbats.com/demarini-flipper-wbd2734010.html"
+   ]
+  },
+  {
+   "bat_id": "demarini-juggy-extended-usa-2027",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2026 DeMarini Juggy Extended USA 13\" End-Loaded (WBD2633010)"
+   },
+   "siblings": [],
+   "changes": [
+    "stamp: retailers list the 2027 Juggy Extended (WBD2680010) as dual USA/USSSA; our catalog lists USA only",
+    "both listed with a 13\" double-wall stacked composite barrel and TR3 F.L.O handle",
+    "price: 2026 MSRP $319.95 -> 2027 about $299.95"
+   ],
+   "confidence": "medium",
+   "basis": "Same line, 13\" two-piece end-load build and USA stamp in consecutive years per retailer listings.",
+   "sources": [
+    "https://spcsports.com/products/2026-demarini-juggy-ext-asa-usa-slowpitch-softball-bat-wbd2633010",
+    "https://www.headbangersports.com/products/2027-demarini-juggy-extended-13-endload-usssa-usa-dual-stamp-slowpitch-softball-bat-wbd2680010.oembed",
+    "https://www.closeoutbats.com/demarini-juggy-wbd2680010.html"
+   ]
+  },
+  {
+   "bat_id": "demarini-kingpin-senior-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "demarini-mercy-usa-2027",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2026 DeMarini Mercy Balanced USA (WBD2612010)"
+   },
+   "siblings": [],
+   "changes": [
+    "both listed as two-piece, balanced, double-wall stacked composite barrel; no confirmed construction change",
+    "2027 listed with stiff 4.One composite handle; 2026 handle wording differs",
+    "2026 barrel length unclear (one retailer lists both 12\" and 13\")"
+   ],
+   "confidence": "medium",
+   "basis": "Same line, USA stamp, two-piece balanced build in consecutive years per retailer listings.",
+   "sources": [
+    "https://closeoutbats.com/demarini-mercy-wbd2612010.html",
+    "https://www.justbats.com/product/demarini-mercy-13-balanced-usa-slow-pitch-softball-bat--wbd2735010/40457/",
+    "https://spcsports.com/products/2027-demarini-mercy-usa-slowpitch-softball-bat-wbd2735010"
+   ]
+  },
+  {
+   "bat_id": "demarini-merciless-usa-2027",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "demarini-stadium-usssa-2027",
+   "predecessor": {
+    "bat_id": "demarini-stadium-13-endload-usssa-2026",
+    "name": "2026 DeMarini Stadium 13\" End-Loaded USSSA"
+   },
+   "siblings": [],
+   "changes": [
+    "same barrel (13\"), build and load in our data",
+    "price: our data $279.95 both years; Headbanger lists the 2027 Stadium (WBD2682010) at $299.95",
+    "technology changes unknown"
+   ],
+   "confidence": "medium",
+   "basis": "Same line, USSSA stamp and same specs in our data in consecutive years.",
+   "sources": [
+    "https://www.headbangersports.com/products/202-demarini-stadium-13-endloaded-slowpitch-softball-bat-wbd2682010"
+   ]
+  },
+  {
+   "bat_id": "demarini-stadium-13-endload-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "demarini-the-standard-usssa-2027",
+   "predecessor": {
+    "bat_id": "demarini-standard-issue-usssa-2026",
+    "name": "2026 DeMarini Standard Issue USSSA (WBD2622010)"
+   },
+   "siblings": [],
+   "changes": [
+    "name: Standard Issue -> The Standard",
+    "price: $229.95 -> $249.95 in our data",
+    "barrel: our data 13\" both years, but Headbanger lists the 2027 The Standard (WBD2683010) as 13.5\"",
+    "swing weight wording conflicts on Headbanger's 2027 listing (midload text, endload title)"
+   ],
+   "confidence": "medium",
+   "basis": "Same line, USSSA stamp and same specs in our data in consecutive years; a retailer's 13.5\" barrel listing for 2027 conflicts with our data.",
+   "sources": [
+    "https://www.headbangersports.com/products/2027-demarini-the-standard-13-5-endload-slowpitch-softball-bat-wbd2683010.oembed",
+    "https://spcsports.com/products/2027-demarini-the-standard-usssa-slowpitch-softball-bat-wbd2683010"
+   ]
+  },
+  {
+   "bat_id": "demarini-standard-issue-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "demarini-twisted-mistress-midload-usssa-2027",
+   "predecessor": {
+    "bat_id": "demarini-twisted-mistress-v2-usssa-2026",
+    "name": "2026 DeMarini Twisted Mistress V2 13\" USSSA (WBD2608010)"
+   },
+   "siblings": [],
+   "changes": [
+    "load: our data lists the 2026 V2 as end-loaded, but a review and some retailers call the 2026 V2 mid-loaded, so unknown",
+    "Headbanger says the 2027 mid-load swings closer to an end-load",
+    "price: our data $299.95 -> $249.95; Headbanger lists the 2027 mid-load (WBD2685010) at $299.95",
+    "2027 listed with stiff 4.One composite handle"
+   ],
+   "confidence": "low",
+   "basis": "Previous-year non-signature Twisted Mistress with the same stamp and 13\" two-piece build; sources disagree on whether its load matches.",
+   "sources": [
+    "https://www.headbangersports.com/products/2027-demarini-twisted-mistress-13-mid-loaded-usssa-slowpitch-softball-bat",
+    "https://www.thenationalpastimemuseum.com/?p=6828",
+    "https://spcsports.com/products/2027-demarini-twisted-mistress-usssa-slowpitch-softball-bat-wbd2685010"
+   ]
+  },
+  {
+   "bat_id": "demarini-yates-twisted-mistress-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [
+    "demarini-twisted-mistress-v2-usssa-2026"
+   ],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "demarini-twisted-mistress-v2-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [
+    "demarini-yates-twisted-mistress-usssa-2026"
+   ],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "demarini-uprising-dual-2027",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2026 DeMarini Uprising Slowpitch (one-piece ZnX alloy)"
+   },
+   "siblings": [],
+   "changes": [
+    "2026 listed as one-piece single-wall ZnX alloy; its stamp, barrel and load are not confirmed",
+    "price: Academy listed the 2026 at $109.99; our 2027 price is $129.95"
+   ],
+   "confidence": "low",
+   "basis": "Same line only; the 2026 version's specs are not confirmed.",
+   "sources": [
+    "https://www.academy.com/p/demarini-2026-uprising-slowpitch-softball-bat-7"
+   ]
+  },
+  {
+   "bat_id": "demarini-vanilla-gorilla-usssa-2027",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2026 DeMarini Jason Magnum Vanilla Gorilla 12.5\" End-Loaded USSSA (WBD2614010)"
+   },
+   "siblings": [],
+   "changes": [
+    "barrel: our data says 13\", but Headbanger lists the 2027 WBD2681010 at 12.5\", the same as 2026",
+    "price $299.95 both years",
+    "a 2026 V2 (WBD2619010) was also sold"
+   ],
+   "confidence": "medium",
+   "basis": "Same signature line, USSSA stamp and end-loaded two-piece build in consecutive years per retailer listings.",
+   "sources": [
+    "https://www.justbats.com/product/demarini-jason-magnum-vanilla-gorilla-12-5--endloaded-usssa-slow-pitch-softball-bat--wbd2614010/38883",
+    "https://www.headbangersports.com/products/2027-demarini-jason-magnum-vanilla-gorilla-12-5-endload-slowpitch-softball-bat-wbd2681010",
+    "https://spcsports.com/products/2026-demarini-vanilla-gorilla-v2-usssa-slowpitch-softball-bat-wbd2619010"
+   ]
+  },
+  {
+   "bat_id": "miken-freak-whiteout-maxload-usssa-2027",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [
+    "miken-freak-fire-maxload-usssa-2027"
+   ],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "Several 2026 USSSA 2-piece 13\" Maxload Freaks in the catalog have the same specs (miken-freak-splatter-maxload-usssa-2026, miken-tunnel-to-towers-usssa-2026, miken-freak30-maxload-usssa-2026), so no single predecessor can be named; its SKU MSU6FWCL uses Miken's 2026 code ('MSU6'), a hint of a 2026-season platform, not a confirmation.",
+   "sources": []
+  },
+  {
+   "bat_id": "miken-freak-fire-maxload-usssa-2027",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [
+    "miken-freak-whiteout-maxload-usssa-2027"
+   ],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "Several 2026 USSSA 2-piece 13\" Maxload Freaks in the catalog have the same specs (miken-freak-splatter-maxload-usssa-2026, miken-tunnel-to-towers-usssa-2026, miken-freak30-maxload-usssa-2026), so no single predecessor can be named; no listing for this bat was found.",
+   "sources": []
+  },
+  {
+   "bat_id": "miken-freak-black-maxload-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "miken-freak-black-maxload-usa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "miken-freak-ice-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "miken-freak-splatter-maxload-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2025 Miken Freak 2-Piece Maxload USSSA"
+   },
+   "siblings": [
+    "miken-tunnel-to-towers-usssa-2026",
+    "miken-freak30-maxload-usssa-2026",
+    "miken-freak-maxload-2pc-usssa-2026"
+   ],
+   "changes": [
+    "one review says the Splatter name and paint are new with no barrel technology change from 2025 (V2-Flex)",
+    "barrel: our data says 13\", but retailers sell the Freak Splatter 2-Piece Maxload USSSA as MSU6FRKL with a 13.5\" barrel",
+    "no 2025 USSSA 2-piece Maxload SKU was found to confirm the predecessor"
+   ],
+   "confidence": "low",
+   "basis": "Retailers list the Freak Splatter 2-Piece Maxload USSSA under the same SKU as miken-freak-maxload-2pc-usssa-2026 (MSU6FRKL); the 'same bat as 2025' claim comes from one review site only.",
+   "sources": [
+    "https://www.thenationalpastimemuseum.com/?p=6256",
+    "https://smashitsports.com/products/2026-miken-freak-splatter-2-piece-maxload-usssa-slowpitch-softball-bat-msu6frkl",
+    "https://ernies.ca/products/miken-2026-freak-splatter-2-piece-maxload-13-5-usssa-slowpitch-bat"
+   ]
+  },
+  {
+   "bat_id": "miken-freak-1pc-maxload-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2025 Miken Freak 13\" 1-Piece Maxload USSSA (MSU5FRK1L)"
+   },
+   "siblings": [],
+   "changes": [
+    "barrel 13\" (2025) -> 13.5\" (2026)",
+    "2026 listed with V2-Flex barrel; 2025 listed with Mid Flex handle; 2026 handle unknown"
+   ],
+   "confidence": "low",
+   "basis": "Same line, stamp and one-piece Maxload build in consecutive years, but the barrel length changed.",
+   "sources": [
+    "https://miken.rawlings.com/product/MSU5FRK1L.html",
+    "https://smashitsports.com/products/2025-miken-freak-13-1-piece-maxload-usssa-slowpitch-softball-bat-msu5frk1l",
+    "https://cheapbats.com/products/2026-miken-freak-maxload-usssa-slowpitch-softball-bat-1-piece-13-5-barrel-msu6frk1l"
+   ]
+  },
+  {
+   "bat_id": "miken-super-freak-highlighter-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [
+    "miken-freak-maxload-2pc-usssa-2026"
+   ],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "miken-super-freak-highlighter-usa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [
+    "miken-freak-splatter-maxload-usa-2026"
+   ],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "miken-tunnel-to-towers-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [
+    "miken-freak-splatter-maxload-usssa-2026",
+    "miken-freak30-maxload-usssa-2026"
+   ],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "miken-freak-maxload-2pc-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2025 Miken Freak 2-Piece Maxload USSSA"
+   },
+   "siblings": [
+    "miken-super-freak-highlighter-usssa-2026",
+    "miken-freak-splatter-maxload-usssa-2026"
+   ],
+   "changes": [
+    "13.5\" V2-Flex barrel and 0.5 oz Maxload listed for 2026",
+    "one review says there is no barrel technology change from 2025; no 2025 USSSA 2-piece Maxload SKU was found to confirm"
+   ],
+   "confidence": "low",
+   "basis": "Retailers sell the same SKU (MSU6FRKL) as the Freak Splatter 2-Piece Maxload USSSA; the 2025 relationship rests on one review site.",
+   "sources": [
+    "https://miken.rawlings.com/product/MSU6FRKL.html",
+    "https://smashitsports.com/products/2026-miken-freak-splatter-2-piece-maxload-usssa-slowpitch-softball-bat-msu6frkl",
+    "https://www.thenationalpastimemuseum.com/?p=6256"
+   ]
+  },
+  {
+   "bat_id": "miken-freak-balanced-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2025 Miken Freak Balanced 2-Piece 13.5\" USSSA (MSU5FRKB)"
+   },
+   "siblings": [],
+   "changes": [
+    "barrel 13.5\" both years",
+    "2025 listed with V2 FLEX barrel, MID FLEX handle and A1 knob; 2026 listed with V2-Flex barrel; no confirmed change",
+    "2026 also sold as the 'Freak Splatter' 2-piece balanced"
+   ],
+   "confidence": "medium",
+   "basis": "Same line, stamp, two-piece balanced build and 13.5\" barrel in consecutive years per retailer listings.",
+   "sources": [
+    "https://smashitsports.com/products/2025-miken-freak-13-5-2-piece-balanced-usssa-slowpitch-softball-bat-msu5frkb",
+    "https://ernies.ca/products/2025-freak-balanced-usssa-2-piece-slowpitch-bat",
+    "https://cheapbats.com/products/2026-miken-freak-balanced-usssa-slowpitch-softball-bat-2-piece-13-5-barrel-msu6frkb",
+    "https://smashitsports.com/products/2026-miken-freak-splatter-2-piece-balanced-usssa-slowpitch-softball-bat-msu6frkb"
+   ]
+  },
+  {
+   "bat_id": "miken-freak-balanced-usa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2025 Miken Freak Balanced 2-Piece 13.5\" USA (MSA5FRKB)"
+   },
+   "siblings": [],
+   "changes": [
+    "2025 USA version listed with MAX-FLEX barrel tech; 2026 changes unknown"
+   ],
+   "confidence": "medium",
+   "basis": "Same line, USA stamp, two-piece balanced build and 13.5\" barrel in consecutive years per Miken and retailer listings.",
+   "sources": [
+    "https://miken.rawlings.com/product/MSA5FRKB.html",
+    "https://smashitsports.com/products/2025-miken-freak-13-5-2-piece-balanced-usa-asa-slowpitch-softball-bat-msa5frkb",
+    "https://cheapbats.com/products/2026-miken-freak-balanced-usa-slowpitch-softball-bat-2-piece-13-5-barrel-msa6frkb"
+   ]
+  },
+  {
+   "bat_id": "miken-freak-splatter-maxload-usa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2025 Miken Freak Maxload 2-Piece 13.5\" USA (MSA5FRKL)"
+   },
+   "siblings": [
+    "miken-super-freak-highlighter-usa-2026"
+   ],
+   "changes": [
+    "13.5\" barrel both years",
+    "2025 listed with MID FLEX handle and A1 knob; 2026 changes unknown"
+   ],
+   "confidence": "medium",
+   "basis": "Same line, USA stamp, two-piece Maxload build and 13.5\" barrel in consecutive years per Miken and retailer listings.",
+   "sources": [
+    "https://miken.rawlings.com/product/MSA5FRKL.html",
+    "https://smashitsports.com/products/2025-miken-freak-13-5-2-piece-maxload-usa-asa-slowpitch-softball-bat-msa5frkl",
+    "https://cheapbats.com/products/2026-miken-freak-maxload-usa-slowpitch-softball-bat-2-piece-13-5-barrel-msa6frkl"
+   ]
+  },
+  {
+   "bat_id": "miken-freak30-maxload-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2025 Miken Freak30 2-Piece Maxload USSSA (MSU5F30L)"
+   },
+   "siblings": [
+    "miken-freak-splatter-maxload-usssa-2026",
+    "miken-tunnel-to-towers-usssa-2026"
+   ],
+   "changes": [
+    "unknown (2025 barrel length not confirmed)"
+   ],
+   "confidence": "low",
+   "basis": "A 2025 Freak30 2-piece Maxload USSSA is listed by Smash It Sports, but its specs could not be matched.",
+   "sources": [
+    "https://canada.smashitsports.com/products/2025-miken-freak30-2-piece-maxload-usssa-slowpitch-softball-bat-msu5f30l",
+    "https://smashitsports.com/products/2026-miken-freak30-2-piece-maxload-usssa-slowpitch-softball-bat-msu6f30l.oembed"
+   ]
+  },
+  {
+   "bat_id": "miken-hb12-retro-endload-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "miken-kp23-2pc-maxload-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2025 Miken KP23 12.5\" 2-Piece Maxload USSSA (MSU5KPL)"
+   },
+   "siblings": [],
+   "changes": [
+    "TRI-ZONE barrel on both years per review",
+    "handle: one review says MID FLEX (2025) -> PRO FLEX (2026), but Miken's 2025 page already lists PRO FLEX, so unknown",
+    "price: one retailer listed 2025 at $279.99; our 2026 price is $299.99"
+   ],
+   "confidence": "medium",
+   "basis": "Same signature line, stamp, two-piece Maxload build and 12.5\" barrel in consecutive years; one review says the platform has no construction changes.",
+   "sources": [
+    "https://www.thenationalpastimemuseum.com/?p=6796",
+    "https://miken.rawlings.com/product/MSU5KPL.html",
+    "https://smashitsports.com/products/2025-miken-kp23-maxload-2-piece-usssa-slowpitch-softball-bat-msu5kpl",
+    "https://cheapbats.com/products/2026-miken-kp23-maxload-usssa-slowpitch-softball-bat-2-piece-12-5-barrel-msu6kp125l"
+   ]
+  },
+  {
+   "bat_id": "miken-kp23-1pc-maxload-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2025 Miken KP23 14\" 1-Piece Maxload USSSA (MSU514KP1L)"
+   },
+   "siblings": [],
+   "changes": [
+    "14\" barrel both years",
+    "2025 listed with TRI-ZONE barrel and MID FLEX handle; 2026 handle unknown",
+    "price $299.99 both years"
+   ],
+   "confidence": "medium",
+   "basis": "Same signature line, stamp, one-piece Maxload build and 14\" barrel in consecutive years per Miken and retailer listings.",
+   "sources": [
+    "https://miken.rawlings.com/product/MSU514KP1L.html",
+    "https://smashitsports.com/products/2025-miken-kp23-maxload-1-piece-usssa-slowpitch-softball-bat-msu514kp1l",
+    "https://smashitsports.com/products/2026-miken-kp23-1-piece-maxload-usssa-slowpitch-softball-bat-msu6kp141l"
+   ]
+  },
+  {
+   "bat_id": "miken-kp23-maxload-usa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2025 Miken KP23 12.5\" Maxload USA (MSA5KPL)"
+   },
+   "siblings": [],
+   "changes": [
+    "barrel tech: one review says the 2026 USA KP23 uses MAX FLEX instead of TRI-ZONE",
+    "barrel: our data says 12\", but retailers list both MSA5KPL and the 2026 MSA6KPL at 12.5\""
+   ],
+   "confidence": "medium",
+   "basis": "Same signature line, USA stamp and two-piece Maxload build in consecutive years per retailer listings; our barrel length conflicts with those listings.",
+   "sources": [
+    "https://www.thenationalpastimemuseum.com/?p=6796",
+    "https://miken.rawlings.com/product/MSA5KPL.html",
+    "https://cheapbats.com/collections/usa-softball-bats/products/2026-miken-kp23-maxload-usa-slowpitch-softball-bat-2-piece-12-5-barrel-msa6kpl"
+   ]
+  },
+  {
+   "bat_id": "miken-mv1-maxload-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "miken-ultra-gamer-supermax-senior-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "miken-ultra-gamer-maxload-senior-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "miken-vicious-maxload-dual-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "worth-amp-alloy-dual-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "worth-bedlam-xl-usa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2025 Worth Bedlam Phil Matte 13.5\" XL 2-Piece USA (WSA5PMBL)"
+   },
+   "siblings": [
+    "worth-bedlam-black-xl-usa-2026"
+   ],
+   "changes": [
+    "signature: Phil Matte (2025) -> Josh Riley (2026)",
+    "barrel: our data says 12.5\", but Cheapbats lists WSA6JRBEDL at 13.5\", the same as WSA5PMBL",
+    "2026 listed with INNER CORE barrel and R-FLEX handle; 2025 tech unknown"
+   ],
+   "confidence": "low",
+   "basis": "Same line, USA stamp and two-piece XL build in consecutive years, but the signature model changed and our barrel length conflicts with retailer listings.",
+   "sources": [
+    "https://www.justbats.com/product/worth-bedlam-13-5--xl-usa-slow-pitch-softball-bat--wsa5pmbl/38830",
+    "https://cheapbats.com/collections/usa-softball-bats/products/2026-worth-josh-riley-bedlam-xl-endload-usa-slowpitch-softball-bat-wsa6jrbedl",
+    "https://worth.rawlings.com/product/W00719950.html"
+   ]
+  },
+  {
+   "bat_id": "worth-bedlam-balanced-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "worth-bedlam-xl-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2025 Worth Bedlam Phil Matte XL 2-Piece 12.5\" USSSA (WSU5PMBL)"
+   },
+   "siblings": [
+    "worth-riley-bedlam-black-xl-usssa-2026"
+   ],
+   "changes": [
+    "barrel: 12.5\" (2025 Phil Matte) vs 13\" in our data for 2026 (unconfirmed)",
+    "2025 listed with S-FLEX barrel tech; 2026 tech unknown"
+   ],
+   "confidence": "low",
+   "basis": "Same line, USSSA stamp and two-piece XL build in consecutive years, but barrel length and signature differ.",
+   "sources": [
+    "https://slopitchcentral.com/en/product-reviews/worth-bedlam-phil-matte-signature-xl-load-2-pc-125-usssa",
+    "https://smashitsports.com/products/2025-worth-bedlam-phil-matte-xl-usssa-slowpitch-softball-bat-wsu5pmbl"
+   ]
+  },
+  {
+   "bat_id": "worth-bedlam-xxl-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "data note: retailers list the 2026 Josh Riley Bedlam XXL (WSU6JRB12X) with a 12\" barrel; our data says 13\""
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": [
+    "https://cheapbats.com/products/2026-worth-josh-riley-bedlam-xxl-endload-usssa-slowpitch-softball-bat-wsu6jrb12x"
+   ]
+  },
+  {
+   "bat_id": "worth-riley-bedlam-black-xl-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [
+    "worth-bedlam-xl-usssa-2026"
+   ],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "worth-bedlam-black-xl-usa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [
+    "worth-bedlam-xl-usa-2026"
+   ],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "worth-krecher-xl-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "data note: retailers list the 2026 Krecher XL (WSU6KJF1L, Jeremy Fry) with a 12.75\" barrel; our data says 13\""
+   ],
+   "confidence": "low",
+   "basis": "One review says the Krecher line has no meaningful changes year over year, but no specific 2025 one-piece Krecher XL was found.",
+   "sources": [
+    "https://www.thenationalpastimemuseum.com/?p=6229",
+    "https://cheapbats.com/products/2026-worth-jeremy-fry-krecher-xl-endload-usssa-slowpitch-softball-bat-wsu6kjf1l"
+   ]
+  },
+  {
+   "bat_id": "worth-silverback-xlt-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "worth-legit-highlighter-xl-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "worth-2-legit-1pc-xl-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "worth-2-legit-2pc-xl-usa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "worth-thumper-xl-usssa-2027",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "ls-genesis-ice-cream-1pc-endload-usssa-2027",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2026 Louisville Slugger Genesis 1-Piece 13\" End-Loaded USSSA (STP / LTM editions)"
+   },
+   "siblings": [],
+   "changes": [
+    "unknown (no 2027 listing for this bat found)"
+   ],
+   "confidence": "low",
+   "basis": "Same line, stamp and one-piece end-loaded build; which 2026 edition it replaces is not stated anywhere.",
+   "sources": [
+    "https://www.chuckies.ca/products/louisville-26-genesis-1-pc-end-load-usssa-stp",
+    "https://www.sportwheels.ca/2026-louisville-genesis-1pc-ltm-autism-speaks-usss.html"
+   ]
+  },
+  {
+   "bat_id": "ls-genesis-royal-geny-14-endload-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "ls-genesis-iron-man-13-balanced-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2025 Louisville Slugger Genesis Ironman 13\" Balanced USSSA (WBL41010102534)"
+   },
+   "siblings": [
+    "ls-genesis-ice-cream-13-balanced-usssa-2026"
+   ],
+   "changes": [
+    "unknown (2026 named 'Iron Man 5.0')"
+   ],
+   "confidence": "medium",
+   "basis": "Same model name, USSSA stamp and 13\" balanced build in consecutive years per a retailer listing; two-piece build of the 2025 version assumed from the Genesis line, not confirmed.",
+   "sources": [
+    "https://reach.dog/shop/exclusivebats/products/2025-louisville-slugger-genesis-ironman-13-balanced-usssa-slowpitch-softball-bat"
+   ]
+  },
+  {
+   "bat_id": "ls-genesis-12-balanced-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [
+    "ls-genesis-splatter-12-balanced-usssa-2026"
+   ],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "ls-genesis-brady-12-maxload-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "ls-genesis-lutheran-powerload-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "ls-genesis-hartling-13-endload-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2025 Louisville Slugger Genesis Scott Hartling 13\" Endload USSSA (WBL41040102534)"
+   },
+   "siblings": [],
+   "changes": [
+    "13\" barrel, 0.5 oz end-load, two-piece both years",
+    "2025 listed with Power X-Coil composite; 2026 Genesis listings say SSP-PowerXcoil; no confirmed change",
+    "price about $359.99 both years"
+   ],
+   "confidence": "medium",
+   "basis": "Same signature model, stamp, two-piece 0.5 oz end-load build and 13\" barrel in consecutive years per retailer listings.",
+   "sources": [
+    "https://reach.dog/shop/exclusivebats/products/2025-louisville-slugger-genesis-scott-hartling-13-endload-usssa-slowpitch-softball-bat-wbl41040102534-1",
+    "https://www.teamtownsports.com/en_CA/sports/slo-pitch/bats/louisville-slugger/2026-genesis-scott-hartling-usssa-2-piece-slowpitch-bat/9040293.html"
+   ]
+  },
+  {
+   "bat_id": "ls-genesis-ussery-13-maxload-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "ls-genesis-splatter-12-balanced-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [
+    "ls-genesis-12-balanced-usssa-2026"
+   ],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "ls-genesis-ice-cream-13-balanced-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [
+    "ls-genesis-iron-man-13-balanced-usssa-2026"
+   ],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "Smash It Sports Canada lists a '2025' Ice Cream 13\" balanced Genesis under a WL26 SKU (WL2601001), so it may be the same bat sold across both years; not confirmed.",
+   "sources": [
+    "https://canada.smashitsports.com/products/2025-louisville-genesis-usssa-13-ice-cream-balance-2-piece-slowpitch-softball-bat-wl2601001.oembed"
+   ]
+  },
+  {
+   "bat_id": "monsta-torch-usa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "2025 Torch MX two-piece listings are mid-load or balanced with 3500/alloy handles and 12.5\" barrels; our 2026 entry is a 12\" end-load, so the relationship is unknown"
+   ],
+   "confidence": "low",
+   "basis": "No 2026 Torch spec sheet was found to match against the 2025 Torch MX models.",
+   "sources": [
+    "https://smashitsports.com/products/2025-monsta-torch-mx-2pc-3500-handle-mid-load-usa-asa-slowpitch-softball-bat",
+    "https://sidelineswap.com/gear/softball/bats/11152364-monsta-2025-usa-asa-mx-torch-slowpitch-softball-bat"
+   ]
+  },
+  {
+   "bat_id": "monsta-senior-torch-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "monsta-trippin-2pc-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "monsta-trippin-buttload-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "monsta-dna-usa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [
+    "monsta-kod-usa-2026"
+   ],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "monsta-kod-usa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [
+    "monsta-dna-usa-2026"
+   ],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "suncoast-melee-3-og-1pc-senior-2027",
+   "predecessor": {
+    "bat_id": null,
+    "name": "Suncoast Melee 3 12\" End-Loaded 1-Piece SSUSA (2021)"
+   },
+   "siblings": [],
+   "changes": [
+    "unknown (no 2027 listing found)"
+   ],
+   "confidence": "low",
+   "basis": "The 'OG' name and 12\" one-piece end-loaded build match the original 2021 Melee 3, but no source confirms it is a re-release, and it is not a consecutive year.",
+   "sources": [
+    "https://smashitsports.com/products/2021-suncoast-melee-3-balanced-13-1-piece-ssusa-senior-slowpitch-softball-bat-sm3sb",
+    "https://www.ebay.de/itm/186714227799"
+   ]
+  },
+  {
+   "bat_id": "suncoast-melee-3-max-balanced-senior-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": "Suncoast Melee Max 2 Balanced 13\" 2-Piece SSUSA (SMM2SB)"
+   },
+   "siblings": [],
+   "changes": [
+    "generation Max 2 -> Max 3",
+    "Max 3 listed with a smaller handle diameter, UFC technology and OPTI-DURA composite",
+    "model year of the Max 2 balanced not confirmed (a Max 2 end-loaded is listed as 2022)"
+   ],
+   "confidence": "low",
+   "basis": "Earlier generation of the same Melee Max balanced 13\" two-piece; not confirmed as the immediate previous-year model.",
+   "sources": [
+    "https://smashitsports.com/products/2026-suncoast-melee-max-3-13-2-piece-balanced-ssusa-senior-slowpitch-softball-bat",
+    "https://smashitsports.com/products/suncoast-melee-max-2-balanced-13-2-piece-ssusa-senior-slowpitch-softball-bat"
+   ]
+  },
+  {
+   "bat_id": "suncoast-melee-megaload-senior-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2025 Suncoast Melee Megaload 13\" 2-Piece SSUSA (SM13SM, Rob Roop signature)"
+   },
+   "siblings": [],
+   "changes": [
+    "unknown (spec differences not listed)"
+   ],
+   "confidence": "high",
+   "basis": "Smash It Sports' 2026 Megaload 13\" 2-piece page refers to the 2025 model as the previous-year version.",
+   "sources": [
+    "https://smashitsports.com/products/2026-suncoast-melee-megaload-13-2-piece-end-loaded-ssusa-senior-slowpitch-softball-bat",
+    "https://smashitsports.com/products/2025-suncoast-melee-megaload-13-2-piece-ssusa-senior-slowpitch-softball-bat"
+   ]
+  },
+  {
+   "bat_id": "victus-beacon-bomb-pop-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": "2025 Victus Beacon 1-Piece End-Loaded USSSA (VSPB1YU)"
+   },
+   "siblings": [],
+   "changes": [
+    "12.75\" barrel and 2 1/4\" diameter both years",
+    "load label 'Endload' (2025 listing) vs 'Ya-Ya Load' (0.5 oz, 2026); likely naming only, not confirmed",
+    "Bomb Pop is a Smash It Sports exclusive paint"
+   ],
+   "confidence": "medium",
+   "basis": "Same line, USSSA stamp, one-piece end-loaded build and 12.75\" barrel in consecutive years per retailer listings.",
+   "sources": [
+    "https://cheapbats.com/collections/baseball-and-softball-equipment/products/victus-beacon-usssa-slowpitch-softball-bat-vspb1yu",
+    "https://smashitsports.com/products/2026-victus-beacon-bomb-pop-ya-ya-load-1-piece-usssa-slowpitch-softball-bat-vspbbp1yusis"
+   ]
+  },
+  {
+   "bat_id": "victus-beacon-travis-clark-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "victus-beacon-neon-2pc-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "victus-vibe-44-senior-2027",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "the earlier Vibe senior (VSPV2NS) is a two-piece 13\" balanced bat; the Vibe 44 is a one-piece 12\" end-load"
+   ],
+   "confidence": "low",
+   "basis": "Same line only; no earlier senior Vibe with matching construction was found.",
+   "sources": [
+    "https://cheapbats.com/products/victus-vibe-ssusa-senior-slowpitch-softball-bat-no-no-load-13-barrel-vspv2ns"
+   ]
+  },
+  {
+   "bat_id": "victus-vibe-36-yaya-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "the earlier Vibe USSSA Ya-Ya (VSPV2YU) is a two-piece 13\" bat; the Vibe 36 is a one-piece 12.75\""
+   ],
+   "confidence": "low",
+   "basis": "Same line only; construction differs from the earlier Vibe USSSA, so it is not a like-for-like predecessor.",
+   "sources": [
+    "https://victussports.com/vibe-usssa-ya-ya-load-slowpitch",
+    "https://cheapbats.com/products/victus-vibe-usssa-slowpitch-softball-bat-ya-ya-load-13-barrel-vspv2yu"
+   ]
+  },
+  {
+   "bat_id": "victus-nox-yaya-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "data note: retailers list the Nox Ya-Ya (VSPNX1YU) as one-piece; our data says two-piece"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": [
+    "https://smashitsports.com/products/2026-victus-nox-ya-ya-load-usssa-slowpitch-softball-bat-vspnx1yu"
+   ]
+  },
+  {
+   "bat_id": "axe-dabacle-13-balanced-dual-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "axe-fury-bravo-13-2pc-endload-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "axe-fury-bravo-13-balanced-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "axe-fury-bravo-13-1pc-endload-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "axe-fury-bravo-12-1oz-endload-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "marucci-cat-1776-loaded-usa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "marucci-gridlock-loaded-usa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "marucci-gridlock-loaded-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "marucci-rckless-resmondo-1pc-loaded-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [
+    "marucci-rckless-cream-1pc-usssa-2026"
+   ],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "Rckless is a new Marucci line launched in September 2026 (per our families data), so there is no predecessor; any siblings listed have the same specs in our data.",
+   "sources": []
+  },
+  {
+   "bat_id": "marucci-rckless-resmondo-2pc-loaded-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [
+    "marucci-rckless-loaded-usssa-2026"
+   ],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "Rckless is a new Marucci line launched in September 2026 (per our families data), so there is no predecessor; any siblings listed have the same specs in our data.",
+   "sources": []
+  },
+  {
+   "bat_id": "marucci-rckless-loaded-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [
+    "marucci-rckless-resmondo-2pc-loaded-usssa-2026"
+   ],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "Rckless is a new Marucci line launched in September 2026 (per our families data), so there is no predecessor; any siblings listed have the same specs in our data.",
+   "sources": []
+  },
+  {
+   "bat_id": "marucci-rckless-balanced-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "Rckless is a new Marucci line launched in September 2026 (per our families data), so there is no predecessor; any siblings listed have the same specs in our data.",
+   "sources": []
+  },
+  {
+   "bat_id": "marucci-rckless-cream-1pc-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [
+    "marucci-rckless-resmondo-1pc-loaded-usssa-2026"
+   ],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "New line launched in 2026, so there is no predecessor; Smash It Sports sells the same SKU (MSPR1LUHRP) as the 'Rckless Rewind'; siblings have the same specs in our data.",
+   "sources": [
+    "https://smashitsports.com/products/2026-marucci-rckless-rewind-loaded-usssa-slowpitch-softball-bat-mspr1luhrp"
+   ]
+  },
+  {
+   "bat_id": "marucci-rckless-america-senior-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "Rckless is a new Marucci line launched in September 2026 (per our families data), so there is no predecessor; any siblings listed have the same specs in our data.",
+   "sources": []
+  },
+  {
+   "bat_id": "combat-cr1-bradley-jones-1pc-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "combat-cr1-bradley-jones-1pc-usa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "combat-cr1-bradley-jones-2pc-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "anarchy-groovy-2pc-balanced-usssa-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "anarchy-groovy-senior-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "anarchy-omen-senior-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  },
+  {
+   "bat_id": "anarchy-ptsd-zatopek-senior-2026",
+   "predecessor": {
+    "bat_id": null,
+    "name": null
+   },
+   "siblings": [],
+   "changes": [
+    "unknown"
+   ],
+   "confidence": "low",
+   "basis": "No previous-year version with the same stamp and construction was found in the catalog or via search; any siblings listed have the same specs in our data (same line, year, build, load, barrel and stamp).",
+   "sources": []
+  }
+ ]
+}
