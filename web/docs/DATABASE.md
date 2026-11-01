@@ -9,6 +9,7 @@ The schema is in `supabase/migrations`, applied in order:
 | `…0300_transactions.sql` | Addresses, orders and order items, payout accounts, shipments and tracking events, webhook events, disputes, reviews, price history, subscriptions, advertising, newsletter, audit log |
 | `…0400_security.sql` | Row Level Security policies, column privileges, the public seller-stats view |
 | `…0500_storage.sql` | Photo buckets and upload rules |
+| `…0600_new_bat_signals.sql` | Product release dates, product lineage, owner reports ("first swings"), review-maturity and durability views, review alerts, the private ownership-proof bucket |
 
 ## How the main tables connect
 
@@ -59,6 +60,18 @@ erDiagram
 | Audit log | | | | admins (read-only for everyone) |
 
 `tests/db/security.test.ts` checks every row of this table against a real database.
+
+## New bat signals
+
+New models have no reviews yet, so `…0600_new_bat_signals.sql` adds honest early signals. Every number comes from rows in the database; nothing is estimated.
+
+- **`products.release_date` / `release_status`** stay empty until known. `product_review_maturity` classifies each published model as `new_release` (announced, on pre-order, or released within `new_release_window_days`, with fewer than `early_report_threshold` owners reporting), `early_reports` (still in the window, threshold reached) or `established` (past the window). With no release info it is `null`.
+- **`product_lineage`** links a model to its predecessor, same-platform or variant models, with a confidence, the basis and a source. Public when both models are published; written by the server only.
+- **`owner_reports`** are dated check-ins from owners (hits, ball, pop vs. previous gamer, sting, durability). One per member per model every `owner_report_interval_days` (7). Members can't set `ownership_verified`, `status` or `created_at`: a trigger verifies ownership when the member has a completed marketplace order for the model (also when the order completes later), and staff can verify from a proof photo. Published reports are public; hidden ones are visible to their owner and moderators.
+- **`owner_report_durability`** shows, per model with at least `durability_min_owners` (3) reporting owners, each owner's latest status, cracks and rattles, and median hits. Aggregates only, no user ids.
+- **`review_alerts`** are private to their owner. The server's notifier sets `last_notified_at`.
+
+`tests/db/new-bat-signals.test.ts` covers these rules.
 
 ## Making changes
 

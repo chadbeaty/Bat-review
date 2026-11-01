@@ -95,5 +95,9 @@ insert into public.site_settings (key, value, description, is_public) values
   ('listing_expiry_days', '90', 'How long a published listing stays live before it expires', true),
   ('messages_per_minute_limit', '15', 'Messages a member can send per minute', false),
   ('premium_seller_enabled', 'false', 'Whether premium seller memberships are on sale', true),
-  ('featured_listings_enabled', 'false', 'Whether sellers can buy featured placement', true)
+  ('featured_listings_enabled', 'false', 'Whether sellers can buy featured placement', true),
+  ('new_release_window_days', '120', 'Days after release during which a model counts as a new release', true),
+  ('early_report_threshold', '5', 'Owners with published reports needed before a new release shows as having early reports', true),
+  ('durability_min_owners', '3', 'Owners with published reports needed before a model appears in the durability tracker', true),
+  ('owner_report_interval_days', '7', 'Minimum days between two owner reports by the same member on the same model', true)
 on conflict (key) do nothing;
