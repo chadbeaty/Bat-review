@@ -128,3 +128,15 @@ describe("catalog seed conversion", () => {
     expect(endloadOz({ loadName: "XL" })).toBeNull();
   });
 });
+
+import { batModelPath, modelSegment, productSlugPattern } from "@/lib/paths";
+
+describe("paths", () => {
+  it("builds bat model URLs from catalog slugs", () => {
+    expect(modelSegment("miken-freak-black-maxload-usssa-2026", 2026)).toBe("freak-black-maxload-usssa");
+    expect(batModelPath({ manufacturerSlug: "louisville-slugger", productSlug: "ls-genesis-12-balanced-usssa-2026", modelYear: 2026 })).toBe(
+      "/bats/louisville-slugger/genesis-12-balanced-usssa/2026"
+    );
+    expect(productSlugPattern("genesis-12-balanced-usssa", "2026")).toBe("%-genesis-12-balanced-usssa-2026");
+  });
+});
