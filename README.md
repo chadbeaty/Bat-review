@@ -1,3 +1,12 @@
+# Slow-pitch marketplace and Barrel Talk
+
+This repository holds two projects:
+
+- **`web/`**: the nationwide used slow-pitch equipment marketplace (Next.js, Supabase, and Stripe Connect and Shippo to come). Start with `web/README.md`.
+- **The root folder**: Barrel Talk, the static bat research site described below. Its researched catalog (`data/bats.json`) seeds the marketplace's product database.
+
+---
+
 # Barrel Talk
 
 A simple site for buying a slowpitch softball bat. It lists every current USSSA, USA (ASA), NSA, ISA and senior (SSUSA) bat and gathers what players say about them on Reddit, forums, YouTube and Facebook groups.

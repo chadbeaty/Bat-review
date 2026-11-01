@@ -1,0 +1,139 @@
+@import "tailwindcss";
+
+/* Colors come from src/config/brand.ts (injected as --brand-* variables in the root layout).
+   The site is deliberately light-only: charcoal on white, one optic-yellow accent. */
+@theme inline {
+  --color-ink: var(--brand-ink);
+  --color-ink-soft: var(--brand-ink-soft);
+  --color-paper: var(--brand-paper);
+  --color-surface: var(--brand-surface);
+  --color-line: var(--brand-line);
+  --color-line-strong: var(--brand-line-strong);
+  --color-accent: var(--brand-accent);
+  --color-accent-ink: var(--brand-accent-ink);
+  --color-success: var(--brand-success);
+  --color-danger: var(--brand-danger);
+  --color-warning: var(--brand-warning);
+
+  --font-sans: var(--font-body), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-display-face), "Arial Narrow", "Helvetica Neue", sans-serif;
+  --font-mono: var(--font-data), ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--brand-paper);
+  color: var(--brand-ink);
+  font-family: var(--font-sans);
+}
+
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand-ink);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@layer components {
+  .wrap {
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  .display {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+    line-height: 0.95;
+  }
+  .eyebrow {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brand-ink-soft);
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.375rem;
+    padding: 0.625rem 1rem;
+    font-weight: 600;
+    line-height: 1.2;
+    border: 1px solid transparent;
+    transition: background-color 120ms, border-color 120ms, color 120ms;
+  }
+  .btn-primary {
+    background: var(--brand-ink);
+    color: var(--brand-surface);
+  }
+  .btn-primary:hover {
+    background: #000;
+  }
+  .btn-accent {
+    background: var(--brand-accent);
+    color: var(--brand-accent-ink);
+  }
+  .btn-accent:hover {
+    filter: brightness(0.96);
+  }
+  .btn-outline {
+    background: var(--brand-surface);
+    border-color: var(--brand-line-strong);
+    color: var(--brand-ink);
+  }
+  .btn-outline:hover {
+    border-color: var(--brand-ink);
+  }
+  .btn[disabled] {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .field {
+    display: grid;
+    gap: 0.375rem;
+    font-weight: 500;
+  }
+  .input {
+    width: 100%;
+    border: 1px solid var(--brand-line-strong);
+    background: var(--brand-surface);
+    border-radius: 0.375rem;
+    padding: 0.625rem 0.75rem;
+    font-weight: 400;
+  }
+  .input:focus {
+    outline: 2px solid var(--brand-ink);
+    outline-offset: 0;
+    border-color: transparent;
+  }
+  .card {
+    background: var(--brand-surface);
+    border: 1px solid var(--brand-line);
+    border-radius: 0.5rem;
+  }
+}
