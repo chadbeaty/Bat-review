@@ -133,7 +133,7 @@ test.describe("search", () => {
 });
 
 test.describe("listing page", () => {
-  test("shows price, condition, damage disclosures, specs, seller and disabled checkout", async ({ page }) => {
+  test("shows price, condition, damage disclosures, specs, seller, and checkout closed", async ({ page }) => {
     const seller = await member("lstg");
     const id = await createLiveListing(seller, { title: "Disclosure test Freak 26 oz", priceCents: 19900 });
     await serviceClient()
@@ -163,8 +163,9 @@ test.describe("listing page", () => {
 
     const actions = page.getByTestId("listing-actions");
     await expect(actions.getByRole("button", { name: /Buy now/ })).toBeDisabled();
-    await expect(actions.getByRole("button", { name: "Make offer" })).toBeDisabled();
-    await expect(actions.getByRole("button", { name: "Message seller" })).toBeDisabled();
+    // Offers and messages work even while checkout is closed (signed-out visitors get sign-in links).
+    await expect(actions.getByText("Make offer", { exact: true })).toBeVisible();
+    await expect(actions.getByText("Message seller", { exact: true })).toBeVisible();
     await expect(actions.getByText("Checkout opens soon")).toBeVisible();
 
     const card = page.getByTestId("seller-card");

@@ -10,6 +10,7 @@ The schema is in `supabase/migrations`, applied in order:
 | `…0400_security.sql` | Row Level Security policies, column privileges, the public seller-stats view |
 | `…0500_storage.sql` | Photo buckets and upload rules |
 | `…0600_new_bat_signals.sql` | Product release dates, product lineage, owner reports ("first swings"), review-maturity and durability views, review alerts, the private ownership-proof bucket |
+| `20261103000100_payments_shipping.sql` | Checkout holds, payment/completion/refund/chargeback functions, shipping quotes, refunds, seller payouts, payment settings (see `docs/tracks/payments.md`) |
 
 ## How the main tables connect
 
