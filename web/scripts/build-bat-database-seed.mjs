@@ -141,7 +141,7 @@ on conflict do nothing;`
 }
 
 // Warranty terms from docs/NEW-BAT-RESEARCH.md (1 November 2026). Other brands stay null: "not on file".
-const WARRANTY_SOURCE = "Research summary, 1 November 2026 (docs/NEW-BAT-RESEARCH.md). Check the manufacturer's current terms.";
+const WARRANTY_SOURCE = "Summary of published terms as of November 2026; check the manufacturer's current terms before you buy";
 const RAWLINGS = "One year from purchase, one-time repair or replacement. The original receipt is required.";
 const warranties = [
   ["easton", RAWLINGS],
