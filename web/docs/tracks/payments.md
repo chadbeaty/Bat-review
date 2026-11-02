@@ -88,7 +88,7 @@ Buyer ──pays item + shipping (+ tax)──▶ Platform's Stripe balance (Che
 
 ### Scheduled job (Vercel)
 
-`vercel.json` runs `/api/cron/orders` and `/api/cron/expire-offers` every 15 minutes (a unit test fails if a route under `src/app/api/cron/` is missing from `vercel.json`). Set `CRON_SECRET` (long random string) in the Vercel project; Vercel sends it as `Authorization: Bearer …`. Vercel's Hobby plan only allows daily cron jobs; use Pro, or an external scheduler calling the same URL with the header. The job is safe to run as often as you like.
+`vercel.json` runs `/api/cron/orders` and `/api/cron/expire-offers` once a day (so it works on Vercel's free Hobby plan; on Pro, change both to `*/15 * * * *` so payouts release within 15 minutes of the inspection window ending) (a unit test fails if a route under `src/app/api/cron/` is missing from `vercel.json`). Set `CRON_SECRET` (long random string) in the Vercel project; Vercel sends it as `Authorization: Bearer …`. Vercel's Hobby plan only allows daily cron jobs; use Pro, or an external scheduler calling the same URL with the header. The job is safe to run as often as you like.
 
 ### Switching on
 

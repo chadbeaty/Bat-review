@@ -48,5 +48,5 @@ Additive and re-runnable. Adds: unique indexes `offers_one_accepted_per_listing`
 - Message emails are sent only for the first unread message in a conversation, to avoid mail floods.
 - Opening a dispute does not change the order status, and there is no member-facing list of cases yet (reached from notifications, the order page link and the admin list).
 - Evidence photos are not scanned or resized; limits are 8 MB each, four per case.
-- `/api/cron/expire-offers` is scheduled in `vercel.json` (every 15 minutes; Vercel's Hobby plan only allows daily crons). Without it, expiry still applies on every read, in checkout, and whenever anyone touches offers.
+- `/api/cron/expire-offers` is scheduled in `vercel.json` (daily, for the Hobby plan; every 15 minutes on Pro). Without it, expiry still applies on every read, in checkout, and whenever anyone touches offers.
 - An offer's reservation and payment window are the same as the offer expiry setting (`offer_expiry_hours`); there is no separate "time to pay" setting.
