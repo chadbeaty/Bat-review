@@ -14,6 +14,12 @@
 
 The offer and conversation insert policies checked `user_blocks` as the buyer, and members can only see their own blocks, so a seller's block never applied to offers or new conversations. `has_blocked()` (a definer function) now backs both policies. Messages were already blocked by the trigger.
 
+## Offers and checkout (added after Track D, `20261104000100_offer_checkout.sql`)
+
+- Checkout honors `/checkout/<listingId>?offer=<offerId>`: the offer must be this buyer's, for this listing, accepted and inside its payment window, and the offer amount is charged (fees computed on it). Details in `docs/tracks/payments.md`.
+- **Accepting an offer reserves the listing** for that buyer until the offer's `expires_at`. Others see "Reserved for another buyer" and a disabled Buy now; the buyer sees "Check out with your accepted offer". The reservation ends when the window lapses or the offer is withdrawn. Either member can now withdraw an accepted offer (until a payment is in progress), which frees the item; `allowedActions` returns `withdraw` for accepted offers. Accepting is refused while another buyer's checkout hold exists.
+- Emails added: counter accepted (to the seller), offer expired (both members), confirmation copy to the member who opens a dispute, and a seller notice when a card chargeback puts an order on hold. Existing: offer received, countered, accepted, declined; dispute opened (other party) and updates.
+
 ## Database (`supabase/migrations/20261103000200_trust.sql`)
 
 Additive and re-runnable. Adds: unique indexes `offers_one_accepted_per_listing` and `offers_one_open_per_buyer`; `prepare_offer` (expiry from settings, below asking price); `expire_offers()`; `respond_to_offer()` (accept, reject, counter, withdraw; service role only); `has_blocked()`; `inbox_summary()` (security invoker); `reports.source`; `dispute_messages` with RLS and triggers; `admin_update_dispute`, `admin_add_dispute_message`.
@@ -32,6 +38,7 @@ Additive and re-runnable. Adds: unique indexes `offers_one_accepted_per_listing`
 ## Tests
 
 - `tests/unit/trust.test.ts`: offer state machine, expiry, amounts, off-platform detection (positives and negatives), error messages, evidence paths, email templates.
+- Offer checkout and reservation: `tests/db/payments.test.ts` ("accepted offers at checkout"), `tests/unit/offer-checkout.test.ts`, `tests/integration/payments.test.ts`, `tests/e2e/payments.spec.ts`.
 - `tests/db/trust.test.ts`: offer rules, counters, auto-reject, one accepted offer, expiry, blocks, inbox summary, reports source, reviews, dispute messages and RLS, admin dispute functions and audit.
 - `tests/e2e/trust.spec.ts`: two-browser message exchange, flagged message, report, blocking, offer to counter to accept with checkout link and auto-rejected second offer, notifications, review and response, dispute with photo upload and admin resolution, phone layouts.
 
@@ -39,8 +46,7 @@ Additive and re-runnable. Adds: unique indexes `offers_one_accepted_per_listing`
 
 - The thread refreshes by polling every 5 seconds; there is no realtime push.
 - Message emails are sent only for the first unread message in a conversation, to avoid mail floods.
-- `/checkout/<listingId>?offer=` is built by the checkout track; until it exists the link leads to a 404.
 - Opening a dispute does not change the order status, and there is no member-facing list of cases yet (reached from notifications, the order page link and the admin list).
-- Offer acceptance does not reserve the listing; the checkout track should honor the accepted offer's price and expiry.
 - Evidence photos are not scanned or resized; limits are 8 MB each, four per case.
-- No scheduler is configured: call `/api/cron/expire-offers` hourly. Without it, expiry still applies on every read and whenever anyone touches offers.
+- `/api/cron/expire-offers` is scheduled in `vercel.json` (every 15 minutes; Vercel's Hobby plan only allows daily crons). Without it, expiry still applies on every read, in checkout, and whenever anyone touches offers.
+- An offer's reservation and payment window are the same as the offer expiry setting (`offer_expiry_hours`); there is no separate "time to pay" setting.

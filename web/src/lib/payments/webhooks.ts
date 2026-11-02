@@ -4,6 +4,7 @@
 
 import type Stripe from "stripe";
 import * as templates from "@/lib/email/templates";
+import * as trustTemplates from "@/lib/email/trust-templates";
 import { accountStatusFromStripe } from "./connect";
 import { emailMember, must, notify, purchasePath, saleOrderPath, shortDate, type Db, type Deps } from "./deps";
 
@@ -140,9 +141,21 @@ export async function handleStripeEvent(deps: Deps, event: Stripe.Event): Promis
       const d = event.data.object;
       const order = await findOrder(db, { paymentIntent: idOf(d.payment_intent), charge: idOf(d.charge) });
       if (!order) return "ignored";
+      const { data: before } = await db.from("orders").select("order_status").eq("id", order.id).single();
       const outcome = must(
         await db.rpc("payments_record_chargeback", { p_order: order.id, p_stripe_dispute: d.id, p_reason: d.reason, p_stripe_status: d.status })
       ) as string;
+      // Tell the seller once, when the order first goes on hold (Stripe sends several dispute events).
+      if (outcome === "under_review" && before && before.order_status !== "disputed") {
+        await emailMember(deps, order.seller_id, (m) =>
+          trustTemplates.disputeUpdated({
+            name: m.name,
+            orderNumber: order.order_number,
+            summary: "The buyer's bank opened a payment dispute (chargeback) on this order. Payment to you is on hold while we respond with the delivery evidence.",
+            disputePath: saleOrderPath(order.id),
+          })
+        );
+      }
       return `dispute_${outcome}`;
     }
     case "account.updated": {

@@ -448,4 +448,144 @@ suite("payments and shipping database", () => {
       expect(await db.as(buyer2, "select id from addresses where id = $1", [addr])).toHaveLength(0);
     });
   });
+  describe("accepted offers at checkout", () => {
+    // A real offer: the buyer makes it, the seller accepts it through respond_to_offer (which sets the payment window).
+    const acceptedOffer = async (who: { id: string }, listing: string, amount = 18000) => {
+      const [o] = await db.as<{ id: string }>(
+        who,
+        "insert into offers (listing_id, buyer_id, seller_id, made_by, amount_cents) values ($1, $2, $3, $2, $4) returning id",
+        [listing, who.id, seller.id, amount]
+      );
+      await db.as("service", "select respond_to_offer($1, $2, 'accept', null, null)", [seller.id, o.id]);
+      return o.id;
+    };
+
+    const orderWithOffer = async (who: { id: string }, listing: string, offerId: string | null) => {
+      const addr = await address(who);
+      const q = await quote(who, listing, addr);
+      const [o] = await db.as<Order & { offer_id: string | null }>(
+        "service",
+        "select * from checkout_create_order($1, $2, $3, $4, 'fake_usps_ground_advantage', 0, null, 35, $5)",
+        [who.id, listing, addr, q, offerId]
+      );
+      return o;
+    };
+
+    const reservation = (actor: Parameters<typeof db.as>[0], listing: string) =>
+      db.as<{ reserved: boolean; held_by_me: boolean; reserved_until: string; offer_id: string | null }>(actor, "select * from listing_offer_reservation($1)", [listing]);
+
+    it("charges the offer amount instead of the list price, with fees computed on it", async () => {
+      const listing = await liveListing(seller, 22000);
+      const offerId = await acceptedOffer(buyer, listing, 18000);
+      const o = await orderWithOffer(buyer, listing, offerId);
+      expect(o.subtotal_cents).toBe(18000);
+      expect(o.total_amount_cents).toBe(18000 + 1899);
+      expect(o.platform_fee_cents).toBe(1260); // 7% of 18000, not of 22000
+      expect(o.seller_payout_cents).toBe(18000 - 1260);
+      expect(o.fee_snapshot).toMatchObject({ commission_cents: 1260, list_price_cents: 22000, offer_id: offerId });
+      expect(await orderRow(o.id)).toMatchObject({ offer_id: offerId });
+      const items = await db.owner<{ unit_price_cents: number }>("select unit_price_cents from order_items where order_id = $1", [o.id]);
+      expect(items).toEqual([{ unit_price_cents: 18000 }]);
+    });
+
+    it("uses the offer up once the order is paid", async () => {
+      const listing = await liveListing(seller, 22000);
+      const offerId = await acceptedOffer(buyer, listing, 17000);
+      const o = await orderWithOffer(buyer, listing, offerId);
+      await db.as("service", "select payments_mark_paid($1, null, 'pi_offer', null, $2)", [o.id, o.total_amount_cents]);
+      const [offer] = await db.owner<{ status: string }>("select status from offers where id = $1", [offerId]);
+      expect(offer.status).toBe("completed");
+    });
+
+    it("rejects a buyer who is not the offer's buyer, and an offer for another listing", async () => {
+      const listing = await liveListing(seller, 22000);
+      const other = await liveListing(seller, 22000);
+      const offerId = await acceptedOffer(buyer, listing);
+      await expect(orderWithOffer(buyer2, listing, offerId)).rejects.toThrow(/reserved for another buyer/);
+      await expect(orderWithOffer(buyer2, other, offerId)).rejects.toThrow(/Offer not found/);
+      await expect(orderWithOffer(buyer, other, offerId)).rejects.toThrow(/Offer not found/);
+      expect(await db.owner("select 1 from orders where offer_id = $1", [offerId])).toHaveLength(0);
+    });
+
+    it("rejects an offer that is not accepted", async () => {
+      const listing = await liveListing(seller, 22000);
+      const [pending] = await db.as<{ id: string }>(
+        buyer,
+        "insert into offers (listing_id, buyer_id, seller_id, made_by, amount_cents) values ($1, $2, $3, $2, 15000) returning id",
+        [listing, buyer.id, seller.id]
+      );
+      await expect(orderWithOffer(buyer, listing, pending.id)).rejects.toThrow(/offer is pending/);
+    });
+
+    it("rejects an offer past its payment window, before and after the sweep marks it expired", async () => {
+      const listing = await liveListing(seller, 22000);
+      const offerId = await acceptedOffer(buyer, listing);
+      await db.owner("update offers set expires_at = now() - interval '1 minute' where id = $1", [offerId]);
+      await expect(orderWithOffer(buyer, listing, offerId)).rejects.toThrow(/payment window/);
+      await db.as("service", "select * from expire_offers()");
+      await expect(orderWithOffer(buyer, listing, offerId)).rejects.toThrow(/offer is expired/);
+      expect(await db.owner("select 1 from orders where offer_id = $1", [offerId])).toHaveLength(0);
+    });
+
+    it("reserves the listing for the offer's buyer: other buyers are blocked, the buyer is not", async () => {
+      const listing = await liveListing(seller, 22000);
+      const offerId = await acceptedOffer(buyer, listing);
+      await expect(orderWithOffer(buyer2, listing, null)).rejects.toThrow(/reserved for another buyer/);
+      const mine = await reservation(buyer, listing);
+      expect(mine).toMatchObject([{ reserved: true, held_by_me: true, offer_id: offerId }]);
+      const theirs = await reservation(buyer2, listing);
+      expect(theirs).toMatchObject([{ reserved: true, held_by_me: false, offer_id: null }]);
+      expect(await reservation("anon", listing)).toMatchObject([{ reserved: true, held_by_me: false, offer_id: null }]);
+      const o = await orderWithOffer(buyer, listing, offerId);
+      expect(o.subtotal_cents).toBe(18000);
+    });
+
+    it("releases the reservation when the payment window lapses, even before the sweep runs", async () => {
+      const listing = await liveListing(seller, 22000);
+      const offerId = await acceptedOffer(buyer, listing);
+      await expect(orderWithOffer(buyer2, listing, null)).rejects.toThrow(/reserved for another buyer/);
+      await db.owner("update offers set expires_at = now() - interval '1 second' where id = $1", [offerId]);
+      expect(await reservation(buyer2, listing)).toHaveLength(0);
+      const o = await orderWithOffer(buyer2, listing, null);
+      expect(o.subtotal_cents).toBe(22000);
+    });
+
+    it("releases the reservation when the offer is withdrawn, by either member", async () => {
+      const listing = await liveListing(seller, 22000);
+      const offerId = await acceptedOffer(buyer, listing);
+      const [{ respond_to_offer: r }] = await db.as<{ respond_to_offer: { status: string; notify: string } }>("service", "select respond_to_offer($1, $2, 'withdraw', null, null)", [seller.id, offerId]);
+      expect(r).toMatchObject({ status: "withdrawn", notify: buyer.id });
+      expect(await reservation(buyer2, listing)).toHaveLength(0);
+      const o = await orderWithOffer(buyer2, listing, null);
+      expect(o.subtotal_cents).toBe(22000);
+
+      const second = await liveListing(seller, 22000);
+      const secondOffer = await acceptedOffer(buyer, second);
+      await db.as("service", "select respond_to_offer($1, $2, 'withdraw', null, null)", [buyer.id, secondOffer]);
+      expect(await reservation(buyer2, second)).toHaveLength(0);
+      await expect(db.as("service", "select respond_to_offer($1, $2, 'withdraw', null, null)", [buyer2.id, secondOffer])).rejects.toThrow(/Offer not found|can no longer be changed/);
+    });
+
+    it("does not let an accepted offer be withdrawn while its payment is in progress, and does not accept over a checkout hold", async () => {
+      const listing = await liveListing(seller, 22000);
+      const offerId = await acceptedOffer(buyer, listing);
+      await orderWithOffer(buyer, listing, offerId);
+      await expect(db.as("service", "select respond_to_offer($1, $2, 'withdraw', null, null)", [buyer.id, offerId])).rejects.toThrow(/payment for this offer is in progress/);
+
+      const held = await liveListing(seller, 22000);
+      await createOrder(buyer2, held);
+      const [pending] = await db.as<{ id: string }>(
+        buyer,
+        "insert into offers (listing_id, buyer_id, seller_id, made_by, amount_cents) values ($1, $2, $3, $2, 15000) returning id",
+        [held, buyer.id, seller.id]
+      );
+      await expect(db.as("service", "select respond_to_offer($1, $2, 'accept', null, null)", [seller.id, pending.id])).rejects.toThrow(/checking out this item/);
+    });
+
+    it("keeps checkout_create_order server-only", async () => {
+      const listing = await liveListing(seller, 22000);
+      const offerId = await acceptedOffer(buyer, listing);
+      await expect(db.as(buyer, "select checkout_create_order($1, $2, $1, $1, 'x', 0, null, 35, $3)", [buyer.id, listing, offerId])).rejects.toThrow(/permission denied/);
+    });
+  });
 });

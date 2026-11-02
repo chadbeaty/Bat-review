@@ -8,7 +8,7 @@ export function NewsletterForm() {
   if (state.ok) {
     return (
       <p role="status" className="font-medium">
-        You&apos;re on the list. We&apos;ll email you to confirm before the first issue goes out.
+        Almost there: check your inbox for a message from us and click the link to confirm. You won&apos;t get updates until you do.
       </p>
     );
   }

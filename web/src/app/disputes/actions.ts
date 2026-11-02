@@ -70,6 +70,13 @@ export async function openDispute(_prev: FormState, form: FormData): Promise<For
     message: `Support will review it. Opened by @${names.get(user.id)?.username ?? "you"}.`,
     link: `/disputes/${disputeId}`,
     entityId: disputeId,
+    email: (name) =>
+      trustTemplates.disputeUpdated({
+        name,
+        orderNumber: order.order_number,
+        summary: `We received your case (${DISPUTE_TYPES[type]}). The other member has been asked to respond by ${respondBy}, and support will review it.`,
+        disputePath: `/disputes/${disputeId}`,
+      }),
   });
   redirect(`/disputes/${disputeId}`);
 }

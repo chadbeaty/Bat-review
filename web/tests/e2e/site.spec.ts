@@ -49,7 +49,7 @@ test.describe("homepage", () => {
     await page.goto("/");
     await page.getByLabel("Email").last().fill(`fan-${Date.now()}@example.com`);
     await page.getByRole("button", { name: "Get updates" }).click();
-    await expect(page.getByText("You're on the list.")).toBeVisible();
+    await expect(page.getByText("Almost there")).toBeVisible();
   });
 });
 

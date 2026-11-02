@@ -12,7 +12,7 @@ import type Stripe from "stripe";
 import type { RenderedEmail } from "@/lib/email/layout";
 import { FakeShippingProvider } from "@/lib/shipping/fake";
 import type { Deps } from "@/lib/payments/deps";
-import { createCheckoutSession, closeUnpaidCheckout, createShippingQuote } from "@/lib/payments/checkout";
+import { createCheckoutSession, closeUnpaidCheckout, createShippingQuote, startCheckout } from "@/lib/payments/checkout";
 import { processStripeWebhook } from "@/lib/payments/webhooks";
 import { completeOrder } from "@/lib/payments/completion";
 import { refundOrder } from "@/lib/payments/refunds";
@@ -21,6 +21,7 @@ import { buyLabel } from "@/lib/shipping/labels";
 import { processShippoWebhook } from "@/lib/shipping/webhook";
 import {
   WEBHOOK_SECRET,
+  buyerAddress,
   cleanupUsers,
   createMember,
   insertOrder,
@@ -304,6 +305,49 @@ suite("payments against stripe-mock", () => {
       expect((await order(o.id)).order_status).toBe("delivered");
       expect((await processShippoWebhook(deps, payload)).body).toMatchObject({ changed: 0 });
       expect(sent.some((m) => m.email.template === "delivered" && m.to === buyer.email)).toBe(true);
+    });
+  });
+  describe("accepted offers", () => {
+    it("starts a Stripe Checkout Session for the offer amount, refuses other buyers, and rejects an expired offer", async () => {
+      const db = service();
+      const rival = await createMember("pay_rival");
+      const listing = await liveListing(seller, 22000);
+      const { data: offer } = await db
+        .from("offers")
+        .insert({ listing_id: listing, buyer_id: buyer.id, seller_id: seller.id, made_by: buyer.id, amount_cents: 18000 })
+        .select("id")
+        .single();
+      const { error: acceptError } = await db.rpc("respond_to_offer", { p_actor: seller.id, p_offer: offer!.id, p_action: "accept", p_amount_cents: null, p_message: null });
+      expect(acceptError).toBeNull();
+      const { data: before } = await db.from("site_settings").select("value").eq("key", "checkout_enabled").single();
+      await db.from("site_settings").update({ value: true }).eq("key", "checkout_enabled");
+      try {
+        const addressId = await buyerAddress(buyer);
+        const quote = await createShippingQuote(deps, { buyerId: buyer.id, listingId: listing, addressId });
+        const rate = quote.rates.find((r) => r.available)!;
+        const input = { buyer: { id: buyer.id, email: buyer.email }, listingId: listing, addressId, quoteId: quote.id, rateId: rate.id, taxEnabled: false };
+
+        // The wrong buyer can neither use the offer nor buy the reserved item.
+        const rivalAddress = await buyerAddress(rival);
+        const rivalQuote = await createShippingQuote(deps, { buyerId: rival.id, listingId: listing, addressId: rivalAddress });
+        const rivalInput = { ...input, buyer: { id: rival.id, email: rival.email }, addressId: rivalAddress, quoteId: rivalQuote.id, rateId: rivalQuote.rates.find((r) => r.available)!.id };
+        await expect(startCheckout(deps, { ...rivalInput, offerId: offer!.id })).rejects.toThrow(/couldn't be found/);
+        await expect(startCheckout(deps, rivalInput)).rejects.toThrow(/reserved for another buyer/);
+
+        const started = await startCheckout(deps, { ...input, offerId: offer!.id });
+        expect(started.url).toMatch(/^https?:\/\//);
+        const o = await order(started.orderId);
+        expect(o).toMatchObject({ offer_id: offer!.id, subtotal_cents: 18000, platform_fee_cents: 1260, total_amount_cents: 18000 + rate.amountCents });
+        await closeUnpaidCheckout(deps, o as never, "test cleanup");
+
+        // After the payment window lapses, the same offer can no longer be paid.
+        await db.from("offers").update({ expires_at: new Date(Date.now() - 60_000).toISOString() }).eq("id", offer!.id);
+        const retryQuote = await createShippingQuote(deps, { buyerId: buyer.id, listingId: listing, addressId });
+        await expect(startCheckout(deps, { ...input, quoteId: retryQuote.id, offerId: offer!.id })).rejects.toThrow(/payment window/);
+      } finally {
+        await db.from("site_settings").update({ value: before?.value ?? false }).eq("key", "checkout_enabled");
+        await cleanupUsers([rival.id]);
+      }
     });
   });
 });

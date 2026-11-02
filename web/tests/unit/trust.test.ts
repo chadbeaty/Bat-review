@@ -37,9 +37,15 @@ describe("offer state machine", () => {
   });
   it("allows nothing for strangers or finished offers", () => {
     expect(allowedActions(offer(), "stranger", now)).toEqual([]);
-    for (const status of ["accepted", "rejected", "countered", "expired", "withdrawn", "completed"] as const) {
+    for (const status of ["rejected", "countered", "expired", "withdrawn", "completed"] as const) {
       expect(allowedActions(offer({ status }), "seller", now)).toEqual([]);
     }
+  });
+  it("lets either member back out of an accepted offer, which releases the reservation", () => {
+    expect(allowedActions(offer({ status: "accepted" }), "seller", now)).toEqual(["withdraw"]);
+    expect(allowedActions(offer({ status: "accepted" }), "buyer", now)).toEqual(["withdraw"]);
+    expect(allowedActions(offer({ status: "accepted" }), "stranger", now)).toEqual([]);
+    expect(allowedActions(offer({ status: "accepted", expiresAt: new Date(now.getTime() - 1) }), "buyer", now)).toEqual([]);
   });
 });
 
@@ -142,5 +148,14 @@ describe("trust email templates", () => {
     expect(mail.text).toContain("$120");
     expect(trustTemplates.reviewReceived({ fromUsername: "bob", rating: 5, reviewsPath: "/sellers/x" }).subject).toContain("5-star");
     expect(trustTemplates.disputeUpdated({ orderNumber: "ORD-1", summary: "Closed.", disputePath: "/disputes/x" }).category).toBe("transactional");
+  });
+  it("renders the counter-accepted and offer-expired emails with escaped text", () => {
+    const accepted = trustTemplates.counterAccepted({ title: "<i>Bat</i>", amountCents: 15000, fromUsername: "bob", payBy: "Nov 5" });
+    expect(accepted.template).toBe("counter_accepted");
+    expect(accepted.html).not.toContain("<i>Bat</i>");
+    expect(accepted.text).toContain("reserved for them");
+    const expired = trustTemplates.offerExpired({ title: "Bat", amountCents: 15000, listingPath: "/listings/x" });
+    expect(expired.template).toBe("offer_expired");
+    expect(expired.html).toContain("/listings/x");
   });
 });

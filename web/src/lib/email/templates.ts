@@ -168,7 +168,7 @@ export function offerAccepted(d: Base & { title: string; amountCents: number; ch
     heading: "Your offer was accepted",
     blocks: [
       { kind: "p", text: hello(d.name) },
-      { kind: "p", text: `The seller accepted ${formatPrice(d.amountCents)} for ${d.title}. Complete checkout by ${d.payBy} to buy it.` },
+      { kind: "p", text: `The seller accepted ${formatPrice(d.amountCents)} for ${d.title}. The item is reserved for you until ${d.payBy}. Complete checkout by then to buy it.` },
       { kind: "button", label: "Go to checkout", href: siteLink(d.checkoutPath) },
     ],
   });

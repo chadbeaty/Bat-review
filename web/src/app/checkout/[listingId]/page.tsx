@@ -14,6 +14,7 @@ import { selectRate, sortRates } from "@/lib/shipping/rates";
 import type { Rate } from "@/lib/shipping/types";
 import { isLiveKey, stripeConfigured } from "@/lib/payments/stripe-client";
 import { taxProviderFromEnv } from "@/lib/payments/tax";
+import { checkOfferForCheckout, type OfferForCheckout } from "@/lib/payments/offer";
 import { Disclosures } from "@/components/listing/Disclosures";
 import { cancelCheckout, chooseAddress, startPayment } from "./actions";
 
@@ -87,6 +88,30 @@ export default async function CheckoutPage({ params, searchParams }: PageProps<"
     return shell(<Notice title="Checkout is paused">Sales tax collection is switched on, but no tax provider is connected yet. {back}</Notice>);
   if (listing.sellerId === user.id) return shell(<Notice title="This is your listing">You can&apos;t buy your own item. {back}</Notice>);
 
+  // An accepted offer (?offer=): checked here for a clear message, and again by the database when the order is created.
+  const offerParamValue = typeof sp.offer === "string" ? sp.offer : null;
+  const offerId = offerParamValue && isUuid(offerParamValue) ? offerParamValue : null;
+  let offerAmountCents: number | null = null;
+  let offerExpiresAt: string | null = null;
+  if (offerParamValue !== null) {
+    const { data: offerRow } = offerId
+      ? await supabase.from("offers").select("id, listing_id, buyer_id, status, amount_cents, expires_at").eq("id", offerId).maybeSingle<OfferForCheckout>()
+      : { data: null };
+    const check = checkOfferForCheckout(offerRow, { buyerId: user.id, listingId: listing.id });
+    if (!check.ok) {
+      return shell(
+        <Notice title={check.code === "expired" ? "This offer's payment window has ended" : "This offer can't be paid for"}>
+          <p className="text-sm">{check.message}</p>
+          {back}
+        </Notice>
+      );
+    }
+    offerAmountCents = check.amountCents;
+    offerExpiresAt = offerRow?.expires_at ?? null;
+  }
+  const itemCents = offerAmountCents ?? listing.askingPriceCents;
+  const offerQuery = offerId ? `?offer=${offerId}` : "";
+
   // The buyer's own unpaid checkout for this item, if any.
   const { data: open } = await supabase
     .from("orders")
@@ -122,6 +147,17 @@ export default async function CheckoutPage({ params, searchParams }: PageProps<"
   }
   const { data: sellerReady } = await supabase.rpc("seller_can_accept_payments", { p_seller: listing.sellerId });
   if (!sellerReady) return shell(<Notice title="The seller is still setting up payouts">You can save the listing and check back soon. {back}</Notice>);
+
+  // An accepted offer reserves the item for its buyer while they pay.
+  const { data: reservation } = await supabase.rpc("listing_offer_reservation", { p_listing: listing.id });
+  const reservedRow = Array.isArray(reservation) ? reservation[0] : null;
+  if (reservedRow?.reserved && !reservedRow.held_by_me) {
+    return shell(
+      <Notice title="This item is reserved for another buyer">
+        The seller accepted another buyer&apos;s offer, and they have a limited time to pay. If they don&apos;t, the item becomes available again. {back}
+      </Notice>
+    );
+  }
 
   // Someone else's checkout holds the item (checked with the service role; buyers can't see others' orders).
   const admin = createAdminClient();
@@ -173,13 +209,14 @@ export default async function CheckoutPage({ params, searchParams }: PageProps<"
                   </span>
                 ))}
               </address>
-              <Link href={`/checkout/${listing.id}`} className="text-sm underline">
+              <Link href={`/checkout/${listing.id}${offerQuery}`} className="text-sm underline">
                 Change
               </Link>
             </div>
           ) : (
             <form action={chooseAddress} className="grid gap-4">
               <input type="hidden" name="listingId" value={listing.id} />
+              {offerId && <input type="hidden" name="offerId" value={offerId} />}
               {quoteExpired && <p className="text-sm text-danger">Those shipping rates expired. Choose the address again for fresh rates.</p>}
               {(addresses ?? []).length > 0 && (
                 <fieldset className="grid gap-2">
@@ -257,6 +294,7 @@ export default async function CheckoutPage({ params, searchParams }: PageProps<"
               </p>
             )}
             <form method="get" className="grid gap-3">
+              {offerId && <input type="hidden" name="offer" value={offerId} />}
               <input type="hidden" name="quote" value={quote.id} />
               <fieldset className="grid gap-2">
                 <legend className="sr-only">Shipping options</legend>
@@ -298,8 +336,10 @@ export default async function CheckoutPage({ params, searchParams }: PageProps<"
           <li className="card grid gap-4 p-5" data-testid="review">
             <h2 className="text-xl font-semibold">3. Review and pay</h2>
             <dl className="grid grid-cols-[1fr_auto] gap-x-6 gap-y-1 text-sm">
-              <dt>Item</dt>
-              <dd className="text-right font-mono">{formatPrice(listing.askingPriceCents)}</dd>
+              <dt>{offerAmountCents !== null ? "Item (your accepted offer)" : "Item"}</dt>
+              <dd className="text-right font-mono" data-testid="checkout-item">
+                {formatPrice(itemCents)}
+              </dd>
               <dt>
                 Shipping ({rate.carrier} {rate.service})
               </dt>
@@ -308,12 +348,19 @@ export default async function CheckoutPage({ params, searchParams }: PageProps<"
               <dd className="text-right font-mono">{formatPrice(0)}</dd>
               <dt className="border-t border-line pt-2 font-semibold">Total</dt>
               <dd className="border-t border-line pt-2 text-right font-mono font-semibold" data-testid="checkout-total">
-                {formatPrice(listing.askingPriceCents + rate.amountCents)}
+                {formatPrice(itemCents + rate.amountCents)}
               </dd>
             </dl>
             <p className="text-xs text-ink-soft">
               {taxEnabled === true ? "Tax is calculated on the payment page." : "The marketplace doesn't collect sales tax yet. You may owe use tax in your state."}
             </p>
+
+            {offerAmountCents !== null && offerExpiresAt && (
+              <p className="text-sm" data-testid="offer-note">
+                Your offer of {formatPrice(offerAmountCents)} was accepted (asking price {formatPrice(listing.askingPriceCents)}). The item is reserved for you until{" "}
+                {new Date(offerExpiresAt).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" })} UTC.
+              </p>
+            )}
 
             <Disclosures listing={listing} />
 
@@ -335,6 +382,7 @@ export default async function CheckoutPage({ params, searchParams }: PageProps<"
 
             <form action={startPayment} className="grid gap-3">
               <input type="hidden" name="listingId" value={listing.id} />
+              {offerId && <input type="hidden" name="offerId" value={offerId} />}
               <input type="hidden" name="quoteId" value={quote.id} />
               <input type="hidden" name="rateId" value={rate.id} />
               <label className="flex items-start gap-2 text-sm">

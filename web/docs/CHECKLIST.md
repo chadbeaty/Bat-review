@@ -59,6 +59,15 @@
 - ⬜ Funds-flow decision record: destination charges vs separate charges and transfers, refund and chargeback liability, payout timing
 - ⬜ Connect onboarding (Stripe-hosted), checkout, commission from `fee_configuration`, signed and idempotent webhooks, refunds, payout status
 
+## Offers, scheduling and email (added after Phases 3 and 5)
+
+- ✅ Accepted offers in checkout: server-side checks (buyer, listing, accepted, payment window), offer amount charged with fees computed on it, listing reserved for the offer's buyer until the window lapses or the offer is withdrawn (DB, unit, integration and browser tests)
+- ✅ `vercel.json` schedules `/api/cron/orders` and `/api/cron/expire-offers` (CRON_SECRET); a test fails if a cron route is unscheduled
+- ✅ Email wired to: offer received/countered/accepted/declined/expired, order paid (buyer and seller), shipped, delivered, dispute opened (both members), chargeback (seller), refunds, review requests. With no `RESEND_API_KEY` the email module logs and records `not_sent` instead of failing
+- ✅ Newsletter double opt-in: the form stores a pending subscriber and sends a confirmation link (`/newsletter/confirm`); no marketing email goes to anyone who has not confirmed
+- 🟡 Real email delivery is untested: Resend has not been called (no API key or sender domain here); only the request shape is unit tested
+- 🟡 Set `CRON_SECRET` and (on Hobby) note that crons run at most daily; Pro or an external scheduler is needed for 15-minute runs
+
 ## Phase 4: Shipping (needs a Shippo test token)
 
 - ⬜ Provider abstraction, live rates at checkout, label purchase after payment, tracking webhooks, long-package handling

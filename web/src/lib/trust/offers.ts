@@ -39,8 +39,11 @@ export function timeLeft(expiresAt: string | Date, now: Date = new Date()): stri
 
 /** Which actions this member can take on the offer right now. */
 export function allowedActions(offer: OfferLike, actorId: string, now: Date = new Date()): OfferAction[] {
-  if (effectiveStatus(offer, now) !== "pending") return [];
+  const status = effectiveStatus(offer, now);
   if (actorId !== offer.buyerId && actorId !== offer.sellerId) return [];
+  // An accepted offer reserves the listing; either member can back out before it is paid, which releases it.
+  if (status === "accepted") return ["withdraw"];
+  if (status !== "pending") return [];
   if (actorId === offer.madeBy) return ["withdraw"];
   return ["accept", "reject", "counter"];
 }

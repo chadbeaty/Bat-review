@@ -24,6 +24,17 @@ function friendly(err: unknown): string {
   return "Something went wrong. Nothing was charged; please try again.";
 }
 
+function optionalUuid(v: FormDataEntryValue | null): string | null {
+  if (v === null || v === "") return null;
+  return uuid.parse(v); // a malformed offer id is an error, never a silent fall back to the list price
+}
+
+/** Carries `?offer=` through the steps of checkout. */
+function offerParam(form: FormData): Record<string, string> {
+  const offerId = optionalUuid(form.get("offerId"));
+  return offerId ? { offer: offerId } : {};
+}
+
 async function requireBuyer(listingId: string) {
   const user = await getCurrentUser();
   if (!user) redirect(`/sign-in?next=${encodeURIComponent(checkoutPath(listingId))}`);
@@ -73,9 +84,9 @@ export async function chooseAddress(form: FormData) {
       throw new PaymentsError("Choose a shipping address.");
     }
     const quote = await createShippingQuote(deps, { buyerId: user.id, listingId, addressId });
-    target = checkoutPath(listingId, { quote: quote.id });
+    target = checkoutPath(listingId, { ...offerParam(form), quote: quote.id });
   } catch (err) {
-    target = withFlash(checkoutPath(listingId), "error", friendly(err));
+    target = withFlash(checkoutPath(listingId, offerParam(form)), "error", friendly(err));
   }
   redirect(target);
 }
@@ -85,7 +96,8 @@ export async function startPayment(form: FormData) {
   const listingId = uuid.parse(form.get("listingId"));
   const quoteId = uuid.parse(form.get("quoteId"));
   const rateId = String(form.get("rateId") ?? "").slice(0, 200);
-  const back = checkoutPath(listingId, { quote: quoteId, rate: rateId });
+  const offerId = optionalUuid(form.get("offerId"));
+  const back = checkoutPath(listingId, { ...(offerId ? { offer: offerId } : {}), quote: quoteId, rate: rateId });
   const user = await requireBuyer(listingId);
   if (form.get("acknowledge") !== "yes") {
     redirect(withFlash(back, "error", "Confirm you've read the condition and damage disclosures before paying."));
@@ -105,6 +117,7 @@ export async function startPayment(form: FormData) {
       quoteId,
       rateId,
       taxEnabled: taxEnabled === true,
+      offerId,
     });
     target = result.url;
   } catch (err) {

@@ -111,9 +111,10 @@ export async function respondToOffer(_prev: FormState, form: FormData): Promise<
         userId: result.notify,
         type: "offer_accepted",
         title: `@${me} accepted your counteroffer on ${title}`,
-        message: `${formatPrice(before.amount_cents)}. They can now check out.`,
+        message: `${formatPrice(before.amount_cents)}. The item is reserved for them while they check out.`,
         link: "/account/offers",
         entityId: offerId,
+        email: (name) => trustTemplates.counterAccepted({ name, title, amountCents: before.amount_cents, fromUsername: me, payBy }),
       });
     }
     for (const rejectedId of result.auto_rejected ?? []) {

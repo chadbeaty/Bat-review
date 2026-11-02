@@ -51,3 +51,35 @@ export function disputeUpdated(d: Base & { orderNumber: string; summary: string;
     ],
   });
 }
+
+/** To the seller when the buyer accepts their counteroffer. */
+export function counterAccepted(d: Base & { title: string; amountCents: number; fromUsername: string; payBy: string }): RenderedEmail {
+  return renderLayout({
+    template: "counter_accepted",
+    category: "transactional",
+    subject: `@${d.fromUsername} accepted your counteroffer on ${d.title}`,
+    preheader: `The item is reserved for them until ${d.payBy}.`,
+    heading: "Your counteroffer was accepted",
+    blocks: [
+      { kind: "p", text: hello(d.name) },
+      { kind: "p", text: `@${d.fromUsername} accepted ${formatPrice(d.amountCents)} for ${d.title}. The item is reserved for them until ${d.payBy} while they check out. Please don't sell it elsewhere.` },
+      { kind: "button", label: "View the offer", href: siteLink("/account/offers") },
+    ],
+  });
+}
+
+/** To both members when an accepted or pending offer runs out of time. */
+export function offerExpired(d: Base & { title: string; amountCents: number; listingPath: string }): RenderedEmail {
+  return renderLayout({
+    template: "offer_expired",
+    category: "transactional",
+    subject: `The offer on ${d.title} expired`,
+    preheader: "The item is available again.",
+    heading: "An offer expired",
+    blocks: [
+      { kind: "p", text: hello(d.name) },
+      { kind: "p", text: `The offer of ${formatPrice(d.amountCents)} on ${d.title} ran out of time. If it had been accepted, the reservation has ended and anyone can buy the item again.` },
+      { kind: "button", label: "View the listing", href: siteLink(d.listingPath) },
+    ],
+  });
+}

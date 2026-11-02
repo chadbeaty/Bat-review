@@ -336,3 +336,105 @@ test.describe("payments and shipping", () => {
     expect(audit!.actor_user_id).toBe(admin.id);
   });
 });
+
+// An accepted offer: the buyer's checkout charges the offer amount (not the asking price), the item shows as
+// reserved to everyone else while the payment window is open, and it frees up again when the window lapses.
+test.describe("accepted offers at checkout", () => {
+  test.describe.configure({ mode: "serial" });
+
+  let ready = false;
+  let seller: Member;
+  let buyer: Member;
+  let rival: Member;
+  let listingId = "";
+  let offerId = "";
+  let previousCheckout: unknown = false;
+
+  test.beforeAll(async () => {
+    ready = (await supabaseUp()) && (await stripeMockUp());
+    if (!ready) return;
+    const db = service();
+    const { data } = await db.from("site_settings").select("value").eq("key", "checkout_enabled").single();
+    previousCheckout = data?.value ?? false;
+    [seller, buyer, rival] = await Promise.all([createMember("e2e_oseller"), createMember("e2e_obuyer"), createMember("e2e_orival")]);
+    await makeSellerReady(seller.id);
+    listingId = await liveListing(seller, 22000);
+    const { data: offer } = await db
+      .from("offers")
+      .insert({ listing_id: listingId, buyer_id: buyer.id, seller_id: seller.id, made_by: buyer.id, amount_cents: 18000 })
+      .select("id")
+      .single();
+    offerId = offer!.id;
+    const { error } = await db.rpc("respond_to_offer", { p_actor: seller.id, p_offer: offerId, p_action: "accept", p_amount_cents: null, p_message: null });
+    if (error) throw error;
+    await setCheckout(true);
+  });
+
+  test.afterAll(async () => {
+    if (!ready) return;
+    await setCheckout(previousCheckout === true);
+    await cleanupUsers([seller?.id, buyer?.id, rival?.id]);
+  });
+
+  test.beforeEach(() => {
+    test.skip(!ready, "Needs the local Supabase stack and stripe-mock");
+  });
+
+  test("another buyer sees the item as reserved and cannot check out", async ({ browser }) => {
+    const ctx = await browser.newContext();
+    const p = await ctx.newPage();
+    await signIn(p, rival, `/listings/${listingId}`);
+    const actions = p.getByTestId("listing-actions");
+    await expect(actions.getByTestId("offer-reserved")).toContainText("Reserved for another buyer");
+    await expect(actions.getByRole("button", { name: /Buy now/ })).toBeDisabled();
+    await p.goto(`/checkout/${listingId}`);
+    await expect(p.getByRole("heading", { name: "This item is reserved for another buyer" })).toBeVisible();
+    await ctx.close();
+  });
+
+  test("the offer's buyer checks out at the offer amount", async ({ browser }) => {
+    const ctx = await browser.newContext();
+    const p = await ctx.newPage();
+    await signIn(p, buyer, `/listings/${listingId}`);
+    await p.getByTestId("offer-checkout").click();
+    await expect(p).toHaveURL(new RegExp(`/checkout/${listingId}\\?offer=${offerId}`));
+    await p.getByLabel("Full name").fill("Pat Buyer");
+    await p.getByLabel("Street address").fill("1 Main St");
+    await p.getByLabel("City").fill("Austin");
+    await p.getByLabel("State").selectOption("TX");
+    await p.getByLabel("ZIP code").fill("78701");
+    await p.getByRole("button", { name: "Get shipping rates" }).click();
+    await p.getByRole("button", { name: "Review order" }).click();
+    const review = p.getByTestId("review");
+    await expect(review.getByTestId("checkout-item")).toHaveText("$180");
+    await expect(review.getByTestId("offer-note")).toContainText("$180");
+
+    await p.route("https://checkout.stripe.com/**", (route) => route.fulfill({ status: 200, contentType: "text/html", body: "<h1>Stripe (intercepted)</h1>" }));
+    await review.getByLabel(/read the seller/).check();
+    await review.getByRole("button", { name: "Continue to secure payment" }).click();
+    await expect(p).toHaveURL(/checkout\.stripe\.com/);
+    const { data: order } = await service().from("orders").select("offer_id, subtotal_cents, order_status").eq("buyer_id", buyer.id).single();
+    expect(order).toEqual({ offer_id: offerId, subtotal_cents: 18000, order_status: "awaiting_payment" });
+    await ctx.close();
+  });
+
+  test("a stranger's offer link and an expired offer are refused, and the reservation ends with the window", async ({ browser }) => {
+    const db = service();
+    // Free the buyer's own unpaid checkout so only the offer rules are being tested.
+    await db.from("orders").delete().eq("buyer_id", buyer.id);
+    const ctx = await browser.newContext();
+    const p = await ctx.newPage();
+    await signIn(p, rival, `/checkout/${listingId}?offer=${offerId}`);
+    await expect(p.getByTestId("checkout-blocked")).toContainText("couldn't be found");
+
+    await db.from("offers").update({ expires_at: new Date(Date.now() - 60_000).toISOString() }).eq("id", offerId);
+    await p.goto(`/listings/${listingId}`);
+    await expect(p.getByTestId("listing-actions").getByRole("link", { name: /Buy now/ })).toBeVisible();
+    const b = await browser.newContext();
+    const bp = await b.newPage();
+    await signIn(bp, buyer, `/checkout/${listingId}?offer=${offerId}`);
+    await expect(bp.getByTestId("checkout-blocked")).toContainText(/payment window|expired/);
+    await ctx.close();
+    await b.close();
+  });
+});

@@ -15,6 +15,10 @@ export type ListingActionsProps = {
   isOwner: boolean;
 };
 
+function untilText(iso: string): string {
+  return new Date(iso).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" }) + " UTC";
+}
+
 async function sellerCanAcceptPayments(listingId: string): Promise<boolean> {
   const supabase = await createClient();
   if (!supabase) return false;
@@ -22,6 +26,16 @@ async function sellerCanAcceptPayments(listingId: string): Promise<boolean> {
   if (!listing) return false;
   const { data } = await supabase.rpc("seller_can_accept_payments", { p_seller: listing.seller_id });
   return data === true;
+}
+
+type Reservation = { reserved: boolean; held_by_me: boolean; reserved_until: string; offer_id: string | null };
+
+/** An accepted offer reserves the listing for its buyer until the payment window ends. */
+async function offerReservation(listingId: string): Promise<Reservation | null> {
+  const supabase = await createClient();
+  if (!supabase) return null;
+  const { data } = await supabase.rpc("listing_offer_reservation", { p_listing: listingId });
+  return Array.isArray(data) && data[0]?.reserved ? (data[0] as Reservation) : null;
 }
 
 export async function ListingActions({ listingId, status, priceCents, acceptsOffers, isOwner }: ListingActionsProps) {
@@ -45,6 +59,31 @@ export async function ListingActions({ listingId, status, priceCents, acceptsOff
       <div className="grid gap-2 rounded-lg border border-line bg-paper p-4" data-testid="listing-actions">
         <p className="font-semibold">This is your listing.</p>
         <p className="text-sm text-ink-soft">Buyers see the buy, offer and message buttons here.</p>
+      </div>
+    );
+  }
+
+  const reservation = await offerReservation(listingId);
+  if (reservation && reservation.held_by_me && reservation.offer_id) {
+    return (
+      <div className="grid gap-2" data-testid="listing-actions">
+        <Link href={`/checkout/${listingId}?offer=${reservation.offer_id}`} className="btn btn-primary w-full py-3 text-base" prefetch={false} data-testid="offer-checkout">
+          Check out with your accepted offer
+        </Link>
+        <p className="text-sm text-ink-soft">The seller accepted your offer. This item is reserved for you until {untilText(reservation.reserved_until)}.</p>
+      </div>
+    );
+  }
+  if (reservation) {
+    return (
+      <div className="grid gap-2" data-testid="listing-actions">
+        <button type="button" className="btn btn-primary w-full py-3 text-base" disabled aria-describedby="reserved-note">
+          Buy now for {formatPrice(priceCents)}
+        </button>
+        <MessageButton listingId={listingId} />
+        <p id="reserved-note" className="text-sm text-ink-soft" data-testid="offer-reserved">
+          Reserved for another buyer while they pay for an accepted offer. If they don&apos;t pay by {untilText(reservation.reserved_until)}, it becomes available again.
+        </p>
       </div>
     );
   }

@@ -9,6 +9,7 @@ import { sortRates } from "@/lib/shipping/rates";
 import { toProviderAddress } from "@/lib/shipping/address";
 import type { Rate } from "@/lib/shipping/types";
 import { PaymentsError, must, type Db, type Deps } from "./deps";
+import { requireCheckoutOffer } from "./offer";
 import { quoteTax, taxProviderFromEnv, type TaxQuote } from "./tax";
 import { markOrderPaid } from "./webhooks";
 
@@ -105,7 +106,7 @@ export type CheckoutStart = { orderId: string; url: string };
  */
 export async function startCheckout(
   deps: Deps,
-  input: { buyer: { id: string; email: string | null }; listingId: string; addressId: string; quoteId: string; rateId: string; taxEnabled: boolean }
+  input: { buyer: { id: string; email: string | null }; listingId: string; addressId: string; quoteId: string; rateId: string; taxEnabled: boolean; offerId?: string | null }
 ): Promise<CheckoutStart> {
   const { db, stripe } = deps;
   const listing = await loadListing(db, input.listingId);
@@ -115,10 +116,16 @@ export async function startCheckout(
   const address = must(await db.from("addresses").select("*").eq("id", input.addressId).eq("user_id", input.buyer.id).maybeSingle());
   if (!address) throw new PaymentsError("Choose a shipping address", "no_address");
 
+  // An accepted offer replaces the asking price. Checked here for a clear message and the right tax base; the
+  // database repeats the check under a lock.
+  const itemCents = input.offerId
+    ? await requireCheckoutOffer(db, input.offerId, { buyerId: input.buyer.id, listingId: input.listingId })
+    : (listing.asking_price_cents ?? 0);
+
   const tax: TaxQuote = await quoteTax(
     input.taxEnabled,
     {
-      itemCents: listing.asking_price_cents ?? 0,
+      itemCents,
       shippingCents: rate?.amountCents ?? 0,
       shipTo: { state: address.state, postalCode: address.postal_code, city: address.city, line1: address.street_address, country: "US" },
       shipFromPostalCode: listing.shipping_origin_postal_code,
@@ -136,6 +143,7 @@ export async function startCheckout(
       p_tax_cents: tax.amountCents,
       p_tax_jurisdiction: tax.jurisdiction ? { ...tax.jurisdiction, label: tax.label } : { collected: false, label: tax.label },
       p_hold_minutes: HOLD_MINUTES,
+      p_offer: input.offerId ?? null,
     })
     .single<{ id: string; order_number: string; subtotal_cents: number; shipping_cost_cents: number; tax_amount_cents: number; total_amount_cents: number; shipping_rate_snapshot: Rate }>();
   if (error || !order) throw new PaymentsError(error?.message ?? "The order couldn't be created", error?.code ?? "create_failed");

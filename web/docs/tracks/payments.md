@@ -31,6 +31,7 @@ Buyer ──pays item + shipping (+ tax)──▶ Platform's Stripe balance (Che
 | --- | --- |
 | Checkout: address (validated), live rates for the listing's package with reasons for unavailable options, review with disclosures, Stripe Checkout redirect | `/checkout/[listingId]`, `src/lib/payments/checkout.ts` |
 | Atomic order + listing hold (one live order per listing), fee snapshot, totals | `checkout_create_order()` |
+| Accepted offers: `/checkout/<listingId>?offer=<offerId>` charges the offer amount (see below) | `src/lib/payments/offer.ts`, `checkout_create_order(..., p_offer)`, migration `20261104000100_offer_checkout.sql` |
 | Holds released on expiry/cancel | `checkout.session.expired` webhook, buyer "Cancel this checkout", and the scheduled job (expires the Stripe session first) |
 | "Buy now" button / "Checkout opens soon" | `src/components/listing/ListingActions.tsx` (offers and messages stay disabled for their own track) |
 | Stripe webhook (signature on the raw body, idempotent) | `/api/webhooks/stripe`, `src/lib/payments/webhooks.ts` |
@@ -51,6 +52,15 @@ Buyer ──pays item + shipping (+ tax)──▶ Platform's Stripe balance (Che
 - New tables (RLS on): `shipping_quotes` (buyer reads own; the server stores rates so a browser can't set its own shipping price), `payment_refunds` (order parties and support read), `seller_payouts` (seller and support read). Browsers can't write any of them.
 - Unique index: one outbound label per order.
 - Server-only functions (service role): `checkout_create_order`, `checkout_release_order`, `payments_mark_paid`, `shipping_record_event`, `orders_ready_to_complete`, `payments_complete_order`, `payments_apply_refund_total`, `admin_record_refund` (audited, support can refund, only admins can record a transfer reversal), `payments_record_chargeback`, `orders_buyer_confirm_received`, `admin_payments_overview`. Public: `seller_can_accept_payments` (yes/no).
+
+### Accepted offers at checkout (`20261104000100_offer_checkout.sql`)
+
+- The link Trust builds after a seller accepts (`/checkout/<listingId>?offer=<offerId>`) is honored. The page and the server action check the offer (`src/lib/payments/offer.ts`) for a clear message and the right tax base, and `checkout_create_order` repeats every check under a row lock: the offer must belong to **this buyer and this listing**, be `accepted`, and be inside its **payment window**. Anything else is refused ("Offer not found" for someone else's offer, so nothing leaks).
+- **Payment window** = the accepted offer's `expires_at`, set when the offer is accepted to `now() + offer_expiry_hours` (the existing admin setting, default 48 h). No new setting was added.
+- The offer amount replaces the asking price: `orders.subtotal_cents`, `order_items.unit_price_cents`, commission (7%) and the passthrough are all computed on it, and the Stripe line item is the offer amount. `orders.offer_id` is set and `fee_snapshot` records `offer_id` and `list_price_cents`. A malformed `?offer=` is an error, never a silent fall back to the list price.
+- **Reservation**: an offer with `status = 'accepted'` and `expires_at > now()` reserves the listing for its buyer. `checkout_create_order` refuses any other buyer ("reserved for another buyer"), `listing_offer_reservation(listing)` tells the listing page (anonymous-safe: reserved yes/no, until when, and the offer id only for the buyer it is reserved for), and the listing shows a disabled Buy now with a note to everyone else and "Check out with your accepted offer" to the buyer. There is no flag to go stale: the reservation ends when the window lapses (effective immediately, even before the cron marks the offer expired) or the offer is withdrawn. Accepting is refused while another buyer's checkout hold exists. Either member can withdraw an accepted offer until a payment is in progress (`respond_to_offer`).
+- When the order is paid, a trigger sets the offer to `completed`.
+- The listing's `listing_status` is **not** changed to `reserved` for offers (that status means "paid" and locks the seller's editing).
 
 ### Order states
 
@@ -78,7 +88,7 @@ Buyer ──pays item + shipping (+ tax)──▶ Platform's Stripe balance (Che
 
 ### Scheduled job (Vercel)
 
-`vercel.json` runs `/api/cron/orders` every 15 minutes. Set `CRON_SECRET` (long random string) in the Vercel project; Vercel sends it as `Authorization: Bearer …`. Vercel's Hobby plan only allows daily cron jobs; use Pro, or an external scheduler calling the same URL with the header. The job is safe to run as often as you like.
+`vercel.json` runs `/api/cron/orders` and `/api/cron/expire-offers` every 15 minutes (a unit test fails if a route under `src/app/api/cron/` is missing from `vercel.json`). Set `CRON_SECRET` (long random string) in the Vercel project; Vercel sends it as `Authorization: Bearer …`. Vercel's Hobby plan only allows daily cron jobs; use Pro, or an external scheduler calling the same URL with the header. The job is safe to run as often as you like.
 
 ### Switching on
 
@@ -89,9 +99,9 @@ Buyer ──pays item + shipping (+ tax)──▶ Platform's Stripe balance (Che
 | Test | What | Count |
 | --- | --- | --- |
 | `tests/unit/payments.test.ts` | Money math (rounding, passthrough, refunds vs transfer), state machine, package/oversize rules and dimensional weight, rate selection, tax gating, Shippo parsing and request shape, fake provider and label PDF, Checkout Session parameters, Connect status mapping, address validation | 38 |
-| `tests/db/payments.test.ts` (throwaway Postgres) | Atomic hold, totals and fee snapshot, passthrough, second buyer blocked, own/inactive/unready-seller listings refused, expired quote / bad rate / foreign address, checkout off, release on expiry, mark paid once, amount mismatch, late payment, tracking idempotency and ordering, inspection window, dispute hold, buyer confirmation, completion + price history, refunds + audit, transfer reversal admin-only, chargebacks, RLS on the new tables and the ship-to address | 23 |
-| `tests/integration/payments.test.ts` (stripe-mock + local Supabase) | Checkout Session creation, quotes, signed webhooks (bad signature 400, duplicate ignored, PI + session both arriving), expiry, chargeback, payout failure, account.updated, Express account + onboarding link, transfer at completion (rerun-safe), not before the window, refunds before/after transfer with typed confirmation and reversal, expiry sweep, test label + tracking webhook | 13 |
-| `tests/e2e/payments.spec.ts` (browser, stripe-mock, port 3105) | "Checkout opens soon"; address → rates → review → redirect to `checkout.stripe.com` (intercepted, not followed); signed webhook → paid, listing reserved, second buyer blocked; seller buys a test label; signed DELIVERED tracking webhook; cron after moving delivery back → completed, transfer id, sold, price history; admin (with MFA) refunds another order | 7 |
+| `tests/db/payments.test.ts` (throwaway Postgres) | Atomic hold, totals and fee snapshot, passthrough, second buyer blocked, own/inactive/unready-seller listings refused, expired quote / bad rate / foreign address, checkout off, release on expiry, mark paid once, amount mismatch, late payment, tracking idempotency and ordering, inspection window, dispute hold, buyer confirmation, completion + price history, refunds + audit, transfer reversal admin-only, chargebacks, RLS on the new tables and the ship-to address; **accepted offers** (offer price and fees, offer used up on payment, wrong buyer/listing, not-accepted, expired, reservation blocks others, released on expiry and on withdrawal, server-only) | 33 |
+| `tests/integration/payments.test.ts` (stripe-mock + local Supabase) | Checkout Session creation, quotes, signed webhooks (bad signature 400, duplicate ignored, PI + session both arriving), expiry, chargeback, payout failure, account.updated, Express account + onboarding link, transfer at completion (rerun-safe), not before the window, refunds before/after transfer with typed confirmation and reversal, expiry sweep, test label + tracking webhook | 14 |
+| `tests/e2e/payments.spec.ts` (browser, stripe-mock, port 3105) | "Checkout opens soon"; address → rates → review → redirect to `checkout.stripe.com` (intercepted, not followed); signed webhook → paid, listing reserved, second buyer blocked; seller buys a test label; signed DELIVERED tracking webhook; cron after moving delivery back → completed, transfer id, sold, price history; admin (with MFA) refunds another order; **accepted offer**: other buyer sees reserved / Buy now disabled, offer buyer reviews and pays the offer amount, stranger's link and expired offer refused | 10 |
 
 Run locally: `docker run -d --name stripe-mock -p 12111:12111 stripe/stripe-mock:latest`, put the test values from `.env.example` in `.env.local` (`STRIPE_SECRET_KEY=sk_test_123`, `STRIPE_API_HOST=localhost`, `STRIPE_API_PORT=12111`, `STRIPE_API_PROTOCOL=http`, `STRIPE_WEBHOOK_SECRET`, `CRON_SECRET`, `SHIPPO_WEBHOOK_SECRET`), then `npm run build && npx next start -p 3105` and `E2E_PORT=3105 npx playwright test tests/e2e/payments.spec.ts`. Integration and browser tests skip themselves when stripe-mock or Supabase isn't running. The browser test turns `checkout_enabled` on only around the checkout steps and restores it.
 
@@ -103,6 +113,7 @@ Run locally: `docker run -d --name stripe-mock -p 12111:12111 stripe/stripe-mock
 
 ## Known limitations
 
+- Offer checkout was verified end to end only against stripe-mock (same limits as the rest of checkout). A payment that lands after the payment window but within the 35-minute checkout hold is accepted at the offer price (the order was created inside the window).
 - Problem reports and the dispute workflow are another track. The buyer page links to `#problem`, which explains this and points to support; admin Disputes is read-only.
 - A buyer who contacts support instead of opening a dispute does **not** stop the automatic completion; support must refund before the window ends (or the owner extends the window).
 - Shipping insurance isn't bought. Label cost above what the buyer paid is absorbed by the platform and listed on Shipping exceptions.
