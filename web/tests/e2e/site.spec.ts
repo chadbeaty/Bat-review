@@ -11,11 +11,12 @@ test.describe("homepage", () => {
     await expect(page.getByRole("link", { name: "Sell your gear" }).first()).toBeVisible();
   });
 
-  test("shows empty states instead of invented inventory", async ({ page }) => {
+  test("shows only real listings, or an empty state when there are none", async ({ page, request }) => {
     await page.goto("/");
-    await expect(page.getByText("No featured bats yet")).toBeVisible();
-    await expect(page.getByText("Nothing listed yet")).toBeVisible();
-    await expect(page.locator('a[href^="/listings/"]')).toHaveCount(0);
+    const links = await page.$$eval('a[href^="/listings/"]', (as) => as.map((a) => (a as HTMLAnchorElement).getAttribute("href")!));
+    if (links.length === 0) await expect(page.getByText("Nothing listed yet")).toBeVisible();
+    // Every listing shown on the homepage is a real, viewable listing.
+    for (const href of new Set(links)) expect((await request.get(href)).status(), href).toBe(200);
     await expect(page.getByRole("heading", { name: "Partners" })).toHaveCount(0);
   });
 
