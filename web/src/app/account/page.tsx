@@ -53,6 +53,9 @@ export default async function AccountPage({ searchParams }: PageProps<"/account"
             <dt className="text-ink-soft">Seller status</dt>
             <dd>{profile?.seller_verified ? "Verified seller" : "Not verified yet"}</dd>
           </dl>
+          <Link href="/account/profile" className="text-sm font-semibold underline">
+            Edit profile
+          </Link>
         </section>
         <section className="card grid content-start gap-2 p-5">
           <h2 className="font-semibold">Buying</h2>
@@ -60,10 +63,18 @@ export default async function AccountPage({ searchParams }: PageProps<"/account"
         </section>
         <section className="card grid content-start gap-2 p-5">
           <h2 className="font-semibold">Selling</h2>
-          <p className="text-sm text-ink-soft">Listing creation opens in the next release. Payouts are set up through Stripe when checkout launches.</p>
-          <Link href="/sell" className="text-sm font-semibold underline">
-            How selling works
-          </Link>
+          <p className="text-sm text-ink-soft">List gear, resume drafts and manage your listings. Payouts are set up through Stripe when checkout launches.</p>
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm font-semibold">
+            <Link href="/seller" className="underline">
+              Seller dashboard
+            </Link>
+            <Link href="/sell/new" className="underline">
+              Start a listing
+            </Link>
+            <Link href="/account/catalog-requests" className="underline">
+              Catalog requests
+            </Link>
+          </div>
         </section>
       </div>
 
