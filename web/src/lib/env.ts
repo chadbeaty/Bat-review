@@ -30,6 +30,7 @@ export const integrations = [
   { id: "google", name: "Google sign-in", vars: ["NEXT_PUBLIC_GOOGLE_AUTH_ENABLED"], phase: 1 },
   { id: "stripe", name: "Stripe Connect (payments and payouts)", vars: ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET", "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY"], phase: 3 },
   { id: "shippo", name: "Shippo (rates, labels, tracking)", vars: ["SHIPPO_API_TOKEN", "SHIPPO_WEBHOOK_SECRET"], phase: 4 },
+  { id: "cron", name: "Scheduled order job (releases holds, pays sellers)", vars: ["CRON_SECRET"], phase: 3 },
   { id: "resend", name: "Resend (email)", vars: ["RESEND_API_KEY"], phase: 7 },
   { id: "sentry", name: "Sentry (error monitoring)", vars: ["SENTRY_DSN"], phase: 7 },
   { id: "ga", name: "Google Analytics", vars: ["NEXT_PUBLIC_GA_MEASUREMENT_ID"], phase: 7 },

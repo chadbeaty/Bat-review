@@ -62,6 +62,10 @@ describe("site settings validation", () => {
         "premium_seller_enabled",
         "price_guide_full_sales",
         "price_guide_min_sales",
+        // Track D (payments)
+        "checkout_enabled",
+        "tax_collection_enabled",
+        "inspection_window_days",
       ].sort()
     );
   });
