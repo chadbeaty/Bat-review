@@ -111,8 +111,9 @@ as $$
         l.title, l.description, p.product_name, p.model_name, array_to_string(p.aliases, ' '),
         m.name, array_to_string(m.aliases, ' '), c.name,
         l.attributes ->> 'weighting_type', l.attributes ->> 'construction_type',
-        array_to_string(jsonb_text_list(l.attributes -> 'certification'), ' '),
-        array_to_string(p.certification_association, ' '),
+        -- The seller's stamps when given (they describe this bat), otherwise the catalog model's.
+        array_to_string(case when cardinality(jsonb_text_list(l.attributes -> 'certification')) > 0
+          then jsonb_text_list(l.attributes -> 'certification') else p.certification_association end, ' '),
         coalesce(l.attributes ->> 'model_year', p.model_year::text)
       )) as doc
     from equipment_listings l
