@@ -1,0 +1,5 @@
+node_modules/
+.DS_Store
+
+# Temporary working copies used by background agents
+.claude/worktrees/

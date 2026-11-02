@@ -1,0 +1,1867 @@
+{
+ "generatedFrom": "data/bats.json (2026-10-21)",
+ "bats": [
+  {
+   "slug": "easton-alpha-2pc-loaded-usssa-2026",
+   "name": "Easton Alpha 2-Piece Loaded",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2026,
+   "productLine": "Alpha",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.5
+  },
+  {
+   "slug": "easton-alpha-2pc-loaded-usa-2026",
+   "name": "Easton Alpha 2-Piece Loaded",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2026,
+   "productLine": "Alpha",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.5
+  },
+  {
+   "slug": "easton-alpha-1pc-balanced-usssa-2025",
+   "name": "Easton Alpha 1-Piece Balanced 13\"",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2025,
+   "productLine": "Alpha",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "easton-empire-connell-senior-2026",
+   "name": "Easton Empire Greg Connell",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2026,
+   "productLine": "Empire",
+   "certifications": [
+    "SSUSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "easton-empire-rulli-senior-2026",
+   "name": "Easton Empire Dennis Rulli",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2026,
+   "productLine": "Empire",
+   "certifications": [
+    "SSUSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "easton-hype-fire-1pc-loaded-usssa-2026",
+   "name": "Easton Hype Fire 1-Piece Loaded 13\"",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2026,
+   "productLine": "Hype Fire",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "easton-hype-fire-2pc-usa-2026",
+   "name": "Easton Hype Fire 2-Piece",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2026,
+   "productLine": "Hype Fire",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "unknown",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "easton-marsh-1pc-loaded-usssa-2026",
+   "name": "Easton Marsh 1-Piece Loaded",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2026,
+   "productLine": "Marsh",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "easton-marsh-2pc-loaded-usssa-2026",
+   "name": "Easton Marsh 2-Piece Loaded",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2026,
+   "productLine": "Marsh",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "easton-power-brigade-1pc-loaded-usssa-2026",
+   "name": "Easton Power Brigade 1-Piece Loaded",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2026,
+   "productLine": "Power Brigade",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "easton-rival-1pc-dual-2026",
+   "name": "Easton Rival 1-Piece",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2026,
+   "productLine": "Rival",
+   "certifications": [
+    "USA",
+    "USSSA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "one_piece",
+   "material": "alloy",
+   "barrelLengthInches": 12
+  },
+  {
+   "slug": "easton-ronin-240-alloy-dual-2027",
+   "name": "Easton Ronin 240 Alloy",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2027,
+   "productLine": "Ronin",
+   "certifications": [
+    "USA",
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "alloy",
+   "barrelLengthInches": 12
+  },
+  {
+   "slug": "easton-stealth-camo-1pc-loaded-usssa-2027",
+   "name": "Easton Stealth Camo 1-Piece End-Loaded",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2027,
+   "productLine": "Stealth",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "easton-tantrum-2pc-balanced-usssa-2026",
+   "name": "Easton Tantrum 2-Piece Balanced 13\"",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2026,
+   "productLine": "Tantrum",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "easton-tantrum-2pc-loaded-usssa-2026",
+   "name": "Easton Tantrum 2-Piece Loaded",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2026,
+   "productLine": "Tantrum",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "easton-tantrum-1pc-balanced-usa-2026",
+   "name": "Easton Tantrum 1-Piece Balanced",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2026,
+   "productLine": "Tantrum",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "easton-tantrum-black-loaded-usa-2026",
+   "name": "Easton Tantrum Black Loaded",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2026,
+   "productLine": "Tantrum",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "easton-tantrum-motherload-1pc-senior-2026",
+   "name": "Easton Tantrum MotherLoad 1-Piece",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2026,
+   "productLine": "Tantrum",
+   "certifications": [
+    "SSUSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "easton-tantrum-1pc-loaded-usssa-2026",
+   "name": "Easton Tantrum 1-Piece Loaded",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2026,
+   "productLine": "Tantrum",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "easton-tantrum-2pc-loaded-usa-2025",
+   "name": "Easton Tantrum 2-Piece 12.75\" Loaded",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2025,
+   "productLine": "Tantrum",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "easton-tantrum-gold-1pc-loaded-2025",
+   "name": "Easton Tantrum Gold 1-Piece Loaded",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2025,
+   "productLine": "Tantrum",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "alloy",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "easton-thing-2pc-loaded-usssa-2026",
+   "name": "Easton Thing 2-Piece Loaded",
+   "manufacturer": "Easton",
+   "manufacturerSlug": "easton",
+   "modelYear": 2026,
+   "productLine": "Thing",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "demarini-corndog-pro-maple-dual-2027",
+   "name": "DeMarini CornDog Pro Maple End-Loaded",
+   "manufacturer": "DeMarini",
+   "manufacturerSlug": "demarini",
+   "modelYear": 2027,
+   "productLine": "CornDog",
+   "certifications": [
+    "USA",
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "wood_composite",
+   "barrelLengthInches": 12
+  },
+  {
+   "slug": "demarini-the-culture-usssa-2027",
+   "name": "DeMarini The Culture",
+   "manufacturer": "DeMarini",
+   "manufacturerSlug": "demarini",
+   "modelYear": 2027,
+   "productLine": "The Culture",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "demarini-flipper-usa-2027",
+   "name": "DeMarini Flipper",
+   "manufacturer": "DeMarini",
+   "manufacturerSlug": "demarini",
+   "modelYear": 2027,
+   "productLine": "Flipper",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "midload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "demarini-juggy-extended-usa-2027",
+   "name": "DeMarini Juggy Extended",
+   "manufacturer": "DeMarini",
+   "manufacturerSlug": "demarini",
+   "modelYear": 2027,
+   "productLine": "Juggy",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "demarini-kingpin-senior-2026",
+   "name": "DeMarini Kingpin 1-Piece",
+   "manufacturer": "DeMarini",
+   "manufacturerSlug": "demarini",
+   "modelYear": 2026,
+   "productLine": "Kingpin",
+   "certifications": [
+    "SSUSA"
+   ],
+   "weightingType": "midload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 13.5
+  },
+  {
+   "slug": "demarini-mercy-usa-2027",
+   "name": "DeMarini Mercy",
+   "manufacturer": "DeMarini",
+   "manufacturerSlug": "demarini",
+   "modelYear": 2027,
+   "productLine": "Mercy / Merciless",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "demarini-merciless-usa-2027",
+   "name": "DeMarini Merciless",
+   "manufacturer": "DeMarini",
+   "manufacturerSlug": "demarini",
+   "modelYear": 2027,
+   "productLine": "Mercy / Merciless",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12
+  },
+  {
+   "slug": "demarini-stadium-usssa-2027",
+   "name": "DeMarini Stadium",
+   "manufacturer": "DeMarini",
+   "manufacturerSlug": "demarini",
+   "modelYear": 2027,
+   "productLine": "Stadium",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "demarini-stadium-13-endload-usssa-2026",
+   "name": "DeMarini Stadium 13\" End-Loaded",
+   "manufacturer": "DeMarini",
+   "manufacturerSlug": "demarini",
+   "modelYear": 2026,
+   "productLine": "Stadium",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "demarini-the-standard-usssa-2027",
+   "name": "DeMarini The Standard",
+   "manufacturer": "DeMarini",
+   "manufacturerSlug": "demarini",
+   "modelYear": 2027,
+   "productLine": "Standard / Standard Issue",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "demarini-standard-issue-usssa-2026",
+   "name": "DeMarini Standard Issue",
+   "manufacturer": "DeMarini",
+   "manufacturerSlug": "demarini",
+   "modelYear": 2026,
+   "productLine": "Standard / Standard Issue",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "demarini-twisted-mistress-midload-usssa-2027",
+   "name": "DeMarini Twisted Mistress 13\" Mid-Load",
+   "manufacturer": "DeMarini",
+   "manufacturerSlug": "demarini",
+   "modelYear": 2027,
+   "productLine": "Twisted Mistress",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "midload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "demarini-yates-twisted-mistress-usssa-2026",
+   "name": "DeMarini Jeremy Yates Twisted Mistress 13\"",
+   "manufacturer": "DeMarini",
+   "manufacturerSlug": "demarini",
+   "modelYear": 2026,
+   "productLine": "Twisted Mistress",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "demarini-twisted-mistress-v2-usssa-2026",
+   "name": "DeMarini Twisted Mistress V2 13\"",
+   "manufacturer": "DeMarini",
+   "manufacturerSlug": "demarini",
+   "modelYear": 2026,
+   "productLine": "Twisted Mistress",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "demarini-uprising-dual-2027",
+   "name": "DeMarini Uprising",
+   "manufacturer": "DeMarini",
+   "manufacturerSlug": "demarini",
+   "modelYear": 2027,
+   "productLine": "Uprising",
+   "certifications": [
+    "USA",
+    "USSSA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "one_piece",
+   "material": "alloy",
+   "barrelLengthInches": 12
+  },
+  {
+   "slug": "demarini-vanilla-gorilla-usssa-2027",
+   "name": "DeMarini Jason Magnum Vanilla Gorilla",
+   "manufacturer": "DeMarini",
+   "manufacturerSlug": "demarini",
+   "modelYear": 2027,
+   "productLine": "Vanilla Gorilla",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "miken-freak-whiteout-maxload-usssa-2027",
+   "name": "Miken Freak Whiteout 13\" Maxload",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2027,
+   "productLine": "Freak",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "miken-freak-fire-maxload-usssa-2027",
+   "name": "Miken Freak Fire 0.5 oz Maxload",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2027,
+   "productLine": "Freak",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "miken-freak-black-maxload-usssa-2026",
+   "name": "Miken Freak Black Maxload",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2026,
+   "productLine": "Freak",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.5
+  },
+  {
+   "slug": "miken-freak-black-maxload-usa-2026",
+   "name": "Miken Freak Black Maxload",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2026,
+   "productLine": "Freak",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12
+  },
+  {
+   "slug": "miken-freak-ice-usssa-2026",
+   "name": "Miken Freak Ice 1-Piece 12.75\" Maxload",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2026,
+   "productLine": "Freak",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "miken-freak-splatter-maxload-usssa-2026",
+   "name": "Miken Freak Splatter Maxload",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2026,
+   "productLine": "Freak",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "miken-freak-1pc-maxload-usssa-2026",
+   "name": "Miken Freak 1-Piece Maxload 13.5\"",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2026,
+   "productLine": "Freak",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 13.5
+  },
+  {
+   "slug": "miken-super-freak-highlighter-usssa-2026",
+   "name": "Miken Super Freak Highlighter",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2026,
+   "productLine": "Freak",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13.5
+  },
+  {
+   "slug": "miken-super-freak-highlighter-usa-2026",
+   "name": "Miken Super Freak Highlighter 13.5\"",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2026,
+   "productLine": "Freak",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13.5
+  },
+  {
+   "slug": "miken-tunnel-to-towers-usssa-2026",
+   "name": "Miken Tunnel to Towers",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2026,
+   "productLine": "Freak",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "miken-freak-maxload-2pc-usssa-2026",
+   "name": "Miken Freak Maxload 2-Piece 13.5\"",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2026,
+   "productLine": "Freak",
+   "certifications": [
+    "USSSA",
+    "NSA",
+    "ISA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13.5
+  },
+  {
+   "slug": "miken-freak-balanced-usssa-2026",
+   "name": "Miken Freak Balanced 2-Piece 13.5\"",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2026,
+   "productLine": "Freak",
+   "certifications": [
+    "USSSA",
+    "NSA",
+    "ISA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13.5
+  },
+  {
+   "slug": "miken-freak-balanced-usa-2026",
+   "name": "Miken Freak Balanced 2-Piece 13.5\"",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2026,
+   "productLine": "Freak",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13.5
+  },
+  {
+   "slug": "miken-freak-splatter-maxload-usa-2026",
+   "name": "Miken Freak Splatter 2-Piece Maxload 13.5\"",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2026,
+   "productLine": "Freak",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13.5
+  },
+  {
+   "slug": "miken-freak30-maxload-usssa-2026",
+   "name": "Miken Freak30 2-Piece Maxload",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2026,
+   "productLine": "Freak",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "miken-hb12-retro-endload-usssa-2026",
+   "name": "Miken HB12 Retro 12.5\" End Loaded",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2026,
+   "productLine": "HB12",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.5
+  },
+  {
+   "slug": "miken-kp23-2pc-maxload-usssa-2026",
+   "name": "Miken KP23 2-Piece 12.5\" Maxload",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2026,
+   "productLine": "KP23",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.5
+  },
+  {
+   "slug": "miken-kp23-1pc-maxload-usssa-2026",
+   "name": "Miken KP23 1-Piece 14\" Maxload",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2026,
+   "productLine": "KP23",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 14
+  },
+  {
+   "slug": "miken-kp23-maxload-usa-2026",
+   "name": "Miken KP23 Maxload",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2026,
+   "productLine": "KP23",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12
+  },
+  {
+   "slug": "miken-mv1-maxload-usssa-2026",
+   "name": "Miken MV1 Maxload 13\"",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2026,
+   "productLine": "MV1",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "miken-ultra-gamer-supermax-senior-2026",
+   "name": "Miken Ultra Gamer Supermax 13.5\"",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2026,
+   "productLine": "Ultra Gamer",
+   "certifications": [
+    "SSUSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13.5
+  },
+  {
+   "slug": "miken-ultra-gamer-maxload-senior-2026",
+   "name": "Miken Ultra Gamer Maxload 13.5\"",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2026,
+   "productLine": "Ultra Gamer",
+   "certifications": [
+    "SSUSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13.5
+  },
+  {
+   "slug": "miken-vicious-maxload-dual-2026",
+   "name": "Miken Vicious 13\" Maxload",
+   "manufacturer": "Miken",
+   "manufacturerSlug": "miken",
+   "modelYear": 2026,
+   "productLine": "Vicious",
+   "certifications": [
+    "USA",
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "alloy",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "worth-amp-alloy-dual-2026",
+   "name": "Worth AMP Alloy",
+   "manufacturer": "Worth",
+   "manufacturerSlug": "worth",
+   "modelYear": 2026,
+   "productLine": "AMP",
+   "certifications": [
+    "USA",
+    "USSSA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "one_piece",
+   "material": "alloy",
+   "barrelLengthInches": 12
+  },
+  {
+   "slug": "worth-bedlam-xl-usa-2026",
+   "name": "Worth Bedlam XL",
+   "manufacturer": "Worth",
+   "manufacturerSlug": "worth",
+   "modelYear": 2026,
+   "productLine": "Bedlam",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.5
+  },
+  {
+   "slug": "worth-bedlam-balanced-usssa-2026",
+   "name": "Worth Bedlam Balanced",
+   "manufacturer": "Worth",
+   "manufacturerSlug": "worth",
+   "modelYear": 2026,
+   "productLine": "Bedlam",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "worth-bedlam-xl-usssa-2026",
+   "name": "Worth Bedlam XL",
+   "manufacturer": "Worth",
+   "manufacturerSlug": "worth",
+   "modelYear": 2026,
+   "productLine": "Bedlam",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "worth-bedlam-xxl-usssa-2026",
+   "name": "Worth Josh Riley Bedlam XXL",
+   "manufacturer": "Worth",
+   "manufacturerSlug": "worth",
+   "modelYear": 2026,
+   "productLine": "Bedlam",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "worth-riley-bedlam-black-xl-usssa-2026",
+   "name": "Worth Josh Riley Bedlam Black XL",
+   "manufacturer": "Worth",
+   "manufacturerSlug": "worth",
+   "modelYear": 2026,
+   "productLine": "Bedlam",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "worth-bedlam-black-xl-usa-2026",
+   "name": "Worth Bedlam Black XL 2-Piece",
+   "manufacturer": "Worth",
+   "manufacturerSlug": "worth",
+   "modelYear": 2026,
+   "productLine": "Bedlam",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.5
+  },
+  {
+   "slug": "worth-krecher-xl-usssa-2026",
+   "name": "Worth Krecher XL",
+   "manufacturer": "Worth",
+   "manufacturerSlug": "worth",
+   "modelYear": 2026,
+   "productLine": "Krecher / Silverback",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "worth-silverback-xlt-usssa-2026",
+   "name": "Worth Silverback XLT",
+   "manufacturer": "Worth",
+   "manufacturerSlug": "worth",
+   "modelYear": 2026,
+   "productLine": "Krecher / Silverback",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "worth-legit-highlighter-xl-usssa-2026",
+   "name": "Worth Legit Highlighter XL 12.75\"",
+   "manufacturer": "Worth",
+   "manufacturerSlug": "worth",
+   "modelYear": 2026,
+   "productLine": "Legit",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "worth-2-legit-1pc-xl-usssa-2026",
+   "name": "Worth 2 Legit 1-Piece XL 13\"",
+   "manufacturer": "Worth",
+   "manufacturerSlug": "worth",
+   "modelYear": 2026,
+   "productLine": "Legit",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "worth-2-legit-2pc-xl-usa-2026",
+   "name": "Worth 2 Legit 2-Piece XL 13\"",
+   "manufacturer": "Worth",
+   "manufacturerSlug": "worth",
+   "modelYear": 2026,
+   "productLine": "Legit",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "worth-thumper-xl-usssa-2027",
+   "name": "Worth Thumper XL 13.5\"",
+   "manufacturer": "Worth",
+   "manufacturerSlug": "worth",
+   "modelYear": 2027,
+   "productLine": "Thumper",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13.5
+  },
+  {
+   "slug": "ls-genesis-ice-cream-1pc-endload-usssa-2027",
+   "name": "Louisville Slugger Genesis Ice Cream 13\" 1-Piece Endloaded",
+   "manufacturer": "Louisville Slugger",
+   "manufacturerSlug": "louisville-slugger",
+   "modelYear": 2027,
+   "productLine": "Genesis",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "ls-genesis-royal-geny-14-endload-usssa-2026",
+   "name": "Louisville Slugger Genesis Royal Geny 14\" Endload",
+   "manufacturer": "Louisville Slugger",
+   "manufacturerSlug": "louisville-slugger",
+   "modelYear": 2026,
+   "productLine": "Genesis",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 14
+  },
+  {
+   "slug": "ls-genesis-iron-man-13-balanced-usssa-2026",
+   "name": "Louisville Slugger Genesis Iron Man 5.0 13\" Balanced",
+   "manufacturer": "Louisville Slugger",
+   "manufacturerSlug": "louisville-slugger",
+   "modelYear": 2026,
+   "productLine": "Genesis",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "ls-genesis-12-balanced-usssa-2026",
+   "name": "Louisville Slugger Genesis 12\" Balanced",
+   "manufacturer": "Louisville Slugger",
+   "manufacturerSlug": "louisville-slugger",
+   "modelYear": 2026,
+   "productLine": "Genesis",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12
+  },
+  {
+   "slug": "ls-genesis-brady-12-maxload-usssa-2026",
+   "name": "Louisville Slugger Genesis Matt Brady 12\" Maxload",
+   "manufacturer": "Louisville Slugger",
+   "manufacturerSlug": "louisville-slugger",
+   "modelYear": 2026,
+   "productLine": "Genesis",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12
+  },
+  {
+   "slug": "ls-genesis-lutheran-powerload-usssa-2026",
+   "name": "Louisville Slugger Genesis Justin Lutheran Powerload",
+   "manufacturer": "Louisville Slugger",
+   "manufacturerSlug": "louisville-slugger",
+   "modelYear": 2026,
+   "productLine": "Genesis",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "ls-genesis-hartling-13-endload-usssa-2026",
+   "name": "Louisville Slugger Genesis Scott Hartling 13\" Endload",
+   "manufacturer": "Louisville Slugger",
+   "manufacturerSlug": "louisville-slugger",
+   "modelYear": 2026,
+   "productLine": "Genesis",
+   "certifications": [
+    "USSSA",
+    "NSA",
+    "ISA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "ls-genesis-ussery-13-maxload-usssa-2026",
+   "name": "Louisville Slugger Genesis Adam Ussery 13\" Maxload",
+   "manufacturer": "Louisville Slugger",
+   "manufacturerSlug": "louisville-slugger",
+   "modelYear": 2026,
+   "productLine": "Genesis",
+   "certifications": [
+    "USSSA",
+    "NSA",
+    "ISA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "ls-genesis-splatter-12-balanced-usssa-2026",
+   "name": "Louisville Slugger Genesis Splatter 12\" Balanced",
+   "manufacturer": "Louisville Slugger",
+   "manufacturerSlug": "louisville-slugger",
+   "modelYear": 2026,
+   "productLine": "Genesis",
+   "certifications": [
+    "USSSA",
+    "NSA",
+    "ISA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12
+  },
+  {
+   "slug": "ls-genesis-ice-cream-13-balanced-usssa-2026",
+   "name": "Louisville Slugger Genesis Ice Cream 13\" Balanced",
+   "manufacturer": "Louisville Slugger",
+   "manufacturerSlug": "louisville-slugger",
+   "modelYear": 2026,
+   "productLine": "Genesis",
+   "certifications": [
+    "USSSA",
+    "NSA",
+    "ISA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "monsta-torch-usa-2026",
+   "name": "Monsta Torch",
+   "manufacturer": "Monsta",
+   "manufacturerSlug": "monsta",
+   "modelYear": 2026,
+   "productLine": "Torch",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12
+  },
+  {
+   "slug": "monsta-senior-torch-2026",
+   "name": "Monsta Senior Torch",
+   "manufacturer": "Monsta",
+   "manufacturerSlug": "monsta",
+   "modelYear": 2026,
+   "productLine": "Torch",
+   "certifications": [
+    "SSUSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12
+  },
+  {
+   "slug": "monsta-trippin-2pc-usssa-2026",
+   "name": "Monsta Trippin' 2-Piece",
+   "manufacturer": "Monsta",
+   "manufacturerSlug": "monsta",
+   "modelYear": 2026,
+   "productLine": "Trippin'",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "monsta-trippin-buttload-usssa-2026",
+   "name": "Monsta Trippin' Buttload",
+   "manufacturer": "Monsta",
+   "manufacturerSlug": "monsta",
+   "modelYear": 2026,
+   "productLine": "Trippin'",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "monsta-dna-usa-2026",
+   "name": "Monsta DNA",
+   "manufacturer": "Monsta",
+   "manufacturerSlug": "monsta",
+   "modelYear": 2026,
+   "productLine": "DNA / King of Diamonds",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12
+  },
+  {
+   "slug": "monsta-kod-usa-2026",
+   "name": "Monsta King of Diamonds",
+   "manufacturer": "Monsta",
+   "manufacturerSlug": "monsta",
+   "modelYear": 2026,
+   "productLine": "DNA / King of Diamonds",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12
+  },
+  {
+   "slug": "suncoast-melee-3-og-1pc-senior-2027",
+   "name": "Suncoast Melee 3 OG 1-Piece 12\"",
+   "manufacturer": "Suncoast",
+   "manufacturerSlug": "suncoast",
+   "modelYear": 2027,
+   "productLine": "Melee",
+   "certifications": [
+    "SSUSA",
+    "ISA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 12
+  },
+  {
+   "slug": "suncoast-melee-3-max-balanced-senior-2026",
+   "name": "Suncoast Melee 3 Max Balanced",
+   "manufacturer": "Suncoast",
+   "manufacturerSlug": "suncoast",
+   "modelYear": 2026,
+   "productLine": "Melee",
+   "certifications": [
+    "SSUSA",
+    "ISA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "suncoast-melee-megaload-senior-2026",
+   "name": "Suncoast Melee Megaload",
+   "manufacturer": "Suncoast",
+   "manufacturerSlug": "suncoast",
+   "modelYear": 2026,
+   "productLine": "Melee",
+   "certifications": [
+    "SSUSA",
+    "ISA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "victus-beacon-bomb-pop-usssa-2026",
+   "name": "Victus Beacon Bomb Pop Ya-Ya Load 1-Piece",
+   "manufacturer": "Victus",
+   "manufacturerSlug": "victus",
+   "modelYear": 2026,
+   "productLine": "Beacon",
+   "certifications": [
+    "USSSA",
+    "NSA",
+    "ISA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "victus-beacon-travis-clark-usssa-2026",
+   "name": "Victus Beacon Travis Clark Big Boy Load 12.25\"",
+   "manufacturer": "Victus",
+   "manufacturerSlug": "victus",
+   "modelYear": 2026,
+   "productLine": "Beacon",
+   "certifications": [
+    "USSSA",
+    "NSA",
+    "ISA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.25
+  },
+  {
+   "slug": "victus-beacon-neon-2pc-usssa-2026",
+   "name": "Victus Beacon Neon Ya-Ya Load 2-Piece 13\"",
+   "manufacturer": "Victus",
+   "manufacturerSlug": "victus",
+   "modelYear": 2026,
+   "productLine": "Beacon",
+   "certifications": [
+    "USSSA",
+    "NSA",
+    "ISA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "victus-vibe-44-senior-2027",
+   "name": "Victus Vibe 44 1-Piece 12\"",
+   "manufacturer": "Victus",
+   "manufacturerSlug": "victus",
+   "modelYear": 2027,
+   "productLine": "Vibe / Nox",
+   "certifications": [
+    "SSUSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 12
+  },
+  {
+   "slug": "victus-vibe-36-yaya-usssa-2026",
+   "name": "Victus Vibe 36 Ya-Ya Load",
+   "manufacturer": "Victus",
+   "manufacturerSlug": "victus",
+   "modelYear": 2026,
+   "productLine": "Vibe / Nox",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "victus-nox-yaya-usssa-2026",
+   "name": "Victus Nox 12.75\" Ya-Ya Load",
+   "manufacturer": "Victus",
+   "manufacturerSlug": "victus",
+   "modelYear": 2026,
+   "productLine": "Vibe / Nox",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "axe-dabacle-13-balanced-dual-2026",
+   "name": "Axe Dabacle 13\" Balanced",
+   "manufacturer": "Axe",
+   "manufacturerSlug": "axe",
+   "modelYear": 2026,
+   "productLine": "Dabacle",
+   "certifications": [
+    "USA",
+    "USSSA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "axe-fury-bravo-13-2pc-endload-usssa-2026",
+   "name": "Axe Fury Bravo 13\" 2-Piece ½ oz Endload (Axe handle)",
+   "manufacturer": "Axe",
+   "manufacturerSlug": "axe",
+   "modelYear": 2026,
+   "productLine": "Fury Bravo",
+   "certifications": [
+    "USSSA",
+    "NSA",
+    "ISA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "axe-fury-bravo-13-balanced-usssa-2026",
+   "name": "Axe Fury Bravo 13\" Balanced (flared handle)",
+   "manufacturer": "Axe",
+   "manufacturerSlug": "axe",
+   "modelYear": 2026,
+   "productLine": "Fury Bravo",
+   "certifications": [
+    "USSSA",
+    "NSA",
+    "ISA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "axe-fury-bravo-13-1pc-endload-usssa-2026",
+   "name": "Axe Fury Bravo 13\" 1-Piece Endload",
+   "manufacturer": "Axe",
+   "manufacturerSlug": "axe",
+   "modelYear": 2026,
+   "productLine": "Fury Bravo",
+   "certifications": [
+    "USSSA",
+    "NSA",
+    "ISA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "axe-fury-bravo-12-1oz-endload-usssa-2026",
+   "name": "Axe Fury Bravo 12\" 2-Piece 1 oz Endload",
+   "manufacturer": "Axe",
+   "manufacturerSlug": "axe",
+   "modelYear": 2026,
+   "productLine": "Fury Bravo",
+   "certifications": [
+    "USSSA",
+    "NSA",
+    "ISA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12
+  },
+  {
+   "slug": "marucci-cat-1776-loaded-usa-2026",
+   "name": "Marucci CAT 1776 Loaded",
+   "manufacturer": "Marucci",
+   "manufacturerSlug": "marucci",
+   "modelYear": 2026,
+   "productLine": "CAT 1776",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12
+  },
+  {
+   "slug": "marucci-gridlock-loaded-usa-2026",
+   "name": "Marucci Gridlock Loaded",
+   "manufacturer": "Marucci",
+   "manufacturerSlug": "marucci",
+   "modelYear": 2026,
+   "productLine": "Gridlock",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12
+  },
+  {
+   "slug": "marucci-gridlock-loaded-usssa-2026",
+   "name": "Marucci Gridlock Loaded 1-Piece 12.75\"",
+   "manufacturer": "Marucci",
+   "manufacturerSlug": "marucci",
+   "modelYear": 2026,
+   "productLine": "Gridlock",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "marucci-rckless-resmondo-1pc-loaded-usssa-2026",
+   "name": "Marucci Rckless Resmondo 1-Piece Loaded 12.75\"",
+   "manufacturer": "Marucci",
+   "manufacturerSlug": "marucci",
+   "modelYear": 2026,
+   "productLine": "Rckless Resmondo",
+   "certifications": [
+    "USSSA",
+    "NSA",
+    "ISA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "marucci-rckless-resmondo-2pc-loaded-usssa-2026",
+   "name": "Marucci Rckless Resmondo 2-Piece Loaded 12.75\"",
+   "manufacturer": "Marucci",
+   "manufacturerSlug": "marucci",
+   "modelYear": 2026,
+   "productLine": "Rckless Resmondo",
+   "certifications": [
+    "USSSA",
+    "NSA",
+    "ISA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "marucci-rckless-loaded-usssa-2026",
+   "name": "Marucci Rckless Loaded 2-Piece",
+   "manufacturer": "Marucci",
+   "manufacturerSlug": "marucci",
+   "modelYear": 2026,
+   "productLine": "Rckless Resmondo",
+   "certifications": [
+    "USSSA",
+    "NSA",
+    "ISA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "marucci-rckless-balanced-usssa-2026",
+   "name": "Marucci Rckless Balanced 13.5\"",
+   "manufacturer": "Marucci",
+   "manufacturerSlug": "marucci",
+   "modelYear": 2026,
+   "productLine": "Rckless Resmondo",
+   "certifications": [
+    "USSSA",
+    "NSA",
+    "ISA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13.5
+  },
+  {
+   "slug": "marucci-rckless-cream-1pc-usssa-2026",
+   "name": "Marucci Rckless Cream 1-Piece Loaded",
+   "manufacturer": "Marucci",
+   "manufacturerSlug": "marucci",
+   "modelYear": 2026,
+   "productLine": "Rckless Resmondo",
+   "certifications": [
+    "USSSA",
+    "NSA",
+    "ISA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "marucci-rckless-america-senior-2026",
+   "name": "Marucci Rckless America Loaded",
+   "manufacturer": "Marucci",
+   "manufacturerSlug": "marucci",
+   "modelYear": 2026,
+   "productLine": "Rckless Resmondo",
+   "certifications": [
+    "SSUSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "combat-cr1-bradley-jones-1pc-usssa-2026",
+   "name": "Combat CR-1 Bradley Jones 1-Piece",
+   "manufacturer": "Combat",
+   "manufacturerSlug": "combat",
+   "modelYear": 2026,
+   "productLine": "CR-1 Bradley Jones",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "combat-cr1-bradley-jones-1pc-usa-2026",
+   "name": "Combat CR-1 Bradley Jones 1-Piece",
+   "manufacturer": "Combat",
+   "manufacturerSlug": "combat",
+   "modelYear": 2026,
+   "productLine": "CR-1 Bradley Jones",
+   "certifications": [
+    "USA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 12.75
+  },
+  {
+   "slug": "combat-cr1-bradley-jones-2pc-usssa-2026",
+   "name": "Combat CR-1 Bradley Jones 2-Piece 12\"",
+   "manufacturer": "Combat",
+   "manufacturerSlug": "combat",
+   "modelYear": 2026,
+   "productLine": "CR-1 Bradley Jones",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 12
+  },
+  {
+   "slug": "anarchy-groovy-2pc-balanced-usssa-2026",
+   "name": "Anarchy Groovy 2-Piece Balanced",
+   "manufacturer": "Anarchy",
+   "manufacturerSlug": "anarchy",
+   "modelYear": 2026,
+   "productLine": "Groovy",
+   "certifications": [
+    "USSSA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "anarchy-groovy-senior-2026",
+   "name": "Anarchy Groovy",
+   "manufacturer": "Anarchy",
+   "manufacturerSlug": "anarchy",
+   "modelYear": 2026,
+   "productLine": "Groovy",
+   "certifications": [
+    "SSUSA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "anarchy-omen-senior-2026",
+   "name": "Anarchy Omen",
+   "manufacturer": "Anarchy",
+   "manufacturerSlug": "anarchy",
+   "modelYear": 2026,
+   "productLine": "Omen / PTSD Awareness",
+   "certifications": [
+    "SSUSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "two_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "anarchy-ptsd-zatopek-senior-2026",
+   "name": "Anarchy PTSD Awareness Alan Zatopek 1-Piece",
+   "manufacturer": "Anarchy",
+   "manufacturerSlug": "anarchy",
+   "modelYear": 2026,
+   "productLine": "Omen / PTSD Awareness",
+   "certifications": [
+    "SSUSA"
+   ],
+   "weightingType": "endload",
+   "constructionType": "one_piece",
+   "material": "composite",
+   "barrelLengthInches": 13
+  },
+  {
+   "slug": "anderson-rocketech-alloy-dual",
+   "name": "Anderson Rocketech Alloy",
+   "manufacturer": "Anderson",
+   "manufacturerSlug": "anderson",
+   "modelYear": 2025,
+   "productLine": "Rocketech",
+   "certifications": [
+    "USA",
+    "USSSA"
+   ],
+   "weightingType": "balanced",
+   "constructionType": "one_piece",
+   "material": "alloy",
+   "barrelLengthInches": 12
+  }
+ ]
+}

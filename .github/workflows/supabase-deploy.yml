@@ -1,0 +1,41 @@
+# Applies web/supabase/migrations to the hosted Supabase project, and optionally loads the starting data.
+# Run it by hand: GitHub → Actions → "Deploy database" → Run workflow.
+# Needs two repository secrets (Settings → Secrets and variables → Actions):
+#   SUPABASE_ACCESS_TOKEN  – from supabase.com/dashboard/account/tokens
+#   SUPABASE_DB_PASSWORD   – the project's database password (Project Settings → Database)
+name: Deploy database
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_ref:
+        description: Supabase project ref
+        default: mxdhjfzaptshydripskj
+        required: true
+      include_seed:
+        description: Also load the starting data (first run only)
+        type: boolean
+        default: true
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - run: supabase link --project-ref "${{ inputs.project_ref }}"
+      - name: Apply migrations
+        run: |
+          if [ "${{ inputs.include_seed }}" = "true" ]; then
+            supabase db push --include-seed
+          else
+            supabase db push
+          fi
