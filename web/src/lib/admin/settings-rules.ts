@@ -17,6 +17,9 @@ export const SETTING_RULES: SettingRule[] = [
   { key: "owner_report_interval_days", label: "Minimum days between one owner's reports on a model", kind: "integer", min: 1, max: 365, unit: "days" },
   { key: "featured_listings_enabled", label: "Sellers can buy featured placement", kind: "boolean" },
   { key: "premium_seller_enabled", label: "Premium seller memberships are on sale", kind: "boolean" },
+  { key: "checkout_enabled", label: "Checkout is open (buyers can pay). Needs owner sign-off on decision 0001", kind: "boolean" },
+  { key: "tax_collection_enabled", label: "Collect sales tax at checkout (needs a tax provider; checkout pauses without one)", kind: "boolean" },
+  { key: "inspection_window_days", label: "Buyer inspection window after delivery, before the seller is paid", kind: "integer", min: 1, max: 30, unit: "days" },
 ];
 
 export function settingRule(key: string): SettingRule | undefined {

@@ -532,7 +532,8 @@ $$;
 
 -- Orders that can complete now: delivered and past the inspection window, or the buyer confirmed receipt;
 -- no open dispute; no transfer yet; nothing refunded in full.
-create or replace function public.orders_ready_to_complete(p_limit integer default 50)
+drop function if exists public.orders_ready_to_complete(integer);
+create or replace function public.orders_ready_to_complete(p_limit integer default 50, p_order uuid default null)
 returns setof public.orders
 language sql
 stable
@@ -541,6 +542,7 @@ set search_path = public
 as $$
   select o.* from public.orders o
   where o.stripe_transfer_id is null
+    and (p_order is null or o.id = p_order)
     and o.refunded_amount_cents < o.total_amount_cents
     and (
       (o.order_status = 'delivered' and o.delivered_at <= now() - make_interval(days => public.setting_int('inspection_window_days', 2)))
@@ -812,7 +814,7 @@ begin
     'public.checkout_release_order(uuid, text)',
     'public.payments_mark_paid(uuid, text, text, text, integer)',
     'public.shipping_record_event(uuid, text, text, text, timestamptz, text)',
-    'public.orders_ready_to_complete(integer)',
+    'public.orders_ready_to_complete(integer, uuid)',
     'public.payments_complete_order(uuid, text, integer)',
     'public.payments_apply_refund_total(uuid, integer)',
     'public.admin_record_refund(uuid, uuid, integer, text, text, text, integer)',

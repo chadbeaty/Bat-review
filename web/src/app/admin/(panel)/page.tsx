@@ -78,6 +78,8 @@ export default async function AdminOverviewPage() {
         </div>
       </section>
 
+      <PaymentsOverview />
+
       <section aria-labelledby="h-trust" className="grid gap-3">
         <h2 id="h-trust" className="font-semibold">
           Trust and safety
@@ -93,6 +95,60 @@ export default async function AdminOverviewPage() {
         <Breakdown title="Active listings by manufacturer" rows={o.listings_by_manufacturer} />
       </div>
     </>
+  );
+}
+
+type PaymentsNumbers = {
+  processing_cents: number;
+  orders_missing_processing: number;
+  transferred_cents: number;
+  transfer_reversed_cents: number;
+  awaiting_transfer: number;
+  transfer_errors: number;
+  payment_issues: number;
+  failed_payouts: number;
+  accounts_requirements_due: number;
+  shipping_label_cents: number;
+  shipping_charged_cents: number;
+};
+
+/** Payment and payout figures (Track D). Stripe processing fees are the actual fees from each charge's balance transaction. */
+async function PaymentsOverview() {
+  const { data } = await adminDb().rpc("admin_payments_overview");
+  if (!data) return null;
+  const p = data as PaymentsNumbers;
+  return (
+    <section aria-labelledby="h-payments" className="grid gap-3">
+      <h2 id="h-payments" className="font-semibold">
+        Payments and payouts
+      </h2>
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <Stat
+          label="Card processing fees"
+          value={formatPrice(Number(p.processing_cents))}
+          hint={`Actual Stripe fees on paid orders${Number(p.orders_missing_processing) ? `; ${n(p.orders_missing_processing)} not recorded yet` : ""}`}
+        />
+        <Stat label="Paid to sellers" value={formatPrice(Number(p.transferred_cents))} hint={`${formatPrice(Number(p.transfer_reversed_cents))} reversed`} />
+        <Stat label="Waiting to pay sellers" value={n(p.awaiting_transfer)} hint="Paid orders not yet complete" />
+        <Stat
+          label="Labels vs. shipping charged"
+          value={formatPrice(Number(p.shipping_label_cents))}
+          hint={`Buyers paid ${formatPrice(Number(p.shipping_charged_cents))} for shipping on those orders`}
+        />
+      </div>
+      {(Number(p.failed_payouts) > 0 || Number(p.accounts_requirements_due) > 0 || Number(p.transfer_errors) > 0 || Number(p.payment_issues) > 0) && (
+        <p className="text-sm">
+          <Link href="/admin/payouts" className="underline">
+            Needs attention: {n(p.failed_payouts)} failed payouts, {n(p.accounts_requirements_due)} seller accounts need info, {n(p.transfer_errors)} failed
+            transfers, {n(p.payment_issues)} payment issues
+          </Link>
+        </p>
+      )}
+      <p className="text-xs text-ink-soft">
+        Not shown: Stripe Connect platform fees (per monthly active seller account and per payout, billed by Stripe separately; see decision 0001 and
+        confirm current pricing). Check them in the Stripe dashboard under Billing when reconciling.
+      </p>
+    </section>
   );
 }
 

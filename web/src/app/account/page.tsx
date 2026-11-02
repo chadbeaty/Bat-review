@@ -65,11 +65,13 @@ export default async function AccountPage({ searchParams }: PageProps<"/account"
           <Link href="/account/favorites" className="text-sm font-semibold underline">
             Saved listings
           </Link>
-          <p className="text-sm text-ink-soft">Purchases and messages arrive with checkout and messaging.</p>
+          <Link href="/account/purchases" className="text-sm font-semibold underline">
+            Your purchases
+          </Link>
         </section>
         <section className="card grid content-start gap-2 p-5">
           <h2 className="font-semibold">Selling</h2>
-          <p className="text-sm text-ink-soft">List gear, resume drafts and manage your listings. Payouts are set up through Stripe when checkout launches.</p>
+          <p className="text-sm text-ink-soft">List gear, resume drafts, ship orders and set up payouts through Stripe.</p>
           <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm font-semibold">
             <Link href="/seller" className="underline">
               Seller dashboard

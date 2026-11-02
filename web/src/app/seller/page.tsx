@@ -86,7 +86,14 @@ export default async function SellerDashboard() {
           </Link>
         </section>
       </div>
-      <p className="text-sm text-ink-soft">Payouts are set up through Stripe when checkout launches.</p>
+      <div className="flex flex-wrap gap-3">
+        <Link href="/seller/orders" className="btn btn-outline">
+          Orders to ship
+        </Link>
+        <Link href="/seller/payouts" className="btn btn-outline">
+          Payouts
+        </Link>
+      </div>
     </div>
   );
 }
