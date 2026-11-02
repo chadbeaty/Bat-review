@@ -648,3 +648,24 @@ begin
   end loop;
 end;
 $$;
+
+-- ---------------------------------------------------------------------------
+-- Deleting an account: audit entries stay, but the deleted member's id is cleared from actor_user_id
+-- (the foreign key's "on delete set null"). That is the only change the append-only rule allows.
+-- ---------------------------------------------------------------------------
+
+create or replace function public.audit_logs_append_only()
+returns trigger
+language plpgsql
+as $$
+begin
+  if tg_op = 'UPDATE'
+    and old.actor_user_id is not null and new.actor_user_id is null
+    and not exists (select 1 from auth.users where id = old.actor_user_id)
+    and new.id = old.id and new.action = old.action and new.entity_type = old.entity_type
+    and new.entity_id is not distinct from old.entity_id and new.metadata = old.metadata and new.created_at = old.created_at then
+    return new;
+  end if;
+  raise exception 'Audit log entries cannot be changed or deleted' using errcode = '42501';
+end;
+$$;

@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { requireStaff } from "@/lib/admin/auth";
+import { checkStaff, requireStaff } from "@/lib/admin/auth";
 import { ADMIN_AREAS, hasAccess } from "@/lib/admin/roles";
 
 export const metadata: Metadata = { title: { default: "Admin", template: "%s · Admin" }, robots: { index: false, follow: false } };
 
 export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
-  // Every page and action checks again; this check decides what the navigation shows.
-  const staff = await requireStaff("any");
+  // Every page and action checks again; this check decides what the navigation shows. When only the
+  // two-step code is missing, the page itself redirects (it knows its own path, to return there after).
+  const check = await checkStaff("any");
+  if (!check.ok && (check.reason === "needs_challenge" || check.reason === "needs_enrollment")) return <>{children}</>;
+  const staff = check.ok ? check.staff : await requireStaff("any");
   const areas = ADMIN_AREAS.filter((a) => hasAccess(staff.roles, a.access));
   const groups = [...new Set(areas.map((a) => a.group))];
 

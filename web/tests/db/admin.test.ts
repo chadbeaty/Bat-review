@@ -304,6 +304,16 @@ suite("admin database functions", () => {
       expect((await db.owner("select status from support_messages where id = $1", [id]))[0].status).toBe("closed");
     });
 
+    it("keeps audit entries when a staff member's account is deleted, clearing only the actor", async () => {
+      const staff = await db.createUser();
+      await db.owner("insert into user_roles (user_id, role) values ($1, 'support')", [staff.id]);
+      const [{ admin_log: id }] = await db.as<{ admin_log: string }>("service", "select admin_log($1, 'test.deleted_actor', 'profile', null)", [staff.id]);
+      await expect(db.owner("update audit_logs set actor_user_id = null where id = $1", [id])).rejects.toThrow(/cannot be changed/);
+      await db.owner("delete from auth.users where id = $1", [staff.id]);
+      const [row] = await db.owner("select actor_user_id, action from audit_logs where id = $1", [id]);
+      expect(row).toEqual({ actor_user_id: null, action: "test.deleted_actor" });
+    });
+
     it("hides the email delivery log from browsers", async () => {
       await db.as("service", "insert into email_deliveries (template, category, to_email, subject, provider, status) values ('welcome', 'transactional', 'a@b.co', 'Hi', 'dev', 'not_sent')");
       await expect(db.as(admin, "select * from email_deliveries")).rejects.toThrow(/permission denied/);
