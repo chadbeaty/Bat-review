@@ -9,7 +9,7 @@ export function SaveSearchButton({ path, search, name, signedIn }: { path: strin
   const [state, action, pending] = useActionState<SaveSearchState, FormData>(saveSearch, {});
   if (!signedIn) {
     return (
-      <Link href={`/sign-in?next=${encodeURIComponent(path + search)}`} className="btn btn-outline">
+      <Link href={`/sign-in?next=${encodeURIComponent(path + search)}`} className="btn btn-outline justify-self-start">
         Sign in to save this search
       </Link>
     );

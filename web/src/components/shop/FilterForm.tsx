@@ -211,7 +211,7 @@ export function FilterForm({
         </label>
       </Group>
 
-      <div className="sticky bottom-0 flex gap-2 border-t border-line bg-paper py-3">
+      <div className="sticky bottom-0 flex gap-2 border-t border-line bg-paper py-3 lg:static">
         <button type="submit" className="btn btn-primary flex-1">
           Apply filters
         </button>

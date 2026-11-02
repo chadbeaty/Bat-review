@@ -277,6 +277,15 @@ test.describe("favorites", () => {
     await expect(page.getByText("Nothing saved yet")).toBeVisible();
   });
 
+  test("a member saves a search", async ({ page }) => {
+    const buyer = await member("svsr");
+    await signIn(page, buyer, "/bats?q=zzqqxxvv&weight=26");
+    await page.getByRole("button", { name: "Save this search" }).click();
+    await expect(page.getByText("Search saved.")).toBeVisible();
+    const { data } = await serviceClient().from("saved_searches").select("query").eq("user_id", buyer.id);
+    expect(data).toEqual([{ query: { path: "/bats", params: "?q=zzqqxxvv&weight=26" } }]);
+  });
+
   test("the favorites page needs sign-in", async ({ page }) => {
     await page.goto("/account/favorites");
     await expect(page).toHaveURL(/\/sign-in\?next=%2Faccount%2Ffavorites/);

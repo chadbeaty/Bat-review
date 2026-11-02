@@ -39,7 +39,7 @@ export default async function BatsPage({ searchParams }: PageProps<"/bats">) {
                   key={w}
                   href={searchHref("/bats", query, { weights: active ? [] : [w] })}
                   aria-current={active ? "true" : undefined}
-                  className={`rounded-full border px-3.5 py-1.5 font-mono text-sm ${active ? "border-ink bg-ink text-surface" : "border-line-strong bg-surface hover:border-ink"}`}
+                  className={`rounded-full border px-3.5 py-1.5 text-sm ${active ? "border-ink bg-ink text-surface" : "border-line-strong bg-surface hover:border-ink"}`}
                 >
                   {w} oz
                 </Link>
