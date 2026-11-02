@@ -35,7 +35,7 @@ jobs:
       - name: Apply migrations
         run: |
           if [ "${{ inputs.include_seed }}" = "true" ]; then
-            supabase db push --include-seed
+            supabase db push --remote --include-seed
           else
-            supabase db push
+            supabase db push --remote
           fi
