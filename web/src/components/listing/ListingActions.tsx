@@ -1,4 +1,5 @@
 import { formatPrice } from "@/lib/format";
+import { MessageButton, OfferButton } from "./TrustButtons";
 
 // Buy, offer and message buttons for a listing. Checkout and messaging aren't open yet, so the buttons are
 // shown disabled with a clear note. The checkout track replaces this component when payments launch.
@@ -11,7 +12,7 @@ export type ListingActionsProps = {
   isOwner: boolean;
 };
 
-export function ListingActions({ status, priceCents, acceptsOffers, isOwner }: ListingActionsProps) {
+export function ListingActions({ listingId, status, priceCents, acceptsOffers, isOwner }: ListingActionsProps) {
   if (status === "sold" || status === "reserved") {
     return (
       <div className="grid gap-2 rounded-lg border border-line bg-paper p-4" data-testid="listing-actions">
@@ -40,15 +41,9 @@ export function ListingActions({ status, priceCents, acceptsOffers, isOwner }: L
       <button type="button" className="btn btn-primary w-full py-3 text-base" disabled aria-describedby="checkout-soon">
         Buy now for {formatPrice(priceCents)}
       </button>
-      <div className="grid grid-cols-2 gap-2">
-        {acceptsOffers && (
-          <button type="button" className="btn btn-outline" disabled aria-describedby="checkout-soon">
-            Make offer
-          </button>
-        )}
-        <button type="button" className={`btn btn-outline ${acceptsOffers ? "" : "col-span-2"}`} disabled aria-describedby="checkout-soon">
-          Message seller
-        </button>
+      <div className="grid gap-2">
+        {acceptsOffers && <OfferButton listingId={listingId} priceCents={priceCents} />}
+        <MessageButton listingId={listingId} />
       </div>
       <p id="checkout-soon" className="text-sm text-ink-soft">
         Checkout opens soon. Payments, offers and messages all happen on the site once it does.

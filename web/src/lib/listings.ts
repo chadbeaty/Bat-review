@@ -320,7 +320,7 @@ export const getSellerByUsername = cache(async (username: string): Promise<Selle
   return data ? withStats(data) : null;
 });
 
-export type PublicReview = { id: string; rating: number; text: string | null; response: string | null; role: "buyer" | "seller"; createdAt: string; reviewer: string | null };
+export type PublicReview = { id: string; rating: number; text: string | null; response: string | null; role: "buyer" | "seller"; createdAt: string; reviewer: string | null; reviewerId: string };
 
 /** Published reviews of a member, newest first. */
 export async function getReviewsOf(userId: string, limit = 10): Promise<PublicReview[]> {
@@ -344,6 +344,7 @@ export async function getReviewsOf(userId: string, limit = 10): Promise<PublicRe
     role: r.reviewer_role,
     createdAt: r.created_at,
     reviewer: names.get(r.reviewer_id) ?? null,
+    reviewerId: r.reviewer_id as string,
   }));
 }
 

@@ -24,6 +24,7 @@ async function updateReport(form: FormData) {
 function entityLink(type: string, id: string) {
   if (type === "listing") return `/admin/listings?id=${id}`;
   if (type === "user") return `/admin/users/${id}`;
+  if (type === "dispute") return `/admin/disputes/${id}`;
   return null;
 }
 
@@ -34,7 +35,7 @@ export default async function ReportsPage({ searchParams }: PageProps<"/admin/re
   const page = pageNumber(sp);
   const { data, error } = await adminDb()
     .from("reports")
-    .select("id, reporter_id, entity_type, entity_id, reason, details, status, resolution_notes, resolved_at, created_at")
+    .select("id, reporter_id, entity_type, entity_id, reason, details, source, status, resolution_notes, resolved_at, created_at")
     .eq("status", status)
     .order("created_at", { ascending: status === "open" || status === "reviewing" })
     .range((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -90,7 +91,8 @@ export default async function ReportsPage({ searchParams }: PageProps<"/admin/re
                     </span>
                   </td>
                   <td>
-                    <span className="font-medium">{r.reason.replace(/_/g, " ")}</span>
+                    <span className="font-medium">{r.reason.replace(/_/g, " ")}</span>{" "}
+                    {r.source === "auto" && <Badge tone="warn">auto-flagged</Badge>}
                     {r.details && <p className="mt-1 max-w-sm whitespace-pre-wrap text-xs text-ink-soft">{r.details}</p>}
                   </td>
                   <td>

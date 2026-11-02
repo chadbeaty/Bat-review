@@ -65,7 +65,17 @@ export default async function AccountPage({ searchParams }: PageProps<"/account"
           <Link href="/account/favorites" className="text-sm font-semibold underline">
             Saved listings
           </Link>
-          <p className="text-sm text-ink-soft">Purchases and messages arrive with checkout and messaging.</p>
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm font-semibold">
+            <Link href="/messages" className="underline">
+              Messages
+            </Link>
+            <Link href="/account/offers" className="underline">
+              Offers
+            </Link>
+            <Link href="/account/notifications" className="underline">
+              Notifications
+            </Link>
+          </div>
         </section>
         <section className="card grid content-start gap-2 p-5">
           <h2 className="font-semibold">Selling</h2>

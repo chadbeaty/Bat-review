@@ -6,6 +6,8 @@ import { Avatar, memberSince, ratingText, TrustBadges } from "@/components/Selle
 import { getReviewsOf, getSellerByUsername, searchListings } from "@/lib/listings";
 import { sellerPath } from "@/lib/paths";
 import { parseSearchParams } from "@/lib/search";
+import { getCurrentUser } from "@/lib/supabase/server";
+import { ReportReviewForm, ReviewResponseForm } from "@/components/trust/ReviewForms";
 
 export async function generateMetadata({ params }: PageProps<"/sellers/[username]">): Promise<Metadata> {
   const { username } = await params;
@@ -24,9 +26,10 @@ export default async function SellerPage({ params }: PageProps<"/sellers/[userna
   const seller = await getSellerByUsername(decodeURIComponent(username));
   if (!seller) notFound();
 
-  const [listings, reviews] = await Promise.all([
+  const [listings, reviews, viewer] = await Promise.all([
     searchListings(parseSearchParams({}), { sellerId: seller.id, pageSize: 48 }),
     getReviewsOf(seller.id, 10),
+    getCurrentUser(),
   ]);
   const name = seller.displayName || seller.username;
 
@@ -45,11 +48,12 @@ export default async function SellerPage({ params }: PageProps<"/sellers/[userna
         </div>
       </header>
 
-      <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line md:grid-cols-4" data-testid="seller-stats">
+      <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line md:grid-cols-5" data-testid="seller-stats">
         <Stat label="Completed sales" value={String(seller.completedSales)} />
         <Stat label="Completed purchases" value={String(seller.completedPurchases)} />
         <Stat label="Average rating" value={seller.reviewCount && seller.averageRating != null ? `${seller.averageRating.toFixed(1)} / 5` : "None yet"} />
         <Stat label="Reviews" value={String(seller.reviewCount)} />
+        <Stat label="Account age" value={accountAge(seller.memberSince)} />
       </dl>
 
       {seller.bio && <p className="max-w-prose whitespace-pre-line break-words">{seller.bio}</p>}
@@ -96,6 +100,8 @@ export default async function SellerPage({ params }: PageProps<"/sellers/[userna
                     <span className="font-semibold text-ink">Response from {name}:</span> {r.response}
                   </p>
                 )}
+                {viewer?.id === seller.id && !r.response && <ReviewResponseForm reviewId={r.id} />}
+                {viewer && viewer.id !== r.reviewerId && viewer.id !== seller.id && <ReportReviewForm reviewId={r.id} />}
               </li>
             ))}
           </ul>
@@ -105,6 +111,13 @@ export default async function SellerPage({ params }: PageProps<"/sellers/[userna
       </section>
     </div>
   );
+}
+
+function accountAge(iso: string): string {
+  const months = Math.max(0, Math.floor((Date.now() - new Date(iso).getTime()) / (30.44 * 86_400_000)));
+  if (months < 1) return "New";
+  if (months < 24) return `${months} ${months === 1 ? "month" : "months"}`;
+  return `${Math.floor(months / 12)} years`;
 }
 
 function Stat({ label, value }: { label: string; value: string }) {
