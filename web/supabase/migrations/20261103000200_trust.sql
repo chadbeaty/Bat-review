@@ -130,6 +130,43 @@ end;
 $$;
 
 -- ---------------------------------------------------------------------------
+-- Blocks: the earlier policies looked up user_blocks as the buyer, but members can only see their own blocks, so
+-- a seller's block was invisible to them and never applied. This definer function can see every block.
+-- ---------------------------------------------------------------------------
+
+create or replace function public.has_blocked(p_blocker uuid, p_blocked uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (select 1 from public.user_blocks where blocker_id = p_blocker and blocked_id = p_blocked);
+$$;
+revoke all on function public.has_blocked(uuid, uuid) from public, anon;
+grant execute on function public.has_blocked(uuid, uuid) to authenticated, service_role;
+
+drop policy if exists "Buyers make offers on live listings" on public.offers;
+create policy "Buyers make offers on live listings" on public.offers
+  for insert to authenticated
+  with check (
+    buyer_id = (select auth.uid()) and made_by = (select auth.uid()) and status = 'pending' and parent_offer_id is null
+    and exists (
+      select 1 from public.equipment_listings l
+      where l.id = listing_id and l.seller_id = offers.seller_id and l.listing_status = 'active' and l.accepts_offers)
+    and not public.has_blocked(offers.seller_id, (select auth.uid()))
+  );
+
+drop policy if exists "Buyers start conversations about a listing" on public.conversations;
+create policy "Buyers start conversations about a listing" on public.conversations
+  for insert to authenticated
+  with check (
+    buyer_id = (select auth.uid())
+    and exists (select 1 from public.equipment_listings l where l.id = listing_id and l.seller_id = conversations.seller_id)
+    and not public.has_blocked(conversations.seller_id, (select auth.uid()))
+  );
+
+-- ---------------------------------------------------------------------------
 -- Inbox summary (security invoker, so row level security limits it to the caller's conversations)
 -- ---------------------------------------------------------------------------
 
