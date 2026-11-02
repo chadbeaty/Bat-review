@@ -77,3 +77,8 @@ export function optional(form: FormData, name: string, max = 1000): string | nul
 }
 
 export const uuid = z.string().uuid();
+
+/** A search term safe to put inside a PostgREST filter (no commas, parentheses or wildcards). */
+export function searchTerm(raw: string): string {
+  return raw.replace(/[^a-zA-Z0-9@._+ -]/g, "").trim().slice(0, 80);
+}
