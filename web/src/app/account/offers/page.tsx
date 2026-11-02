@@ -52,7 +52,7 @@ export default async function OffersPage() {
 
   function renderOffer(o: OfferRow) {
     const listing = listingById.get(o.listing_id);
-    const status = effectiveStatus(o);
+    const status = effectiveStatus({ status: o.status, expiresAt: o.expires_at });
     const actions = allowedActions({ status: o.status, madeBy: o.made_by, buyerId: o.buyer_id, sellerId: o.seller_id, expiresAt: o.expires_at }, me);
     const other = names.get(o.buyer_id === me ? o.seller_id : o.buyer_id);
     const left = status === "pending" || status === "accepted" ? timeLeft(o.expires_at) : null;
