@@ -60,9 +60,14 @@ export async function Header() {
               </div>
             </details>
           ) : (
-            <Link href="/sign-in" className="rounded-md px-2.5 py-2 font-medium text-ink-soft hover:bg-surface hover:text-ink">
-              Sign in
-            </Link>
+            <>
+              <Link href="/sign-in" className="rounded-md px-2.5 py-2 font-medium text-ink-soft hover:bg-surface hover:text-ink">
+                Sign in
+              </Link>
+              <Link href="/sign-up" className="rounded-md px-2.5 py-2 font-medium text-ink-soft hover:bg-surface hover:text-ink">
+                Join
+              </Link>
+            </>
           )}
           <Link href="/sell" className="btn btn-accent ml-1 hidden sm:inline-flex">
             Sell your gear
