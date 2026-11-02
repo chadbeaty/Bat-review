@@ -1,11 +1,12 @@
 import Link from "next/link";
 import type { ListingCard as Listing } from "@/lib/catalog";
 import { conditionLabel, formatPrice } from "@/lib/format";
+import { listingPath } from "@/lib/paths";
 
 export function ListingCard({ listing }: { listing: Listing }) {
   const condition = conditionLabel(listing.conditionScore);
   return (
-    <Link href={`/listings/${listing.id}`} className="card group grid overflow-hidden no-underline">
+    <Link href={listingPath(listing.id)} className="card group grid overflow-hidden no-underline">
       <div className="aspect-[4/3] bg-paper">
         {listing.imageUrl ? (
           // Listing photos come from Supabase Storage; next/image remote patterns are configured per environment.
