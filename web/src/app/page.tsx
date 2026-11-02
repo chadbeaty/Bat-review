@@ -4,6 +4,7 @@ import { SearchBar } from "@/components/SearchBar";
 import { ListingCard } from "@/components/ListingCard";
 import { EmptyState } from "@/components/EmptyState";
 import { NewsletterForm } from "@/components/NewsletterForm";
+import { SiteJsonLd } from "@/components/SiteJsonLd";
 import { getCatalogStats, getCategories, getHomepagePartners, getListings, getManufacturers, getNewestBatModels } from "@/lib/catalog";
 import { getCurrentFee, getSetting } from "@/lib/settings";
 import { batWeights } from "@/data/reference";
@@ -40,6 +41,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <SiteJsonLd />
       {/* Hero */}
       <section className="border-b border-line bg-surface">
         <div className="wrap grid gap-10 py-12 md:grid-cols-[1.3fr_1fr] md:items-end md:py-20">

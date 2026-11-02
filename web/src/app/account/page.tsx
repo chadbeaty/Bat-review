@@ -22,7 +22,10 @@ export default async function AccountPage({ searchParams }: PageProps<"/account"
   const { data: auth } = await supabase.auth.getUser();
   if (!auth.user) redirect("/sign-in?next=/account");
 
-  const { data: profile } = await supabase.rpc("get_my_profile").single<Profile>();
+  const [{ data: profile }, { data: staffRoles }] = await Promise.all([
+    supabase.rpc("get_my_profile").single<Profile>(),
+    supabase.from("user_roles").select("role").eq("user_id", auth.user.id),
+  ]);
   const { notice } = await searchParams;
   const memberSince = profile ? new Date(profile.created_at).toLocaleDateString("en-US", { month: "long", year: "numeric" }) : null;
 
@@ -80,6 +83,17 @@ export default async function AccountPage({ searchParams }: PageProps<"/account"
           </div>
         </section>
       </div>
+
+      <p className="flex flex-wrap gap-3">
+        <Link href="/account/security" className="btn btn-outline">
+          Sign-in security
+        </Link>
+        {(staffRoles ?? []).length > 0 && (
+          <Link href="/admin" className="btn btn-outline">
+            Admin
+          </Link>
+        )}
+      </p>
 
       <form action={signOut}>
         <button type="submit" className="btn btn-outline">
