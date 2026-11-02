@@ -829,9 +829,10 @@ export function PublishStep() {
           <Link href="/seller/listings" className="btn btn-outline">
             Your listings
           </Link>
-          <Link href="/sell/new" className="btn btn-outline">
+          {/* A full page load, so the flow starts fresh instead of keeping this listing's state. */}
+          <a href="/sell/new" className="btn btn-outline">
             List another item
-          </Link>
+          </a>
         </div>
       </div>
     );

@@ -10,6 +10,15 @@ import { DetailsStep, DisclosuresStep, PhotosStep, PreviewStep, PriceStep, Publi
 
 const EARLY: StepKey[] = ["category", "manufacturer", "model"];
 
+/** Keeps the address bar on the current draft and step, so a reload or a shared link resumes in place. */
+function syncUrl(basePath: string, listingId: string | null, step: StepKey) {
+  const params = new URLSearchParams();
+  if (listingId && basePath === "/sell/new") params.set("listing", listingId);
+  params.set("step", step);
+  window.history.replaceState(null, "", `${basePath}?${params}`);
+  window.scrollTo({ top: 0 });
+}
+
 /**
  * The 10-step listing flow. Steps 1–3 choose what is being sold; the draft is created when the model is
  * chosen, and every later step saves to it, so the seller can leave and resume from the dashboard.
@@ -43,12 +52,7 @@ export function ListingWizard(props: {
       setError(null);
       setErrorStep(null);
       setStep(key);
-      const id = snapshot?.listing.id;
-      const url = new URL(window.location.href);
-      if (id && props.basePath === "/sell/new") url.searchParams.set("listing", id);
-      url.searchParams.set("step", key);
-      window.history.replaceState(null, "", url.pathname + url.search);
-      window.scrollTo({ top: 0 });
+      syncUrl(props.basePath, snapshot?.listing.id ?? null, key);
     },
     [snapshot?.listing.id, props.basePath]
   );
@@ -70,11 +74,7 @@ export function ListingWizard(props: {
         setSnapshot(r.snapshot);
         if (then) {
           setStep(then);
-          const url = new URL(window.location.href);
-          if (props.basePath === "/sell/new") url.searchParams.set("listing", r.listingId);
-          url.searchParams.set("step", then);
-          window.history.replaceState(null, "", url.pathname + url.search);
-          window.scrollTo({ top: 0 });
+          syncUrl(props.basePath, r.listingId, then);
         }
       } else {
         setErrors(r.fieldErrors ?? {});

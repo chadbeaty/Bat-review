@@ -28,15 +28,17 @@ export default async function NewListingPage({ searchParams }: PageProps<"/sell/
     listingId && UUID.test(listingId) ? loadListingSnapshot(supabase, auth.user.id, listingId) : Promise.resolve(null),
   ]);
   if (listingId && !snapshot) notFound();
-  if (snapshot && snapshot.listing.listing_status !== "draft") redirect(`/seller/listings/${snapshot.listing.id}/edit`);
+  // Reserved and sold listings are read-only. Live listings stay here, so publishing doesn't navigate away.
+  if (snapshot && ["reserved", "sold"].includes(snapshot.listing.listing_status)) redirect(`/seller/listings/${snapshot.listing.id}/edit`);
 
   // A resumed draft opens on the step the seller asked for, or on details (steps 1–3 are already done).
-  const step: StepKey = requested ?? (snapshot ? "details" : "category");
+  let step: StepKey = requested ?? (snapshot ? "details" : "category");
+  if (snapshot && snapshot.listing.listing_status !== "draft" && ["category", "manufacturer", "model"].includes(step)) step = "details";
 
   return (
     <div className="wrap grid max-w-4xl gap-6 py-8 md:py-12">
       <div className="grid gap-2">
-        <p className="eyebrow">{snapshot ? "Resume your draft" : "New listing"}</p>
+        <p className="eyebrow">{!snapshot ? "New listing" : snapshot.listing.listing_status === "draft" ? "Resume your draft" : "Edit listing"}</p>
         <h1 className="display text-4xl font-bold break-words md:text-5xl">{snapshot ? snapshot.listing.title : "List your gear"}</h1>
         <p className="text-ink-soft">
           About three minutes with your photos ready.{" "}

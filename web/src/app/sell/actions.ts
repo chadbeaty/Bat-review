@@ -45,10 +45,11 @@ async function session() {
   return { db, user: data.user };
 }
 
+// Step saves return a fresh snapshot instead of revalidating: every seller page renders on demand, and a
+// revalidation would re-render the flow mid-edit.
 async function done(s: NonNullable<Awaited<ReturnType<typeof session>>>, listingId: string): Promise<ActionResult> {
   const snapshot = await loadListingSnapshot(s.db, s.user.id, listingId);
   if (!snapshot) return { ok: false, error: "We couldn't find that listing." };
-  revalidatePath("/seller", "layout");
   return { ok: true, snapshot, listingId };
 }
 
@@ -376,7 +377,6 @@ export async function publishListing(listingId: string): Promise<ActionResult> {
     })
     .eq("id", e.id);
   if (error) return dbError(error);
-  revalidatePath("/");
   return done(s, e.id);
 }
 
