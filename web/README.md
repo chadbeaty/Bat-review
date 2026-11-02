@@ -17,7 +17,7 @@ Edit `src/config/brand.ts` and redeploy. Name options and domain checks are in `
 
 ### Change marketplace fees
 
-Fees are stored in the database's `fee_configuration` table, not in the code. Until the admin dashboard is built (Phase 7), change them in the Supabase dashboard under **Table Editor → fee_configuration**. Every change is recorded in `audit_logs`.
+Fees are stored in the database, not in the code. Change them in the admin dashboard under **Admin → Fees**: you create a new fee version that starts now or on a future date, and past versions stay as history. Every change is recorded in the audit log.
 
 ### Change settings
 

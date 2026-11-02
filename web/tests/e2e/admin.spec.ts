@@ -93,6 +93,8 @@ test.describe("admin area", () => {
   });
 
   test("a new session must enter a code before opening the admin area", async ({ browser }) => {
+    // A fresh authenticator code can take up to one 30-second step to become available.
+    test.setTimeout(90_000);
     const ctx = await browser.newContext();
     const p = await ctx.newPage();
     await signIn(p, admin, "/admin/fees");
