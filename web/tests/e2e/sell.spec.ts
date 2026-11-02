@@ -132,8 +132,8 @@ test.describe("listing flow", () => {
 
     // Step 8: disclosures.
     await expect(page.getByRole("heading", { name: "Condition and damage disclosure" })).toBeVisible();
-    for (const group of await page.getByRole("group").filter({ has: page.getByRole("radio", { name: "Yes" }) }).all()) {
-      await group.getByRole("radio", { name: "No" }).check();
+    for (const group of await page.getByRole("group").filter({ has: page.getByRole("radio", { name: "Yes", exact: true }) }).all()) {
+      await group.getByRole("radio", { name: "No", exact: true }).check();
     }
     await page.getByLabel("No known structural damage").check();
     await page.getByLabel("I own this item and have the right to sell it.").check();
