@@ -376,13 +376,19 @@ function Market({ detail, thresholds }: { detail: BatDetail; thresholds: PriceTh
         <h3 className="font-semibold">For sale now</h3>
         {detail.listings.length ? (
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {detail.listings.map((l) => (
+            {detail.listings.slice(0, 8).map((l) => (
               <li key={l.id}>
                 <ListingCard listing={l} />
               </li>
             ))}
           </ul>
-        ) : (
+        ) : null}
+        {detail.listings.length > 8 && (
+          <p className="text-sm text-ink-soft">
+            Showing the 8 newest of {detail.listings.length} listings for this model. The asking-price figures above use all of them.
+          </p>
+        )}
+        {detail.listings.length === 0 && (
           <EmptyState title="None listed right now" body="Nobody is selling this exact model at the moment. Set an alert below to hear when one is listed." action={{ href: "/sell", label: "Sell yours" }} />
         )}
       </div>
