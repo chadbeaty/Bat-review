@@ -88,3 +88,6 @@ const fallback = bats.map((b) => ({
 await mkdir(dirname(fallbackOut), { recursive: true });
 await writeFile(fallbackOut, JSON.stringify({ generatedFrom: `data/bats.json (${updated})`, bats: fallback }, null, 1) + "\n");
 console.log(`Wrote ${fallback.length} bats to ${fallbackOut}`);
+
+// Lines, lineage, published reviews and warranty terms build on the catalog: regenerate them too.
+await import("./build-bat-database-seed.mjs");

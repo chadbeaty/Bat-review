@@ -16,7 +16,7 @@ function sqlFiles(): string[] {
     .filter((f) => f.endsWith(".sql"))
     .sort()
     .map((f) => join(ROOT, "migrations", f));
-  return [join(ROOT, "tests", "supabase_stub.sql"), ...migrations, join(ROOT, "seed.sql"), join(ROOT, "seed", "catalog.sql")];
+  return [join(ROOT, "tests", "supabase_stub.sql"), ...migrations, join(ROOT, "seed.sql"), join(ROOT, "seed", "catalog.sql"), join(ROOT, "seed", "bat-database.sql")];
 }
 
 export async function canConnect(): Promise<boolean> {
