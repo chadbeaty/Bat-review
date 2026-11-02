@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getAllBats, getBatSettings, getMarketSummaries, getMaturityMap, type BatSummary } from "@/lib/bats";
 import { batCompareFields, type ComparableBat } from "@/lib/bat-display";
 import { MAX_COMPARE, compareHref, compareRows, differenceCount, parseCompareSlugs } from "@/lib/compare";
@@ -21,6 +22,8 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
   const selected = requested.map((s) => bySlug.get(s)).filter((b): b is BatSummary => Boolean(b));
   const unknown = requested.filter((s) => !bySlug.has(s));
   const slugs = selected.map((b) => b.slug);
+  // The picker submits ?models=…&add=…; settle on one shareable ?models= URL.
+  if (sp.add !== undefined) redirect(compareHref(slugs));
 
   const items: ComparableBat[] = selected.map((b) => {
     const m = market.get(b.id);
