@@ -35,6 +35,8 @@ import {
   suggestTitle,
   type DamageKey,
 } from "@/lib/sell/listing";
+import type { Mark } from "@/lib/import/plan";
+import type { ImportFieldKey } from "@/lib/import/parse-post";
 import { ListingPreview } from "./ListingPreview";
 import { resizeImage } from "./resize-image";
 import { ErrorBanner, FieldError, StepActions, StepHeader, YesNo, inputClass, useWizard } from "./ui";
@@ -64,9 +66,8 @@ function toRaw(fields: AttributeField[], attrs: Record<string, unknown>): RawVal
 export function DetailsStep() {
   const { w, s } = useSnapshot();
   const fields = s.category.fields;
-  const [values, setValues] = useState<RawValues>(() => toRaw(fields, s.listing.attributes));
-  const [condition, setCondition] = useState(s.listing.condition_score ? String(s.listing.condition_score) : "");
-  const [description, setDescription] = useState(s.listing.description ?? "");
+  // Values read from a pasted post fill the form the first time Details opens (until condition has been saved).
+  const plan = w.imported && !s.listing.condition_score ? w.imported : null;
   const modelText = s.product?.name ?? s.submission?.modelName ?? null;
   const suggestion = (v: RawValues) =>
     suggestTitle({
@@ -77,9 +78,16 @@ export function DetailsStep() {
       weightOz: v.weight_oz ? Number(v.weight_oz) : null,
       fallback: s.category.name,
     });
-  const [title, setTitle] = useState(s.listing.title);
+  const savedValues = toRaw(fields, s.listing.attributes);
+  const fromPost = plan ? Object.fromEntries(Object.entries(plan.attributes).filter(([k]) => fields.some((f) => f.key === k))) : {};
+  const startValues: RawValues = { ...savedValues, ...fromPost };
   // Keep following the suggestion until the seller types their own title.
-  const [auto, setAuto] = useState(() => s.listing.title === suggestion(toRaw(fields, s.listing.attributes)) || s.listing.title === suggestion({}));
+  const startAuto = s.listing.title === suggestion(savedValues) || s.listing.title === suggestion({});
+  const [values, setValues] = useState<RawValues>(startValues);
+  const [condition, setCondition] = useState(s.listing.condition_score ? String(s.listing.condition_score) : "");
+  const [description, setDescription] = useState(s.listing.description || plan?.description || "");
+  const [title, setTitle] = useState(startAuto && plan ? suggestion(startValues) : s.listing.title);
+  const [auto, setAuto] = useState(startAuto);
 
   const update = (key: string, v: string | string[]) => {
     const next = { ...values, [key]: v };
@@ -110,9 +118,28 @@ export function DetailsStep() {
         }
       />
       <ErrorBanner />
+      {plan && (
+        <div role="status" className="grid gap-1 border-2 border-dashed border-steel bg-paper p-3 text-sm" data-testid="import-banner">
+          <p className="font-semibold">Filled in from your post</p>
+          <p className="text-ink-soft">
+            Highlighted fields came from your words. A dashed outline means your post said it plainly; an orange outline means check it against the bat. Nothing is
+            saved or published until you continue.
+          </p>
+        </div>
+      )}
       <div className="grid gap-4 sm:grid-cols-2">
         {fields.map((f) => (
-          <AttributeInput key={f.key} field={f} value={values[f.key]} onChange={(v) => update(f.key, v)} error={w.errors[`attributes.${f.key}`]} fromCatalog={fromCatalog.includes(f.key)} listedWeights={f.key === "weight_oz" ? s.product?.listedWeights : undefined} />
+          <AttributeInput
+            key={f.key}
+            field={f}
+            value={values[f.key]}
+            onChange={(v) => update(f.key, v)}
+            error={w.errors[`attributes.${f.key}`]}
+            fromCatalog={fromCatalog.includes(f.key)}
+            listedWeights={f.key === "weight_oz" ? s.product?.listedWeights : undefined}
+            mark={plan?.marks[f.key as ImportFieldKey]}
+            emptyNote={plan?.empty[f.key as ImportFieldKey]}
+          />
         ))}
       </div>
 
@@ -135,6 +162,7 @@ export function DetailsStep() {
         </select>
         <span id="h-condition" className="text-sm font-normal text-ink-soft">
           Looks only: paint, scuffs and graphics. You&apos;ll answer questions about damage in step 8.
+          {plan && plan.conditionWords.length > 0 && <> Your post says {plan.conditionWords.join(", ")}; choose the score that matches how it looks.</>}
         </span>
         <FieldError id="e-condition" message={w.errors.conditionScore} />
       </label>
@@ -176,10 +204,15 @@ export function DetailsStep() {
         <FieldError id="e-title" message={w.errors.title} />
       </label>
 
-      <label className="field" htmlFor="description">
+      <label className={`field ${plan?.marks.description && description === plan.description ? "border-2 border-warning bg-warning/10 p-2" : ""}`} htmlFor="description">
         <span>
           Description <span className="font-normal text-ink-soft">(optional)</span>
         </span>
+        {plan?.marks.description && description === plan.description && (
+          <span className="text-sm font-normal text-warning" data-testid="import-description-note">
+            This is your post with contact details and links removed. Read it over and trim anything buyers don&apos;t need.
+          </span>
+        )}
         <textarea
           id="description"
           rows={4}
@@ -203,6 +236,8 @@ function AttributeInput({
   error,
   fromCatalog,
   listedWeights,
+  mark,
+  emptyNote,
 }: {
   field: AttributeField;
   value: string | string[] | undefined;
@@ -210,8 +245,22 @@ function AttributeInput({
   error?: string;
   fromCatalog: boolean;
   listedWeights?: number[];
+  /** Set when this field's value came from a pasted post. */
+  mark?: Mark;
+  /** Set when the post left this field unsettled. */
+  emptyNote?: string;
 }) {
   const id = `attr-${field.key}`;
+  const boxClass = mark ? (mark.confidence === "high" ? "border-2 border-dashed border-steel bg-surface p-2" : "border-2 border-warning bg-warning/10 p-2") : emptyNote ? "border-2 border-warning bg-warning/10 p-2" : "";
+  const fromPost = mark ? (
+    <span className={`text-sm font-normal ${mark.confidence === "high" ? "text-ink-soft" : "text-warning"}`} data-testid={`from-post-${field.key}`}>
+      {mark.confidence === "high" ? "From your post" : "From your post, but check it"}: &ldquo;{mark.evidence}&rdquo;
+    </span>
+  ) : emptyNote ? (
+    <span className="text-sm font-normal text-warning" data-testid={`from-post-${field.key}`}>
+      {emptyNote}
+    </span>
+  ) : null;
   const optional = !field.required && <span className="font-normal text-ink-soft"> (optional)</span>;
   const hint = [field.help ?? null, fromCatalog ? "From the catalog. Confirm it matches." : null, listedWeights?.length ? `Listed weights: ${listedWeights.join(", ")} oz.` : null]
     .filter(Boolean)
@@ -219,6 +268,7 @@ function AttributeInput({
   const describedBy = error ? `e-${id}` : hint ? `h-${id}` : undefined;
   const help = (
     <>
+      {fromPost}
       {hint && !error && (
         <span id={`h-${id}`} className="text-sm font-normal text-ink-soft">
           {hint}
@@ -231,7 +281,7 @@ function AttributeInput({
   if (field.type === "multiselect") {
     const selected = Array.isArray(value) ? value : [];
     return (
-      <fieldset className="grid gap-2 sm:col-span-2" aria-describedby={describedBy}>
+      <fieldset className={`grid gap-2 sm:col-span-2 ${boxClass}`} aria-describedby={describedBy}>
         <legend className="font-medium">
           {field.label}
           {optional}
@@ -254,7 +304,7 @@ function AttributeInput({
   }
   const str = typeof value === "string" ? value : "";
   return (
-    <label className="field" htmlFor={id}>
+    <label className={`field ${boxClass}`} htmlFor={id}>
       <span>
         {field.label}
         {optional}
@@ -536,8 +586,12 @@ export function PhotosStep() {
 
 export function PriceStep() {
   const { w, s } = useSnapshot();
-  const [price, setPrice] = useState(s.listing.asking_price_cents != null ? String(s.listing.asking_price_cents / 100) : "");
-  const [offers, setOffers] = useState(s.listing.accepts_offers);
+  // A price read from a pasted post fills the box the first time Price opens.
+  const plan = w.imported && s.listing.asking_price_cents == null ? w.imported : null;
+  const [price, setPrice] = useState(s.listing.asking_price_cents != null ? String(s.listing.asking_price_cents / 100) : (plan?.priceDollars ?? ""));
+  const [offers, setOffers] = useState(plan?.acceptsOffers ?? s.listing.accepts_offers);
+  const priceMark = plan?.marks.price;
+  const offersMark = plan?.marks.accepts_offers;
   const cents = parseDollars(price);
   const preview = cents != null && cents >= 100 && w.fee ? sellerProceedsBeforeProcessing(cents, w.fee) : null;
   const sales = s.priceHint?.sales ?? [];
@@ -553,7 +607,12 @@ export function PriceStep() {
     >
       <StepHeader title="Asking price" />
       <ErrorBanner />
-      <label className="field max-w-xs" htmlFor="price">
+      {plan && (priceMark || plan.empty.price) && (
+        <p role="status" className="text-sm text-ink-soft" data-testid="import-price-note">
+          {priceMark ? `Your post said ${priceMark.evidence}. Check the price and what you'd receive below.` : plan.empty.price}
+        </p>
+      )}
+      <label className={`field max-w-xs ${priceMark ? (priceMark.confidence === "high" ? "border-2 border-dashed border-steel bg-surface p-2" : "border-2 border-warning bg-warning/10 p-2") : ""}`} htmlFor="price">
         <span>Price (USD)</span>
         <span className="relative">
           <span className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-ink-soft">$</span>
@@ -610,9 +669,10 @@ export function PriceStep() {
         )}
       </div>
 
-      <label className="flex items-center gap-2">
+      <label className={`flex items-center gap-2 ${offersMark ? "border-2 border-dashed border-steel bg-surface p-2" : ""}`}>
         <input type="checkbox" checked={offers} onChange={(e) => setOffers(e.target.checked)} />
         Accept offers from buyers
+        {offersMark && <span className="text-sm text-ink-soft">(from your post: &ldquo;{offersMark.evidence}&rdquo;)</span>}
       </label>
       <StepActions back={w.published ? undefined : "photos"} />
     </form>

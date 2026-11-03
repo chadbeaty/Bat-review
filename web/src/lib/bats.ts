@@ -641,3 +641,13 @@ export async function getManufacturerDetail(slug: string): Promise<ManufacturerD
   if (!ref) return null;
   return { slug, name: ref.name, websiteUrl: null, warrantySummary: null, warrantySource: null, bats, lines: [] };
 }
+
+/** One published bat model by its product id, or null. Used where a listing points at a catalog model. */
+export async function getBatById(id: string): Promise<BatSummary | null> {
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
+  const supabase = await createClient();
+  if (!supabase) return null;
+  const { data, error } = await supabase.from("products").select(SUMMARY_SELECT).eq("id", id).eq("product_categories.slug", "bats").maybeSingle();
+  if (error || !data) return null;
+  return toSummary(data as unknown as ProductRow);
+}

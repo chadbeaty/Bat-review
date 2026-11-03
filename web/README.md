@@ -23,6 +23,14 @@ Fees are stored in the database, not in the code. Change them in the admin dashb
 
 The price guide thresholds (5 and 10 verified sales), the offer expiry (48 hours), the listing expiry (90 days) and the message rate limit are rows in `site_settings`.
 
+### Show live eBay listings next to ours (optional)
+
+Set `EBAY_CLIENT_ID`, `EBAY_CLIENT_SECRET` and `EBAY_CAMPAIGN_ID` (and optionally `EBAY_ENV`) in Vercel and redeploy to turn on the "Elsewhere right now: on eBay" sections, with eBay Partner Network links. Without them nothing changes. Steps and compliance notes: `docs/ebay.md`.
+
+### Seller import ("Paste your post")
+
+On the first step of the sell flow, sellers can paste the text of a Facebook group post. `src/lib/import/parse-post.ts` (no AI, no network) fills the draft; the seller reviews every step and publishes themselves. Links are never opened.
+
 ### Make someone an admin
 
 In the Supabase SQL editor, run:

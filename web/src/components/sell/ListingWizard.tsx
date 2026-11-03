@@ -6,6 +6,8 @@ import { STEPS, stepIndex, type StepKey } from "@/lib/sell/listing";
 import type { FeeRule } from "@/lib/fees";
 import type { ListingSnapshot, ProductSummary, SellCategory, SellManufacturer } from "@/lib/sell/server";
 import { ErrorBanner, FieldError, StepActions, StepHeader, WizardContext, inputClass, useWizard, type Wizard } from "./ui";
+import type { ImportPlan } from "@/lib/import/plan";
+import { PostImport } from "./PostImport";
 import { DetailsStep, DisclosuresStep, PhotosStep, PreviewStep, PriceStep, PublishStep, ShippingStep } from "./steps";
 
 const EARLY: StepKey[] = ["category", "manufacturer", "model"];
@@ -38,6 +40,7 @@ export function ListingWizard(props: {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [error, setError] = useState<string | null>(null);
   const [errorStep, setErrorStep] = useState<StepKey | null>(null);
+  const [imported, setImported] = useState<ImportPlan | null>(null);
   const [choice, setChoice] = useState({
     categoryId: props.initial?.category.id ?? "",
     manufacturerId: props.initial?.manufacturer?.id ?? "",
@@ -106,6 +109,8 @@ export function ListingWizard(props: {
     setError,
     run,
     published,
+    imported,
+    setImported,
   };
 
   const current = stepIndex(step);
@@ -173,36 +178,39 @@ function CategoryStep({ choice, setChoice }: { choice: Choice; setChoice: (c: Ch
   const [selected, setSelected] = useState(choice.categoryId);
   const [err, setErr] = useState<string>();
   return (
-    <form
-      className="grid gap-5"
-      onSubmit={(e) => {
-        e.preventDefault();
-        if (!selected) return setErr("Choose a category");
-        setChoice({ categoryId: selected, manufacturerId: selected === choice.categoryId ? choice.manufacturerId : "" });
-        w.goTo("manufacturer");
-      }}
-    >
-      <StepHeader title="What are you selling?" />
-      <fieldset className="grid gap-2" aria-describedby={err ? "e-category" : undefined}>
-        <legend className="sr-only">Category</legend>
-        <div className="grid gap-2 sm:grid-cols-2">
-          {w.categories.map((c) => (
-            <label
-              key={c.id}
-              className={`grid cursor-pointer gap-0.5 rounded-md border p-3 ${selected === c.id ? "border-ink bg-paper" : "border-line-strong hover:border-ink"}`}
-            >
-              <span className="flex items-center gap-2 font-semibold">
-                <input type="radio" name="category" value={c.id} checked={selected === c.id} onChange={() => setSelected(c.id)} />
-                {c.name}
-              </span>
-              {c.description && <span className="pl-6 text-sm text-ink-soft">{c.description}</span>}
-            </label>
-          ))}
-        </div>
-        <FieldError id="e-category" message={err} />
-      </fieldset>
-      <StepActions label="Continue" />
-    </form>
+    <div className="grid gap-6">
+      <PostImport setChoice={setChoice} />
+      <form
+        className="grid gap-5"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (!selected) return setErr("Choose a category");
+          setChoice({ categoryId: selected, manufacturerId: selected === choice.categoryId ? choice.manufacturerId : "" });
+          w.goTo("manufacturer");
+        }}
+      >
+        <StepHeader title="What are you selling?" />
+        <fieldset className="grid gap-2" aria-describedby={err ? "e-category" : undefined}>
+          <legend className="sr-only">Category</legend>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {w.categories.map((c) => (
+              <label
+                key={c.id}
+                className={`grid cursor-pointer gap-0.5 rounded-md border p-3 ${selected === c.id ? "border-ink bg-paper" : "border-line-strong hover:border-ink"}`}
+              >
+                <span className="flex items-center gap-2 font-semibold">
+                  <input type="radio" name="category" value={c.id} checked={selected === c.id} onChange={() => setSelected(c.id)} />
+                  {c.name}
+                </span>
+                {c.description && <span className="pl-6 text-sm text-ink-soft">{c.description}</span>}
+              </label>
+            ))}
+          </div>
+          <FieldError id="e-category" message={err} />
+        </fieldset>
+        <StepActions label="Continue" />
+      </form>
+    </div>
   );
 }
 

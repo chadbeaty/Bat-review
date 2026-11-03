@@ -12,6 +12,10 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Thumbnails of the eBay listings shown in "Elsewhere right now" (eBay's own image host).
+  images: {
+    remotePatterns: [{ protocol: "https", hostname: "i.ebayimg.com", pathname: "/**" }],
+  },
   // Tailwind CSS v4 runs as a Turbopack loader on every stylesheet.
   turbopack: {
     rules: {

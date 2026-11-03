@@ -34,6 +34,7 @@ export const integrations = [
   { id: "resend", name: "Resend (email)", vars: ["RESEND_API_KEY"], phase: 7 },
   { id: "sentry", name: "Sentry (error monitoring)", vars: ["SENTRY_DSN"], phase: 7 },
   { id: "ga", name: "Google Analytics", vars: ["NEXT_PUBLIC_GA_MEASUREMENT_ID"], phase: 7 },
+  { id: "ebay", name: "eBay listings with Partner Network links (\"Elsewhere right now\")", vars: ["EBAY_CLIENT_ID", "EBAY_CLIENT_SECRET", "EBAY_CAMPAIGN_ID"], phase: 8 },
   { id: "openai", name: "OpenAI (listing assistant)", vars: ["OPENAI_API_KEY"], phase: 8 },
 ] as const;
 

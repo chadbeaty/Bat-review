@@ -11,6 +11,7 @@ import { WEIGHTING_LABELS } from "@/lib/format";
 import { listingPath } from "@/lib/paths";
 import { SourceLabel } from "@/components/listing/SourceLabel";
 import { ArrowIcon } from "@/components/icons";
+import { EbayHomeStrip } from "@/components/EbayHomeStrip";
 
 export default async function HomePage() {
   const [user, listings, rackBats, sold, facets, partners, allBats, mostListed] = await Promise.all([
@@ -123,6 +124,9 @@ export default async function HomePage() {
           <EmptyFence title="The fence is empty" body="Be the first to hang a bat." />
         </section>
       )}
+
+      {/* Elsewhere right now: eBay listings, only while we have few of our own and eBay is configured */}
+      {listings.length < 6 && <EbayHomeStrip models={models.map((m) => m.bat)} />}
 
       {/* 6. Recently sold: only when real completed sales exist */}
       {sold.length > 0 && (
