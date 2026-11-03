@@ -1,14 +1,15 @@
 // Every brand-specific value lives here. Change the name, colors, emails or links in this one file and the
-// whole site follows. "Dugout Trade" is a working name until the final name is cleared (see docs/BRAND.md).
+// whole site follows. "Gamer Bat" (gamerbat.com) was chosen on 2026-11-03; the owner still has to run a trademark search (see docs/BRAND.md).
 
 export const brand = {
-  name: "Dugout Trade",
-  shortName: "Dugout Trade",
+  name: "Gamer Bat",
+  shortName: "Gamer Bat",
+  domain: "gamerbat.com",
   /** Two-part wordmark: the second part is drawn lighter. */
-  wordmark: ["Dugout", "Trade"] as const,
-  tagline: "Buy. Sell. Trade. All things slow-pitch.",
+  wordmark: ["Gamer", "Bat"] as const,
+  tagline: "The used slow-pitch bat market players trust",
   description:
-    "The marketplace built for softball players. Shop used bats, gloves, bags and equipment from players nationwide.",
+    "Buy and sell used slow-pitch softball bats and gear. Every bat model comes with its stamp, real sold prices and owner reports.",
   /** Production URL once a domain is chosen. Used for canonical links, sitemaps and emails. */
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   colors: {
@@ -26,9 +27,9 @@ export const brand = {
     warning: "#8a6a10",
   },
   email: {
-    fromName: "Dugout Trade",
-    fromAddress: "hello@example.com",
-    supportAddress: "support@example.com",
+    fromName: "Gamer Bat",
+    fromAddress: "hello@gamerbat.com",
+    supportAddress: "support@gamerbat.com",
   },
   /** Leave a link empty to hide it. */
   social: {

@@ -8,6 +8,8 @@ import { batModelPath, listingPath } from "@/lib/paths";
 import { humanize } from "@/lib/search";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { Gallery } from "@/components/listing/Gallery";
+import { getPassport } from "@/lib/passport-data";
+import { BatPassport } from "@/components/listing/BatPassport";
 import { Disclosures } from "@/components/listing/Disclosures";
 import { ListingActions } from "@/components/listing/ListingActions";
 import { FavoriteButton } from "@/components/listing/FavoriteButton";
@@ -103,7 +105,7 @@ export default async function ListingPage({ params }: PageProps<"/listings/[id]"
   const listing = await getListing(id);
   if (!listing) notFound();
 
-  const [user, seller] = await Promise.all([getCurrentUser(), getSellerById(listing.sellerId)]);
+  const [user, seller, passport] = await Promise.all([getCurrentUser(), getSellerById(listing.sellerId), getPassport(listing)]);
   const isOwner = user?.id === listing.sellerId;
   const saved = user ? await isFavorite(user.id, listing.id) : false;
   const isPublic = PUBLIC_STATUSES.includes(listing.status);
@@ -160,6 +162,8 @@ export default async function ListingPage({ params }: PageProps<"/listings/[id]"
             </p>
             {listing.status === "active" && listing.acceptsOffers && <p className="text-sm text-ink-soft">The seller accepts offers.</p>}
           </div>
+
+          {passport && <BatPassport {...passport} />}
 
           <Disclosures listing={listing} />
 

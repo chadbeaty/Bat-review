@@ -146,6 +146,14 @@ test.describe("listing page", () => {
     await expect(page.getByText("$199").first()).toBeVisible();
     await expect(page.getByText("Condition 8/10 Normal light wear")).toBeVisible();
 
+    // Bat Passport renders for bat listings linked to a catalog product (if this listing is one).
+    const passport = page.getByTestId("bat-passport");
+    if (await passport.count()) {
+      await expect(passport.getByRole("heading", { name: "Bat Passport" })).toBeVisible();
+      await expect(passport).toContainText(/\d of 4/);
+      await expect(passport.locator("[data-check]")).toHaveCount(4);
+    }
+
     const disclosure = page.getByTestId("damage-disclosure");
     await expect(disclosure.getByRole("heading", { name: "Seller disclosed damage" })).toBeVisible();
     for (const q of ["Cracks", "Loose end cap", "Repairs", "Significant damage"]) {

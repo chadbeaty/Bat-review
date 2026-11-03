@@ -1,6 +1,14 @@
-# Brand name options
+# Brand
 
-The site runs under the working name **Dugout Trade**. Changing it takes one edit to `src/config/brand.ts`: the name, wordmark, colors, email identity and social links all live there.
+## Decision
+
+**Gamer Bat**, gamerbat.com, chosen 2026-11-03. **Trademark search pending by owner** (USPTO, Class 28 and Class 35; see below). Contact emails in `src/config/brand.ts` are placeholders on the new domain (hello@ and support@gamerbat.com) until mailboxes exist.
+
+Visual direction: a new look is being designed; the current site styling is unchanged. All colors live in `src/config/brand.ts`.
+
+## Earlier name options
+
+The site started under the working name **Dugout Trade** (now replaced). The options below were the shortlist. Changing the name takes one edit to `src/config/brand.ts`: the name, wordmark, colors, email identity and social links all live there.
 
 ## How the options were checked
 

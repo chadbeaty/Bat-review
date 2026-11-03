@@ -170,7 +170,7 @@ export type ListingDetail = {
   images: { url: string; alt: string | null; type: string }[];
   category: { slug: string; name: string; fields: CategoryField[] } | null;
   manufacturer: { slug: string; name: string } | null;
-  product: { slug: string; name: string; modelYear: number | null; manufacturerSlug: string | null } | null;
+  product: { id: string; slug: string; name: string; modelYear: number | null; manufacturerSlug: string | null } | null;
 };
 
 const LISTING_COLUMNS = `
@@ -181,7 +181,7 @@ const LISTING_COLUMNS = `
   listing_images(image_url, alt_text, image_type, display_order, uploaded_at),
   product_categories(slug, name, attribute_schema),
   manufacturers(slug, name),
-  products(slug, product_name, model_year, manufacturers(slug, name))
+  products(id, slug, product_name, model_year, manufacturers(slug, name))
 `;
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -201,7 +201,7 @@ export const getListing = cache(async (id: string): Promise<ListingDetail | null
     listing_images: { image_url: string; alt_text: string | null; image_type: string; display_order: number; uploaded_at: string }[] | null;
     product_categories: { slug: string; name: string; attribute_schema: CategoryField[] } | null;
     manufacturers: { slug: string; name: string } | null;
-    products: { slug: string; product_name: string; model_year: number | null; manufacturers: { slug: string; name: string } | null } | null;
+    products: { id: string; slug: string; product_name: string; model_year: number | null; manufacturers: { slug: string; name: string } | null } | null;
   };
   const row = data as unknown as typeof data & Row;
   const images = [...(row.listing_images ?? [])].sort((a, b) => a.display_order - b.display_order || a.uploaded_at.localeCompare(b.uploaded_at));
@@ -242,7 +242,7 @@ export const getListing = cache(async (id: string): Promise<ListingDetail | null
       : null,
     manufacturer: row.manufacturers ?? product?.manufacturers ?? null,
     product: product
-      ? { slug: product.slug, name: product.product_name, modelYear: product.model_year, manufacturerSlug: product.manufacturers?.slug ?? null }
+      ? { id: product.id, slug: product.slug, name: product.product_name, modelYear: product.model_year, manufacturerSlug: product.manufacturers?.slug ?? null }
       : null,
   };
 });

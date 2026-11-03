@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test.describe("homepage", () => {
   test("states what the marketplace is and shows real catalog numbers", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Buy\. Sell\. Trade\. All things slow-pitch\./i);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/The used slow-pitch bat market players trust/i);
     await expect(page.getByText("Bat models in the catalog")).toBeVisible();
     await expect(page.getByText("121", { exact: true })).toBeVisible();
     await expect(page.getByText("7% commission on the item price")).toBeVisible();

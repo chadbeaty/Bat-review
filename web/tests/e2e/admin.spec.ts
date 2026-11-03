@@ -222,7 +222,7 @@ test.describe("content pages", () => {
 
   test("the contact page shows the support email to visitors", async ({ page }) => {
     await page.goto("/contact");
-    await expect(page.getByRole("link", { name: "support@example.com" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "support@gamerbat.com" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Sign in" }).last()).toBeVisible();
   });
 
