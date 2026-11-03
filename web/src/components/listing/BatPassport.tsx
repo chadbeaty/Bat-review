@@ -70,7 +70,7 @@ export function BatPassport({ checks, filledCount, ident }: { checks: PassportCh
               const [head, tail] = c.key === "stamp" ? splitStamp(c.headline) : [c.headline, null];
               return (
                 <div key={c.key} className="stamp-slot" data-check={c.key} data-filled={c.filled} data-source={c.source}>
-                  <SourceLabel source={c.source} className="mb-1.5" />
+                  {c.filled && <SourceLabel source={c.source} className="mb-1.5" />}
                   {c.filled ? (
                     <div className={`ink-stamp ${look.shape}`} style={{ ["--c" as string]: look.color }}>
                       <div>

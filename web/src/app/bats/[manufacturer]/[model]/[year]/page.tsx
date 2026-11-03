@@ -28,6 +28,9 @@ import { formatPrice } from "@/lib/format";
 import { compareHref } from "@/lib/compare";
 import { siteUrl } from "@/lib/env";
 import { brand } from "@/config/brand";
+import { EbayElsewhere, passportCompareFromCatalog } from "@/components/EbayElsewhere";
+import { matchModelForBat } from "@/lib/catalog-match-data";
+import { isEbayEnabled } from "@/lib/ebay/config";
 
 type Params = { manufacturer: string; model: string; year: string };
 
@@ -54,6 +57,8 @@ export default async function BatModelPage({ params }: { params: Promise<Params>
   const thresholds = normalizeThresholds(settings.minSales, settings.fullSales);
   const maturity = maturityInfo(detail.maturity?.maturity ?? null, { windowDays: settings.windowDays, threshold: settings.earlyThreshold });
   const signInHref = `/sign-in?next=${encodeURIComponent(bat.path)}`;
+  // Live eBay listings for this model (off unless eBay is configured). Gamer Bat's own listings stay first.
+  const ebayModel = isEbayEnabled() ? await matchModelForBat(bat) : null;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -90,6 +95,19 @@ export default async function BatModelPage({ params }: { params: Promise<Params>
       <Specs detail={detail} />
 
       <Market detail={detail} thresholds={thresholds} />
+
+      {ebayModel && (
+        <EbayElsewhere
+          model={ebayModel}
+          compare={passportCompareFromCatalog({
+            stamps: bat.stamps,
+            certificationStatus: detail.certificationStatus,
+            certificationSource: detail.certificationSource,
+            sales: detail.sales,
+            minSales: thresholds.minSales,
+          })}
+        />
+      )}
 
       <Lineage detail={detail} />
 

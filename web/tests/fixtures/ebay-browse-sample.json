@@ -1,0 +1,249 @@
+{
+  "_comment": "TEST FIXTURE ONLY. Invented listings shaped like an eBay Browse API response, for screenshots under `next dev` (EBAY_MOCK_FILE). Never used in production builds.",
+  "total": 11,
+  "itemSummaries": [
+    {
+      "itemId": "v1|990000001|0",
+      "title": "Miken Freak Black Maxload 34/27 USSSA Slowpitch Softball Bat",
+      "price": {
+        "value": "189.99",
+        "currency": "USD"
+      },
+      "condition": "Pre-Owned",
+      "itemWebUrl": "https://www.ebay.com/itm/990000001",
+      "itemAffiliateWebUrl": "https://www.ebay.com/itm/990000001?mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=TEST_FIXTURE&toolid=20006",
+      "buyingOptions": [
+        "FIXED_PRICE"
+      ],
+      "image": {
+        "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE01/s-l225.jpg"
+      },
+      "thumbnailImages": [
+        {
+          "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE01/s-l225.jpg"
+        }
+      ]
+    },
+    {
+      "itemId": "v1|990000002|0",
+      "title": "2026 Miken Freak Black Maxload USSSA 34/26 slow pitch bat",
+      "price": {
+        "value": "165.00",
+        "currency": "USD"
+      },
+      "condition": "Pre-Owned",
+      "itemWebUrl": "https://www.ebay.com/itm/990000002",
+      "itemAffiliateWebUrl": "https://www.ebay.com/itm/990000002?mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=TEST_FIXTURE&toolid=20006",
+      "buyingOptions": [
+        "FIXED_PRICE",
+        "BEST_OFFER"
+      ],
+      "image": {
+        "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE02/s-l225.jpg"
+      },
+      "thumbnailImages": [
+        {
+          "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE02/s-l225.jpg"
+        }
+      ]
+    },
+    {
+      "itemId": "v1|990000003|0",
+      "title": "Miken Freak Fastpitch Softball Bat 33/23 (-10)",
+      "price": {
+        "value": "95.00",
+        "currency": "USD"
+      },
+      "condition": "Pre-Owned",
+      "itemWebUrl": "https://www.ebay.com/itm/990000003",
+      "itemAffiliateWebUrl": "https://www.ebay.com/itm/990000003?mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=TEST_FIXTURE&toolid=20006",
+      "buyingOptions": [
+        "FIXED_PRICE"
+      ],
+      "image": {
+        "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE03/s-l225.jpg"
+      },
+      "thumbnailImages": [
+        {
+          "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE03/s-l225.jpg"
+        }
+      ]
+    },
+    {
+      "itemId": "v1|990000004|0",
+      "title": "Miken Freak Black Maxload bat bag backpack",
+      "price": {
+        "value": "44.00",
+        "currency": "USD"
+      },
+      "condition": "Pre-Owned",
+      "itemWebUrl": "https://www.ebay.com/itm/990000004",
+      "itemAffiliateWebUrl": "https://www.ebay.com/itm/990000004?mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=TEST_FIXTURE&toolid=20006",
+      "buyingOptions": [
+        "FIXED_PRICE"
+      ],
+      "image": {
+        "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE04/s-l225.jpg"
+      },
+      "thumbnailImages": [
+        {
+          "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE04/s-l225.jpg"
+        }
+      ]
+    },
+    {
+      "itemId": "v1|990000005|0",
+      "title": "MIKEN FREAK BLACK MAX LOAD SLOW PITCH SOFTBALL BAT 34\" 28oz",
+      "price": {
+        "value": "140.00",
+        "currency": "USD"
+      },
+      "condition": "Good",
+      "itemWebUrl": "https://www.ebay.com/itm/990000005",
+      "itemAffiliateWebUrl": "https://www.ebay.com/itm/990000005?mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=TEST_FIXTURE&toolid=20006",
+      "buyingOptions": [
+        "FIXED_PRICE"
+      ],
+      "image": {
+        "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE05/s-l225.jpg"
+      },
+      "thumbnailImages": [
+        {
+          "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE05/s-l225.jpg"
+        }
+      ]
+    },
+    {
+      "itemId": "v1|990000006|0",
+      "title": "Miken Freak Whiteout Maxload 34/27 USSSA",
+      "price": {
+        "value": "150.00",
+        "currency": "USD"
+      },
+      "condition": "Pre-Owned",
+      "itemWebUrl": "https://www.ebay.com/itm/990000006",
+      "itemAffiliateWebUrl": "https://www.ebay.com/itm/990000006?mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=TEST_FIXTURE&toolid=20006",
+      "buyingOptions": [
+        "FIXED_PRICE"
+      ],
+      "image": {
+        "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE06/s-l225.jpg"
+      },
+      "thumbnailImages": [
+        {
+          "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE06/s-l225.jpg"
+        }
+      ]
+    },
+    {
+      "itemId": "v1|990000007|0",
+      "title": "Miken Freak Black Maxload 34/27 broken in, no cracks",
+      "price": {
+        "value": "172.50",
+        "currency": "USD"
+      },
+      "condition": "Pre-Owned",
+      "itemWebUrl": "https://www.ebay.com/itm/990000007",
+      "itemAffiliateWebUrl": "https://www.ebay.com/itm/990000007?mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=TEST_FIXTURE&toolid=20006",
+      "buyingOptions": [
+        "AUCTION"
+      ],
+      "image": {
+        "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE07/s-l225.jpg"
+      },
+      "thumbnailImages": [
+        {
+          "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE07/s-l225.jpg"
+        }
+      ]
+    },
+    {
+      "itemId": "v1|990000008|0",
+      "title": "Freak Black Maxload USSSA 34/27 great shape",
+      "price": {
+        "value": "155.00",
+        "currency": "USD"
+      },
+      "condition": "Very Good",
+      "itemWebUrl": "https://www.ebay.com/itm/990000008",
+      "itemAffiliateWebUrl": "https://www.ebay.com/itm/990000008?mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=TEST_FIXTURE&toolid=20006",
+      "buyingOptions": [
+        "FIXED_PRICE"
+      ],
+      "image": {
+        "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE08/s-l225.jpg"
+      },
+      "thumbnailImages": [
+        {
+          "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE08/s-l225.jpg"
+        }
+      ]
+    },
+    {
+      "itemId": "v1|990000009|0",
+      "title": "Miken Freak Black Maxload 34/28 USSSA slowpitch",
+      "price": {
+        "value": "199.00",
+        "currency": "USD"
+      },
+      "condition": "Pre-Owned",
+      "itemWebUrl": "https://www.ebay.com/itm/990000009",
+      "itemAffiliateWebUrl": "https://www.ebay.com/itm/990000009?mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=TEST_FIXTURE&toolid=20006",
+      "buyingOptions": [
+        "FIXED_PRICE"
+      ],
+      "image": {
+        "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE09/s-l225.jpg"
+      },
+      "thumbnailImages": [
+        {
+          "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE09/s-l225.jpg"
+        }
+      ]
+    },
+    {
+      "itemId": "v1|990000010|0",
+      "title": "2023 Miken Freak Black Maxload 34/27",
+      "price": {
+        "value": "120.00",
+        "currency": "USD"
+      },
+      "condition": "Pre-Owned",
+      "itemWebUrl": "https://www.ebay.com/itm/990000010",
+      "itemAffiliateWebUrl": "https://www.ebay.com/itm/990000010?mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=TEST_FIXTURE&toolid=20006",
+      "buyingOptions": [
+        "FIXED_PRICE"
+      ],
+      "image": {
+        "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE10/s-l225.jpg"
+      },
+      "thumbnailImages": [
+        {
+          "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE10/s-l225.jpg"
+        }
+      ]
+    },
+    {
+      "itemId": "v1|990000011|0",
+      "title": "Miken Freak Black Maxload 34/27 USSSA Used 1 Season",
+      "price": {
+        "value": "179.00",
+        "currency": "USD"
+      },
+      "condition": "Pre-Owned",
+      "itemWebUrl": "https://www.ebay.com/itm/990000011",
+      "itemAffiliateWebUrl": "https://www.ebay.com/itm/990000011?mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=TEST_FIXTURE&toolid=20006",
+      "buyingOptions": [
+        "FIXED_PRICE"
+      ],
+      "image": {
+        "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE11/s-l225.jpg"
+      },
+      "thumbnailImages": [
+        {
+          "imageUrl": "https://i.ebayimg.com/images/g/FIXTURE11/s-l225.jpg"
+        }
+      ]
+    }
+  ]
+}

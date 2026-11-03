@@ -26,6 +26,10 @@ import { parseHits } from "@/lib/life-meter";
 import { buildMrz } from "@/lib/mrz";
 import { isCategoryVisible } from "@/lib/launch";
 import { optionLabel } from "@/lib/sell/attributes";
+import { EbayElsewhere } from "@/components/EbayElsewhere";
+import { getBatById } from "@/lib/bats";
+import { matchModelForBat } from "@/lib/catalog-match-data";
+import { isEbayEnabled } from "@/lib/ebay/config";
 
 /** Where each passport ident line comes from: the seller's listing, or the site's own completed-sales record. */
 const ROW_SOURCES: Record<string, PassportSource> = {
@@ -172,6 +176,12 @@ export default async function ListingPage({ params }: PageProps<"/listings/[id]"
           }),
         }
       : undefined;
+
+  // Live eBay listings for this listing's catalog model, below everything of ours. Off unless eBay is configured.
+  const catalogBat = isPublic && isBat && listing.product && isEbayEnabled() ? await getBatById(listing.product.id) : null;
+  const ebayModel = catalogBat ? await matchModelForBat(catalogBat) : null;
+  const priceCheckForCompare = passport?.checks.find((c) => c.key === "price");
+  const stampCheckForCompare = passport?.checks.find((c) => c.key === "stamp");
 
   return (
     <div>
@@ -337,6 +347,20 @@ export default async function ListingPage({ params }: PageProps<"/listings/[id]"
             <BatPassport {...passport} ident={ident} />
           </div>
         </section>
+      )}
+
+      {ebayModel && (
+        <div className="wrap pb-10 pt-8">
+          <EbayElsewhere
+            model={ebayModel}
+            headingId="ebay-heading"
+            compare={
+              stampCheckForCompare && priceCheckForCompare
+                ? { stamp: stampCheckForCompare, price: priceCheckForCompare, modelHref: modelHref ?? undefined }
+                : undefined
+            }
+          />
+        </div>
       )}
     </div>
   );

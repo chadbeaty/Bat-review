@@ -189,11 +189,15 @@ test.describe("listing page", () => {
 
     const passport = page.getByTestId("bat-passport");
     await expect(passport).toBeVisible();
-    for (const check of ["stamp", "price", "owners", "listing"]) await expect(passport.locator(`[data-check="${check}"] [data-source]`)).toHaveCount(1);
-    await expect(passport.locator('[data-check="stamp"] [data-source="verified"]')).toHaveText("Verified");
-    await expect(passport.locator('[data-check="price"] [data-source="verified"]')).toHaveText("Verified");
-    await expect(passport.locator('[data-check="owners"] [data-source="owners"]')).toHaveText("Owners report");
-    await expect(passport.locator('[data-check="listing"] [data-source="seller"]')).toHaveText("Seller says");
+    // A source tag only appears on checks that are stamped, so an empty check never reads "Verified".
+    const expected = { stamp: "Verified", price: "Verified", owners: "Owners report", listing: "Seller says" } as const;
+    for (const [check, label] of Object.entries(expected)) {
+      const slot = passport.locator(`[data-check="${check}"]`);
+      const filled = (await slot.getAttribute("data-filled")) === "true";
+      const tag = slot.locator("[data-source]:not(.stamp-slot)");
+      if (filled) await expect(tag).toHaveText(label);
+      else await expect(tag).toHaveCount(0);
+    }
   });
 });
 

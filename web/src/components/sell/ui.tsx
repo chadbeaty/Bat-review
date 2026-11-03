@@ -5,6 +5,7 @@ import type { ActionResult } from "@/app/sell/actions";
 import type { StepKey } from "@/lib/sell/listing";
 import type { FeeRule } from "@/lib/fees";
 import type { ListingSnapshot, SellCategory, SellManufacturer } from "@/lib/sell/server";
+import type { ImportPlan } from "@/lib/import/plan";
 
 export type Wizard = {
   userId: string;
@@ -25,6 +26,9 @@ export type Wizard = {
   run: (action: () => Promise<ActionResult>, then?: StepKey) => Promise<ActionResult>;
   /** True once a listing is published (or removed/expired): saves change it in place. */
   published: boolean;
+  /** Values and highlights from a pasted post ("Already posted it somewhere?"), until the details are saved. */
+  imported: ImportPlan | null;
+  setImported: (plan: ImportPlan | null) => void;
 };
 
 export const WizardContext = createContext<Wizard | null>(null);
