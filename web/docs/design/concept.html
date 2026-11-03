@@ -1,0 +1,297 @@
+<title>Gamer Bat Concept</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anybody:ital,wdth,wght@0,50..150,400..900;1,50..150,400..900&family=Schibsted+Grotesk:wght@400;500;700&family=Martian+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: one long scroll of three "signature moments" (The Rack, The Bat, The Passport), each a full-bleed band with its own material; a quiet steel-and-ink chrome around them. Deliberately single-look (light) — the dugout in daylight. */
+:root{
+  color-scheme:light;
+  --concrete:#e4e6e1;   /* dugout concrete, faint green-grey */
+  --ink:#121820;        /* scorebook ink */
+  --steel:#8e989e;      /* galvanized fence */
+  --tag:#ffd23f;        /* hang-tag yellow */
+  --visa:#4b2fa0;       /* passport stamp violet */
+  --stampred:#c0352b;   /* customs red */
+  --stampgreen:#1d6e4b; /* cleared green */
+  --paper:#f7f5ef;      /* passport page */
+  --muted:#59636b;
+  --f-display:"Anybody",system-ui,sans-serif;
+  --f-body:"Schibsted Grotesk",system-ui,sans-serif;
+  --f-data:"Martian Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{background:var(--concrete);color:var(--ink);font:16px/1.55 var(--f-body)}
+.gutter{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.inner{max-width:1100px;margin:0 auto}
+h1,h2,h3{margin:0;text-wrap:balance}
+p{margin:0;max-width:62ch}
+.disp{font-family:var(--f-display);font-style:italic;font-variation-settings:"wdth" 150;font-weight:900;letter-spacing:-.01em;text-transform:uppercase;line-height:.92}
+.label{font:600 11px var(--f-data);letter-spacing:.12em;text-transform:uppercase}
+.sample{font:600 11px var(--f-data);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+/* Masthead */
+.mast{padding-block:28px 22px;display:grid;gap:14px}
+.wordmark{font-size:clamp(44px,10vw,104px);position:relative;display:inline-block}
+.wordmark .b{color:transparent;-webkit-text-stroke:2px var(--ink)}
+.wordmark svg{display:block;width:100%;height:14px;margin-top:6px}
+.mast p{font-size:18px}
+.chip{display:inline-flex;gap:8px;align-items:center;background:var(--ink);color:var(--concrete);padding:6px 10px;font:600 11px var(--f-data);letter-spacing:.1em;text-transform:uppercase;width:max-content}
+
+/* Moment header */
+.mh{display:grid;gap:8px;padding-block:44px 18px}
+.mh .n{font:600 11px var(--f-data);letter-spacing:.14em;color:var(--muted)}
+.mh h2{font-size:clamp(30px,6vw,58px)}
+
+/* ---------- 1. THE RACK ---------- */
+.rack{position:relative;padding-block:26px 34px;background:
+  linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 40%),
+  repeating-linear-gradient(45deg,transparent 0 15px,var(--steel) 15px 17px),
+  repeating-linear-gradient(-45deg,transparent 0 15px,var(--steel) 15px 17px),
+  #cfd5d8;border-block:6px solid #6f797f}
+.rail{height:10px;background:linear-gradient(#a7b0b5,#6f797f);border-radius:5px;margin:0 0 4px}
+.rackscroll{overflow-x:auto;padding-bottom:8px}
+.bats{display:flex;gap:22px;min-width:max-content;padding:0 6px}
+.hang{display:grid;justify-items:center;width:92px;position:relative}
+.hook{width:16px;height:22px;border:3px solid #3d464c;border-top:0;border-radius:0 0 10px 10px;margin-top:-4px}
+.hang svg{display:block}
+.tag{position:absolute;top:58px;left:54px;background:var(--tag);padding:6px 7px 6px 12px;transform:rotate(9deg);box-shadow:1px 2px 0 rgba(0,0,0,.25);width:96px;clip-path:polygon(10px 0,100% 0,100% 100%,10px 100%,0 50%);z-index:2}
+.tag::before{content:"";position:absolute;left:5px;top:calc(50% - 3px);width:6px;height:6px;border-radius:50%;background:#cfd5d8}
+.tag .p{font:800 18px/1 var(--f-display);font-variation-settings:"wdth" 110}
+.tag .m{font:600 9px/1.25 var(--f-data);letter-spacing:.04em;text-transform:uppercase}
+.hang:nth-child(2n) .tag{transform:rotate(-6deg);top:120px}
+.hang:nth-child(3n) .tag{top:180px}
+.under{display:flex;flex-wrap:wrap;gap:10px 18px;justify-content:space-between;align-items:center;padding-top:16px}
+.why{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;padding-block:18px 0}
+.why div{border-top:2px solid var(--ink);padding-top:10px;display:grid;gap:4px}
+.why b{font-family:var(--f-display);font-variation-settings:"wdth" 120;font-weight:800;font-style:italic;text-transform:uppercase;font-size:17px}
+
+/* ---------- 2. THE BAT ---------- */
+.batband{background:var(--ink);color:#e9ecec;padding-block:30px 34px}
+.batband .label{color:#9fb0b8}
+.model{font-size:clamp(28px,5.5vw,54px);color:#fff}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;font:400 13px var(--f-data);color:#b9c4c9;margin-top:10px}
+.meta b{color:var(--tag);font-weight:600}
+.big{overflow-x:auto;margin-top:18px}
+.big svg{display:block;min-width:640px;width:100%;height:auto}
+.life{margin-top:26px;display:grid;gap:10px}
+.track{position:relative;height:46px;display:flex;border:1px solid #3a4651}
+.zone{display:flex;align-items:flex-end;padding:4px 6px;font:600 10px var(--f-data);letter-spacing:.06em;text-transform:uppercase}
+.z1{flex:0 0 7%;background:repeating-linear-gradient(135deg,#2a3540 0 6px,#33404c 6px 12px);color:#9fb0b8}
+.z2{flex:0 0 55%;background:#24502f;color:#cfe8d6}
+.z3{flex:1;background:linear-gradient(90deg,#4a3a20,#5c2a24);color:#f0d6c6}
+.marker{position:absolute;top:-12px;bottom:-12px;width:3px;background:var(--tag)}
+.marker span{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--tag);color:var(--ink);font:700 11px var(--f-data);padding:3px 6px}
+.ticks{display:flex;justify-content:space-between;font:400 11px var(--f-data);color:#9fb0b8}
+.fine{font-size:13px;color:#9fb0b8;max-width:70ch}
+
+/* ---------- 3. THE PASSPORT ---------- */
+.ppband{padding-block:30px 40px}
+.book{display:grid;grid-template-columns:1fr 1fr;max-width:900px;margin:0 auto;box-shadow:0 18px 40px rgba(18,24,32,.18);border-radius:6px;overflow:hidden}
+@media (max-width:720px){.book{grid-template-columns:1fr}}
+.page{background:
+  repeating-radial-gradient(circle at 30% 40%,rgba(75,47,160,.05) 0 2px,transparent 2px 9px),
+  var(--paper);padding:22px;min-height:400px;position:relative;display:grid;align-content:start;gap:14px;min-width:0}
+.page.left{border-right:1px dashed #cfc8b8}
+.ph{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #d9d2c2;padding-bottom:8px}
+.ph .disp{font-size:24px}
+.idrow{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:14px}
+.idrow .k{font:600 10px var(--f-data);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding-top:3px}
+.mrz{font:400 12px/1.5 var(--f-data);letter-spacing:.14em;color:#4c4a44;word-break:break-all;border-top:1px solid #d9d2c2;padding-top:10px}
+.stamps{position:relative;min-height:360px}
+.st{position:absolute;color:var(--c);border:3px solid var(--c);display:grid;place-items:center;text-align:center;padding:8px 12px;font-family:var(--f-display);font-weight:800;text-transform:uppercase;line-height:1.05;filter:url(#rough);mix-blend-mode:multiply;opacity:.88}
+.st small{display:block;font:600 9px var(--f-data);letter-spacing:.08em}
+.st.circle{border-radius:50%;width:150px;height:150px;border-width:4px;outline:1.5px solid var(--c);outline-offset:-10px}
+.st.oval{border-radius:50%/40%;width:190px;height:110px}
+.st.empty{border:2px dashed #b3ab99;color:#9b937f;filter:none;mix-blend-mode:normal;opacity:1;font-weight:600}
+.s1{--c:var(--stampgreen);top:6px;left:8px;transform:rotate(-12deg)}
+.s2{--c:var(--stampred);top:24px;right:6px;transform:rotate(7deg)}
+.s3{--c:var(--visa);top:190px;left:18px;transform:rotate(4deg)}
+.s4{top:206px;right:12px;transform:rotate(-5deg);width:150px;height:110px}
+.ppnote{max-width:900px;margin:18px auto 0;display:grid;gap:8px;font-size:15px}
+
+/* System strip */
+.sys{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px;padding-block:44px 30px;border-top:2px solid var(--ink);margin-top:40px}
+.sw{display:flex;gap:8px;flex-wrap:wrap}
+.sw i{width:44px;height:44px;border-radius:2px;display:block;box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.end{padding-block:10px 50px;display:grid;gap:10px}
+.end .disp{font-size:clamp(26px,5vw,40px)}
+@media (prefers-reduced-motion:no-preference){
+  .hang{animation:sway 6s ease-in-out infinite alternate;transform-origin:50% 0}
+  .hang:nth-child(2n){animation-duration:7.5s}
+  @keyframes sway{from{transform:rotate(-.8deg)}to{transform:rotate(.8deg)}}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="rough"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="4"/><feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -2.2 1.5"/><feComposite in="SourceGraphic" operator="in"/></filter>
+</svg>
+
+<header class="gutter"><div class="inner mast">
+  <span class="chip">Concept · not live yet</span>
+  <div class="wordmark disp" aria-label="Gamer Bat">GAMER <span class="b">BAT</span>
+    <svg viewBox="0 0 400 14" preserveAspectRatio="none" aria-hidden="true"><path d="M0 7 L6 2 L8 4 L120 5.5 L190 3 L398 2.5 Q400 7 398 11.5 L190 11 L120 8.5 L8 10 L6 12 Z" fill="#121820"/></svg>
+  </div>
+  <p>The used slow-pitch bat market built around the bat itself: drawn to its real specs, with its life story and its stamps on every listing.</p>
+  <p class="sample">Mockup. Models are real catalog bats; prices, hits and sales counts are sample numbers. Bat drawings use real lengths and barrel sizes; colors are illustrative.</p>
+</div></header>
+
+<!-- 1 THE RACK -->
+<section>
+  <div class="gutter"><div class="inner mh">
+    <span class="n">SIGNATURE MOMENT 1 · SHOP</span>
+    <h2 class="disp">The Rack</h2>
+    <p>Browsing looks like walking up to the dugout fence. Every bat hangs knob-up, drawn to scale from its specs, so you see length, barrel and load before you read a word. Each one wears a hang tag with the price and stamp.</p>
+  </div></div>
+  <div class="rack gutter"><div class="inner">
+    <div class="rail"></div>
+    <div class="rackscroll"><div class="bats" id="bats"></div></div>
+  </div></div>
+  <div class="gutter"><div class="inner">
+    <div class="why">
+      <div><b>Shape tells the story</b><span>End-loaded bats carry visible weight at the barrel end; 2-piece bats show the joint. Players read that instantly.</span></div>
+      <div><b>No stock photos needed</b><span>Every catalog bat gets a clean drawing, so even a listing with weak photos looks good on the rack.</span></div>
+      <div><b>Swipe on a phone</b><span>The rack scrolls sideways like walking down the fence; filters sit above it.</span></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 2 THE BAT -->
+<section style="margin-top:44px">
+  <div class="gutter"><div class="inner mh">
+    <span class="n">SIGNATURE MOMENT 2 · LISTING</span>
+    <h2 class="disp">The bat, measured</h2>
+    <p>The listing page opens with the bat laid flat on a ruler, then shows where this exact bat is in its life, from the seller's hit count.</p>
+  </div></div>
+  <div class="batband gutter"><div class="inner">
+    <span class="label">2027 · Miken · USSSA</span>
+    <h3 class="disp model">Freak Fire 0.5 oz Maxload</h3>
+    <div class="meta"><span>34" / 26 oz</span><span>2-piece composite</span><span>13" barrel</span><span>End-loaded</span><span><b>$214</b> asking</span></div>
+    <div class="big"><svg id="bigbat" viewBox="0 0 1000 190" role="img" aria-label="Drawing of a 34 inch bat with a 13 inch barrel on an inch ruler"></svg></div>
+    <div class="life">
+      <span class="label">Life meter · seller reports about 400 hits</span>
+      <div class="track" aria-label="Life meter">
+        <div class="zone z1">Break-in</div><div class="zone z2">Prime</div><div class="zone z3">Late life</div>
+        <div class="marker" style="left:13.3%"><span>~400 hits</span></div>
+      </div>
+      <div class="ticks"><span>0</span><span>500</span><span>1,000</span><span>1,500</span><span>2,000</span><span>2,500</span><span>3,000+</span></div>
+      <p class="fine">Composite bats are usually broken in over the first 150–200 hits; how long the prime lasts varies a lot by model and hitter. The real site would draw these zones from owner reports for this model, and show "not enough reports yet" when there aren't enough.</p>
+    </div>
+  </div></div>
+</section>
+
+<!-- 3 THE PASSPORT -->
+<section class="ppband">
+  <div class="gutter"><div class="inner mh">
+    <span class="n">SIGNATURE MOMENT 3 · TRUST</span>
+    <h2 class="disp">Stamped</h2>
+    <p>The Bat Passport is an actual passport. Each check that passes gets an ink stamp. Checks without enough real data stay as empty dotted spots, so buyers see what's missing too.</p>
+  </div></div>
+  <div class="gutter">
+    <div class="book">
+      <div class="page left">
+        <div class="ph"><span class="disp">Bat Passport</span><span class="label">No. GB-0412</span></div>
+        <div class="idrow">
+          <span class="k">Model</span><span>Miken Freak Fire 0.5 oz Maxload, 2027</span>
+          <span class="k">Size</span><span>34" / 26 oz · 13" barrel</span>
+          <span class="k">Build</span><span>2-piece composite, end-loaded</span>
+          <span class="k">Stamp</span><span>USSSA</span>
+          <span class="k">Seller</span><span>@ralphs_gamer · 12 sales</span>
+          <span class="k">Condition</span><span>About 400 hits, no cracks, no rattle</span>
+        </div>
+        <div class="mrz">P&lt;GBMIKEN&lt;FREAK&lt;FIRE&lt;&lt;34&lt;26&lt;USSSA&lt;&lt;&lt;&lt;&lt;&lt;<br>GB0412&lt;2027&lt;2PC&lt;END&lt;&lt;0400H&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;</div>
+      </div>
+      <div class="page">
+        <div class="ph"><span class="label">Checks</span><span class="label">3 of 4 stamped</span></div>
+        <div class="stamps">
+          <div class="st circle s1"><div><small>Stamp</small>USSSA<small>on approved list</small></div></div>
+          <div class="st s2"><div><small>Sold here</small>9× · $195–240<small>verified sales</small></div></div>
+          <div class="st oval s3"><div><small>Owners</small>14 reports<small>median 1,100 hits</small></div></div>
+          <div class="st empty s4"><div><small>Photo check</small>Not stamped yet</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="ppnote inner">
+      <p>Every stamp is earned from real data: the stamp list, completed sales on the site, and owner check-ins. The empty dotted spot is part of the honesty: it tells you what hasn't been verified.</p>
+    </div>
+  </div>
+</section>
+
+<!-- system -->
+<section class="gutter"><div class="inner">
+  <div class="sys">
+    <div style="display:grid;gap:8px"><span class="label">Type</span>
+      <span class="disp" style="font-size:30px">Anybody, wide italic</span>
+      <span>Schibsted Grotesk for reading. Borrowed from the loud, stretched lettering on real bat barrels.</span>
+      <span style="font:400 14px var(--f-data)">Martian Mono · 34" / 26 oz · 1,100 hits</span></div>
+    <div style="display:grid;gap:8px"><span class="label">Color</span>
+      <div class="sw"><i style="background:#e4e6e1"></i><i style="background:#121820"></i><i style="background:#8e989e"></i><i style="background:#ffd23f"></i><i style="background:#4b2fa0"></i><i style="background:#c0352b"></i><i style="background:#1d6e4b"></i></div>
+      <span>Dugout concrete and fence steel for the frame; hang-tag yellow for prices; passport inks only for verification. The bats bring the rest of the color.</span></div>
+    <div style="display:grid;gap:8px"><span class="label">Rules</span>
+      <span>Drawings use real specs only. Stamps appear only from real data. Yellow means money; ink colors mean verified.</span></div>
+  </div>
+  <div class="end">
+    <span class="disp">What do you think?</span>
+    <p>Tell me what you like and what you don't: the whole thing, one moment, or a different mood (night game, retro 80s aluminum, etc.). Once the look is settled I'll build it into the real site.</p>
+  </div>
+</div></section>
+
+<script>
+// Draw bats from real specs: length (in), barrel length (in), 2-piece joint, end-load cap weight.
+const BATS=[
+ {n:"Miken Freak Fire Maxload",s:"USSSA",p:"$214",L:34,B:13,two:true,load:"end",c:["#c4361f","#f29a21"]},
+ {n:"Easton Alpha 2-Piece Loaded",s:"USA",p:"$188",L:34,B:12.75,two:true,load:"end",c:["#1a1f2b","#3c8ad6"]},
+ {n:"DeMarini Mercy",s:"USA",p:"$205",L:34,B:12.75,two:true,load:"bal",c:["#efefef","#d4234a"]},
+ {n:"Easton Rival 1-Piece",s:"DUAL",p:"$62",L:34,B:12,two:false,load:"bal",c:["#2b2f33","#9aa3a8"]},
+ {n:"Miken Freak Whiteout 13\"",s:"USSSA",p:"$231",L:34,B:13,two:true,load:"end",c:["#f4f4f2","#202326"]},
+ {n:"DeMarini The Culture",s:"USSSA",p:"$219",L:34,B:13,two:true,load:"end",c:["#3a1c55","#e8c33a"]},
+ {n:"Easton Ronin 240 Alloy",s:"DUAL",p:"$97",L:34,B:12.5,two:false,load:"end",c:["#5a5f63","#e2e5e6"]}
+];
+// Returns an SVG path for a horizontal bat: x from knob (0) to end (L*k), centered on y=cy.
+function batPath(L,B,k,cy){
+  const x=i=>i*k, r=d=>d/2*k;
+  const knob=1.0, handleEnd=L-B-7.5, barrelStart=L-B;
+  return `M${x(0)} ${cy-r(1.5)} L${x(knob*.6)} ${cy-r(1.5)} Q${x(knob)} ${cy-r(1.5)} ${x(knob)} ${cy-r(0.95)}
+  L${x(handleEnd)} ${cy-r(1.0)} C${x(handleEnd+4)} ${cy-r(1.05)} ${x(barrelStart-2)} ${cy-r(2.25)} ${x(barrelStart)} ${cy-r(2.25)}
+  L${x(L-0.4)} ${cy-r(2.25)} Q${x(L)} ${cy-r(2.25)} ${x(L)} ${cy} Q${x(L)} ${cy+r(2.25)} ${x(L-0.4)} ${cy+r(2.25)}
+  L${x(barrelStart)} ${cy+r(2.25)} C${x(barrelStart-2)} ${cy+r(2.25)} ${x(handleEnd+4)} ${cy+r(1.05)} ${x(handleEnd)} ${cy+r(1.0)}
+  L${x(knob)} ${cy+r(0.95)} Q${x(knob)} ${cy+r(1.5)} ${x(knob*.6)} ${cy+r(1.5)} L${x(0)} ${cy+r(1.5)} Z`;
+}
+function batSVG(b,k,cy,id,opts={}){
+  const L=b.L,B=b.B, x=i=>i*k, r=d=>d/2*k;
+  const joint=b.two?`<rect x="${x(L-B-7.5)}" y="${cy-r(1.25)}" width="${Math.max(2,k*.35)}" height="${r(2.5)}" fill="#0b0d10" opacity=".55"/>`:"";
+  const cap=b.load==="end"?`<rect x="${x(L-1.1)}" y="${cy-r(2.25)}" width="${x(1.1)}" height="${r(4.5)}" fill="#0b0d10" opacity=".45"/>`:"";
+  const grip=`<rect x="${x(1)}" y="${cy-r(1.05)}" width="${x(9.5)}" height="${r(2.1)}" fill="#111" opacity=".75"/>`;
+  return `<defs><clipPath id="c${id}"><path d="${batPath(L,B,k,cy)}"/></clipPath>
+    <linearGradient id="g${id}" x1="0" x2="1"><stop offset="0" stop-color="${b.c[0]}"/><stop offset=".55" stop-color="${b.c[0]}"/><stop offset=".56" stop-color="${b.c[1]}"/><stop offset="1" stop-color="${b.c[1]}"/></linearGradient>
+    <linearGradient id="h${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset=".35" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".35"/></linearGradient></defs>
+    <path d="${batPath(L,B,k,cy)}" fill="url(#g${id})" stroke="#0b0d10" stroke-width="1.2"/>
+    <g clip-path="url(#c${id})">${grip}${joint}${cap}<rect x="0" y="${cy-r(2.3)}" width="${x(L)}" height="${r(4.6)}" fill="url(#h${id})"/></g>`;
+}
+// Rack (vertical): rotate a horizontal bat 90° so the knob hangs at the top.
+const rack=document.getElementById("bats");
+BATS.forEach((b,i)=>{
+  const k=8.2, w=b.L*k, h=2.6*k;
+  const el=document.createElement("div"); el.className="hang";
+  el.innerHTML=`<div class="hook"></div>
+   <svg width="${h+8}" height="${w+4}" viewBox="0 0 ${h+8} ${w+4}" role="img" aria-label="${b.n}">
+     <g transform="translate(${(h+8)/2+ (2.25/2*k) - (2.25/2*k)} 2) rotate(90)">${batSVG(b,k,0,"r"+i)}</g></svg>
+   <div class="tag"><div class="p">${b.p}</div><div class="m">${b.n}<br>${b.s} · ${b.L}"</div></div>`;
+  rack.appendChild(el);
+});
+// Big listing bat on a ruler.
+(function(){
+  const b=BATS[0], k=27, cy=78, ox=20;
+  let ruler="";
+  for(let i=0;i<=34;i++){const X=ox+i*k, tall=i%2===0;
+    ruler+=`<line x1="${X}" y1="132" x2="${X}" y2="${tall?150:142}" stroke="#9fb0b8" stroke-width="1"/>`;
+    if(i%2===0) ruler+=`<text x="${X}" y="166" fill="#9fb0b8" font-family="Martian Mono,monospace" font-size="11" text-anchor="middle">${i}"</text>`;}
+  const bs=ox+(b.L-b.B)*k, be=ox+b.L*k;
+  const bp=ox+ (b.L*0.735)*k; // illustrative balance point for an end-loaded bat
+  document.getElementById("bigbat").innerHTML=
+   `<line x1="${ox}" y1="132" x2="${ox+34*k}" y2="132" stroke="#9fb0b8"/>${ruler}
+    <g transform="translate(${ox} 0)">${batSVG(b,k,cy,"big")}</g>
+    <path d="M${bs} 30 L${bs} 22 L${be} 22 L${be} 30" fill="none" stroke="#ffd23f" stroke-width="2"/>
+    <text x="${(bs+be)/2}" y="16" fill="#ffd23f" font-family="Martian Mono,monospace" font-size="12" text-anchor="middle">13" barrel</text>
+    <path d="M${bp} 112 l-7 12 h14 z" fill="#ffd23f"/>
+    <text x="${bp}" y="186" fill="#e9ecec" font-family="Martian Mono,monospace" font-size="11" text-anchor="middle">balance point (illustrative)</text>`;
+})();
+</script>
