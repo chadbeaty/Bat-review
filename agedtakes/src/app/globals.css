@@ -1,0 +1,135 @@
+@import "tailwindcss";
+
+/* AGED TAKES design tokens. Ivory paper, near-black ink, one restrained red, archival gray. */
+@theme {
+  --color-paper: #f5f0e6;
+  --color-paper-2: #ece5d6;
+  --color-paper-3: #e3dac7;
+  --color-ink: #15130f;
+  --color-ink-2: #37332c;
+  --color-muted: #6b655b;
+  --color-rule: #cdc3b0;
+  --color-red: #b0261a;
+  --color-red-ink: #8c1d13;
+  --color-red-wash: #f1dcd3;
+  --color-well: #2e5a3a;
+  --color-well-wash: #dde6d6;
+  --color-amber: #85600c;
+  --color-amber-wash: #efe2c2;
+
+  --font-display: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
+  --font-serif: var(--font-source-serif), "Iowan Old Style", Georgia, serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --animate-rise: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+  font-feature-settings: "kern", "liga", "onum";
+  /* A faint paper grain, drawn with gradients so there is no image request. */
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(255, 255, 255, 0.35), transparent 40%),
+    radial-gradient(circle at 80% 90%, rgba(120, 100, 60, 0.04), transparent 45%);
+  background-attachment: fixed;
+}
+
+::selection {
+  background: var(--color-red);
+  color: var(--color-paper);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-red);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* Components that read better as named classes than long utility strings. */
+@layer components {
+  .wrap { width: 100%; max-width: 76rem; margin-inline: auto; padding-inline: 1rem; }
+  @media (min-width: 640px) { .wrap { padding-inline: 1.5rem; } }
+
+  .kicker {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+  .meta {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+    color: var(--color-muted);
+  }
+  .rule-double { border-top: 3px double var(--color-ink); }
+  .rule { border-top: 1px solid var(--color-rule); }
+
+  .headline {
+    font-family: var(--font-display);
+    font-weight: 650;
+    letter-spacing: -0.015em;
+    line-height: 1.05;
+    font-variation-settings: "opsz" 96, "SOFT" 0, "WONK" 0;
+  }
+
+  .link { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; text-decoration-color: var(--color-rule); }
+  .link:hover { text-decoration-color: var(--color-red); color: var(--color-red-ink); }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 0.5rem; justify-content: center;
+    font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.7rem 1.1rem; border: 1px solid var(--color-ink); background: var(--color-ink); color: var(--color-paper);
+    transition: background 0.15s, color 0.15s;
+  }
+  .btn:hover { background: var(--color-red); border-color: var(--color-red); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-ghost { background: transparent; color: var(--color-ink); }
+  .btn-ghost:hover { background: var(--color-ink); color: var(--color-paper); border-color: var(--color-ink); }
+  .btn-red { background: var(--color-red); border-color: var(--color-red); }
+  .btn-red:hover { background: var(--color-red-ink); border-color: var(--color-red-ink); }
+  .btn-sm { padding: 0.4rem 0.7rem; font-size: 0.6875rem; }
+
+  .field {
+    width: 100%; background: #fbf8f2; border: 1px solid var(--color-rule); padding: 0.6rem 0.75rem;
+    font-family: var(--font-serif); font-size: 1rem; color: var(--color-ink);
+  }
+  .field:focus { outline: none; border-color: var(--color-ink); box-shadow: 0 0 0 1px var(--color-ink); }
+  .label { display: block; font-family: var(--font-mono); font-size: 0.6875rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ink-2); margin-bottom: 0.35rem; }
+
+  /* Article body typography for case pages. */
+  .prose-case { font-size: 1.125rem; line-height: 1.7; color: var(--color-ink-2); }
+  .prose-case p { margin-block: 0 1.1em; }
+  .prose-case h2 { font-family: var(--font-display); font-weight: 650; font-size: 1.5rem; color: var(--color-ink); margin: 1.8em 0 0.5em; letter-spacing: -0.01em; }
+  .prose-case h3 { font-family: var(--font-display); font-weight: 600; font-size: 1.2rem; color: var(--color-ink); margin: 1.4em 0 0.4em; }
+  .prose-case strong { color: var(--color-ink); }
+  .prose-case a { text-decoration: underline; text-underline-offset: 3px; }
+  .prose-case ul { list-style: square; padding-left: 1.3em; margin-bottom: 1.1em; }
+  .prose-case blockquote { border-left: 3px solid var(--color-red); padding-left: 1rem; font-style: italic; }
+
+  /* Stamp: rotated bordered label used for verdicts. */
+  .stamp {
+    display: inline-block; font-family: var(--font-mono); font-weight: 600; font-size: 0.6875rem; letter-spacing: 0.14em;
+    text-transform: uppercase; padding: 0.2rem 0.45rem; border: 1.5px solid currentColor; transform: rotate(-1.5deg);
+  }
+}
