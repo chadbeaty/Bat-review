@@ -91,7 +91,7 @@ test.describe("model page", () => {
     });
     createdListings.push(id);
     await page.goto("/bats/worth/krecher-xl-usssa/2026");
-    const card = page.locator(`a[href="/listings/${id}"]`);
+    const card = page.getByTestId("listing-card").filter({ has: page.locator(`a[href="/listings/${id}"]`) });
     await expect(card).toContainText(title);
     await expect(card).toContainText("$234.57");
     const asking = page.getByTestId("asking-prices");

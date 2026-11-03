@@ -1,24 +1,23 @@
 import Link from "next/link";
 import { brand } from "@/config/brand";
 import { LogoMark, LogoWordmark } from "./Logo";
+import { getBatsOnlyMode } from "@/lib/launch";
+import { getCategories } from "@/lib/catalog";
+
+const SHOP_LINKS = [
+  { href: "/bats", label: "Shop bats" },
+  { href: "/manufacturers", label: "Bat archive" },
+  { href: "/price-guide", label: "Price guide" },
+  { href: "/account/watchlist", label: "Watchlist" },
+  { href: "/sell", label: "Sell your bat" },
+];
 
 const COLUMNS = [
-  {
-    title: "Shop",
-    links: [
-      { href: "/shop", label: "All equipment" },
-      { href: "/bats", label: "Bats" },
-      { href: "/shop/gloves", label: "Gloves" },
-      { href: "/shop/bags", label: "Bags" },
-      { href: "/shop/cleats", label: "Cleats" },
-      { href: "/shop/accessories", label: "Accessories" },
-      { href: "/manufacturers", label: "Manufacturers" },
-    ],
-  },
+  { title: "Shop", links: SHOP_LINKS },
   {
     title: "Learn",
     links: [
-      { href: "/price-guide", label: "Bat price guide" },
+      { href: "/compare", label: "Compare bats" },
       { href: "/how-it-works", label: "How it works" },
       { href: "/buyer-protection", label: "Buyer protection" },
       { href: "/seller-guide", label: "Seller guide" },
@@ -39,7 +38,10 @@ const COLUMNS = [
 ];
 
 /** The footer is a lineup card: each real group of links is a numbered row in the batting order. */
-export function Footer() {
+export async function Footer() {
+  const batsOnly = await getBatsOnlyMode();
+  const extra = batsOnly ? [] : (await getCategories()).filter((c) => c.slug !== "bats").map((c) => ({ href: `/shop/${c.slug}`, label: c.name }));
+  const columns = COLUMNS.map((c, i) => (i === 0 ? { ...c, links: [...c.links, ...extra] } : c));
   const social = Object.entries(brand.social).filter(([, url]) => url);
   return (
     <footer className="on-ink ink-band mt-auto border-t-[6px] border-double border-[#5a6670]" style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
@@ -64,7 +66,7 @@ export function Footer() {
           )}
         </div>
         <ol className="grid border-y-2 border-dashed border-[#5a6670]">
-          {COLUMNS.map((col, i) => (
+          {columns.map((col, i) => (
             <li key={col.title} className="grid gap-3 border-b-2 border-dashed border-[#5a6670] py-5 last:border-b-0 sm:grid-cols-[3.25rem_1fr]">
               <span className="font-mono text-2xl font-bold leading-none text-[#9fb0b8]" aria-hidden="true">
                 {i + 1}

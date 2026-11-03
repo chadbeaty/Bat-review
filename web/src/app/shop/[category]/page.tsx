@@ -4,6 +4,7 @@ import { BrowsePage } from "@/components/shop/BrowsePage";
 import { browseTitle, readBrowseQuery } from "@/lib/browse";
 import { readViewMode } from "@/lib/view-mode";
 import { getCategories } from "@/lib/catalog";
+import { isCategoryVisible } from "@/lib/launch";
 import { getCategoryDetail } from "@/lib/listings";
 import { parseSearchParams, toQueryString } from "@/lib/search";
 
@@ -18,7 +19,7 @@ async function findCategory(slug: string) {
 export async function generateMetadata({ params, searchParams }: PageProps<"/shop/[category]">): Promise<Metadata> {
   const { category } = await params;
   const match = await findCategory(category);
-  if (!match) return { title: "Shop" };
+  if (!match || !(await isCategoryVisible(match.slug))) return { title: "Shop", robots: { index: false } };
   const query = parseSearchParams(await searchParams, { attributeKeys: match.fields.map((f) => f.key) });
   return {
     title: browseTitle(`Used ${match.name.toLowerCase()}`, query),
@@ -30,7 +31,8 @@ export async function generateMetadata({ params, searchParams }: PageProps<"/sho
 export default async function CategoryPage({ params, searchParams }: PageProps<"/shop/[category]">) {
   const { category } = await params;
   const match = await findCategory(category);
-  if (!match) notFound();
+  // Categories hidden while launch is bats-only answer 404, as if they didn't exist.
+  if (!match || !(await isCategoryVisible(match.slug))) notFound();
   const sp = await searchParams;
   // Bats have their own page with bat-specific filters.
   if (match.slug === "bats") permanentRedirect(`/bats${toQueryString(parseSearchParams(sp))}`);

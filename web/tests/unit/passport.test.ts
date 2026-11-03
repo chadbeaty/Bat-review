@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildPassport, listingCheck, ownersCheck, priceCheck, stampCheck, type PassportInput } from "@/lib/passport";
+import { SOURCE_LABELS, buildPassport, listingCheck, ownersCheck, priceCheck, stampCheck, type PassportInput } from "@/lib/passport";
 
 const sale = (priceCents: number, saleDate = "2026-10-01", verified = true) => ({ priceCents, saleDate, weightOz: 26, conditionScore: 8, verified });
 
@@ -77,5 +77,26 @@ describe("buildPassport", () => {
     const p = buildPassport(input);
     expect(p.checks.map((c) => c.key)).toEqual(["stamp", "price", "owners", "listing"]);
     expect(p.filledCount).toBe(1);
+  });
+});
+
+describe("provenance sources", () => {
+  const input: PassportInput = {
+    stamp: { associations: ["USSSA"], status: "association_listed", verifiedAt: null, source: null },
+    sales: [],
+    thresholds: { minSales: 5 },
+    durability: null,
+    publishedReports: 0,
+    minOwners: 3,
+    listing: { conditionScore: 8, conditionLabel: null, structuralDisclosure: "no_known_damage", damageAnswers: [false], photoCount: 1 },
+  };
+  it("labels every check with where its data comes from", () => {
+    const bySource = Object.fromEntries(buildPassport(input).checks.map((c) => [c.key, c.source]));
+    expect(bySource).toEqual({ stamp: "verified", price: "verified", owners: "owners", listing: "seller" });
+    expect(SOURCE_LABELS).toEqual({ verified: "Verified", seller: "Seller says", owners: "Owners report" });
+  });
+  it("keeps the source on empty checks too", () => {
+    expect(priceCheck([], { minSales: 5 }).source).toBe("verified");
+    expect(ownersCheck(null, 0, 3).source).toBe("owners");
   });
 });

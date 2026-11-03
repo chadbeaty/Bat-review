@@ -51,6 +51,7 @@ describe("site settings validation", () => {
   it("covers every setting the dashboard edits", () => {
     expect(SETTING_RULES.map((r) => r.key).sort()).toEqual(
       [
+        "bats_only_mode",
         "durability_min_owners",
         "early_report_threshold",
         "featured_listings_enabled",

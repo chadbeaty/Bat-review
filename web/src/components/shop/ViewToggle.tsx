@@ -5,9 +5,9 @@
 import Link from "next/link";
 import { useEffect } from "react";
 import { VIEW_COOKIE, type ViewMode } from "@/lib/view-mode-shared";
-import { FenceIcon } from "@/components/icons";
+import { FenceIcon, GridIcon } from "@/components/icons";
 
-export function ViewToggle({ view, hrefs, rackLabel = "Rack" }: { view: ViewMode; hrefs: Record<ViewMode, string>; rackLabel?: string }) {
+export function ViewToggle({ view, hrefs, modes = ["grid", "list", "rack"] }: { view: ViewMode; hrefs: Record<ViewMode, string>; modes?: ViewMode[] }) {
   useEffect(() => {
     try {
       document.cookie = `${VIEW_COOKIE}=${view}; path=/; max-age=31536000; samesite=lax`;
@@ -15,6 +15,7 @@ export function ViewToggle({ view, hrefs, rackLabel = "Rack" }: { view: ViewMode
       // Cookies blocked: the URL still carries the choice.
     }
   }, [view]);
+  const labels: Record<ViewMode, string> = { grid: "Grid", list: "List", rack: "Rack" };
   const item = (mode: ViewMode, label: string) => (
     <Link
       key={mode}
@@ -22,18 +23,17 @@ export function ViewToggle({ view, hrefs, rackLabel = "Rack" }: { view: ViewMode
       replace
       scroll={false}
       aria-current={view === mode ? "true" : undefined}
-      className={`inline-flex items-center gap-1.5 px-3 py-1.5 font-mono text-[0.6875rem] font-semibold uppercase tracking-wider no-underline ${
+      className={`inline-flex items-center gap-1.5 min-h-11 px-3 font-mono text-[0.6875rem] font-semibold uppercase tracking-wider no-underline ${
         view === mode ? "bg-ink text-surface" : "bg-surface text-ink hover:bg-paper"
       }`}
     >
-      {mode === "rack" ? <FenceIcon size={15} /> : <ListIcon />}
+      {mode === "rack" ? <FenceIcon size={15} /> : mode === "grid" ? <GridIcon size={15} /> : <ListIcon />}
       {label}
     </Link>
   );
   return (
     <nav aria-label="Layout" className="inline-flex divide-x-2 divide-ink overflow-hidden rounded-sm border-2 border-ink">
-      {item("rack", rackLabel)}
-      {item("list", "List")}
+      {modes.map((m) => item(m, labels[m]))}
     </nav>
   );
 }

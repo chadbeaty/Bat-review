@@ -9,7 +9,7 @@ import { FilterForm, type FilterVariant } from "@/components/shop/FilterForm";
 import { FiltersPanel } from "@/components/shop/FiltersPanel";
 import { SaveSearchButton } from "@/components/shop/SaveSearchButton";
 import { getCategories } from "@/lib/catalog";
-import { getFacets, getFilterOptions, getSuggestions, searchListings, type CategoryDetail } from "@/lib/listings";
+import { getFacets, getFilterOptions, getSavedIds, getSuggestions, searchListings, type CategoryDetail } from "@/lib/listings";
 import { activeFilters, pageWindow, searchHref, SORTS, toQueryString, type SearchQuery, type Sort } from "@/lib/search";
 import { getCurrentUser } from "@/lib/supabase/server";
 
@@ -26,7 +26,7 @@ export async function BrowsePage({
   title,
   intro,
   extra,
-  view = "rack",
+  view = "grid",
   explicitView = false,
 }: {
   path: string;
@@ -63,15 +63,18 @@ export async function BrowsePage({
   const keep = explicitView ? view : null;
   const href = (changes: Partial<SearchQuery> = {}) => withView(searchHref(path, query, changes), keep);
   const hasBatRack = variant === "bats" || variant === "all";
+  const mode: ViewMode = view === "rack" && !hasBatRack ? "grid" : view;
+  const saved = await getSavedIds(user?.id, result.listings.map((l) => l.id));
+  const favFor = (id: string) => ({ signedIn: Boolean(user), saved: saved.has(id), next: path + toQueryString({ ...query }) });
   const saveName = [title, ...filters.map((f) => f.label)].join(" · ").slice(0, 80);
 
   return (
-    <div className="wrap grid gap-6 py-8">
-      <header className="grid gap-3 border-b-2 border-ink pb-6">
+    <div className="wrap grid gap-4 py-5 sm:gap-6 sm:py-8">
+      <header className="grid gap-2 border-b-2 border-ink pb-4 sm:gap-3 sm:pb-6">
         <p className="eyebrow">{eyebrow}</p>
-        <h1 className="display text-5xl font-bold">{title}</h1>
-        <p className="max-w-2xl text-ink-soft">{intro}</p>
-        <form action={path} method="get" role="search" className="board max-w-2xl">
+        <h1 className="display text-4xl font-bold sm:text-5xl">{title}</h1>
+        <p className="hidden max-w-2xl text-ink-soft sm:block">{intro}</p>
+        <form action={path} method="get" role="search" className="board hidden max-w-2xl lg:flex">
           <label htmlFor="shop-search" className="sr-only">
             Search {title.toLowerCase()}
           </label>
@@ -109,7 +112,7 @@ export async function BrowsePage({
 
       <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
         <aside aria-label="Filter results">
-          <FiltersPanel activeCount={filters.filter((f) => f.key !== "q").length}>
+          <FiltersPanel activeCount={filters.filter((f) => f.key !== "q").length} resultCount={result.total}>
             <FilterForm
               path={path}
               query={query}
@@ -118,6 +121,7 @@ export async function BrowsePage({
               brands={options.brands}
               models={options.models}
               fields={category?.fields ?? []}
+              view={keep}
             />
           </FiltersPanel>
         </aside>
@@ -132,18 +136,22 @@ export async function BrowsePage({
                   : `${firstShown}–${lastShown} of ${result.total} listings`}
             </h2>
             <ViewToggle
-              view={view}
-              rackLabel={hasBatRack ? "Rack" : "Grid"}
-              hrefs={{ rack: withView(searchHref(path, query, { page: query.page }), "rack"), list: withView(searchHref(path, query, { page: query.page }), "list") }}
+              view={mode}
+              modes={hasBatRack ? ["grid", "list", "rack"] : ["grid", "list"]}
+              hrefs={{
+                grid: withView(searchHref(path, query, { page: query.page }), "grid"),
+                list: withView(searchHref(path, query, { page: query.page }), "list"),
+                rack: withView(searchHref(path, query, { page: query.page }), "rack"),
+              }}
             />
-            <nav aria-label="Sort" className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+            <nav aria-label="Sort" className="flex flex-wrap items-center gap-x-1 gap-y-1 text-sm">
               <span className="text-ink-soft">Sort:</span>
               {sorts.map((s) => (
                 <Link
                   key={s}
                   href={href({ sort: s })}
                   aria-current={query.sort === s ? "true" : undefined}
-                  className={query.sort === s ? "font-semibold text-ink underline underline-offset-4" : "text-ink-soft hover:text-ink"}
+                  className={`inline-flex min-h-11 items-center px-2 ${query.sort === s ? "font-semibold text-ink underline underline-offset-4" : "text-ink-soft hover:text-ink"}`}
                 >
                   {SORTS[s]}
                 </Link>
@@ -152,12 +160,12 @@ export async function BrowsePage({
           </div>
 
           {filters.length > 0 && (
-            <ul aria-label="Active filters" className="flex flex-wrap gap-2">
+            <ul aria-label="Active filters" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0" data-testid="active-filters">
               {filters.map((f) => (
                 <li key={f.key}>
                   <Link
                     href={searchHref(path, query, f.remove)}
-                    className="chip !py-1"
+                    className="chip !min-h-9 shrink-0"
                     aria-label={`Remove filter: ${f.label}`}
                   >
                     {f.label} <span aria-hidden="true">×</span>
@@ -165,7 +173,7 @@ export async function BrowsePage({
                 </li>
               ))}
               <li>
-                <Link href={path} className="inline-flex px-2 py-1 text-sm underline">
+                <Link href={withView(path, keep)} className="inline-flex min-h-9 shrink-0 items-center px-2 text-sm underline">
                   Clear all
                 </Link>
               </li>
@@ -176,17 +184,17 @@ export async function BrowsePage({
             <EmptyState title="Search isn't available right now" body="Something went wrong on our side. Try again in a minute." />
           ) : result.listings.length > 0 ? (
             <>
-              {view === "list" ? (
+              {mode === "list" ? (
                 <ListView listings={result.listings} testId="results" />
-              ) : hasBatRack ? (
+              ) : mode === "rack" ? (
                 <div className="-mx-4 min-w-0 sm:mx-0">
                   <Rack listings={result.listings} testId="results" />
                 </div>
               ) : (
-                <ul className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3" data-testid="results">
+                <ul className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4" data-testid="results">
                   {result.listings.map((l) => (
                     <li key={l.id} className="grid">
-                      <ListingCard listing={l} />
+                      <ListingCard listing={l} favorite={favFor(l.id)} />
                     </li>
                   ))}
                 </ul>
@@ -207,7 +215,7 @@ export async function BrowsePage({
             <EmptyState
               title={`Nothing listed in ${title.toLowerCase()} yet`}
               body="Listings appear here as soon as sellers publish them. Have something to sell? Listing is free."
-              action={{ href: "/sell", label: "Sell your gear" }}
+              action={{ href: "/sell", label: "Sell your bat" }}
             />
           ) : (
             <NoResults path={path} query={query} filters={filters} suggestions={suggestions} saveName={saveName} signedIn={Boolean(user)} search={search} />

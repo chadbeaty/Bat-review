@@ -3,6 +3,7 @@ import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { ListingCard } from "@/lib/catalog";
 import { withCardExtras } from "@/lib/card-extras";
+import { getBatsOnlyMode } from "@/lib/launch";
 import { PAGE_SIZE, searchRpcArgs, type SearchQuery } from "@/lib/search";
 
 // Server-side reads for the shop, listing and seller pages. Everything runs as the visitor, so Row Level
@@ -18,6 +19,7 @@ type SearchRow = {
   location_city: string | null;
   location_state: string | null;
   published_at: string | null;
+  accepts_offers: boolean | null;
   image_url: string | null;
   image_alt: string | null;
   total_count: number;
@@ -27,6 +29,7 @@ export async function searchListings(query: SearchQuery, scope: { category?: str
   const pageSize = scope.pageSize ?? PAGE_SIZE;
   const supabase = await createClient();
   if (!supabase) return { listings: [], total: 0, pageSize, failed: false };
+  if (!scope.category && (await getBatsOnlyMode())) scope = { ...scope, category: "bats" };
   const { data, error } = await supabase.rpc("search_listings", searchRpcArgs(query, scope));
   if (error || !data) {
     console.error("search_listings failed", error?.message);
@@ -49,6 +52,7 @@ export async function searchListings(query: SearchQuery, scope: { category?: str
       imageUrl: r.image_url,
       imageAlt: r.image_alt,
       publishedAt: r.published_at,
+      acceptsOffers: r.accepts_offers ?? undefined,
   }));
   return { total, pageSize, failed: false, listings: await withCardExtras(cards) };
 }
@@ -351,4 +355,13 @@ export async function isFavorite(userId: string, listingId: string): Promise<boo
   if (!supabase) return false;
   const { data } = await supabase.from("favorites").select("id").eq("user_id", userId).eq("listing_id", listingId).maybeSingle();
   return Boolean(data);
+}
+
+/** Which of these listings the member has saved: one batched read, so cards never cost a query each. */
+export async function getSavedIds(userId: string | null | undefined, listingIds: string[]): Promise<Set<string>> {
+  if (!userId || !listingIds.length) return new Set();
+  const supabase = await createClient();
+  if (!supabase) return new Set();
+  const { data } = await supabase.from("favorites").select("listing_id").eq("user_id", userId).in("listing_id", listingIds);
+  return new Set((data ?? []).map((r) => r.listing_id as string));
 }

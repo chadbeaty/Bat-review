@@ -5,12 +5,12 @@ import { useRef, useState } from "react";
 export type GalleryImage = { url: string; alt: string | null; type: string };
 
 const TYPE_LABELS: Record<string, string> = {
-  full: "Full item",
+  full: "Full bat",
   barrel: "Barrel",
   end_cap: "End cap",
   knob: "Knob",
-  markings: "Markings",
-  damage: "Damage",
+  markings: "Certification stamp",
+  damage: "Damage / wear",
   front: "Front",
   back: "Back",
   detail: "Detail",
@@ -76,8 +76,11 @@ export function Gallery({ images, title }: { images: GalleryImage[]; title: stri
             </button>
           </>
         )}
-        <figcaption className="sr-only" aria-live="polite">
-          Photo {index + 1} of {images.length}
+        <figcaption className="absolute bottom-0 left-0 flex items-center gap-2 border-r-2 border-t-2 border-ink bg-surface px-2.5 py-1.5" aria-live="polite" data-testid="photo-caption">
+          {TYPE_LABELS[current.type] && <span className="label !text-[0.6875rem]">{TYPE_LABELS[current.type]}</span>}
+          <span className="font-mono text-xs text-ink-soft">
+            {index + 1} / {images.length}
+          </span>
         </figcaption>
       </figure>
       {images.length > 1 && (
@@ -94,10 +97,11 @@ export function Gallery({ images, title }: { images: GalleryImage[]; title: stri
               aria-label={`Photo ${i + 1} of ${images.length}${TYPE_LABELS[img.type] ? `: ${TYPE_LABELS[img.type]}` : ""}`}
               tabIndex={i === index ? 0 : -1}
               onClick={() => go(i)}
-              className={`h-16 w-20 shrink-0 overflow-hidden rounded border-2 bg-surface ${i === index ? "border-ink" : "border-line"}`}
+              className={`grid w-20 shrink-0 overflow-hidden rounded border-2 bg-surface text-left ${i === index ? "border-ink" : "border-line"}`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={img.url} alt="" className="h-full w-full object-cover" loading="lazy" />
+              <img src={img.url} alt="" className="h-14 w-full object-cover" loading="lazy" />
+              <span className="truncate bg-surface px-1 py-0.5 font-mono text-[0.625rem] leading-tight">{TYPE_LABELS[img.type] ?? "Photo"}</span>
             </button>
           ))}
         </div>

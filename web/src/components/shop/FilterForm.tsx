@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { BrandOption, CategoryField, Facets, ModelOption } from "@/lib/listings";
 import { STAMPS, US_STATES, WEIGHTINGS, humanize, type SearchQuery } from "@/lib/search";
 import { WEIGHTING_LABELS } from "@/lib/format";
+import type { ViewMode } from "@/lib/view-mode-shared";
 
 export type FilterVariant = "all" | "bats" | "category";
 
@@ -27,8 +28,8 @@ function Group({ legend, children }: { legend: string; children: React.ReactNode
 
 function Check({ name, value, checked, label, n }: { name: string; value: string; checked: boolean; label: string; n?: number }) {
   return (
-    <label className="flex items-center gap-2 text-sm">
-      <input type="checkbox" name={name} value={value} defaultChecked={checked} className="h-4 w-4 accent-ink" />
+    <label className="flex min-h-11 items-center gap-2.5 text-sm">
+      <input type="checkbox" name={name} value={value} defaultChecked={checked} className="h-5 w-5 accent-ink" />
       <span>
         {label}
         <Count n={n} />
@@ -48,6 +49,7 @@ export function FilterForm({
   brands,
   models = [],
   fields = [],
+  view = null,
 }: {
   path: string;
   query: SearchQuery;
@@ -56,6 +58,7 @@ export function FilterForm({
   brands: BrandOption[];
   models?: ModelOption[];
   fields?: CategoryField[];
+  view?: ViewMode | null;
 }) {
   const weightOptions = [
     ...new Set([
@@ -81,6 +84,7 @@ export function FilterForm({
     <form action={path} method="get" className="grid gap-4" aria-label="Filters">
       {query.q && <input type="hidden" name="q" value={query.q} />}
       {query.sort !== "newest" && <input type="hidden" name="sort" value={query.sort} />}
+      {view && <input type="hidden" name="view" value={view} />}
 
       <Group legend="Brand">
         <label className="sr-only" htmlFor="f-brand">
@@ -133,6 +137,9 @@ export function FilterForm({
               ))}
             </div>
           </Group>
+          <Group legend="Stamps on the bat">
+            <Check name="dual" value="1" checked={Boolean(query.dual)} label="Dual-stamp only (two or more)" />
+          </Group>
           <Group legend="Weighting">
             {WEIGHTINGS.map((w) => (
               <Check key={w} name="load" value={w} checked={query.loads.includes(w)} label={WEIGHTING_LABELS[w]} n={count(facets, "weighting", w)} />
@@ -157,6 +164,21 @@ export function FilterForm({
           ))}
         </Group>
       ))}
+
+      {variant === "bats" && (
+        <Group legend="Length (in)">
+          <div className="grid grid-cols-2 gap-2">
+            <label className="field text-sm" htmlFor="f-minlen">
+              <span>Min</span>
+              <input id="f-minlen" name="minlen" type="number" inputMode="decimal" min={20} max={40} step={0.5} defaultValue={query.minLength ?? ""} className="input" />
+            </label>
+            <label className="field text-sm" htmlFor="f-maxlen">
+              <span>Max</span>
+              <input id="f-maxlen" name="maxlen" type="number" inputMode="decimal" min={20} max={40} step={0.5} defaultValue={query.maxLength ?? ""} className="input" />
+            </label>
+          </div>
+        </Group>
+      )}
 
       <Group legend="Price">
         <div className="grid grid-cols-2 gap-2">
@@ -183,6 +205,11 @@ export function FilterForm({
             </option>
           ))}
         </select>
+      </Group>
+
+      <Group legend="Listing">
+        <Check name="new" value="1" checked={Boolean(query.fresh)} label="Listed in the last 7 days" />
+        <Check name="offers" value="1" checked={Boolean(query.offers)} label="Seller accepts offers" />
       </Group>
 
       <Group legend="Seller">
@@ -212,10 +239,10 @@ export function FilterForm({
       </Group>
 
       <div className="sticky bottom-0 flex gap-2 border-t border-line bg-paper py-3 lg:static">
-        <button type="submit" className="btn btn-primary flex-1">
-          Apply filters
+        <button type="submit" className="btn btn-primary min-h-11 flex-1" data-testid="apply-filters">
+          Apply
         </button>
-        <Link href={query.q ? `${path}?q=${encodeURIComponent(query.q)}` : path} className="btn btn-outline">
+        <Link href={query.q ? `${path}?q=${encodeURIComponent(query.q)}` : path} className="btn btn-outline min-h-11">
           Clear
         </Link>
       </div>

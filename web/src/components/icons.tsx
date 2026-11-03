@@ -136,6 +136,64 @@ export function HeartIcon({ filled, ...p }: IconProps & { filled?: boolean }) {
   );
 }
 
+export function MenuIcon(p: IconProps) {
+  return (
+    <Icon {...p}>
+      <path d="M3 6H21M3 12H21M3 18H21" />
+    </Icon>
+  );
+}
+
+export function UserIcon(p: IconProps) {
+  return (
+    <Icon {...p}>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21V19Q4 15 12 15Q20 15 20 19V21Z" />
+    </Icon>
+  );
+}
+
+export function SearchIcon(p: IconProps) {
+  return (
+    <Icon {...p}>
+      <circle cx="10.5" cy="10.5" r="6.5" />
+      <path d="M15.5 15.5L21 21" />
+    </Icon>
+  );
+}
+
+export function FilterIcon(p: IconProps) {
+  return (
+    <Icon {...p}>
+      <path d="M3 5H21L14 13V20L10 18V13Z" />
+    </Icon>
+  );
+}
+
+export function GridIcon(p: IconProps) {
+  return (
+    <Icon {...p}>
+      <path d="M4 4H10.5V10.5H4ZM13.5 4H20V10.5H13.5ZM4 13.5H10.5V20H4ZM13.5 13.5H20V20H13.5Z" />
+    </Icon>
+  );
+}
+
+export function ArrowIcon(p: IconProps) {
+  return (
+    <Icon {...p}>
+      <path d="M4 12H20M14 6L20 12L14 18" />
+    </Icon>
+  );
+}
+
+export function CloseIcon(p: IconProps) {
+  return (
+    <Icon {...p}>
+      <path d="M5 5L19 19M19 5L5 19" />
+    </Icon>
+  );
+}
+
 /** Icon for a category slug, for listings that aren't bats (no bat drawing to show). */
 export function CategoryIcon({ slug, ...p }: IconProps & { slug?: string | null }) {
   switch (slug) {

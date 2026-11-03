@@ -17,11 +17,22 @@ export default async function ManufacturersPage() {
   return (
     <div className="wrap grid gap-6 py-12">
       <div className="grid gap-2">
-        <p className="eyebrow">Directory</p>
+        <p className="eyebrow">Bat archive</p>
         <h1 className="display text-5xl font-bold">Manufacturers</h1>
         <p className="max-w-2xl text-ink-soft">
           Brands in the {brand.name} catalog. Each page lists the brand&apos;s bat models by year and line, with links to specs, prices and owner reports.
           Names identify products only; {brand.name} isn&apos;t affiliated with or endorsed by any manufacturer.
+        </p>
+        <p className="flex flex-wrap gap-x-5 text-sm font-semibold">
+          <Link href="/price-guide" className="inline-flex min-h-11 items-center underline">
+            Bat price guide
+          </Link>
+          <Link href="/account/watchlist" className="inline-flex min-h-11 items-center underline">
+            Your watchlist
+          </Link>
+          <Link href="/compare" className="inline-flex min-h-11 items-center underline">
+            Compare bats
+          </Link>
         </p>
       </div>
       <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

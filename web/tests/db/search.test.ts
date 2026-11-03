@@ -80,14 +80,14 @@ suite("shop search", () => {
       title: "Miken Freak Black Maxload 26 oz",
       price: 22000,
       productSlug: "miken-freak-black-maxload-usssa-2026",
-      attributes: { weight_oz: 26, certification: ["USSSA"], weighting_type: "endload", model_year: 2026 },
+      attributes: { weight_oz: 26, length_inches: 34, certification: ["USSSA"], weighting_type: "endload", model_year: 2026 },
       condition: 9,
     });
     ids.tantrum = await listing(seller, {
       title: "Easton bat, great pop",
       price: 15000,
       productSlug: "easton-tantrum-1pc-balanced-usa-2026",
-      attributes: { weight_oz: 27, certification: ["USA"], weighting_type: "balanced", construction_type: "one_piece", model_year: 2026 },
+      attributes: { weight_oz: 27, length_inches: 33, certification: ["USA"], weighting_type: "balanced", construction_type: "one_piece", model_year: 2026 },
       condition: 7,
       state: "TX",
     });
@@ -157,6 +157,18 @@ suite("shop search", () => {
     expect(titles(await search("anon", { year: "2026", load: "balanced" }))).toEqual(["Easton bat, great pop"]);
     expect(titles(await search("anon", {}, { category: "gloves" }))).toEqual(["Left-hand outfield glove 13 inch"]);
     expect(titles(await search("anon", {}, { sellerId: other.id }))).toEqual(["DeMarini Flipper 28 oz end-loaded", "Left-hand outfield glove 13 inch"]);
+  });
+
+  it("filters on length, newly listed, accepts offers and dual stamps (bats-only launch filters)", async () => {
+    await db.owner("update equipment_listings set accepts_offers = false, published_at = now() - interval '10 days' where id = $1", [ids.tantrum]);
+    expect(titles(await search("anon", { minlen: "34" }))).toEqual(["Miken Freak Black Maxload 26 oz"]);
+    expect(titles(await search("anon", { maxlen: "33.5" }))).toEqual(["Easton bat, great pop"]);
+    expect(titles(await search("anon", { new: "1" }))).not.toContain("Easton bat, great pop");
+    expect(titles(await search("anon", { new: "1" }))).toContain("Miken Freak Black Maxload 26 oz");
+    expect(titles(await search("anon", { offers: "1" }))).not.toContain("Easton bat, great pop");
+    expect(titles(await search("anon", { dual: "1" }))).toEqual(["DeMarini Flipper 28 oz end-loaded"]);
+    const rows = await db.as<Row & { accepts_offers: boolean }>("anon", "select * from search_listings(p_product => 'easton-tantrum-1pc-balanced-usa-2026')");
+    expect(rows[0].accepts_offers).toBe(false);
   });
 
   function endloadedTitles() {

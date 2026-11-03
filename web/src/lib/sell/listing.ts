@@ -186,8 +186,8 @@ export const IMAGE_TYPE_LABELS: Record<string, string> = {
   barrel: "Barrel",
   end_cap: "End cap",
   knob: "Knob",
-  markings: "Markings",
-  damage: "Damage",
+  markings: "Certification stamp",
+  damage: "Damage / wear",
   front: "Front",
   back: "Back",
   detail: "Detail",
@@ -195,6 +195,40 @@ export const IMAGE_TYPE_LABELS: Record<string, string> = {
   other: "Other",
 };
 export const IMAGE_TYPES = Object.keys(IMAGE_TYPE_LABELS);
+
+export type BatPhotoSlot = {
+  type: string;
+  label: string;
+  /** "required": the slot buyers expect. "encouraged": strongly encouraged. "optional". */
+  need: "required" | "encouraged" | "optional";
+  multiple?: boolean;
+  hint: string;
+};
+
+/** The labeled photo slots for a bat listing, in the order they appear in the gallery. Photos are stored in listing_images with image_type = the slot's type. */
+export const BAT_PHOTO_SLOTS: BatPhotoSlot[] = [
+  { type: "full", label: "Full bat", need: "required", hint: "The whole bat, barrel to knob, on a plain background. This is the cover photo." },
+  { type: "barrel", label: "Barrel", need: "encouraged", hint: "Close up in good light, so the finish and any marks show." },
+  { type: "end_cap", label: "End cap", need: "encouraged", hint: "Straight on, showing it is seated and undamaged." },
+  { type: "knob", label: "Knob", need: "encouraged", hint: "The knob and the grip." },
+  { type: "markings", label: "Certification stamp", need: "encouraged", hint: "Every stamp on the barrel (USSSA, USA, NSA, ISA, SSUSA), sharp enough to read. Strongly encouraged." },
+  { type: "damage", label: "Damage / wear", need: "optional", multiple: true, hint: "Any crack, dent, flat spot or heavy wear, close up. Add as many as you need." },
+];
+
+/** Gallery position: photos sort by slot first, so the full bat is always the cover however the photos were added. */
+export function slotDisplayOrder(imageType: string, existingOfType: number): number {
+  const i = BAT_PHOTO_SLOTS.findIndex((x) => x.type === imageType);
+  return (i === -1 ? BAT_PHOTO_SLOTS.length : i) * 20 + Math.min(existingOfType, 19);
+}
+
+/** Which slots have a photo, and which core slots are still empty (for the "still missing" prompt). */
+export function slotSummary(photos: { imageType: string }[]): { filled: string[]; missingEncouraged: string[] } {
+  const have = new Set(photos.map((p) => p.imageType));
+  return {
+    filled: BAT_PHOTO_SLOTS.filter((x) => have.has(x.type)).map((x) => x.type),
+    missingEncouraged: BAT_PHOTO_SLOTS.filter((x) => x.need !== "optional" && !have.has(x.type)).map((x) => x.type),
+  };
+}
 
 /** Null when the file is acceptable, otherwise the message to show. HEIC files sometimes report no type. */
 export function photoProblem(file: { name: string; type: string; size: number }, opts: { types?: readonly string[]; maxBytes?: number } = {}): string | null {

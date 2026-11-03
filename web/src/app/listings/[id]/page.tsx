@@ -8,6 +8,7 @@ import { batModelPath, listingPath } from "@/lib/paths";
 import { humanize } from "@/lib/search";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { Gallery } from "@/components/listing/Gallery";
+import type { PassportSource } from "@/lib/passport";
 import { getPassport } from "@/lib/passport-data";
 import { BatPassport } from "@/components/listing/BatPassport";
 import { Disclosures } from "@/components/listing/Disclosures";
@@ -23,7 +24,18 @@ import { StampChips } from "@/components/ListingBits";
 import { batSpecFrom } from "@/lib/bat-drawing";
 import { parseHits } from "@/lib/life-meter";
 import { buildMrz } from "@/lib/mrz";
+import { isCategoryVisible } from "@/lib/launch";
 import { optionLabel } from "@/lib/sell/attributes";
+
+/** Where each passport ident line comes from: the seller's listing, or the site's own completed-sales record. */
+const ROW_SOURCES: Record<string, PassportSource> = {
+  Model: "seller",
+  Size: "seller",
+  Build: "seller",
+  Stamp: "seller",
+  Seller: "verified",
+  Condition: "seller",
+};
 
 const PUBLIC_STATUSES = ["active", "reserved", "sold"];
 
@@ -112,7 +124,7 @@ function jsonLd(listing: ListingDetail) {
 export default async function ListingPage({ params }: PageProps<"/listings/[id]">) {
   const { id } = await params;
   const listing = await getListing(id);
-  if (!listing) notFound();
+  if (!listing || !(await isCategoryVisible(listing.category?.slug))) notFound();
 
   const [user, seller, passport] = await Promise.all([getCurrentUser(), getSellerById(listing.sellerId), getPassport(listing)]);
   const isOwner = user?.id === listing.sellerId;
@@ -145,7 +157,7 @@ export default async function ListingPage({ params }: PageProps<"/listings/[id]"
             { label: "Stamp", value: stamps.length ? stamps.join(" / ") : "Not listed" },
             { label: "Seller", value: seller ? `@${seller.username} · ${seller.completedSales} ${seller.completedSales === 1 ? "sale" : "sales"}` : "Not listed" },
             { label: "Condition", value: [condition ?? "Not rated", hits != null ? `about ${hits.toLocaleString("en-US")} hits` : null].filter(Boolean).join(", ") },
-          ],
+          ].map((r) => ({ ...r, source: ROW_SOURCES[r.label] })),
           mrz: buildMrz({
             brand: listing.manufacturer?.name,
             model: listing.product?.name ?? listing.title,

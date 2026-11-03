@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { HeartIcon } from "@/components/icons";
 import { toggleFavorite } from "@/app/listings/actions";
 
 /**
@@ -11,13 +12,35 @@ export function FavoriteButton({
   saved,
   next,
   compact = false,
+  icon = false,
 }: {
   listingId: string;
   signedIn: boolean;
   saved: boolean;
   next: string;
   compact?: boolean;
+  /** A square 44px heart-only button, for cards. */
+  icon?: boolean;
 }) {
+  if (icon) {
+    const base = "grid h-11 w-11 place-items-center border-2 border-ink bg-surface text-ink hover:bg-ink hover:text-surface";
+    if (!signedIn) {
+      return (
+        <Link href={`/sign-in?next=${encodeURIComponent(next)}`} className={base} aria-label="Sign in to save this listing">
+          <HeartIcon size={20} />
+        </Link>
+      );
+    }
+    return (
+      <form action={toggleFavorite}>
+        <input type="hidden" name="listingId" value={listingId} />
+        <input type="hidden" name="next" value={next} />
+        <button type="submit" className={base} aria-pressed={saved} aria-label={saved ? "Remove from saved" : "Save this listing"}>
+          <HeartIcon size={20} filled={saved} />
+        </button>
+      </form>
+    );
+  }
   const cls = `btn ${compact ? "btn-outline px-3 py-1.5 text-sm" : "btn-outline"}`;
   if (!signedIn) {
     return (

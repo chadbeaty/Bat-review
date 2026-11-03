@@ -1,12 +1,13 @@
-// Browse layouts. "rack" is the chain-link fence of hanging bats (a card grid for gear that isn't a bat); "list" is the
-// dense data-sheet. The choice lives in the URL (?view=) and is remembered in a cookie.
+// Browse layouts. "grid" (the default) is the marketplace card grid; "rack" is the chain-link fence of hanging bats;
+// "list" is the dense data-sheet. The choice lives in the URL (?view=) and is remembered in a cookie.
 
 export const VIEW_COOKIE = "gb_view";
-export type ViewMode = "rack" | "list";
+export type ViewMode = "grid" | "list" | "rack";
+export const VIEW_MODES: ViewMode[] = ["grid", "list", "rack"];
 
 export function parseView(v: unknown): ViewMode | null {
   const s = Array.isArray(v) ? v[0] : v;
-  return s === "rack" || s === "list" ? s : null;
+  return s === "grid" || s === "rack" || s === "list" ? s : null;
 }
 
 /** Adds ?view= to a link when the visitor picked a layout in the URL, so paging and sorting keep it. */

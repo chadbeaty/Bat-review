@@ -3,12 +3,10 @@ import { expect, test } from "@playwright/test";
 test.describe("homepage", () => {
   test("states what the marketplace is and shows real catalog numbers", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Know the stamp, the price and the hits before you buy/i);
-    await expect(page.getByText("Bat models in the catalog")).toBeVisible();
-    await expect(page.getByText("121", { exact: true })).toBeVisible();
-    await expect(page.getByText("7% commission on the item price")).toBeVisible();
-    await expect(page.getByRole("link", { name: "Shop equipment" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Sell your gear" }).first()).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Know your bat\./i);
+    await expect(page.getByText("Know the stamp. Know the condition. Know the price.")).toBeVisible();
+    await expect(page.getByRole("link", { name: "Shop bats" }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: "Sell your bat" }).first()).toBeVisible();
   });
 
   test("shows only real listings, or an empty state when there are none", async ({ page, request }) => {
@@ -20,19 +18,37 @@ test.describe("homepage", () => {
     await expect(page.getByRole("heading", { name: "Partners" })).toHaveCount(0);
   });
 
-  test("lists every equipment category with bats first", async ({ page }) => {
+  test("follows the launch order: certification tiles, just listed, the rack, passport, models; no recently sold without sales", async ({ page }) => {
     await page.goto("/");
-    const section = page.locator("section", { has: page.getByRole("heading", { name: "Shop by category" }) });
-    await expect(section.getByRole("link")).toHaveCount(10);
-    await expect(section.getByRole("link").nth(1)).toContainText("Slow-pitch bats");
+    const order = await page.locator("main h2, h2").allTextContents();
+    const idx = (re: RegExp) => order.findIndex((t) => re.test(t));
+    expect(idx(/Shop by certification/i)).toBeGreaterThan(-1);
+    expect(idx(/Shop by certification/i)).toBeLessThan(idx(/Bat Passport|Stamped, or not stamped yet/i));
+    expect(idx(/Stamped, or not stamped yet/i)).toBeLessThan(idx(/bat models/i));
+    for (const name of ["USSSA", "USA / ASA", "Senior", "Dual-stamp"]) await expect(page.getByRole("link", { name: new RegExp(name) }).first()).toBeVisible();
+    await expect(page.getByRole("link", { name: /Dual-stamp/ })).toHaveAttribute("href", "/bats?dual=1");
+    // Nothing has completed a sale in the test data, so the section is omitted entirely.
+    await expect(page.getByRole("heading", { name: "Recently sold" })).toHaveCount(0);
+    await expect(page.getByRole("heading", { name: "Shop by category" })).toHaveCount(0);
   });
 
-  test("mixes brands in the newest bat models", async ({ page }) => {
+  test("shows bat models from the archive, labelled by what the data really is", async ({ page }) => {
     await page.goto("/");
-    const section = page.locator("section", { has: page.getByRole("heading", { name: /bat models/i }) });
-    const brands = await section.locator("li > span:first-child").allTextContents();
-    expect(brands.length).toBeGreaterThan(0);
-    expect(new Set(brands).size).toBeGreaterThanOrEqual(Math.min(3, brands.length));
+    const section = page.locator("section", { has: page.getByRole("heading", { name: /(Most-listed|Newest) bat models/ }) });
+    await expect(section.getByTestId("home-models").getByRole("link").first()).toHaveAttribute("href", /^\/bats\//);
+    await expect(section.getByRole("link", { name: "Open the bat archive" })).toBeVisible();
+  });
+
+  test("header and footer show bats only, with the archive, watchlist and price guide in the menu", async ({ page, request }) => {
+    await page.goto("/");
+    const text = await page.locator("header, footer").allInnerTexts();
+    const all = text.join(" ").toLowerCase();
+    for (const gone of ["gloves", "cleats", "bags", "accessories", "apparel"]) expect(all, gone).not.toContain(gone);
+    for (const href of ["/bats", "/manufacturers", "/price-guide", "/account/watchlist"]) await expect(page.locator(`footer a[href="${href}"]`)).toHaveCount(1);
+    expect((await request.get("/shop/gloves")).status()).toBe(404);
+    const map = await (await request.get("/sitemap.xml")).text();
+    expect(map).not.toContain("/shop/gloves");
+    expect(map).not.toContain("/shop<");
   });
 
   test("every internal link resolves", async ({ page, request }) => {

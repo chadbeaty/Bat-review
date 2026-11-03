@@ -1,10 +1,12 @@
 import type { PassportCheck } from "@/lib/passport";
 import { ThunkGroup } from "@/components/ThunkGroup";
+import { SourceLabel } from "@/components/listing/SourceLabel";
+import type { PassportSource } from "@/lib/passport";
 
 export type PassportIdent = {
   /** Short number printed on the cover, for example GB-4F2A91. */
   number: string;
-  rows: { label: string; value: string }[];
+  rows: { label: string; value: string; source?: PassportSource }[];
   /** The two machine-readable lines, built from the listing's real fields. */
   mrz: [string, string];
 };
@@ -37,7 +39,10 @@ export function BatPassport({ checks, filledCount, ident }: { checks: PassportCh
               {ident.rows.map((r) => (
                 <div key={r.label} className="contents">
                   <dt className="label !text-[0.625rem] pt-[3px] text-ink-soft">{r.label}</dt>
-                  <dd className="min-w-0 break-words">{r.value}</dd>
+                  <dd className="min-w-0 break-words">
+                    {r.value}
+                    {r.source && <SourceLabel source={r.source} className="ml-2 align-middle" />}
+                  </dd>
                 </div>
               ))}
             </dl>
@@ -64,7 +69,8 @@ export function BatPassport({ checks, filledCount, ident }: { checks: PassportCh
               const look = SHAPES[c.key];
               const [head, tail] = c.key === "stamp" ? splitStamp(c.headline) : [c.headline, null];
               return (
-                <div key={c.key} className="stamp-slot" data-check={c.key} data-filled={c.filled}>
+                <div key={c.key} className="stamp-slot" data-check={c.key} data-filled={c.filled} data-source={c.source}>
+                  <SourceLabel source={c.source} className="mb-1.5" />
                   {c.filled ? (
                     <div className={`ink-stamp ${look.shape}`} style={{ ["--c" as string]: look.color }}>
                       <div>
@@ -93,7 +99,7 @@ export function BatPassport({ checks, filledCount, ident }: { checks: PassportCh
         </div>
       </div>
       <p className="max-w-[70ch] text-sm text-ink-soft">
-        Every stamp is earned from real data: the model&apos;s stamp list, completed sales on the site, owner reports and this listing&apos;s own answers. A dashed spot means that check doesn&apos;t have enough data yet. Official lists:{" "}
+        Every line says where it comes from: Verified (catalog certification status and completed sales on the site), Seller says (this listing&apos;s own condition and damage answers) or Owners report (reports from people who own the model). A dashed spot means that check doesn&apos;t have enough data yet. Official lists:{" "}
         <a href="https://usssa.com" className="underline" rel="noopener noreferrer">
           USSSA
         </a>

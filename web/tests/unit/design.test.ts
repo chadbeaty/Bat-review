@@ -71,7 +71,8 @@ describe("browse layout choice", () => {
   it("accepts only known views and keeps them on links", () => {
     expect(parseView("list")).toBe("list");
     expect(parseView(["rack"])).toBe("rack");
-    expect(parseView("grid")).toBeNull();
+    expect(parseView("grid")).toBe("grid");
+    expect(parseView("tiles")).toBeNull();
     expect(withView("/bats?sort=price_asc", "list")).toBe("/bats?sort=price_asc&view=list");
     expect(withView("/bats", "list")).toBe("/bats?view=list");
     expect(withView("/bats", null)).toBe("/bats");

@@ -6,13 +6,13 @@ import { formatPrice } from "@/lib/format";
 import { getCurrentUser } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "Sell your gear",
-  description: "List a bat or any other slow-pitch equipment in about three minutes. Free to list; you pay a commission only when it sells.",
+  title: "Sell your bat",
+  description: "List a used slow-pitch bat in about three minutes. Free to list; you pay a commission only when it sells.",
 };
 
 const STEPS = [
-  { title: "Pick your model", body: "Choose the category, brand and model from our catalog. We fill in the specs we know, and you confirm them." },
-  { title: "Add photos and details", body: "Upload photos, score the cosmetic condition and answer the damage questions honestly." },
+  { title: "Pick your model", body: "Choose the brand and model from our catalog. We fill in the specs we know, and you confirm them." },
+  { title: "Add photos and details", body: "Fill the labeled photo slots, score the cosmetic condition and answer the damage questions honestly." },
   { title: "Set your price", body: "See exactly what you'll receive before payment processing, and compare with verified sales when there are any." },
   { title: "Ship it when it sells", body: "Enter your box size once. When a buyer pays, you pack the item and ship it to them." },
 ];
@@ -22,8 +22,8 @@ const PHOTOS = [
   { title: "Barrel", body: "Close up, in good light, so buyers can see the finish and any marks." },
   { title: "End cap", body: "Straight on, showing it's seated and undamaged." },
   { title: "Knob", body: "Both the knob and the grip." },
-  { title: "Model and certification markings", body: "The model name, weight and length, and every stamp (USSSA, USA, NSA, ISA, SSUSA)." },
-  { title: "Any damage", body: "Every crack, dent or flat spot, close up. Tag it as damage when you upload." },
+  { title: "Certification stamp", body: "Every stamp on the barrel (USSSA, USA, NSA, ISA, SSUSA), sharp enough to read. Strongly encouraged." },
+  { title: "Damage / wear", body: "Every crack, dent or flat spot, close up. Add as many as you need." },
 ];
 
 export default async function SellPage() {
@@ -36,9 +36,9 @@ export default async function SellPage() {
     <div className="wrap grid gap-14 py-10 md:py-16">
       <section className="grid gap-5 md:max-w-3xl">
         <p className="eyebrow">Sell on the marketplace</p>
-        <h1 className="display text-5xl font-bold md:text-7xl">Sell your gear</h1>
+        <h1 className="display text-5xl font-bold md:text-7xl">Sell your bat</h1>
         <p className="text-lg text-ink-soft">
-          List a bat or any other slow-pitch equipment in about three minutes with your photos ready. Listing is free.
+          List a used slow-pitch bat in about three minutes with your photos ready. Listing is free.
           {rate ? ` You pay a ${rate} commission on the item price only when it sells.` : " You pay a commission only when it sells."}
         </p>
         <div className="flex flex-wrap gap-3">

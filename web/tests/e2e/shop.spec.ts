@@ -24,7 +24,7 @@ function uniqueWord(length = 10): string {
 }
 
 function results(page: Page) {
-  return page.getByTestId("results").getByRole("link");
+  return page.getByTestId("results").locator("> li");
 }
 
 async function noSideways(page: Page, path: string) {
@@ -44,25 +44,25 @@ test.describe("search", () => {
     const word = uniqueWord(10);
     await createLiveListing(seller, { title: `Freak ${word} 26 oz gamer` });
 
-    await page.goto(`/shop?q=${word.slice(0, 6)}`);
+    await page.goto(`/bats?q=${word.slice(0, 6)}`);
     await expect(results(page)).toHaveCount(1);
     await expect(results(page).first()).toContainText(word);
 
     // Drop a letter near the end: a typo the trigram match should still catch.
     const typo = word.slice(0, 7) + word.slice(8);
-    await page.goto(`/shop?q=${typo}`);
+    await page.goto(`/bats?q=${typo}`);
     await expect(results(page)).toHaveCount(1);
 
     // The header search box submits to the shop.
     await page.goto("/");
     await page.getByRole("searchbox").first().fill(word);
     await page.getByRole("searchbox").first().press("Enter");
-    await expect(page).toHaveURL(new RegExp(`/shop\\?q=${word}`));
+    await expect(page).toHaveURL(new RegExp(`/bats\\?q=${word}`));
     await expect(results(page)).toHaveCount(1);
   });
 
   test("shows a helpful empty state with did-you-mean", async ({ page }) => {
-    await page.goto("/shop?q=tantrm+qqzzxx&weight=26");
+    await page.goto("/bats?q=tantrm+qqzzxx&weight=26");
     const empty = page.getByTestId("no-results");
     await expect(empty).toBeVisible();
     await expect(empty.getByRole("link", { name: /Without 26 oz/ })).toBeVisible();
@@ -83,7 +83,7 @@ test.describe("search", () => {
 
     // Filter with the form, the way a visitor would.
     await page.getByRole("checkbox", { name: /^26 oz/ }).check();
-    await page.getByRole("button", { name: "Apply filters" }).click();
+    await page.getByRole("button", { name: "Apply", exact: true }).click();
     await expect(page).toHaveURL(/weight=26/);
     await expect(page).not.toHaveURL(/min=&/);
     await expect(results(page)).toHaveCount(1);
@@ -119,15 +119,15 @@ test.describe("search", () => {
     await expect(page.getByRole("link", { name: "Bat price guide" }).first()).toBeVisible();
   });
 
-  test("category pages scope results, and the canonical URL has no filters", async ({ page, request }) => {
+  test("while bats-only, /shop goes to the bats page, hidden categories 404, and the canonical URL has no filters", async ({ page, request }) => {
     const seller = await member("ctgy");
     const word = uniqueWord(9);
     await createLiveListing(seller, { title: `${word} bat for sale` });
-    await page.goto(`/shop/gloves?q=${word}`);
-    await expect(page.getByTestId("no-results")).toBeVisible();
+    expect((await request.get("/shop/gloves")).status()).toBe(404);
     await page.goto(`/shop?q=${word}`);
+    await expect(page).toHaveURL(new RegExp(`/bats\\?q=${word}`));
     await expect(results(page)).toHaveCount(1);
-    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", /\/shop$/);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", /\/bats$/);
     expect((await request.get("/shop/not-a-category")).status()).toBe(404);
   });
 });
@@ -330,9 +330,9 @@ test.describe("mobile layout", () => {
 
     // Filters are behind a button on phones.
     await page.goto("/bats");
-    await expect(page.getByRole("button", { name: "Apply filters" })).toBeHidden();
+    await expect(page.getByTestId("apply-filters")).toBeHidden();
     await page.getByRole("button", { name: /^Filters/ }).click();
-    await expect(page.getByRole("button", { name: "Apply filters" })).toBeVisible();
+    await expect(page.getByTestId("apply-filters")).toBeVisible();
   });
 });
 
@@ -342,6 +342,10 @@ test.describe("the rack and the life meter", () => {
     const word = uniqueWord(9);
     await createLiveListing(seller, { title: `Rack ${word} 26 oz`, attributes: { weight_oz: 26, certification: ["USSSA"], weighting_type: "endload", construction_type: "two_piece", barrel_length_inches: 13, length_inches: 34, model_year: 2026 } });
     await page.goto(`/bats?q=${word.slice(0, 6)}`);
+    // Grid is the default view.
+    await expect(page.getByTestId("listing-card")).toHaveCount(1);
+    await page.getByRole("link", { name: "Rack", exact: true }).click();
+    await expect(page).toHaveURL(/view=rack/);
     await expect(page.locator(".fence .hang")).toHaveCount(1);
     await expect(page.locator(".hang .htag")).toContainText("$220");
     await page.getByRole("link", { name: "List", exact: true }).click();
@@ -350,8 +354,8 @@ test.describe("the rack and the life meter", () => {
     // The choice is remembered without the URL parameter.
     await page.goto(`/bats?q=${word.slice(0, 6)}`);
     await expect(page.locator(".sheet-row")).toHaveCount(1);
-    await page.getByRole("link", { name: "Rack", exact: true }).click();
-    await expect(page.locator(".fence .hang")).toHaveCount(1);
+    await page.getByRole("link", { name: "Grid", exact: true }).click();
+    await expect(page.getByTestId("listing-card")).toHaveCount(1);
   });
 
   test("the listing page places the seller's hit count on the life meter, or says none was given", async ({ page }) => {

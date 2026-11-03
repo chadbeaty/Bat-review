@@ -56,7 +56,7 @@ export default async function FavoritesPage() {
       </div>
 
       {favorites.length === 0 ? (
-        <EmptyState title="Nothing saved yet" body="Tap Save on any listing to keep it here." action={{ href: "/shop", label: "Shop equipment" }} />
+        <EmptyState title="Nothing saved yet" body="Tap Save on any listing to keep it here." action={{ href: "/bats", label: "Shop bats" }} />
       ) : (
         <ul className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4" data-testid="favorites">
           {favorites.map((f) => {
@@ -68,7 +68,8 @@ export default async function FavoritesPage() {
                     <ListingCard
                       listing={{
                         id: l.id,
-                        title: STATUS_NOTE[l.listing_status] ? `${STATUS_NOTE[l.listing_status]}: ${l.title}` : l.title,
+                        title: l.title,
+                        status: STATUS_NOTE[l.listing_status] ? l.listing_status : undefined,
                         askingPriceCents: l.asking_price_cents,
                         conditionScore: l.condition_score,
                         locationCity: l.location_city,

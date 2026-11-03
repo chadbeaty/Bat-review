@@ -157,3 +157,17 @@ describe("pageWindow", () => {
     expect(pageWindow(1, 20)).toEqual([1, 2, null, 20]);
   });
 });
+
+describe("launch filters (length, newly listed, offers, dual stamp)", () => {
+  it("parses, rebuilds and sends them to the database", () => {
+    const q = parseSearchParams({ minlen: "33", maxlen: "34.5", new: "1", offers: "1", dual: "1" });
+    expect(q).toMatchObject({ minLength: 33, maxLength: 34.5, fresh: true, offers: true, dual: true });
+    expect(toQueryString(q)).toBe("?minlen=33&maxlen=34.5&new=1&dual=1&offers=1");
+    expect(searchRpcArgs(q)).toMatchObject({ p_min_length: 33, p_max_length: 34.5, p_new_days: 7, p_accepts_offers: true, p_dual_stamp: true });
+    expect(activeFilters(q).map((f) => f.key)).toEqual(expect.arrayContaining(["length", "fresh", "offers", "dual"]));
+  });
+  it("drops junk and swaps a reversed range", () => {
+    expect(parseSearchParams({ minlen: "abc", maxlen: "99", new: "0" })).toMatchObject({ minLength: undefined, maxLength: undefined, fresh: undefined });
+    expect(parseSearchParams({ minlen: "35", maxlen: "33" })).toMatchObject({ minLength: 33, maxLength: 35 });
+  });
+});

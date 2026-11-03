@@ -6,8 +6,17 @@ import { soldStats, type PriceThresholds, type SaleRecord } from "@/lib/price-st
 
 export type PassportCheckKey = "stamp" | "price" | "owners" | "listing";
 
+/**
+ * Where a line of the passport comes from. "verified": catalog certification data with a verified status and completed
+ * marketplace sales. "seller": what the seller says (condition, damage answers, hits). "owners": owner-report aggregates.
+ */
+export type PassportSource = "verified" | "seller" | "owners";
+
+export const SOURCE_LABELS: Record<PassportSource, string> = { verified: "Verified", seller: "Seller says", owners: "Owners report" };
+
 export type PassportCheck = {
   key: PassportCheckKey;
+  source: PassportSource;
   title: string;
   /** True when the check has real data / passes. */
   filled: boolean;
@@ -52,6 +61,7 @@ export function stampCheck(s: PassportInput["stamp"]): PassportCheck {
   if (!assoc.length || !status || !known) {
     return {
       key: "stamp",
+      source: "verified",
       title,
       filled: false,
       headline: "Stamp not verified yet",
@@ -59,21 +69,22 @@ export function stampCheck(s: PassportInput["stamp"]): PassportCheck {
     };
   }
   const label = `${assoc.join(" / ")} · ${CERT_STATUS_LABELS[status]}`;
-  if (status === "decertified") return { key: "stamp", title, filled: false, headline: label, detail: "Check the current approved list before you buy." };
+  if (status === "decertified") return { key: "stamp", source: "verified", title, filled: false, headline: label, detail: "Check the current approved list before you buy." };
   let detail = status === "association_listed" ? "Approved list status" : "Listed status";
   if (s.verifiedAt) detail += `: verified on ${s.verifiedAt.slice(0, 10)}`;
   if (s.source) detail += ` (${s.source})`;
-  return { key: "stamp", title, filled: true, headline: label, detail: `${detail}. Lists change, so confirm with the association.` };
+  return { key: "stamp", source: "verified", title, filled: true, headline: label, detail: `${detail}. Lists change, so confirm with the association.` };
 }
 
 export function priceCheck(sales: SaleRecord[], t: Pick<PriceThresholds, "minSales">): PassportCheck {
   const title = "Price history";
   const stats = soldStats(sales, { minSales: t.minSales, fullSales: Math.max(t.minSales, 10) });
   if (stats.tier === "insufficient") {
-    return { key: "price", title, filled: false, headline: `Not enough sales yet (${stats.count})`, detail: `Needs ${t.minSales} verified sales on the site.` };
+    return { key: "price", source: "verified", title, filled: false, headline: `Not enough sales yet (${stats.count})`, detail: `Needs ${t.minSales} verified sales on the site.` };
   }
   return {
     key: "price",
+    source: "verified",
     title,
     filled: true,
     headline: `${usd(stats.minCents)} to ${usd(stats.maxCents)}`,
@@ -86,6 +97,7 @@ export function ownersCheck(d: PassportInput["durability"], publishedReports: nu
   if (!d || d.reportingOwners < minOwners) {
     return {
       key: "owners",
+      source: "owners",
       title,
       filled: false,
       headline: `Not enough owner reports yet (${publishedReports})`,
@@ -95,6 +107,7 @@ export function ownersCheck(d: PassportInput["durability"], publishedReports: nu
   const hits = d.medianHitsIntact != null ? `Median ${Math.round(d.medianHitsIntact)} hits on bats still intact` : "Median hits not reported";
   return {
     key: "owners",
+    source: "owners",
     title,
     filled: true,
     headline: hits,
@@ -109,6 +122,7 @@ export function listingCheck(l: PassportInput["listing"]): PassportCheck {
   const condition = l.conditionScore != null ? `Condition ${l.conditionScore}/10` : "Condition not rated";
   return {
     key: "listing",
+    source: "seller",
     title,
     filled,
     headline: condition,

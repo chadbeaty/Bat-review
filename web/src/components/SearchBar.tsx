@@ -1,21 +1,37 @@
-/** The chalkboard / scoreboard search box. */
-export function SearchBar({ id = "site-search", large = false, defaultValue = "" }: { id?: string; large?: boolean; defaultValue?: string }) {
+import { SearchIcon } from "@/components/icons";
+
+/** The chalkboard / scoreboard search box. Tall enough to tap; the text never clips on a phone. */
+export function SearchBar({
+  id = "site-search",
+  large = false,
+  defaultValue = "",
+  action = "/bats",
+  placeholder = "Search bats or models",
+}: {
+  id?: string;
+  large?: boolean;
+  defaultValue?: string;
+  action?: string;
+  placeholder?: string;
+}) {
   return (
-    <form action="/shop" method="get" role="search" className="board">
+    <form action={action} method="get" role="search" className="board">
       <label htmlFor={id} className="sr-only">
-        Search equipment
+        Search bats
       </label>
       <input
         id={id}
         name="q"
         type="search"
         defaultValue={defaultValue}
-        placeholder="Search bats, gloves, brands, models"
+        placeholder={placeholder}
         autoComplete="off"
-        className={large ? "!py-4 !text-base" : ""}
+        enterKeyHint="search"
+        className={large ? "!min-h-14 !text-base" : ""}
       />
-      <button type="submit" className={large ? "!px-6 !text-sm" : ""}>
-        Search
+      <button type="submit" aria-label="Search" className={large ? "!px-6 !text-sm" : ""}>
+        <SearchIcon size={20} className="sm:hidden" />
+        <span className="hidden sm:inline">Search</span>
       </button>
     </form>
   );

@@ -100,5 +100,6 @@ insert into public.site_settings (key, value, description, is_public) values
   ('new_release_window_days', '120', 'Days after release during which a model counts as a new release', true),
   ('early_report_threshold', '5', 'Owners with published reports needed before a new release shows as having early reports', true),
   ('durability_min_owners', '3', 'Owners with published reports needed before a model appears in the durability tracker', true),
-  ('owner_report_interval_days', '7', 'Minimum days between two owner reports by the same member on the same model', true)
+  ('owner_report_interval_days', '7', 'Minimum days between two owner reports by the same member on the same model', true),
+  ('bats_only_mode', 'true', 'Show only bats (hide gloves, bags, cleats and other categories everywhere). Turn off to bring every category back', true)
 on conflict (key) do nothing;
