@@ -2,6 +2,7 @@ import "server-only";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { ListingCard } from "@/lib/catalog";
+import { withCardExtras } from "@/lib/card-extras";
 import { PAGE_SIZE, searchRpcArgs, type SearchQuery } from "@/lib/search";
 
 // Server-side reads for the shop, listing and seller pages. Everything runs as the visitor, so Row Level
@@ -38,11 +39,7 @@ export async function searchListings(query: SearchQuery, scope: { category?: str
     const { data: firstPage } = await supabase.rpc("search_listings", { ...searchRpcArgs({ ...query, page: 1 }, scope), p_limit: 1 });
     total = (firstPage as SearchRow[] | null)?.[0] ? Number((firstPage as SearchRow[])[0].total_count) : 0;
   }
-  return {
-    total,
-    pageSize,
-    failed: false,
-    listings: rows.map((r) => ({
+  const cards: ListingCard[] = rows.map((r) => ({
       id: r.id,
       title: r.title,
       askingPriceCents: r.asking_price_cents,
@@ -52,8 +49,8 @@ export async function searchListings(query: SearchQuery, scope: { category?: str
       imageUrl: r.image_url,
       imageAlt: r.image_alt,
       publishedAt: r.published_at,
-    })),
-  };
+  }));
+  return { total, pageSize, failed: false, listings: await withCardExtras(cards) };
 }
 
 export type Facets = Record<string, { value: string; listings: number }[]>;

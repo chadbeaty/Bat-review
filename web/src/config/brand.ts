@@ -12,19 +12,30 @@ export const brand = {
     "Buy and sell used slow-pitch softball bats and gear. Every bat model comes with its stamp, real sold prices and owner reports.",
   /** Production URL once a domain is chosen. Used for canonical links, sitemaps and emails. */
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  /**
+   * Identity colors (see docs/BRAND.md). Concrete is the page, ink is text and rules, paper is the card/passport page.
+   * Tag yellow is for prices and money actions ONLY, always as a background behind ink text, never as text on a light page.
+   * Violet, red and green are passport ink colors and mean "verified".
+   */
   colors: {
-    ink: "#16191d",
-    inkSoft: "#4a525c",
-    paper: "#f7f7f4",
-    surface: "#ffffff",
-    line: "#e3e4df",
-    lineStrong: "#c8cbc4",
-    /** Softball optic yellow. Used for fills with ink text, never for text on white. */
-    accent: "#e4f034",
-    accentInk: "#16191d",
-    success: "#1f7a4d",
-    danger: "#b4372b",
-    warning: "#8a6a10",
+    ink: "#121820",
+    inkSoft: "#59636b",
+    /** Dugout concrete: the page background. */
+    paper: "#e4e6e1",
+    /** Passport paper: cards, inputs and pages that sit on the concrete. */
+    surface: "#f7f5ef",
+    line: "#c4c8c2",
+    lineStrong: "#8e989e",
+    /** Hang-tag yellow. Prices and money actions only, with ink text on top. */
+    accent: "#ffd23f",
+    accentInk: "#121820",
+    steel: "#8e989e",
+    passportViolet: "#4b2fa0",
+    customsRed: "#c0352b",
+    clearedGreen: "#1d6e4b",
+    success: "#1d6e4b",
+    danger: "#b02e24",
+    warning: "#7a5c08",
   },
   email: {
     fromName: "Gamer Bat",

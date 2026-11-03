@@ -1,3 +1,5 @@
+import { BatDrawing } from "@/components/BatDrawing";
+import { batSpecFromCatalog, describeBat } from "@/lib/bat-drawing";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -108,7 +110,18 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
 
       {selected.length >= 2 ? (
         <section className="grid gap-3" aria-labelledby="comparison-heading">
-          <h2 id="comparison-heading" className="text-lg font-semibold">
+          <div className="card grid gap-3 p-4" aria-label="Bats drawn to the same scale">
+            <p className="eyebrow">Drawn to the same scale, from the listed specs</p>
+            {selected.map((b) => (
+              <div key={b.slug} className="grid items-center gap-1 sm:grid-cols-[11rem_1fr] sm:gap-4">
+                <span className="disp-c text-base">{b.productName}</span>
+                <div className="grid-paper px-3 py-2">
+                  <BatDrawing spec={batSpecFromCatalog(b)} fluid label={`${b.productName}: ${describeBat(batSpecFromCatalog(b))}`} />
+                </div>
+              </div>
+            ))}
+          </div>
+          <h2 id="comparison-heading" className="disp text-xl">
             {diffs} {diffs === 1 ? "difference" : "differences"} in what we know
           </h2>
           <div className="card overflow-x-auto">
@@ -129,7 +142,7 @@ export default async function ComparePage({ searchParams }: { searchParams: Prom
               </thead>
               <tbody>
                 {rows.map((r) => (
-                  <tr key={r.key} data-differs={r.differs ? "true" : "false"} className={`border-b border-line last:border-0 ${r.differs ? "bg-accent/25" : ""}`}>
+                  <tr key={r.key} data-differs={r.differs ? "true" : "false"} className={`border-b border-line last:border-0 ${r.differs ? "bg-ink/5" : ""}`}>
                     <th scope="row" className="p-3 font-medium">
                       {r.label}
                       {r.differs && <span className="ml-2 rounded-sm bg-ink px-1.5 py-0.5 text-[0.65rem] font-semibold uppercase text-surface">Differs</span>}

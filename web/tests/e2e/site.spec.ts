@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test.describe("homepage", () => {
   test("states what the marketplace is and shows real catalog numbers", async ({ page }) => {
     await page.goto("/");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/The used slow-pitch bat market players trust/i);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Know the stamp, the price and the hits before you buy/i);
     await expect(page.getByText("Bat models in the catalog")).toBeVisible();
     await expect(page.getByText("121", { exact: true })).toBeVisible();
     await expect(page.getByText("7% commission on the item price")).toBeVisible();
@@ -14,7 +14,7 @@ test.describe("homepage", () => {
   test("shows only real listings, or an empty state when there are none", async ({ page, request }) => {
     await page.goto("/");
     const links = await page.$$eval('a[href^="/listings/"]', (as) => as.map((a) => (a as HTMLAnchorElement).getAttribute("href")!));
-    if (links.length === 0) await expect(page.getByText("Nothing listed yet")).toBeVisible();
+    if (links.length === 0) await expect(page.getByText("The fence is empty")).toBeVisible();
     // Every listing shown on the homepage is a real, viewable listing.
     for (const href of new Set(links)) expect((await request.get(href)).status(), href).toBe(200);
     await expect(page.getByRole("heading", { name: "Partners" })).toHaveCount(0);

@@ -59,7 +59,7 @@ export default async function SellerListingsPage({ searchParams }: PageProps<"/s
           </p>
           <h1 className="display text-5xl font-bold">Your listings</h1>
         </div>
-        <Link href="/sell/new" className="btn btn-accent">
+        <Link href="/sell/new" className="btn btn-primary">
           Start a listing
         </Link>
       </div>

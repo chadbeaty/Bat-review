@@ -4,7 +4,7 @@
 
 **Gamer Bat**, gamerbat.com, chosen 2026-11-03. **Trademark search pending by owner** (USPTO, Class 28 and Class 35; see below). Contact emails in `src/config/brand.ts` are placeholders on the new domain (hello@ and support@gamerbat.com) until mailboxes exist.
 
-Visual direction: a new look is being designed; the current site styling is unchanged. All colors live in `src/config/brand.ts`.
+Visual direction (implemented, concept in `docs/design/concept.html`): dugout concrete `#e4e6e1`, scorebook ink `#121820`, fence steel `#8e989e`, hang-tag yellow `#ffd23f` (prices and money actions only, always behind ink text), passport violet `#4b2fa0`, customs red `#c0352b`, cleared green `#1d6e4b`, passport paper `#f7f5ef`. Fonts: Anybody (wide italic display), Schibsted Grotesk (body), Martian Mono (numbers, specs, prices). All colors live in `src/config/brand.ts`; the look lives in `src/app/globals.css`. Signature pieces: the Rack (`components/shop/Rack.tsx`), `BatDrawing`, the Life meter and the Bat Passport spread.
 
 ## Earlier name options
 

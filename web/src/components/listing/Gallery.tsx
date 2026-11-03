@@ -61,7 +61,7 @@ export function Gallery({ images, title }: { images: GalleryImage[]; title: stri
             <button
               type="button"
               onClick={() => go(index - 1)}
-              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full border border-line bg-surface/90 px-3 py-2 font-semibold"
+              className="absolute left-2 top-1/2 -translate-y-1/2 rounded-sm border-2 border-ink bg-surface/90 px-3 py-2 font-semibold"
               aria-label="Previous photo"
             >
               ‹
@@ -69,7 +69,7 @@ export function Gallery({ images, title }: { images: GalleryImage[]; title: stri
             <button
               type="button"
               onClick={() => go(index + 1)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-line bg-surface/90 px-3 py-2 font-semibold"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-sm border-2 border-ink bg-surface/90 px-3 py-2 font-semibold"
               aria-label="Next photo"
             >
               ›

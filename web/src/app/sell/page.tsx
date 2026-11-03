@@ -42,7 +42,7 @@ export default async function SellPage() {
           {rate ? ` You pay a ${rate} commission on the item price only when it sells.` : " You pay a commission only when it sells."}
         </p>
         <div className="flex flex-wrap gap-3">
-          <Link href={start} className="btn btn-accent px-6 py-3 text-base">
+          <Link href={start} className="btn btn-primary px-6 py-3 text-base">
             Start a listing
           </Link>
           {user && (

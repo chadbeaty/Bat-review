@@ -2,6 +2,8 @@ import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import * as reference from "@/data/reference";
 import fallbackCatalog from "@/data/catalog-fallback.json";
+import type { BatSpec } from "@/lib/bat-drawing";
+import { withCardExtras } from "@/lib/card-extras";
 
 // Read-only catalog queries for public pages. When the database isn't connected, reference data and the
 // researched bat catalog are used instead. Listings and sponsors never fall back: without a database there are none.
@@ -26,6 +28,20 @@ export type ListingCard = {
   imageUrl: string | null;
   imageAlt: string | null;
   publishedAt: string | null;
+  /** Extra facts for drawing and describing the listing (bats especially). Filled in by withCardExtras(). */
+  extra?: CardExtra;
+};
+/** What a listing card needs beyond the basics: category, brand, the bat's real specs, stamps and passport progress. */
+export type CardExtra = {
+  categorySlug: string | null;
+  brand: string | null;
+  bat: BatSpec | null;
+  /** Stamps on the barrel (USSSA, USA, ...) as the seller listed them, or the catalog model's. */
+  stamps: string[];
+  weightOz: number | null;
+  approxHits: number | null;
+  /** How many of the four Bat Passport checks have data (null when it is not a catalog bat). */
+  passportFilled: number | null;
 };
 export type Partner = { id: string; advertiserName: string; imageUrl: string | null; destinationUrl: string | null };
 
@@ -115,7 +131,7 @@ export async function getCatalogStats(): Promise<{ batModels: number; manufactur
 }
 
 /** Live listings, newest first. Optionally only one category, or only featured listings. */
-export async function getListings(opts: { category?: string; featured?: boolean; limit?: number } = {}): Promise<ListingCard[]> {
+export async function getListings(opts: { category?: string; excludeCategory?: string; featured?: boolean; limit?: number } = {}): Promise<ListingCard[]> {
   const supabase = await createClient();
   if (!supabase) return [];
   let query = supabase
@@ -127,10 +143,11 @@ export async function getListings(opts: { category?: string; featured?: boolean;
     .order("published_at", { ascending: false })
     .limit(opts.limit ?? 8);
   if (opts.category) query = query.eq("product_categories.slug", opts.category);
+  if (opts.excludeCategory) query = query.neq("product_categories.slug", opts.excludeCategory);
   if (opts.featured) query = query.eq("featured", true);
   const { data, error } = await query;
   if (error || !data) return [];
-  return data.map((l) => {
+  const cards = data.map((l) => {
     const images = ((l.listing_images as unknown as { image_url: string; alt_text: string | null; display_order: number }[]) ?? []).sort(
       (a, b) => a.display_order - b.display_order
     );
@@ -146,6 +163,7 @@ export async function getListings(opts: { category?: string; featured?: boolean;
       publishedAt: l.published_at,
     };
   });
+  return withCardExtras(cards);
 }
 
 /** Sponsors with a paid, running homepage placement. Empty until a real sponsor buys one. */

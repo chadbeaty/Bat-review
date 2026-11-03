@@ -144,7 +144,7 @@ test.describe("listing page", () => {
     await page.goto(`/listings/${id}`);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Disclosure test Freak 26 oz");
     await expect(page.getByText("$199").first()).toBeVisible();
-    await expect(page.getByText("Condition 8/10 Normal light wear")).toBeVisible();
+    await expect(page.getByText("Condition 8/10 Normal light wear").first()).toBeVisible();
 
     // Bat Passport renders for bat listings linked to a catalog product (if this listing is one).
     const passport = page.getByTestId("bat-passport");
@@ -333,5 +333,36 @@ test.describe("mobile layout", () => {
     await expect(page.getByRole("button", { name: "Apply filters" })).toBeHidden();
     await page.getByRole("button", { name: /^Filters/ }).click();
     await expect(page.getByRole("button", { name: "Apply filters" })).toBeVisible();
+  });
+});
+
+test.describe("the rack and the life meter", () => {
+  test("shows a real listing on the rack, switches to the list view and remembers it", async ({ page }) => {
+    const seller = await member("rack");
+    const word = uniqueWord(9);
+    await createLiveListing(seller, { title: `Rack ${word} 26 oz`, attributes: { weight_oz: 26, certification: ["USSSA"], weighting_type: "endload", construction_type: "two_piece", barrel_length_inches: 13, length_inches: 34, model_year: 2026 } });
+    await page.goto(`/bats?q=${word.slice(0, 6)}`);
+    await expect(page.locator(".fence .hang")).toHaveCount(1);
+    await expect(page.locator(".hang .htag")).toContainText("$220");
+    await page.getByRole("link", { name: "List", exact: true }).click();
+    await expect(page).toHaveURL(/view=list/);
+    await expect(page.locator(".sheet-row")).toHaveCount(1);
+    // The choice is remembered without the URL parameter.
+    await page.goto(`/bats?q=${word.slice(0, 6)}`);
+    await expect(page.locator(".sheet-row")).toHaveCount(1);
+    await page.getByRole("link", { name: "Rack", exact: true }).click();
+    await expect(page.locator(".fence .hang")).toHaveCount(1);
+  });
+
+  test("the listing page places the seller's hit count on the life meter, or says none was given", async ({ page }) => {
+    const seller = await member("life");
+    const attrs = { weight_oz: 26, certification: ["USSSA"], weighting_type: "endload", model_year: 2026 };
+    const withHits = await createLiveListing(seller, { title: "Life meter with hits 26 oz", attributes: { ...attrs, approx_hits: 400 } });
+    const without = await createLiveListing(seller, { title: "Life meter without hits 26 oz", attributes: attrs });
+    await page.goto(`/listings/${withHits}`);
+    await expect(page.getByTestId("life-meter")).toContainText("Seller reports about 400 hits");
+    await expect(page.getByTestId("life-meter").getByRole("meter")).toHaveAttribute("aria-valuenow", "400");
+    await page.goto(`/listings/${without}`);
+    await expect(page.getByTestId("life-meter")).toContainText("Seller didn't give a hit count");
   });
 });

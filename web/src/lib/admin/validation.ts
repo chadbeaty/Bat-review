@@ -11,6 +11,9 @@ const field = z
     options: z.array(z.union([z.string().max(60), z.number()])).max(60).optional(),
     default: z.union([z.string(), z.number(), z.boolean()]).optional(),
     hint: z.string().max(200).optional(),
+    help: z.string().max(200).optional(),
+    min: z.number().optional(),
+    max: z.number().optional(),
   })
   .strict()
   .refine((f) => !["select", "multiselect"].includes(f.type) || (f.options && f.options.length > 0), {

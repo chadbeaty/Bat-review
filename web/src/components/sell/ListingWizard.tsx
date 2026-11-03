@@ -129,7 +129,7 @@ export function ListingWizard(props: {
                     onClick={() => can && goTo(s.key)}
                     disabled={!can}
                     aria-current={active ? "step" : undefined}
-                    className={`rounded-full border px-3 py-1.5 ${active ? "border-ink bg-ink text-surface" : can ? "border-line-strong hover:border-ink" : "border-line text-ink-soft opacity-60"}`}
+                    className={`rounded-sm border px-3 py-1.5 ${active ? "border-ink bg-ink text-surface" : can ? "border-line-strong hover:border-ink" : "border-line text-ink-soft opacity-60"}`}
                   >
                     <span className="font-mono">{i + 1}</span> {s.label}
                   </button>

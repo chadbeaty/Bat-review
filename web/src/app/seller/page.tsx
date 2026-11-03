@@ -40,7 +40,7 @@ export default async function SellerDashboard() {
           <p className="eyebrow">Selling</p>
           <h1 className="display text-5xl font-bold">Seller dashboard</h1>
         </div>
-        <Link href="/sell/new" className="btn btn-accent">
+        <Link href="/sell/new" className="btn btn-primary">
           Start a listing
         </Link>
       </div>

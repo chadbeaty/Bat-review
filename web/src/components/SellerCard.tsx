@@ -32,10 +32,10 @@ export function ratingText(s: Pick<SellerSummary, "averageRating" | "reviewCount
 export function TrustBadges({ seller }: { seller: Pick<SellerSummary, "sellerVerified" | "identityVerified"> }) {
   return (
     <ul className="flex flex-wrap gap-2 text-xs font-semibold">
-      <li className={`rounded-full border px-2.5 py-1 ${seller.sellerVerified ? "border-success/40 bg-success/10 text-success" : "border-line text-ink-soft"}`}>
+      <li className={`rounded-sm border px-2.5 py-1 ${seller.sellerVerified ? "border-success/40 bg-success/10 text-success" : "border-line text-ink-soft"}`}>
         {seller.sellerVerified ? "Verified seller" : "Not a verified seller yet"}
       </li>
-      <li className={`rounded-full border px-2.5 py-1 ${seller.identityVerified ? "border-success/40 bg-success/10 text-success" : "border-line text-ink-soft"}`}>
+      <li className={`rounded-sm border px-2.5 py-1 ${seller.identityVerified ? "border-success/40 bg-success/10 text-success" : "border-line text-ink-soft"}`}>
         {seller.identityVerified ? "Identity verified" : "Identity not verified"}
       </li>
     </ul>

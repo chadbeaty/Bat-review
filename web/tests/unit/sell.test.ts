@@ -44,9 +44,24 @@ describe("attribute form from attribute_schema", () => {
       "barrel_length_inches",
       "length_inches",
       "model_year",
+      "approx_hits",
     ]);
     expect(batFields.find((f) => f.key === "certification")).toMatchObject({ type: "multiselect", required: true });
     expect(batFields.find((f) => f.key === "construction_type")?.required).toBe(false);
+  });
+
+  it("accepts an optional whole-number hit count from 0 to 10,000 and shows its help", () => {
+    const hits = batFields.find((f) => f.key === "approx_hits")!;
+    expect(hits).toMatchObject({ type: "number", required: false, label: "About how many hits?", min: 0, max: 10000 });
+    expect(hits.help).toContain("150–200 hits");
+    const schema = attributesSchema(batFields);
+    const base = { weight_oz: "26", certification: ["USSSA"], weighting_type: "endload", model_year: "2026" };
+    expect(schema.safeParse(coerceAttributes(batFields, base)).success).toBe(true);
+    expect(schema.safeParse(coerceAttributes(batFields, { ...base, approx_hits: "400" })).data).toMatchObject({ approx_hits: 400 });
+    expect(schema.safeParse(coerceAttributes(batFields, { ...base, approx_hits: "0" })).success).toBe(true);
+    expect(schema.safeParse(coerceAttributes(batFields, { ...base, approx_hits: "10001" })).success).toBe(false);
+    expect(schema.safeParse(coerceAttributes(batFields, { ...base, approx_hits: "-5" })).success).toBe(false);
+    expect(schema.safeParse(coerceAttributes(batFields, { ...base, approx_hits: "12.5" })).success).toBe(false);
   });
 
   it("reads the bat photo checklist", () => {

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { BrowsePage } from "@/components/shop/BrowsePage";
 import { browseTitle, readBrowseQuery } from "@/lib/browse";
+import { readViewMode } from "@/lib/view-mode";
 import { getCategories } from "@/lib/catalog";
 import { getCategoryDetail } from "@/lib/listings";
 import { parseSearchParams, toQueryString } from "@/lib/search";
@@ -35,11 +36,14 @@ export default async function CategoryPage({ params, searchParams }: PageProps<"
   if (match.slug === "bats") permanentRedirect(`/bats${toQueryString(parseSearchParams(sp))}`);
   const path = `/shop/${match.slug}`;
   const query = readBrowseQuery(path, sp, match.fields.map((f) => f.key));
+  const { view, explicit } = await readViewMode(sp);
   return (
     <BrowsePage
       path={path}
       query={query}
       variant="category"
+      view={view}
+      explicitView={explicit}
       category={match}
       eyebrow="Shop"
       title={match.name}

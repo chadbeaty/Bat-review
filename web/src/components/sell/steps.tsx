@@ -211,7 +211,7 @@ function AttributeInput({
 }) {
   const id = `attr-${field.key}`;
   const optional = !field.required && <span className="font-normal text-ink-soft"> (optional)</span>;
-  const hint = [fromCatalog ? "From the catalog. Confirm it matches." : null, listedWeights?.length ? `Listed weights: ${listedWeights.join(", ")} oz.` : null]
+  const hint = [field.help ?? null, fromCatalog ? "From the catalog. Confirm it matches." : null, listedWeights?.length ? `Listed weights: ${listedWeights.join(", ")} oz.` : null]
     .filter(Boolean)
     .join(" ");
   const describedBy = error ? `e-${id}` : hint ? `h-${id}` : undefined;
@@ -871,7 +871,7 @@ export function PublishStep() {
       <div className="flex flex-wrap gap-3 border-t border-line pt-4">
         <button
           type="button"
-          className="btn btn-accent"
+          className="btn btn-primary"
           disabled={w.pending}
           onClick={async () => {
             const r = await w.run(() => publishListing(s.listing.id));

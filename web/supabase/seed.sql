@@ -11,7 +11,8 @@ insert into public.product_categories (name, slug, description, display_order, a
       {"key":"construction_type","label":"Construction","type":"select","required":false,"options":["one_piece","two_piece","unknown"]},
       {"key":"barrel_length_inches","label":"Barrel length (in)","type":"number","required":false},
       {"key":"length_inches","label":"Length (in)","type":"number","required":false,"default":34},
-      {"key":"model_year","label":"Model year","type":"number","required":true}
+      {"key":"model_year","label":"Model year","type":"number","required":true},
+      {"key":"approx_hits","label":"About how many hits?","type":"number","required":false,"min":0,"max":10000,"help":"Rough is fine. Composite bats break in over the first 150–200 hits."}
     ]'::jsonb,
     '[
       {"type":"full","label":"Full bat"},{"type":"barrel","label":"Barrel"},{"type":"end_cap","label":"End cap"},
