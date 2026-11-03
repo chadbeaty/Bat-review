@@ -34,7 +34,7 @@ More detail: [`docs/LAUNCH_CHECKLIST.md`](docs/LAUNCH_CHECKLIST.md) · [`docs/OP
 <a id="whats-included"></a>
 ## 1. What's included and what works
 
-**Fully working and tested** (87 automated tests, including the database's security rules on a real Postgres database):
+**Fully working and tested** (90 automated tests, including the database's security rules on a real Postgres database):
 
 | Area | What it does |
 | --- | --- |
@@ -47,7 +47,9 @@ More detail: [`docs/LAUNCH_CHECKLIST.md`](docs/LAUNCH_CHECKLIST.md) · [`docs/OP
 | AI research engine | Seven agents (Source Monitor, Statement Extraction, Historical Matching, Evidence Assessment, Investigation Draft, Prediction Resolution, Editorial Distribution) on Claude Opus 5.5 with structured, validated JSON. Quotes are kept only if they appear **word for word** in the stored source text. Daily spending cap, cost tracking, retries, de-duplication. |
 | Source connectors | RSS/Atom feeds, YouTube Data API, SEC EDGAR, U.S. House disclosures, public web pages, CoinGecko and Financial Modeling Prep prices. Senate disclosures are deliberately manual (see risks). |
 | Newsletter | Double opt-in signup, confirmation and welcome emails, one-click unsubscribe, weekly digest and investigation alerts — published cases only. |
-| SEO and sharing | Unique titles and descriptions, canonical URLs, Open Graph and X cards, sitemap, robots.txt, breadcrumbs, structured data (NewsMediaOrganization, NewsArticle, ProfilePage, BreadcrumbList), generated share images in three sizes, copy-ready posts for X, Facebook, Instagram, TikTok/Shorts. |
+| Uploads | Person photos (public, credit required) and evidence files — screenshots or filing PDFs — kept private with a fingerprint (SHA-256) proving they haven't changed. File types are checked from the file's contents; 3 MB photo / 4 MB evidence limits. |
+| Audience | RSS feed of new investigations (`/feed.xml`) and Vercel Web Analytics (page views, no cookies) — switch it on under Vercel → your project → Analytics. |
+| SEO and sharing | Unique titles and descriptions, canonical URLs, Open Graph and X cards, sitemap, robots.txt, breadcrumbs, structured data (NewsMediaOrganization, NewsArticle, ProfilePage, BreadcrumbList), generated share images in three sizes (for each case and for the weekly roundup), copy-ready posts for X, Facebook, Instagram, TikTok/Shorts. |
 | Demo content | Five fictional people and cases clearly marked **DEMO ONLY — fictional**, linking only to `example.com`, never indexed. One switch hides them; one button deletes them. |
 | Research candidates | Michael Saylor, Cathie Wood, Jim Cramer, Warren Buffett, Robert Kiyosaki, Anthony Pompliano, Raoul Pal and Nancy Pelosi are listed **internally only**, with no statements or claims, for your editors to research. |
 

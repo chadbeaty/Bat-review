@@ -43,7 +43,8 @@ const nextConfig: NextConfig = {
     },
   },
   experimental: {
-    serverActions: { bodySizeLimit: "2mb" },
+    // Uploads are capped at 4 MB in code (src/lib/uploads.ts), under Vercel's 4.5 MB request limit.
+    serverActions: { bodySizeLimit: "4.5mb" },
   },
   async headers() {
     return [

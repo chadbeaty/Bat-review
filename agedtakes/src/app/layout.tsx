@@ -16,6 +16,7 @@ export const metadata: Metadata = {
   openGraph: { siteName: BRAND.name, type: "website", locale: "en_US" },
   twitter: { card: "summary_large_image" },
   formatDetection: { telephone: false, email: false, address: false },
+  alternates: { types: { "application/rss+xml": [{ url: "/feed.xml", title: "Aged Takes — new investigations" }] } },
 };
 
 export const viewport: Viewport = {

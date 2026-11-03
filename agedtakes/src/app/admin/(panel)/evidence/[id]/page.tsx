@@ -4,7 +4,7 @@ import { AdminHeader, Field, Flash, Panel, Return, Submit, type SearchParams } f
 import { requireStaff } from "@/lib/auth/staff";
 import { readFlash } from "@/lib/admin/action";
 import { formatDateTime } from "@/lib/format";
-import { addSnapshot, extractFromSource, fetchSnapshot, updateSource } from "../actions";
+import { addSnapshot, extractFromSource, fetchSnapshot, openSourceFile, updateSource, uploadSourceFile } from "../actions";
 import { SourceFields } from "../SourceForm";
 
 export const metadata = { title: "Source" };
@@ -51,6 +51,18 @@ export default async function SourcePage({ params, searchParams }: { params: Pro
             {latest && (
               <form action={extractFromSource} className="mt-3"><input type="hidden" name="id" value={s.id} /><Return to={back} /><Submit tone="ghost" small>Extract statements with AI</Submit></form>
             )}
+          </Panel>
+          <Panel title="Stored file (private)" note={s.file_path ? `${s.file_mime} · ${Math.round((s.file_size ?? 0) / 1024)} KB` : "none"}>
+            {s.file_path && (
+              <form action={openSourceFile} className="mb-3"><input type="hidden" name="id" value={s.id} /><Submit small tone="ghost">Open stored file</Submit></form>
+            )}
+            {s.file_sha256 && <p className="meta mb-3 break-all">sha256 {s.file_sha256}</p>}
+            <form action={uploadSourceFile} className="space-y-2">
+              <input type="hidden" name="id" value={s.id} /><Return to={back} />
+              <input type="file" name="file" accept="image/jpeg,image/png,image/webp,application/pdf" required className="block w-full text-sm" />
+              <p className="meta">Screenshot or PDF, up to 4 MB. Kept private; the hash proves it hasn&apos;t changed.</p>
+              <Submit small>{s.file_path ? "Replace file" : "Upload file"}</Submit>
+            </form>
           </Panel>
           <Panel title="Used in">
             <ul className="space-y-1 text-sm">

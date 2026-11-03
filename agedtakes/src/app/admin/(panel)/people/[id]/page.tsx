@@ -4,7 +4,7 @@ import { AdminHeader, Field, Flash, Panel, Return, SelectField, StatusPill, Subm
 import { requireStaff } from "@/lib/auth/staff";
 import { readFlash } from "@/lib/admin/action";
 import { formatShortDate } from "@/lib/format";
-import { deletePerson, updatePerson } from "../actions";
+import { deletePerson, updatePerson, uploadPersonPhoto } from "../actions";
 
 export const metadata = { title: "Edit person" };
 
@@ -56,6 +56,20 @@ export default async function EditPerson({ params, searchParams }: { params: Pro
           </form>
         </Panel>
         <div className="space-y-6">
+          <Panel title="Photo">
+            {p.image_url && (
+              // eslint-disable-next-line @next/next/no-img-element -- preview of an editor-uploaded image
+              <img src={p.image_url} alt="" width={120} height={120} className="mb-3 h-30 w-30 border border-rule object-cover" />
+            )}
+            <form action={uploadPersonPhoto} className="space-y-2">
+              <input type="hidden" name="id" value={p.id} /><Return to={back} />
+              <input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required className="block w-full text-sm" />
+              <Field label="Photo credit" name="image_credit" defaultValue={p.image_credit} required />
+              <Field label="License" name="image_license" defaultValue={p.image_license} placeholder="e.g. CC BY 2.0, used with permission" />
+              <p className="meta">JPEG, PNG or WebP, up to 3 MB. Only photos you have the right to use.</p>
+              <Submit small>Upload photo</Submit>
+            </form>
+          </Panel>
           <Panel title="Cases">
             <ul className="space-y-2">{(cases ?? []).map((c) => <li key={c.id} className="flex justify-between gap-2"><Link className="link" href={`/admin/cases/${c.id}`}>{c.title}</Link><StatusPill status={c.status} /></li>)}</ul>
             <Link className="btn btn-sm mt-3" href={`/admin/cases/new?person=${p.id}`}>New case</Link>

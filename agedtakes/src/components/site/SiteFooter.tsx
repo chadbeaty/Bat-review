@@ -3,7 +3,7 @@ import { Wordmark } from "@/components/brand";
 import { BRAND } from "@/lib/seo";
 
 const COLUMNS = [
-  { title: "The archive", links: [["/cases", "Investigations"], ["/people", "People"], ["/predictions", "Prediction scoreboard"], ["/never-sell", "Never Sell Index"], ["/search", "Search"]] },
+  { title: "The archive", links: [["/cases", "Investigations"], ["/people", "People"], ["/predictions", "Prediction scoreboard"], ["/never-sell", "Never Sell Index"], ["/search", "Search"], ["/feed.xml", "RSS feed"]] },
   { title: "Standards", links: [["/methodology", "Methodology"], ["/corrections", "Corrections"], ["/about", "About & independence"], ["/submit", "Submit a receipt"]] },
   { title: "Legal", links: [["/privacy", "Privacy"], ["/terms", "Terms"]] },
 ] as const;

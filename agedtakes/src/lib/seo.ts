@@ -31,7 +31,7 @@ export function pageMetadata(opts: {
   return {
     title: opts.title,
     description: opts.description,
-    alternates: { canonical: url },
+    alternates: { canonical: url, types: { "application/rss+xml": [{ url: absoluteUrl("/feed.xml"), title: `${BRAND.name} — new investigations` }] } },
     robots: opts.noindex ? { index: false, follow: true } : undefined,
     openGraph: {
       title: opts.title,

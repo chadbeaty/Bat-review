@@ -4,6 +4,10 @@ import { audit, InputError, refreshPublic, runAction, str } from "@/lib/admin/ac
 import { formValues, parseOrThrow, sourceSchema } from "@/lib/validation/admin";
 import { sha256 } from "@/lib/ai/hash";
 import { manualUrlConnector } from "@/lib/connectors/official";
+import { createHash } from "node:crypto";
+import { checkUpload } from "@/lib/uploads";
+import { redirect } from "next/navigation";
+import { assertStaff } from "@/lib/auth/staff";
 
 function toRow(form: FormData) {
   const v = parseOrThrow(sourceSchema, formValues(form, ["is_primary"]));
@@ -76,4 +80,35 @@ export async function extractFromSource(form: FormData) {
     if (error) throw new InputError(/duplicate/.test(error.message) ? "Extraction for this source is already queued." : error.message);
     return { notice: "Extraction queued. Run it from the research queue, or wait for the next scheduled run.", to: "/admin/research" };
   });
+}
+
+/** Stores a screenshot or document (e.g. a filing PDF) for this source in private storage. */
+export async function uploadSourceFile(form: FormData) {
+  const id = str(form, "id");
+  await runAction("researcher", form, `/admin/evidence/${id}`, async (staff) => {
+    const file = form.get("file");
+    if (!(file instanceof File)) throw new InputError("Choose a file to upload.");
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    const checked = checkUpload("evidence", bytes);
+    if (!checked.ok) throw new InputError(checked.message);
+    const path = `sources/${id}/${crypto.randomUUID()}.${checked.ext}`;
+    const { error } = await staff.db.storage.from("evidence-files").upload(path, bytes, { contentType: checked.mime, upsert: false });
+    if (error) throw new InputError(`Upload failed: ${error.message}`);
+    const hash = createHash("sha256").update(bytes).digest("hex");
+    const { error: updateError } = await staff.db.from("evidence_sources").update({ file_path: path, file_mime: checked.mime, file_size: checked.size, file_sha256: hash }).eq("id", id);
+    if (updateError) throw new InputError(updateError.message);
+    await audit(staff, "upload_source_file", "evidence_sources", id, { path, size: checked.size, sha256: hash });
+    return "File stored privately with this source.";
+  });
+}
+
+/** Opens a private evidence file through a link that expires after 10 minutes. */
+export async function openSourceFile(form: FormData) {
+  const staff = await assertStaff("researcher");
+  const id = str(form, "id");
+  const { data: src } = await staff.db.from("evidence_sources").select("file_path").eq("id", id).single();
+  if (!src?.file_path) redirect(`/admin/evidence/${id}`);
+  const { data, error } = await staff.db.storage.from("evidence-files").createSignedUrl(src.file_path, 600);
+  if (error || !data) redirect(`/admin/evidence/${id}`);
+  redirect(data.signedUrl);
 }

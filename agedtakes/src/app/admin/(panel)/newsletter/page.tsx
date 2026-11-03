@@ -8,6 +8,8 @@ import { digestCases } from "@/lib/newsletter-send";
 import { BRAND, absoluteUrl } from "@/lib/seo";
 import { formatDateTime } from "@/lib/format";
 import { createIssue, sendNewsletterIssue, updateSubscriber } from "../system-actions";
+import { CopyButton } from "@/components/admin/CopyButton";
+import { weeklyRoundupCopy } from "@/lib/social/copy";
 
 export const metadata = { title: "Newsletter" };
 export const maxDuration = 300;
@@ -27,7 +29,10 @@ export default async function Newsletter({ searchParams }: { searchParams: Searc
     admin ? staff.db.from("newsletter_subscribers").select("id, email, status, confirmed_at, created_at, consent_source").order("created_at", { ascending: false }).limit(100) : Promise.resolve({ data: null }),
   ]);
   const issue = (issues ?? []).find((i) => i.id === issueId);
-  const preview = issue ? digestEmail({ subject: issue.subject, intro: issue.intro, cases: await digestCases(staff.db, issue.case_ids), siteUrl: absoluteUrl("/").replace(/\/$/, ""), unsubscribeUrl: "#", oneClickUrl: "#" }) : null;
+  const issueCases = issue ? await digestCases(staff.db, issue.case_ids) : [];
+  const siteRoot = absoluteUrl("/").replace(/\/$/, "");
+  const preview = issue ? digestEmail({ subject: issue.subject, intro: issue.intro, cases: issueCases, siteUrl: siteRoot, unsubscribeUrl: "#", oneClickUrl: "#" }) : null;
+  const roundup = issueCases.length ? weeklyRoundupCopy(issueCases.map((c) => ({ title: c.title, url: c.url })), siteRoot) : null;
   return (
     <div className="space-y-6">
       <AdminHeader kicker="Audience" title={BRAND.newsletter}>Double opt-in only. Issues can include published cases only — the database refuses anything else.{!emailConfigured() && <strong className="block text-amber">Resend is not configured: emails won&apos;t send.</strong>}</AdminHeader>
@@ -57,6 +62,15 @@ export default async function Newsletter({ searchParams }: { searchParams: Searc
       {issue && preview && (
         <Panel title={`Preview: ${issue.subject}`} note={issue.status}>
           <iframe title="Email preview" srcDoc={preview.html} sandbox="" className="h-[36rem] w-full border border-rule bg-white" />
+          {roundup && (
+            <div className="mt-4 border-t border-rule pt-3">
+              <div className="flex items-center justify-between"><p className="kicker">Weekly roundup post</p><CopyButton text={roundup} /></div>
+              <pre className="mt-1 whitespace-pre-wrap bg-paper-2 p-2 font-mono text-xs">{roundup}</pre>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {(["square", "story", "og"] as const).map((f) => <a key={f} className="btn btn-ghost btn-sm" href={`/admin/social/weekly/${issue.id}?format=${f}`} target="_blank" rel="noopener">{f === "square" ? "Square graphic" : f === "story" ? "Vertical graphic" : "Link graphic"}</a>)}
+              </div>
+            </div>
+          )}
           {issue.status !== "sent" && (
             <form action={sendNewsletterIssue} className="mt-4 space-y-2">
               <input type="hidden" name="issue_id" value={issue.id} /><Return to={`/admin/newsletter?issue=${issue.id}`} />

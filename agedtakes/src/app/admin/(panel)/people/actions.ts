@@ -3,6 +3,7 @@
 import { refreshPublic, runAction, str, InputError } from "@/lib/admin/action";
 import { formValues, parseOrThrow, personSchema } from "@/lib/validation/admin";
 import { slugify } from "@/lib/format";
+import { checkUpload } from "@/lib/uploads";
 
 export async function createPerson(form: FormData) {
   await runAction("researcher", form, "/admin/people", async ({ db, user }) => {
@@ -45,5 +46,27 @@ export async function deletePerson(form: FormData) {
     if (error) throw new InputError("This person still has statements, predictions or cases. Archive them instead.");
     refreshPublic();
     return { notice: "Person deleted.", to: "/admin/people" };
+  });
+}
+
+/** Uploads a person's photo to public storage and sets it on the profile, with the required credit. */
+export async function uploadPersonPhoto(form: FormData) {
+  const id = str(form, "id");
+  await runAction("researcher", form, `/admin/people/${id}`, async ({ db }) => {
+    const file = form.get("photo");
+    if (!(file instanceof File)) throw new InputError("Choose an image to upload.");
+    const credit = str(form, "image_credit");
+    if (credit.length < 2) throw new InputError("Add the photo credit (who took it or where it's from).");
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    const checked = checkUpload("photo", bytes);
+    if (!checked.ok) throw new InputError(checked.message);
+    const path = `people/${id}/${crypto.randomUUID()}.${checked.ext}`;
+    const { error } = await db.storage.from("person-images").upload(path, bytes, { contentType: checked.mime, cacheControl: "31536000", upsert: false });
+    if (error) throw new InputError(`Upload failed: ${error.message}`);
+    const { data } = db.storage.from("person-images").getPublicUrl(path);
+    const { error: updateError } = await db.from("people").update({ image_url: data.publicUrl, image_credit: credit, image_license: str(form, "image_license") || null }).eq("id", id);
+    if (updateError) throw new InputError(updateError.message);
+    refreshPublic();
+    return "Photo uploaded.";
   });
 }
