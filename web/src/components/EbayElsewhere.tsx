@@ -145,7 +145,7 @@ function PassportCompareCard({ compare }: { compare: PassportCompare }) {
         <div key={c.key} className="grid gap-1 border-t-2 border-dashed border-steel pt-2.5">
           <div className="flex items-center justify-between gap-2">
             <span className="text-sm font-semibold">{c.title}</span>
-            <SourceLabel source={c.source} />
+            {c.filled && <SourceLabel source={c.source} />}
           </div>
           <p className="text-sm">{c.headline}</p>
           {c.detail && <p className="text-xs text-ink-soft">{c.detail}</p>}
