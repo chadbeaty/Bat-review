@@ -15,6 +15,11 @@ export type AttributeField = {
   required: boolean;
   options?: (string | number)[];
   default?: AttributeValue;
+  /** Short help shown under the field. */
+  help?: string;
+  /** Allowed range for number fields (overrides the built-in ranges). */
+  min?: number;
+  max?: number;
 };
 
 export type RequiredPhoto = { type: string; label: string; optional: boolean };
@@ -26,6 +31,9 @@ const fieldSchema = z.object({
   required: z.boolean().optional().default(false),
   options: z.array(z.union([z.string(), z.number()])).optional(),
   default: z.union([z.string(), z.number(), z.array(z.string())]).optional(),
+  help: z.string().max(200).optional(),
+  min: z.number().optional(),
+  max: z.number().optional(),
 });
 
 /** The fields in a category's attribute_schema. Malformed entries are skipped rather than breaking the form. */
@@ -78,7 +86,8 @@ export function formatAttribute(field: AttributeField, value: AttributeValue | u
   return optionLabel(value);
 }
 
-function numberRange(key: string): [number, number] {
+function numberRange(key: string, f?: Pick<AttributeField, "min" | "max">): [number, number] {
+  if (f?.min != null || f?.max != null) return [f.min ?? 0, f.max ?? 100000];
   if (key === "model_year") return [1980, new Date().getFullYear() + 2];
   if (key === "weight_oz") return [10, 40];
   if (key.endsWith("_inches")) return [1, 120];
@@ -91,9 +100,10 @@ export function attributesSchema(fields: AttributeField[]) {
   for (const f of fields) {
     let s: z.ZodType;
     if (f.type === "number") {
-      const [min, max] = numberRange(f.key);
+      const [min, max] = numberRange(f.key, f);
       let n = z.number({ message: `Enter ${f.label.toLowerCase()}` }).min(min, `${f.label}: use ${min} or more`).max(max, `${f.label}: use ${max} or less`);
       if (f.key === "model_year") n = n.int(`${f.label}: use a whole year`);
+      if (f.key === "approx_hits") n = n.int(`${f.label}: use a whole number`);
       s = f.options?.length
         ? n.refine((v) => f.options!.map(Number).includes(v), `Choose one of the listed values for ${f.label.toLowerCase()}`)
         : n;

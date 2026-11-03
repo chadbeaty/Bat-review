@@ -255,6 +255,15 @@ suite("admin database functions", () => {
       await expect(db.owner("update site_settings set value = '3' where key = 'price_guide_full_sales'")).rejects.toThrow(/below the minimum/);
     });
 
+    it("has a bats-only launch setting that defaults on and must be a boolean", async () => {
+      const [row] = await db.owner<{ value: unknown; is_public: boolean }>("select value, is_public from site_settings where key = 'bats_only_mode'");
+      expect(row).toEqual({ value: true, is_public: true });
+      await expect(db.owner("update site_settings set value = '1' where key = 'bats_only_mode'")).rejects.toThrow(/true or false/);
+      await db.as("service", "select admin_update_setting($1, 'bats_only_mode', 'false')", [admin.id]);
+      expect((await db.owner<{ value: unknown }>("select value from site_settings where key = 'bats_only_mode'"))[0].value).toBe(false);
+      await db.as("service", "select admin_update_setting($1, 'bats_only_mode', 'true')", [admin.id]);
+    });
+
     it("updates a setting through the admin function and records the admin", async () => {
       await db.as("service", "select admin_update_setting($1, 'offer_expiry_hours', '24')", [admin.id]);
       const [row] = await db.owner("select value, updated_by from site_settings where key = 'offer_expiry_hours'");

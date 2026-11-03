@@ -19,6 +19,7 @@ import { listingPath } from "@/lib/paths";
 import { optionLabel, type AttributeField } from "@/lib/sell/attributes";
 import {
   DAMAGE_QUESTIONS,
+  BAT_PHOTO_SLOTS,
   IMAGE_TYPES,
   IMAGE_TYPE_LABELS,
   MAX_PHOTOS,
@@ -30,6 +31,7 @@ import {
   ozToLb,
   parseDollars,
   photoProblem,
+  slotSummary,
   suggestTitle,
   type DamageKey,
 } from "@/lib/sell/listing";
@@ -211,7 +213,7 @@ function AttributeInput({
 }) {
   const id = `attr-${field.key}`;
   const optional = !field.required && <span className="font-normal text-ink-soft"> (optional)</span>;
-  const hint = [fromCatalog ? "From the catalog. Confirm it matches." : null, listedWeights?.length ? `Listed weights: ${listedWeights.join(", ")} oz.` : null]
+  const hint = [field.help ?? null, fromCatalog ? "From the catalog. Confirm it matches." : null, listedWeights?.length ? `Listed weights: ${listedWeights.join(", ")} oz.` : null]
     .filter(Boolean)
     .join(" ");
   const describedBy = error ? `e-${id}` : hint ? `h-${id}` : undefined;
@@ -295,17 +297,21 @@ export function PhotosStep() {
   const [problems, setProblems] = useState<string[]>([]);
   const fileInput = useRef<HTMLInputElement>(null);
   const checklist = s.category.photos;
+  const isBat = s.category.slug === "bats";
+  const slotTypes = new Set(BAT_PHOTO_SLOTS.map((x) => x.type));
+  const summary = slotSummary(s.photos);
+  const extraPhotos = isBat ? s.photos.filter((p) => !slotTypes.has(p.imageType)) : s.photos;
   const have = new Set(s.photos.map((p) => p.imageType));
 
   const nextType = (taken: Set<string>) => checklist.find((c) => !taken.has(c.type) && !c.optional)?.type ?? "other";
 
-  async function handleFiles(files: FileList | null) {
+  async function handleFiles(files: FileList | null, slot?: { type: string; replaceIds?: string[] }) {
     if (!files?.length) return;
     const supabase = createClient();
     if (!supabase) return w.setError("Photo uploads aren't available: the database isn't connected.");
     const list = [...files];
     const errs: string[] = [];
-    const room = MAX_PHOTOS - s.photos.length;
+    const room = MAX_PHOTOS - s.photos.length + (slot?.replaceIds?.length ?? 0);
     if (list.length > room) errs.push(`A listing can have up to ${MAX_PHOTOS} photos, so only the first ${Math.max(room, 0)} will be added.`);
     const accepted = list.slice(0, Math.max(room, 0)).filter((f) => {
       const p = photoProblem(f);
@@ -324,8 +330,10 @@ export function PhotosStep() {
         const path = listingPhotoPath(w.userId, s.listing.id, crypto.randomUUID().replace(/-/g, ""), ext);
         const { error } = await supabase.storage.from("listing-images").upload(path, blob, { contentType: type, upsert: false, cacheControl: "31536000" });
         if (error) throw new Error("upload");
-        const imageType = nextType(taken);
+        const imageType = slot?.type ?? nextType(taken);
         taken.add(imageType);
+        // Replacing a slot's photo: drop the old one first so a 12-photo listing can still swap.
+        for (const oldId of slot?.replaceIds ?? []) await w.run(() => removePhoto(s.listing.id, oldId));
         const r = await w.run(() => addPhoto(s.listing.id, { path, imageType }));
         if (!r.ok) throw new Error(r.error ?? "save");
         setUploads((u) => u.filter((x) => x.key !== key));
@@ -354,7 +362,59 @@ export function PhotosStep() {
         intro={`Clear, well-lit photos sell faster. Add up to ${MAX_PHOTOS}; the first one is the cover. At least one is needed to publish.`}
       />
       <ErrorBanner />
-      {checklist.length > 0 && (
+      {isBat && (
+        <div className="grid gap-3" data-testid="photo-slots">
+          <p className="text-sm text-ink-soft" role="status">
+            {summary.missingEncouraged.length === 0
+              ? "Every main photo is in. Buyers will thank you."
+              : `Still missing: ${summary.missingEncouraged.map((t) => IMAGE_TYPE_LABELS[t]).join(", ")}.`}
+          </p>
+          <ul className="grid gap-3 sm:grid-cols-2">
+            {BAT_PHOTO_SLOTS.map((slot) => {
+              const mine = s.photos.filter((p) => p.imageType === slot.type);
+              const tag = slot.need === "required" ? "Required" : slot.need === "encouraged" ? (slot.type === "markings" ? "Strongly encouraged" : "Encouraged") : "Optional";
+              const full = s.photos.length >= MAX_PHOTOS && !(mine.length && !slot.multiple);
+              return (
+                <li key={slot.type} className="card grid content-start gap-2 p-3" data-slot={slot.type} data-filled={mine.length > 0}>
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="font-semibold">{slot.label}</p>
+                    <span className={`label !text-[0.5625rem] border-[1.5px] px-1.5 py-0.5 leading-none ${slot.need === "required" ? "border-ink bg-ink text-surface" : "border-steel text-ink-soft"}`}>{tag}</span>
+                  </div>
+                  <p className="text-xs text-ink-soft">{slot.hint}</p>
+                  {mine.length > 0 && (
+                    <ul className="flex flex-wrap gap-2">
+                      {mine.map((p) => (
+                        <li key={p.id} className="relative">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={p.url} alt={`${slot.label} photo`} className="h-20 w-20 border-2 border-ink object-cover" />
+                          <button type="button" className="absolute -right-2 -top-2 grid h-8 w-8 place-items-center border-2 border-ink bg-surface text-danger" disabled={w.pending || busy} onClick={() => w.run(() => removePhoto(s.listing.id, p.id))} aria-label={`Remove ${slot.label} photo`}>
+                            ×
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                  <label className={`btn btn-outline min-h-11 cursor-pointer justify-self-start ${busy || full ? "opacity-50" : ""}`}>
+                    {busy ? "Uploading…" : mine.length ? (slot.multiple ? "Add another" : "Replace") : "Add photo"}
+                    <input
+                      type="file"
+                      accept={[...PHOTO_TYPES, ".heic", ".heif"].join(",")}
+                      multiple={Boolean(slot.multiple)}
+                      className="sr-only"
+                      data-testid={`slot-input-${slot.type}`}
+                      disabled={busy || full}
+                      aria-label={`${slot.label} photo`}
+                      onChange={(e) => handleFiles(e.target.files, { type: slot.type, replaceIds: slot.multiple ? [] : mine.map((m) => m.id) })}
+                    />
+                  </label>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+
+      {!isBat && checklist.length > 0 && (
         <div className="rounded-md border border-line bg-paper p-3">
           <p className="font-semibold">Photos buyers look for</p>
           <ul className="mt-2 grid gap-1 text-sm sm:grid-cols-2">
@@ -375,7 +435,7 @@ export function PhotosStep() {
       )}
 
       <div className="grid gap-2">
-        <label htmlFor="photo-input" className="btn btn-outline cursor-pointer justify-self-start">
+        <label htmlFor="photo-input" className={`btn btn-outline cursor-pointer justify-self-start ${isBat ? "hidden" : ""}`}>
           {busy ? "Uploading…" : "Add photos"}
         </label>
         <input
@@ -389,7 +449,7 @@ export function PhotosStep() {
           onChange={(e) => handleFiles(e.target.files)}
           aria-describedby="h-photos"
         />
-        <span id="h-photos" className="text-sm text-ink-soft">
+        <span id="h-photos" className={`text-sm text-ink-soft ${isBat ? "hidden" : ""}`}>
           JPG, PNG, WEBP or HEIC, up to 10 MB each. Large photos are resized in your browser before upload.
         </span>
         {problems.map((p) => (
@@ -404,9 +464,9 @@ export function PhotosStep() {
         ))}
       </div>
 
-      {s.photos.length > 0 && (
-        <ol className="grid gap-3 sm:grid-cols-2" aria-label="Your photos">
-          {s.photos.map((p, i) => (
+      {(isBat ? extraPhotos : s.photos).length > 0 && (
+        <ol className="grid gap-3 sm:grid-cols-2" aria-label={isBat ? "Other photos" : "Your photos"}>
+          {(isBat ? extraPhotos : s.photos).map((p, i) => (
             <li key={p.id} className="grid grid-cols-[96px_1fr] gap-3 rounded-md border border-line p-2">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={p.url} alt={p.alt ?? `Photo ${i + 1}`} className="h-24 w-24 rounded object-cover" />
@@ -431,13 +491,13 @@ export function PhotosStep() {
                   </select>
                 </label>
                 <div className="flex flex-wrap gap-1 text-sm">
-                  <button type="button" className="btn btn-outline px-2 py-1" disabled={i === 0 || w.pending} onClick={() => move(i, -1)} aria-label={`Move photo ${i + 1} earlier`}>
+                  <button type="button" className="btn btn-outline px-2 py-1" disabled={isBat || i === 0 || w.pending} onClick={() => move(i, -1)} aria-label={`Move photo ${i + 1} earlier`}>
                     ↑
                   </button>
                   <button
                     type="button"
                     className="btn btn-outline px-2 py-1"
-                    disabled={i === s.photos.length - 1 || w.pending}
+                    disabled={isBat || i === s.photos.length - 1 || w.pending}
                     onClick={() => move(i, 1)}
                     aria-label={`Move photo ${i + 1} later`}
                   >
@@ -871,7 +931,7 @@ export function PublishStep() {
       <div className="flex flex-wrap gap-3 border-t border-line pt-4">
         <button
           type="button"
-          className="btn btn-accent"
+          className="btn btn-primary"
           disabled={w.pending}
           onClick={async () => {
             const r = await w.run(() => publishListing(s.listing.id));

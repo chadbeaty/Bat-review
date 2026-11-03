@@ -102,16 +102,17 @@ test.describe("listing flow", () => {
 
     // Step 5: photo upload straight to Storage from the browser.
     await expect(page.getByRole("heading", { name: "Photos" })).toBeVisible();
-    await page.locator("#photo-input").setInputFiles({ name: "full-bat.png", mimeType: "image/png", buffer: testPng() });
-    const photos = page.getByRole("list", { name: "Your photos" }).locator("li");
-    await expect(photos).toHaveCount(1);
-    await expect(photos.first().getByLabel(/Photo 1 \(cover\)/)).toHaveValue("full");
-    await page.locator("#photo-input").setInputFiles({ name: "barrel.png", mimeType: "image/png", buffer: testPng(64, 96) });
-    await expect(photos).toHaveCount(2);
-    await expect(photos.nth(1).getByRole("combobox")).toHaveValue("barrel");
-    // Reorder: the barrel shot becomes the cover.
-    await page.getByRole("button", { name: "Move photo 2 earlier" }).click();
-    await expect(photos.first().getByRole("combobox")).toHaveValue("barrel");
+    // Bats get labeled slots: Full bat (required), Barrel, End cap, Knob, Certification stamp, Damage / wear.
+    const slots = page.getByTestId("photo-slots");
+    await expect(slots.getByText("Full bat", { exact: true })).toBeVisible();
+    await expect(slots.getByText("Certification stamp", { exact: true })).toBeVisible();
+    await expect(slots.getByText("Required", { exact: true })).toBeVisible();
+    await expect(slots.getByText("Strongly encouraged", { exact: true })).toBeVisible();
+    await page.getByTestId("slot-input-barrel").setInputFiles({ name: "barrel.png", mimeType: "image/png", buffer: testPng(64, 96) });
+    await expect(page.locator('[data-slot="barrel"]')).toHaveAttribute("data-filled", "true");
+    await page.getByTestId("slot-input-full").setInputFiles({ name: "full-bat.png", mimeType: "image/png", buffer: testPng() });
+    await expect(page.locator('[data-slot="full"]')).toHaveAttribute("data-filled", "true");
+    await expect(slots).toContainText("Still missing: End cap, Knob, Certification stamp");
     await continueButton(page).click();
 
     // Step 6: live commission preview from fee_configuration.
@@ -167,7 +168,8 @@ test.describe("listing flow", () => {
     const product = await productBySlug("miken-freak-black-maxload-usssa-2026");
     expect(listing.product_id).toBe(product.id);
     const { data: images } = await serviceClient().from("listing_images").select("storage_path, image_type, display_order").eq("listing_id", listingId).order("display_order");
-    expect(images!.map((i) => i.image_type)).toEqual(["barrel", "full"]);
+    // The full bat is always the cover, however the photos were added.
+    expect(images!.map((i) => i.image_type)).toEqual(["full", "barrel"]);
     for (const img of images!) expect(img.storage_path).toMatch(new RegExp(`^${seller.id}/${listingId}/[0-9a-f]{32}\\.jpg$`));
     const { data: zip } = await serviceClient().from("equipment_listings").select("shipping_origin_postal_code").eq("id", listingId).single();
     expect(zip!.shipping_origin_postal_code).toBe("37201");
@@ -184,7 +186,7 @@ test.describe("listing flow", () => {
     await page.goto(`/sell/new?listing=${id}&step=photos`);
     await page.locator("#photo-input").setInputFiles({ name: "notes.gif", mimeType: "image/gif", buffer: Buffer.from("GIF89a") });
     await expect(page.getByRole("alert").filter({ hasText: "notes.gif" })).toContainText("notes.gif: use a JPG, PNG, WEBP, HEIC photo");
-    await expect(page.getByRole("list", { name: "Your photos" })).toHaveCount(0);
+    await expect(page.locator('[data-slot][data-filled="true"]')).toHaveCount(0);
   });
 
   test("saves a draft and resumes it from the dashboard", async ({ page }) => {
@@ -356,7 +358,7 @@ test.describe("phone layout", () => {
 
   test("the sell page fits a phone", async ({ page }) => {
     await page.goto("/sell");
-    await expect(page.getByRole("heading", { level: 1, name: "Sell your gear" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Sell your bat" })).toBeVisible();
     await expect(page.getByText("Example: a bat sells for $200")).toBeVisible();
     await noOverflow(page);
     await expect(page.getByRole("link", { name: "Start a listing" }).first()).toHaveAttribute("href", "/sign-in?next=/sell/new");

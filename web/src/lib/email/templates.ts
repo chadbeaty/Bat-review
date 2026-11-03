@@ -254,7 +254,7 @@ export function reviewRequest(d: Base & { orderNumber: string; otherUsername: st
       { kind: "p", text: hello(d.name) },
       {
         kind: "p",
-        text: `Order ${d.orderNumber} is complete. A short review of the ${d.role === "buyer" ? "seller" : "buyer"} helps other players trade with confidence.`,
+        text: `Order ${d.orderNumber} is complete. A short review of the ${d.role === "buyer" ? "seller" : "buyer"} helps other players buy with confidence.`,
       },
       { kind: "button", label: "Leave a review", href: siteLink(d.reviewPath) },
     ],

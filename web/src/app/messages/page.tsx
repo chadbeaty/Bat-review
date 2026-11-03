@@ -51,7 +51,7 @@ export default async function MessagesPage() {
                   <span className="flex flex-wrap items-baseline justify-between gap-2">
                     <span className="font-semibold break-words">@{other?.username ?? "member"}</span>
                     {s && s.unread > 0 && (
-                      <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-semibold text-accent-ink" aria-label={`${s.unread} unread`}>
+                      <span className="rounded-sm bg-stamp-red px-2 py-0.5 text-xs font-bold text-white" aria-label={`${s.unread} unread`}>
                         {s.unread} new
                       </span>
                     )}

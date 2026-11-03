@@ -4,89 +4,125 @@ import { SearchBar } from "./SearchBar";
 import { getCurrentUser } from "@/lib/supabase/server";
 import { signOut } from "@/app/(auth)/actions";
 import { CountPill, unreadNotificationCount } from "./NotificationBadge";
+import { HeaderMenus } from "./HeaderMenus";
+import { MenuIcon, UserIcon } from "./icons";
+import { getBatsOnlyMode } from "@/lib/launch";
+import { getCategories } from "@/lib/catalog";
 
 const NAV = [
-  { href: "/shop", label: "Shop" },
-  { href: "/bats", label: "Bats" },
+  { href: "/bats", label: "Shop bats" },
+  { href: "/manufacturers", label: "Bat archive" },
+  { href: "/price-guide", label: "Price guide" },
+  { href: "/account/watchlist", label: "Watchlist" },
   { href: "/sell", label: "Sell" },
-  { href: "/price-guide", label: "Bat price guide" },
 ];
 
+const MORE = [
+  { href: "/how-it-works", label: "How it works" },
+  { href: "/buyer-protection", label: "Buyer protection" },
+  { href: "/seller-guide", label: "Seller guide" },
+  { href: "/compare", label: "Compare bats" },
+  { href: "/faq", label: "FAQ" },
+];
+
+const ICON_BTN =
+  "relative grid h-11 min-w-11 cursor-pointer list-none place-items-center border-2 border-ink bg-surface px-2 text-ink hover:bg-ink hover:text-surface";
+
 export async function Header() {
-  const user = await getCurrentUser();
+  const [user, batsOnly] = await Promise.all([getCurrentUser(), getBatsOnlyMode()]);
   const unread = user ? await unreadNotificationCount() : 0;
+  // Other categories appear in the menu only once the owner switches bats-only mode off.
+  const otherCategories = batsOnly ? [] : (await getCategories()).filter((c) => c.slug !== "bats");
   return (
-    <header className="sticky top-0 z-20 border-b border-line bg-paper/95 backdrop-blur" style={{ top: "env(safe-area-inset-top, 0px)" }}>
-      <div className="wrap flex flex-wrap items-center gap-x-6 gap-y-3 py-3">
-        <Wordmark />
-        <div className="order-3 w-full md:order-2 md:w-auto md:flex-1">
-          <SearchBar />
-        </div>
-        <nav aria-label="Main" className="order-2 ml-auto flex items-center gap-1 md:order-3">
-          <ul className="hidden items-center gap-1 lg:flex">
+    <header className="sticky z-20 border-b-[3px] border-ink bg-paper/95 backdrop-blur" style={{ top: "env(safe-area-inset-top, 0px)" }}>
+      <HeaderMenus />
+      <div className="wrap flex flex-wrap items-center gap-x-3 gap-y-2 py-2 lg:flex-nowrap lg:gap-x-4">
+        <Wordmark className="order-1" />
+        <nav aria-label="Main" className="order-2 hidden lg:flex">
+          <ul className="flex items-center gap-0.5">
             {NAV.map((n) => (
-              <li key={n.href}>
-                <Link href={n.href} className="rounded-md px-2.5 py-2 font-medium text-ink-soft hover:bg-surface hover:text-ink">
+              <li key={n.href} className={n.href === "/account/watchlist" ? "hidden 2xl:block" : undefined}>
+                <Link href={n.href} className="navlink">
                   {n.label}
                 </Link>
               </li>
             ))}
           </ul>
-          {user ? (
-            <details className="relative">
-              <summary className="cursor-pointer list-none rounded-md px-2.5 py-2 font-medium text-ink-soft hover:bg-surface hover:text-ink">
-                Account
-                <CountPill count={unread} />
-              </summary>
-              <div className="card absolute right-0 mt-2 grid w-48 gap-1 p-2 shadow-lg">
-                <Link href="/account" className="rounded px-2 py-1.5 hover:bg-paper">
-                  Dashboard
-                </Link>
-                <Link href="/messages" className="rounded px-2 py-1.5 hover:bg-paper">
-                  Messages
-                </Link>
-                <Link href="/account/offers" className="rounded px-2 py-1.5 hover:bg-paper">
-                  Offers
-                </Link>
-                <Link href="/account/notifications" className="rounded px-2 py-1.5 hover:bg-paper">
-                  Notifications
-                  <CountPill count={unread} />
-                </Link>
-                <form action={signOut}>
-                  <button type="submit" className="w-full rounded px-2 py-1.5 text-left hover:bg-paper">
-                    Sign out
-                  </button>
-                </form>
-              </div>
-            </details>
-          ) : (
-            <Link href="/sign-in" className="rounded-md px-2.5 py-2 font-medium text-ink-soft hover:bg-surface hover:text-ink">
-              Sign in
-            </Link>
-          )}
-          <Link href="/sell" className="btn btn-accent ml-1 hidden sm:inline-flex">
-            Sell your gear
-          </Link>
-          <details className="relative lg:hidden">
-            <summary className="cursor-pointer list-none rounded-md px-2.5 py-2 font-medium text-ink" aria-label="Menu">
-              Menu
-            </summary>
-            <ul className="card absolute right-0 mt-2 grid w-52 gap-1 p-2 shadow-lg">
-              {NAV.map((n) => (
-                <li key={n.href}>
-                  <Link href={n.href} className="block rounded px-2 py-1.5 hover:bg-paper">
-                    {n.label}
-                  </Link>
-                </li>
-              ))}
-              <li>
-                <Link href="/sell" className="block rounded px-2 py-1.5 font-semibold hover:bg-paper">
-                  Sell your gear
-                </Link>
-              </li>
-            </ul>
-          </details>
         </nav>
+        <div className="order-3 w-full lg:min-w-[17rem] lg:flex-1">
+          <SearchBar action="/bats" />
+        </div>
+        <div className="order-2 ml-auto flex items-center gap-2 lg:order-4 lg:ml-0">
+          <details className="relative lg:hidden" data-header-menu>
+            <summary className={ICON_BTN} aria-label="Menu">
+              <MenuIcon size={22} />
+            </summary>
+            <div className="card absolute right-0 mt-2 grid max-h-[80vh] w-64 gap-1 overflow-y-auto p-2 shadow-lg">
+              {NAV.map((n) => (
+                <Link key={n.href} href={n.href} className="menu-item">
+                  {n.label}
+                </Link>
+              ))}
+              {otherCategories.map((c) => (
+                <Link key={c.slug} href={`/shop/${c.slug}`} className="menu-item">
+                  {c.name}
+                </Link>
+              ))}
+              <hr className="chalk my-1" />
+              {MORE.map((n) => (
+                <Link key={n.href} href={n.href} className="menu-item text-sm">
+                  {n.label}
+                </Link>
+              ))}
+            </div>
+          </details>
+          <details className="relative" data-header-menu>
+            <summary className={`${ICON_BTN} !inline-flex items-center justify-center gap-1.5 lg:px-3`} aria-label={user ? "Account menu" : "Sign in or join"}>
+              <UserIcon size={22} />
+              <span className="navlink !hidden !border-0 !p-0 lg:!inline">{user ? "Account" : "Sign in"}</span>
+              {unread > 0 && <span className="absolute -right-1.5 -top-1.5"><CountPill count={unread} /></span>}
+            </summary>
+            <div className="card absolute right-0 mt-2 grid w-52 gap-1 p-2 shadow-lg">
+              {user ? (
+                <>
+                  <Link href="/account" className="menu-item">
+                    Dashboard
+                  </Link>
+                  <Link href="/account/watchlist" className="menu-item">
+                    Watchlist
+                  </Link>
+                  <Link href="/messages" className="menu-item">
+                    Messages
+                  </Link>
+                  <Link href="/account/offers" className="menu-item">
+                    Offers
+                  </Link>
+                  <Link href="/account/notifications" className="menu-item">
+                    Notifications
+                    <CountPill count={unread} />
+                  </Link>
+                  <form action={signOut}>
+                    <button type="submit" className="menu-item w-full text-left">
+                      Sign out
+                    </button>
+                  </form>
+                </>
+              ) : (
+                <>
+                  <Link href="/sign-in" className="menu-item">
+                    Sign in
+                  </Link>
+                  <Link href="/sign-up" className="menu-item">
+                    Join
+                  </Link>
+                </>
+              )}
+            </div>
+          </details>
+          <Link href="/sell" className="btn btn-primary hidden !py-2 2xl:inline-flex">
+            Sell your bat
+          </Link>
+        </div>
       </div>
     </header>
   );

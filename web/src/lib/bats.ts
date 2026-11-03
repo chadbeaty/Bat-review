@@ -1,3 +1,4 @@
+import { withCardExtras } from "@/lib/card-extras";
 import "server-only";
 import { createClient, getCurrentUser } from "@/lib/supabase/server";
 import fallbackCatalog from "@/data/catalog-fallback.json";
@@ -572,7 +573,7 @@ export async function getBatDetail(bat: BatSummary, intervalDays = 7): Promise<B
           hitsAtFailure: (d.hits_at_failure ?? []).map(Number),
         }
       : null,
-    listings: (listings.data ?? []).map((l) => {
+    listings: await withCardExtras((listings.data ?? []).map((l) => {
       const images = ((l.listing_images as { image_url: string; alt_text: string | null; display_order: number }[]) ?? []).sort((a, b) => a.display_order - b.display_order);
       const attrs = (l.attributes ?? {}) as Record<string, unknown>;
       return {
@@ -589,7 +590,7 @@ export async function getBatDetail(bat: BatSummary, intervalDays = 7): Promise<B
         priceCents: l.asking_price_cents,
         weightOz: num(attrs.weight_oz),
       };
-    }),
+    })),
     sales: (sales.data ?? []).map((s) => ({
       productId: s.product_id,
       priceCents: s.sold_price_cents,

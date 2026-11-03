@@ -11,7 +11,8 @@ insert into public.product_categories (name, slug, description, display_order, a
       {"key":"construction_type","label":"Construction","type":"select","required":false,"options":["one_piece","two_piece","unknown"]},
       {"key":"barrel_length_inches","label":"Barrel length (in)","type":"number","required":false},
       {"key":"length_inches","label":"Length (in)","type":"number","required":false,"default":34},
-      {"key":"model_year","label":"Model year","type":"number","required":true}
+      {"key":"model_year","label":"Model year","type":"number","required":true},
+      {"key":"approx_hits","label":"About how many hits?","type":"number","required":false,"min":0,"max":10000,"help":"Rough is fine. Composite bats break in over the first 150–200 hits."}
     ]'::jsonb,
     '[
       {"type":"full","label":"Full bat"},{"type":"barrel","label":"Barrel"},{"type":"end_cap","label":"End cap"},
@@ -99,5 +100,6 @@ insert into public.site_settings (key, value, description, is_public) values
   ('new_release_window_days', '120', 'Days after release during which a model counts as a new release', true),
   ('early_report_threshold', '5', 'Owners with published reports needed before a new release shows as having early reports', true),
   ('durability_min_owners', '3', 'Owners with published reports needed before a model appears in the durability tracker', true),
-  ('owner_report_interval_days', '7', 'Minimum days between two owner reports by the same member on the same model', true)
+  ('owner_report_interval_days', '7', 'Minimum days between two owner reports by the same member on the same model', true),
+  ('bats_only_mode', 'true', 'Show only bats (hide gloves, bags, cleats and other categories everywhere). Turn off to bring every category back', true)
 on conflict (key) do nothing;

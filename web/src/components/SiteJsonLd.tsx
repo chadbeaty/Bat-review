@@ -23,7 +23,7 @@ export function SiteJsonLd() {
       description: brand.description,
       potentialAction: {
         "@type": "SearchAction",
-        target: { "@type": "EntryPoint", urlTemplate: `${base}/shop?q={search_term_string}` },
+        target: { "@type": "EntryPoint", urlTemplate: `${base}/bats?q={search_term_string}` },
         "query-input": "required name=search_term_string",
       },
     },

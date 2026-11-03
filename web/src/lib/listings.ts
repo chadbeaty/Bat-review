@@ -2,6 +2,8 @@ import "server-only";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { ListingCard } from "@/lib/catalog";
+import { withCardExtras } from "@/lib/card-extras";
+import { getBatsOnlyMode } from "@/lib/launch";
 import { PAGE_SIZE, searchRpcArgs, type SearchQuery } from "@/lib/search";
 
 // Server-side reads for the shop, listing and seller pages. Everything runs as the visitor, so Row Level
@@ -17,6 +19,7 @@ type SearchRow = {
   location_city: string | null;
   location_state: string | null;
   published_at: string | null;
+  accepts_offers: boolean | null;
   image_url: string | null;
   image_alt: string | null;
   total_count: number;
@@ -26,6 +29,7 @@ export async function searchListings(query: SearchQuery, scope: { category?: str
   const pageSize = scope.pageSize ?? PAGE_SIZE;
   const supabase = await createClient();
   if (!supabase) return { listings: [], total: 0, pageSize, failed: false };
+  if (!scope.category && (await getBatsOnlyMode())) scope = { ...scope, category: "bats" };
   const { data, error } = await supabase.rpc("search_listings", searchRpcArgs(query, scope));
   if (error || !data) {
     console.error("search_listings failed", error?.message);
@@ -38,11 +42,7 @@ export async function searchListings(query: SearchQuery, scope: { category?: str
     const { data: firstPage } = await supabase.rpc("search_listings", { ...searchRpcArgs({ ...query, page: 1 }, scope), p_limit: 1 });
     total = (firstPage as SearchRow[] | null)?.[0] ? Number((firstPage as SearchRow[])[0].total_count) : 0;
   }
-  return {
-    total,
-    pageSize,
-    failed: false,
-    listings: rows.map((r) => ({
+  const cards: ListingCard[] = rows.map((r) => ({
       id: r.id,
       title: r.title,
       askingPriceCents: r.asking_price_cents,
@@ -52,8 +52,9 @@ export async function searchListings(query: SearchQuery, scope: { category?: str
       imageUrl: r.image_url,
       imageAlt: r.image_alt,
       publishedAt: r.published_at,
-    })),
-  };
+      acceptsOffers: r.accepts_offers ?? undefined,
+  }));
+  return { total, pageSize, failed: false, listings: await withCardExtras(cards) };
 }
 
 export type Facets = Record<string, { value: string; listings: number }[]>;
@@ -170,7 +171,7 @@ export type ListingDetail = {
   images: { url: string; alt: string | null; type: string }[];
   category: { slug: string; name: string; fields: CategoryField[] } | null;
   manufacturer: { slug: string; name: string } | null;
-  product: { slug: string; name: string; modelYear: number | null; manufacturerSlug: string | null } | null;
+  product: { id: string; slug: string; name: string; modelYear: number | null; manufacturerSlug: string | null } | null;
 };
 
 const LISTING_COLUMNS = `
@@ -181,7 +182,7 @@ const LISTING_COLUMNS = `
   listing_images(image_url, alt_text, image_type, display_order, uploaded_at),
   product_categories(slug, name, attribute_schema),
   manufacturers(slug, name),
-  products(slug, product_name, model_year, manufacturers(slug, name))
+  products(id, slug, product_name, model_year, manufacturers(slug, name))
 `;
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -201,7 +202,7 @@ export const getListing = cache(async (id: string): Promise<ListingDetail | null
     listing_images: { image_url: string; alt_text: string | null; image_type: string; display_order: number; uploaded_at: string }[] | null;
     product_categories: { slug: string; name: string; attribute_schema: CategoryField[] } | null;
     manufacturers: { slug: string; name: string } | null;
-    products: { slug: string; product_name: string; model_year: number | null; manufacturers: { slug: string; name: string } | null } | null;
+    products: { id: string; slug: string; product_name: string; model_year: number | null; manufacturers: { slug: string; name: string } | null } | null;
   };
   const row = data as unknown as typeof data & Row;
   const images = [...(row.listing_images ?? [])].sort((a, b) => a.display_order - b.display_order || a.uploaded_at.localeCompare(b.uploaded_at));
@@ -242,7 +243,7 @@ export const getListing = cache(async (id: string): Promise<ListingDetail | null
       : null,
     manufacturer: row.manufacturers ?? product?.manufacturers ?? null,
     product: product
-      ? { slug: product.slug, name: product.product_name, modelYear: product.model_year, manufacturerSlug: product.manufacturers?.slug ?? null }
+      ? { id: product.id, slug: product.slug, name: product.product_name, modelYear: product.model_year, manufacturerSlug: product.manufacturers?.slug ?? null }
       : null,
   };
 });
@@ -354,4 +355,13 @@ export async function isFavorite(userId: string, listingId: string): Promise<boo
   if (!supabase) return false;
   const { data } = await supabase.from("favorites").select("id").eq("user_id", userId).eq("listing_id", listingId).maybeSingle();
   return Boolean(data);
+}
+
+/** Which of these listings the member has saved: one batched read, so cards never cost a query each. */
+export async function getSavedIds(userId: string | null | undefined, listingIds: string[]): Promise<Set<string>> {
+  if (!userId || !listingIds.length) return new Set();
+  const supabase = await createClient();
+  if (!supabase) return new Set();
+  const { data } = await supabase.from("favorites").select("listing_id").eq("user_id", userId).in("listing_id", listingIds);
+  return new Set((data ?? []).map((r) => r.listing_id as string));
 }

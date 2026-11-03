@@ -48,6 +48,15 @@ export type SearchQuery = {
   years: number[];
   loads: string[];
   rating?: number;
+  /** Bat length range in inches (URL: minlen, maxlen). */
+  minLength?: number;
+  maxLength?: number;
+  /** Only listings published in the last 7 days (URL: new=1). */
+  fresh?: boolean;
+  /** Only bats stamped for two or more associations (URL: dual=1). */
+  dual?: boolean;
+  /** Only listings whose seller accepts offers (URL: offers=1). */
+  offers?: boolean;
   /** Category-specific attribute filters from product_categories.attribute_schema (URL: a.<key>=value). */
   attrs: Record<string, string[]>;
   sort: Sort;
@@ -162,6 +171,15 @@ export function parseSearchParams(params: RawParams, opts: { attributeKeys?: str
   }
 
   const model = first(params, "model");
+  const lenOf = (k: string) => {
+    const v = first(params, k);
+    const n = v && /^\d{2}(\.\d)?$/.test(v) ? Number(v) : undefined;
+    return n != null && n >= 20 && n <= 40 ? n : undefined;
+  };
+  let minLength = lenOf("minlen");
+  let maxLength = lenOf("maxlen");
+  if (minLength != null && maxLength != null && minLength > maxLength) [minLength, maxLength] = [maxLength, minLength];
+  const flag = (k: string) => (["1", "true"].includes(first(params, k) ?? "") ? true : undefined);
   return {
     q,
     terms: searchTerms(q),
@@ -186,6 +204,11 @@ export function parseSearchParams(params: RawParams, opts: { attributeKeys?: str
     ),
     loads: [...new Set(list(params, "load").map(normalizeWeighting).filter((s): s is string => s !== null))],
     rating,
+    minLength,
+    maxLength,
+    fresh: flag("new"),
+    dual: flag("dual"),
+    offers: flag("offers"),
     attrs,
     sort,
     page: intInRange(first(params, "page"), 1, MAX_PAGE) ?? 1,
@@ -207,6 +230,11 @@ export function toQueryString(query: Partial<SearchQuery>): string {
   for (const y of query.years ?? []) p.append("year", String(y));
   for (const l of query.loads ?? []) p.append("load", l);
   if (query.rating != null) p.set("rating", String(query.rating));
+  if (query.minLength != null) p.set("minlen", String(query.minLength));
+  if (query.maxLength != null) p.set("maxlen", String(query.maxLength));
+  if (query.fresh) p.set("new", "1");
+  if (query.dual) p.set("dual", "1");
+  if (query.offers) p.set("offers", "1");
   for (const [k, values] of Object.entries(query.attrs ?? {})) for (const v of values) p.append(`a.${k}`, v);
   if (query.sort && query.sort !== "newest") p.set("sort", query.sort);
   if (query.page && query.page > 1) p.set("page", String(query.page));
@@ -254,6 +282,17 @@ export function activeFilters(
   for (const l of query.loads)
     out.push({ key: `load:${l}`, label: WEIGHTING_NAMES[l] ?? l, remove: { loads: query.loads.filter((x) => x !== l) } });
   if (query.rating != null) out.push({ key: "rating", label: `Seller rated ${query.rating}+`, remove: { rating: undefined } });
+  if (query.minLength != null || query.maxLength != null) {
+    const a = query.minLength, b = query.maxLength;
+    out.push({
+      key: "length",
+      label: a != null && b != null ? `${a}–${b} in long` : a != null ? `${a} in or longer` : `Up to ${b} in long`,
+      remove: { minLength: undefined, maxLength: undefined },
+    });
+  }
+  if (query.fresh) out.push({ key: "fresh", label: "Listed this week", remove: { fresh: undefined } });
+  if (query.dual) out.push({ key: "dual", label: "Dual-stamp", remove: { dual: undefined } });
+  if (query.offers) out.push({ key: "offers", label: "Accepts offers", remove: { offers: undefined } });
   for (const [k, values] of Object.entries(query.attrs))
     for (const v of values) {
       const rest = values.filter((x) => x !== v);
@@ -296,6 +335,11 @@ export function searchRpcArgs(query: SearchQuery, scope: { category?: string; se
     p_sort: query.sort,
     p_limit: pageSize,
     p_offset: (query.page - 1) * pageSize,
+    p_min_length: query.minLength ?? null,
+    p_max_length: query.maxLength ?? null,
+    p_new_days: query.fresh ? 7 : null,
+    p_accepts_offers: query.offers ? true : null,
+    p_dual_stamp: query.dual ? true : null,
   };
 }
 

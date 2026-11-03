@@ -1,3 +1,5 @@
+import { BatDrawing } from "@/components/BatDrawing";
+import { batSpecFromCatalog, describeBat } from "@/lib/bat-drawing";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -178,17 +180,20 @@ function Header({ detail, maturity }: { detail: BatDetail; maturity: { label: st
         <h1 className="display text-4xl font-bold sm:text-5xl">{bat.productName}</h1>
         <div className="flex flex-wrap items-center gap-2">
           {bat.stamps.map((s) => (
-            <span key={s} className="rounded-sm border border-ink px-2 py-0.5 font-mono text-xs tracking-wider">
+            <span key={s} className="stamp-chip">
               {s}
             </span>
           ))}
-          <span data-testid="release-badge" className="rounded-full bg-accent px-3 py-1 text-xs font-semibold text-accent-ink">
+          <span data-testid="release-badge" className="rounded-sm bg-ink px-3 py-1 text-xs font-semibold text-surface">
             {maturity.label}
           </span>
         </div>
         <p className="max-w-2xl text-sm text-ink-soft">{maturity.explanation}</p>
       </div>
-      <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-4">
+      <div className="grid-paper border-2 border-ink px-4 py-5 sm:px-8">
+        <BatDrawing spec={batSpecFromCatalog(bat)} fluid label={`${describeBat(batSpecFromCatalog(bat))}, drawn from the catalog's listed specs. Colors are decorative.`} />
+      </div>
+      <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-sm border-2 border-ink bg-ink sm:grid-cols-4">
         <Fact label="Weighting" value={weightingText(bat.weightingType, bat.endloadOz)} />
         <Fact label="Construction" value={CONSTRUCTION_LABELS[bat.constructionType] ?? "Not listed"} />
         <Fact label="Material" value={MATERIAL_LABELS[bat.material] ?? "Not listed"} />
@@ -440,7 +445,7 @@ function Lineage({ detail }: { detail: BatDetail }) {
           <>
             {note && (
               <p className="text-sm">
-                <span className="rounded-full border border-line-strong px-2 py-0.5 text-xs font-semibold">{CONFIDENCE_LABELS[note.confidence] ?? note.confidence}</span>{" "}
+                <span className="rounded-sm border border-line-strong px-2 py-0.5 text-xs font-semibold">{CONFIDENCE_LABELS[note.confidence] ?? note.confidence}</span>{" "}
                 <span className="text-ink-soft">Lineage is our research from retailer and manufacturer listings, not a manufacturer statement.</span>
               </p>
             )}

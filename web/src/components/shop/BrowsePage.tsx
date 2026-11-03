@@ -1,11 +1,15 @@
 import Link from "next/link";
 import { ListingCard } from "@/components/ListingCard";
 import { EmptyState } from "@/components/EmptyState";
+import { Rack } from "@/components/shop/Rack";
+import { ListView } from "@/components/shop/ListView";
+import { ViewToggle } from "@/components/shop/ViewToggle";
+import { withView, type ViewMode } from "@/lib/view-mode-shared";
 import { FilterForm, type FilterVariant } from "@/components/shop/FilterForm";
 import { FiltersPanel } from "@/components/shop/FiltersPanel";
 import { SaveSearchButton } from "@/components/shop/SaveSearchButton";
 import { getCategories } from "@/lib/catalog";
-import { getFacets, getFilterOptions, getSuggestions, searchListings, type CategoryDetail } from "@/lib/listings";
+import { getFacets, getFilterOptions, getSavedIds, getSuggestions, searchListings, type CategoryDetail } from "@/lib/listings";
 import { activeFilters, pageWindow, searchHref, SORTS, toQueryString, type SearchQuery, type Sort } from "@/lib/search";
 import { getCurrentUser } from "@/lib/supabase/server";
 
@@ -22,6 +26,8 @@ export async function BrowsePage({
   title,
   intro,
   extra,
+  view = "grid",
+  explicitView = false,
 }: {
   path: string;
   query: SearchQuery;
@@ -31,6 +37,9 @@ export async function BrowsePage({
   title: string;
   intro: string;
   extra?: React.ReactNode;
+  view?: ViewMode;
+  /** True when the URL itself carries ?view=, so paging and sorting links keep it. */
+  explicitView?: boolean;
 }) {
   const categorySlug = category?.slug ?? (variant === "bats" ? "bats" : undefined);
   const [result, facets, options, categories, user] = await Promise.all([
@@ -51,15 +60,21 @@ export async function BrowsePage({
   const sorts = (Object.keys(SORTS) as Sort[]).filter((s) => s !== "best" || query.terms.length > 0);
   const suggestions = result.total === 0 && query.q ? await getSuggestions(query.q, query.terms) : null;
   const search = toQueryString({ ...query, page: 1 });
+  const keep = explicitView ? view : null;
+  const href = (changes: Partial<SearchQuery> = {}) => withView(searchHref(path, query, changes), keep);
+  const hasBatRack = variant === "bats" || variant === "all";
+  const mode: ViewMode = view === "rack" && !hasBatRack ? "grid" : view;
+  const saved = await getSavedIds(user?.id, result.listings.map((l) => l.id));
+  const favFor = (id: string) => ({ signedIn: Boolean(user), saved: saved.has(id), next: path + toQueryString({ ...query }) });
   const saveName = [title, ...filters.map((f) => f.label)].join(" · ").slice(0, 80);
 
   return (
-    <div className="wrap grid gap-6 py-8">
-      <header className="grid gap-3">
+    <div className="wrap grid gap-4 py-5 sm:gap-6 sm:py-8">
+      <header className="grid gap-2 border-b-2 border-ink pb-4 sm:gap-3 sm:pb-6">
         <p className="eyebrow">{eyebrow}</p>
-        <h1 className="display text-5xl font-bold">{title}</h1>
-        <p className="max-w-2xl text-ink-soft">{intro}</p>
-        <form action={path} method="get" role="search" className="flex w-full max-w-2xl gap-2">
+        <h1 className="display text-4xl font-bold sm:text-5xl">{title}</h1>
+        <p className="hidden max-w-2xl text-ink-soft sm:block">{intro}</p>
+        <form action={path} method="get" role="search" className="board hidden max-w-2xl lg:flex">
           <label htmlFor="shop-search" className="sr-only">
             Search {title.toLowerCase()}
           </label>
@@ -70,12 +85,10 @@ export async function BrowsePage({
             defaultValue={query.q}
             placeholder={variant === "bats" ? "Brand, model or year, e.g. Freak 26 oz" : "Search by brand, model or item"}
             autoComplete="off"
-            className="input min-w-0 flex-1"
           />
           {query.sort !== "newest" && <input type="hidden" name="sort" value={query.sort} />}
-          <button type="submit" className="btn btn-primary">
-            Search
-          </button>
+          {keep && <input type="hidden" name="view" value={keep} />}
+          <button type="submit">Search</button>
         </form>
       </header>
 
@@ -99,7 +112,7 @@ export async function BrowsePage({
 
       <div className="grid gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
         <aside aria-label="Filter results">
-          <FiltersPanel activeCount={filters.filter((f) => f.key !== "q").length}>
+          <FiltersPanel activeCount={filters.filter((f) => f.key !== "q").length} resultCount={result.total}>
             <FilterForm
               path={path}
               query={query}
@@ -108,6 +121,7 @@ export async function BrowsePage({
               brands={options.brands}
               models={options.models}
               fields={category?.fields ?? []}
+              view={keep}
             />
           </FiltersPanel>
         </aside>
@@ -121,14 +135,23 @@ export async function BrowsePage({
                   ? `${result.total} ${result.total === 1 ? "listing" : "listings"}`
                   : `${firstShown}–${lastShown} of ${result.total} listings`}
             </h2>
-            <nav aria-label="Sort" className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+            <ViewToggle
+              view={mode}
+              modes={hasBatRack ? ["grid", "list", "rack"] : ["grid", "list"]}
+              hrefs={{
+                grid: withView(searchHref(path, query, { page: query.page }), "grid"),
+                list: withView(searchHref(path, query, { page: query.page }), "list"),
+                rack: withView(searchHref(path, query, { page: query.page }), "rack"),
+              }}
+            />
+            <nav aria-label="Sort" className="flex flex-wrap items-center gap-x-1 gap-y-1 text-sm">
               <span className="text-ink-soft">Sort:</span>
               {sorts.map((s) => (
                 <Link
                   key={s}
-                  href={searchHref(path, query, { sort: s })}
+                  href={href({ sort: s })}
                   aria-current={query.sort === s ? "true" : undefined}
-                  className={query.sort === s ? "font-semibold text-ink underline underline-offset-4" : "text-ink-soft hover:text-ink"}
+                  className={`inline-flex min-h-11 items-center px-2 ${query.sort === s ? "font-semibold text-ink underline underline-offset-4" : "text-ink-soft hover:text-ink"}`}
                 >
                   {SORTS[s]}
                 </Link>
@@ -137,12 +160,12 @@ export async function BrowsePage({
           </div>
 
           {filters.length > 0 && (
-            <ul aria-label="Active filters" className="flex flex-wrap gap-2">
+            <ul aria-label="Active filters" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0" data-testid="active-filters">
               {filters.map((f) => (
                 <li key={f.key}>
                   <Link
                     href={searchHref(path, query, f.remove)}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-line-strong bg-surface px-3 py-1 text-sm hover:border-ink"
+                    className="chip !min-h-9 shrink-0"
                     aria-label={`Remove filter: ${f.label}`}
                   >
                     {f.label} <span aria-hidden="true">×</span>
@@ -150,7 +173,7 @@ export async function BrowsePage({
                 </li>
               ))}
               <li>
-                <Link href={path} className="inline-flex px-2 py-1 text-sm underline">
+                <Link href={withView(path, keep)} className="inline-flex min-h-9 shrink-0 items-center px-2 text-sm underline">
                   Clear all
                 </Link>
               </li>
@@ -161,14 +184,22 @@ export async function BrowsePage({
             <EmptyState title="Search isn't available right now" body="Something went wrong on our side. Try again in a minute." />
           ) : result.listings.length > 0 ? (
             <>
-              <ul className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3" data-testid="results">
-                {result.listings.map((l) => (
-                  <li key={l.id} className="grid">
-                    <ListingCard listing={l} />
-                  </li>
-                ))}
-              </ul>
-              {totalPages > 1 && <Pagination path={path} query={query} totalPages={totalPages} />}
+              {mode === "list" ? (
+                <ListView listings={result.listings} testId="results" />
+              ) : mode === "rack" ? (
+                <div className="-mx-4 min-w-0 sm:mx-0">
+                  <Rack listings={result.listings} testId="results" />
+                </div>
+              ) : (
+                <ul className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4" data-testid="results">
+                  {result.listings.map((l) => (
+                    <li key={l.id} className="grid">
+                      <ListingCard listing={l} favorite={favFor(l.id)} />
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {totalPages > 1 && <Pagination path={path} query={query} totalPages={totalPages} keep={keep} />}
               <div className="flex flex-wrap items-center gap-3 border-t border-line pt-4 text-sm text-ink-soft">
                 <span>Want to hear about new listings like these?</span>
                 <SaveSearchButton path={path} search={search} name={saveName} signedIn={Boolean(user)} />
@@ -184,7 +215,7 @@ export async function BrowsePage({
             <EmptyState
               title={`Nothing listed in ${title.toLowerCase()} yet`}
               body="Listings appear here as soon as sellers publish them. Have something to sell? Listing is free."
-              action={{ href: "/sell", label: "Sell your gear" }}
+              action={{ href: "/sell", label: "Sell your bat" }}
             />
           ) : (
             <NoResults path={path} query={query} filters={filters} suggestions={suggestions} saveName={saveName} signedIn={Boolean(user)} search={search} />
@@ -197,24 +228,18 @@ export async function BrowsePage({
 
 function Chip({ href, active, children }: { href: string; active: boolean; children: React.ReactNode }) {
   return (
-    <Link
-      href={href}
-      aria-current={active ? "page" : undefined}
-      className={`shrink-0 rounded-full border px-3.5 py-1.5 text-sm font-medium whitespace-nowrap ${
-        active ? "border-ink bg-ink text-surface" : "border-line-strong bg-surface text-ink hover:border-ink"
-      }`}
-    >
+    <Link href={href} aria-current={active ? "page" : undefined} className="chip shrink-0">
       {children}
     </Link>
   );
 }
 
-function Pagination({ path, query, totalPages }: { path: string; query: SearchQuery; totalPages: number }) {
+function Pagination({ path, query, totalPages, keep }: { path: string; query: SearchQuery; totalPages: number; keep: ViewMode | null }) {
   const pages = pageWindow(query.page, totalPages);
   return (
     <nav aria-label="Pages" className="flex flex-wrap items-center justify-center gap-1 pt-2">
       {query.page > 1 && (
-        <Link href={searchHref(path, query, { page: query.page - 1 })} rel="prev" className="btn btn-outline px-3 py-1.5 text-sm">
+        <Link href={withView(searchHref(path, query, { page: query.page - 1 }), keep)} rel="prev" className="btn btn-outline px-3 py-1.5 text-sm">
           Previous
         </Link>
       )}
@@ -226,17 +251,17 @@ function Pagination({ path, query, totalPages }: { path: string; query: SearchQu
         ) : (
           <Link
             key={p}
-            href={searchHref(path, query, { page: p })}
+            href={withView(searchHref(path, query, { page: p }), keep)}
             aria-current={p === query.page ? "page" : undefined}
             aria-label={`Page ${p}`}
-            className={`min-w-9 rounded-md border px-3 py-1.5 text-center text-sm ${p === query.page ? "border-ink bg-ink text-surface" : "border-line-strong bg-surface"}`}
+            className={`min-w-9 rounded-sm border-2 border-ink px-3 py-1.5 text-center font-mono text-sm ${p === query.page ? "bg-ink text-surface" : "bg-surface"}`}
           >
             {p}
           </Link>
         )
       )}
       {query.page < totalPages && (
-        <Link href={searchHref(path, query, { page: query.page + 1 })} rel="next" className="btn btn-outline px-3 py-1.5 text-sm">
+        <Link href={withView(searchHref(path, query, { page: query.page + 1 }), keep)} rel="next" className="btn btn-outline px-3 py-1.5 text-sm">
           Next
         </Link>
       )}
@@ -262,7 +287,7 @@ function NoResults({
   search: string;
 }) {
   return (
-    <div className="grid gap-5 rounded-lg border border-dashed border-line-strong bg-surface p-6" data-testid="no-results">
+    <div className="grid gap-5 border-2 border-dashed border-ink bg-surface p-6" data-testid="no-results">
       <div className="grid gap-1">
         <p className="text-lg font-semibold">No listings match this search right now</p>
         <p className="text-ink-soft">Try removing a filter, or check the spelling.</p>
@@ -284,7 +309,7 @@ function NoResults({
           <ul className="flex flex-wrap gap-2">
             {filters.map((f) => (
               <li key={f.key}>
-                <Link href={searchHref(path, query, f.remove)} className="inline-flex rounded-full border border-line-strong px-3 py-1 text-sm hover:border-ink">
+                <Link href={searchHref(path, query, f.remove)} className="chip !py-1">
                   Without {f.label}
                 </Link>
               </li>

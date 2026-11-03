@@ -41,7 +41,7 @@ async function offerReservation(listingId: string): Promise<Reservation | null> 
 export async function ListingActions({ listingId, status, priceCents, acceptsOffers, isOwner }: ListingActionsProps) {
   if (status === "sold" || status === "reserved") {
     return (
-      <div className="grid gap-2 rounded-lg border border-line bg-paper p-4" data-testid="listing-actions">
+      <div className="grid gap-2 card p-4" data-testid="listing-actions">
         <p className="font-semibold">{status === "sold" ? "This item has sold." : "This item is reserved for a buyer who has paid."}</p>
         <p className="text-sm text-ink-soft">It can&apos;t be bought. Save a search to hear about similar listings.</p>
       </div>
@@ -49,14 +49,14 @@ export async function ListingActions({ listingId, status, priceCents, acceptsOff
   }
   if (status !== "active") {
     return (
-      <div className="grid gap-2 rounded-lg border border-line bg-paper p-4" data-testid="listing-actions">
+      <div className="grid gap-2 card p-4" data-testid="listing-actions">
         <p className="font-semibold">{isOwner ? "Only you can see this listing." : "This listing isn't for sale right now."}</p>
       </div>
     );
   }
   if (isOwner) {
     return (
-      <div className="grid gap-2 rounded-lg border border-line bg-paper p-4" data-testid="listing-actions">
+      <div className="grid gap-2 card p-4" data-testid="listing-actions">
         <p className="font-semibold">This is your listing.</p>
         <p className="text-sm text-ink-soft">Buyers see the buy, offer and message buttons here.</p>
       </div>
@@ -67,7 +67,7 @@ export async function ListingActions({ listingId, status, priceCents, acceptsOff
   if (reservation && reservation.held_by_me && reservation.offer_id) {
     return (
       <div className="grid gap-2" data-testid="listing-actions">
-        <Link href={`/checkout/${listingId}?offer=${reservation.offer_id}`} className="btn btn-primary w-full py-3 text-base" prefetch={false} data-testid="offer-checkout">
+        <Link href={`/checkout/${listingId}?offer=${reservation.offer_id}`} className="btn btn-accent w-full py-3 text-base" prefetch={false} data-testid="offer-checkout">
           Check out with your accepted offer
         </Link>
         <p className="text-sm text-ink-soft">The seller accepted your offer. This item is reserved for you until {untilText(reservation.reserved_until)}.</p>
@@ -77,7 +77,7 @@ export async function ListingActions({ listingId, status, priceCents, acceptsOff
   if (reservation) {
     return (
       <div className="grid gap-2" data-testid="listing-actions">
-        <button type="button" className="btn btn-primary w-full py-3 text-base" disabled aria-describedby="reserved-note">
+        <button type="button" className="btn btn-accent w-full py-3 text-base" disabled aria-describedby="reserved-note">
           Buy now for {formatPrice(priceCents)}
         </button>
         <MessageButton listingId={listingId} />
@@ -94,11 +94,11 @@ export async function ListingActions({ listingId, status, priceCents, acceptsOff
   return (
     <div className="grid gap-2" data-testid="listing-actions">
       {sellerReady ? (
-        <Link href={`/checkout/${listingId}`} className="btn btn-primary w-full py-3 text-base" prefetch={false}>
+        <Link href={`/checkout/${listingId}`} className="btn btn-accent w-full py-3 text-base" prefetch={false}>
           Buy now for {formatPrice(priceCents)}
         </Link>
       ) : (
-        <button type="button" className="btn btn-primary w-full py-3 text-base" disabled aria-describedby="checkout-soon">
+        <button type="button" className="btn btn-accent w-full py-3 text-base" disabled aria-describedby="checkout-soon">
           Buy now for {formatPrice(priceCents)}
         </button>
       )}

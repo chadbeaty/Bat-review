@@ -222,7 +222,7 @@ test.describe("content pages", () => {
 
   test("the contact page shows the support email to visitors", async ({ page }) => {
     await page.goto("/contact");
-    await expect(page.getByRole("link", { name: "support@example.com" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "support@gamerbat.com" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Sign in" }).last()).toBeVisible();
   });
 
@@ -231,7 +231,7 @@ test.describe("content pages", () => {
     const json = await page.locator('script[type="application/ld+json"]').first().textContent();
     const data = JSON.parse(json!);
     expect(data.map((d: { "@type": string }) => d["@type"])).toEqual(["Organization", "WebSite"]);
-    expect(data[1].potentialAction.target.urlTemplate).toContain("/shop?q={search_term_string}");
+    expect(data[1].potentialAction.target.urlTemplate).toContain("/bats?q={search_term_string}");
   });
 });
 

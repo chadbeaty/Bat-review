@@ -1,4 +1,4 @@
-# Slow-pitch marketplace (working name: Dugout Trade)
+# Slow-pitch marketplace (Gamer Bat)
 
 A nationwide marketplace for buying and selling used slow-pitch softball equipment, with bats as the main category and a bat database behind them.
 
@@ -13,7 +13,7 @@ A nationwide marketplace for buying and selling used slow-pitch softball equipme
 
 ### Change the name, colors or contact emails
 
-Edit `src/config/brand.ts` and redeploy. Name options and domain checks are in `docs/BRAND.md`.
+Edit `src/config/brand.ts` and redeploy. The brand is **Gamer Bat** (gamerbat.com, chosen 2026-11-03; trademark search pending by owner). The decision, visual direction and earlier name options are in `docs/BRAND.md`.
 
 ### Change marketplace fees
 

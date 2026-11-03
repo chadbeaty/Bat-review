@@ -15,6 +15,7 @@ export const SETTING_RULES: SettingRule[] = [
   { key: "early_report_threshold", label: "Owner reports before a new release shows early reports", kind: "integer", min: 1, max: 1000, unit: "owners" },
   { key: "durability_min_owners", label: "Owners reporting before the durability tracker shows a model", kind: "integer", min: 1, max: 1000, unit: "owners" },
   { key: "owner_report_interval_days", label: "Minimum days between one owner's reports on a model", kind: "integer", min: 1, max: 365, unit: "days" },
+  { key: "bats_only_mode", label: "Bats only: hide gloves, bags, cleats and every other category on the site", kind: "boolean" },
   { key: "featured_listings_enabled", label: "Sellers can buy featured placement", kind: "boolean" },
   { key: "premium_seller_enabled", label: "Premium seller memberships are on sale", kind: "boolean" },
   { key: "checkout_enabled", label: "Checkout is open (buyers can pay). Needs owner sign-off on decision 0001", kind: "boolean" },

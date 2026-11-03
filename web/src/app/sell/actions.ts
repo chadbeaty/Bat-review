@@ -8,6 +8,7 @@ import {
   DAMAGE_QUESTIONS,
   IMAGE_TYPES,
   IMAGE_TYPE_LABELS,
+  slotDisplayOrder,
   MAX_PHOTOS,
   MAX_PHOTO_BYTES,
   PHOTO_TYPES,
@@ -301,7 +302,10 @@ export async function addPhoto(listingId: string, input: unknown): Promise<Actio
     return { ok: false, error: `A listing can have up to ${MAX_PHOTOS} photos.` };
   }
   const url = s.db.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
-  const order = e.snapshot.photos.reduce((m, p) => Math.max(m, p.order + 1), 0);
+  const isBat = e.snapshot.category.slug === "bats";
+  const order = isBat
+    ? slotDisplayOrder(imageType, e.snapshot.photos.filter((p) => p.imageType === imageType).length)
+    : e.snapshot.photos.reduce((m, p) => Math.max(m, p.order + 1), 0);
   const { error } = await s.db.from("listing_images").insert({
     listing_id: e.id,
     image_url: url,

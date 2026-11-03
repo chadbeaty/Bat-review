@@ -35,7 +35,7 @@ export default async function PriceGuidePage({ searchParams }: { searchParams: P
   return (
     <div className="wrap grid gap-8 py-12">
       <div className="grid gap-3">
-        <p className="eyebrow">Bat database</p>
+        <p className="eyebrow">Bat archive · price guide</p>
         <h1 className="display text-5xl font-bold">Bat price guide</h1>
         <p className="max-w-2xl text-ink-soft">
           Every bat model in the catalog with what it&apos;s listed for today and what it has actually sold for here. Pick a model for its full price page.

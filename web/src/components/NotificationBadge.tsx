@@ -11,7 +11,7 @@ export async function unreadNotificationCount(): Promise<number> {
 export function CountPill({ count, label = "unread" }: { count: number; label?: string }) {
   if (count <= 0) return null;
   return (
-    <span className="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-xs font-semibold text-accent-ink" aria-label={`${count} ${label}`} data-testid="unread-badge">
+    <span className="ml-1 inline-flex min-w-5 items-center justify-center rounded-sm bg-stamp-red px-1.5 font-mono text-xs font-bold text-white" aria-label={`${count} ${label}`} data-testid="unread-badge">
       {count > 99 ? "99+" : count}
     </span>
   );

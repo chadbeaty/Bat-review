@@ -62,6 +62,9 @@ export default async function AccountPage({ searchParams }: PageProps<"/account"
         </section>
         <section className="card grid content-start gap-2 p-5">
           <h2 className="font-semibold">Buying</h2>
+          <Link href="/account/watchlist" className="text-sm font-semibold underline">
+            Watchlist
+          </Link>
           <Link href="/account/favorites" className="text-sm font-semibold underline">
             Saved listings
           </Link>

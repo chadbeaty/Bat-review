@@ -59,7 +59,9 @@ export async function getSellCategories(db: Db): Promise<SellCategory[]> {
     .select("id, name, slug, description, attribute_schema, required_photos")
     .eq("active", true)
     .order("display_order");
-  return (data ?? []).map((c) => ({
+  const { data: setting } = await db.from("site_settings").select("value").eq("key", "bats_only_mode").maybeSingle();
+  const batsOnly = setting?.value !== false;
+  return (data ?? []).filter((c) => !batsOnly || c.slug === "bats").map((c) => ({
     id: c.id,
     name: c.name,
     slug: c.slug,

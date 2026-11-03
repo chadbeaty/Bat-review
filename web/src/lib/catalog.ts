@@ -2,6 +2,9 @@ import "server-only";
 import { createClient } from "@/lib/supabase/server";
 import * as reference from "@/data/reference";
 import fallbackCatalog from "@/data/catalog-fallback.json";
+import type { BatSpec } from "@/lib/bat-drawing";
+import { withCardExtras } from "@/lib/card-extras";
+import { getBatsOnlyMode, visibleCategories } from "@/lib/launch";
 
 // Read-only catalog queries for public pages. When the database isn't connected, reference data and the
 // researched bat catalog are used instead. Listings and sponsors never fall back: without a database there are none.
@@ -26,10 +29,33 @@ export type ListingCard = {
   imageUrl: string | null;
   imageAlt: string | null;
   publishedAt: string | null;
+  /** Seller accepts offers (from search / listing reads). */
+  acceptsOffers?: boolean;
+  /** Listing status when it is not simply active (saved listings can be reserved or sold). */
+  status?: string;
+  /** Extra facts for drawing and describing the listing (bats especially). Filled in by withCardExtras(). */
+  extra?: CardExtra;
+};
+/** What a listing card needs beyond the basics: category, brand, the bat's real specs, stamps and passport progress. */
+export type CardExtra = {
+  categorySlug: string | null;
+  brand: string | null;
+  bat: BatSpec | null;
+  /** Stamps on the barrel (USSSA, USA, ...) as the seller listed them, or the catalog model's. */
+  stamps: string[];
+  weightOz: number | null;
+  approxHits: number | null;
+  /** How many of the four Bat Passport checks have data (null when it is not a catalog bat). */
+  passportFilled: number | null;
 };
 export type Partner = { id: string; advertiserName: string; imageUrl: string | null; destinationUrl: string | null };
 
 export async function getCategories(): Promise<CategorySummary[]> {
+  return visibleCategories(await getAllCategories());
+}
+
+/** Every active category, including ones hidden at launch (admin and data use). */
+export async function getAllCategories(): Promise<CategorySummary[]> {
   const supabase = await createClient();
   if (supabase) {
     const { data, error } = await supabase
@@ -115,22 +141,25 @@ export async function getCatalogStats(): Promise<{ batModels: number; manufactur
 }
 
 /** Live listings, newest first. Optionally only one category, or only featured listings. */
-export async function getListings(opts: { category?: string; featured?: boolean; limit?: number } = {}): Promise<ListingCard[]> {
+export async function getListings(opts: { category?: string; excludeCategory?: string; featured?: boolean; limit?: number } = {}): Promise<ListingCard[]> {
   const supabase = await createClient();
   if (!supabase) return [];
+  // While launch is bats-only, listings in other categories never surface.
+  if (!opts.category && (await getBatsOnlyMode())) opts = { ...opts, category: "bats", excludeCategory: undefined };
   let query = supabase
     .from("equipment_listings")
     .select(
-      "id, title, asking_price_cents, condition_score, location_city, location_state, published_at, product_categories!inner(slug), listing_images(image_url, alt_text, display_order)"
+      "id, title, asking_price_cents, condition_score, location_city, location_state, published_at, accepts_offers, product_categories!inner(slug), listing_images(image_url, alt_text, display_order)"
     )
     .eq("listing_status", "active")
     .order("published_at", { ascending: false })
     .limit(opts.limit ?? 8);
   if (opts.category) query = query.eq("product_categories.slug", opts.category);
+  if (opts.excludeCategory) query = query.neq("product_categories.slug", opts.excludeCategory);
   if (opts.featured) query = query.eq("featured", true);
   const { data, error } = await query;
   if (error || !data) return [];
-  return data.map((l) => {
+  const cards = data.map((l) => {
     const images = ((l.listing_images as unknown as { image_url: string; alt_text: string | null; display_order: number }[]) ?? []).sort(
       (a, b) => a.display_order - b.display_order
     );
@@ -144,8 +173,10 @@ export async function getListings(opts: { category?: string; featured?: boolean;
       imageUrl: images[0]?.image_url ?? null,
       imageAlt: images[0]?.alt_text ?? null,
       publishedAt: l.published_at,
+      acceptsOffers: l.accepts_offers,
     };
   });
+  return withCardExtras(cards);
 }
 
 /** Sponsors with a paid, running homepage placement. Empty until a real sponsor buys one. */
@@ -158,4 +189,49 @@ export async function getHomepagePartners(): Promise<Partner[]> {
     .eq("placement", "homepage_partner");
   if (error || !data) return [];
   return data.map((c) => ({ id: c.id, advertiserName: c.advertiser_name, imageUrl: c.image_url, destinationUrl: c.destination_url }));
+}
+
+export type SoldCard = { id: string; title: string; imageUrl: string | null; imageAlt: string | null; soldAt: string; brand: string | null };
+
+/** Listings that really sold (set only by the order system), newest first. Empty until a real sale completes. */
+export async function getRecentlySold(limit = 4): Promise<SoldCard[]> {
+  const supabase = await createClient();
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from("equipment_listings")
+    .select("id, title, sold_at, manufacturers(name), product_categories!inner(slug), listing_images(image_url, alt_text, display_order)")
+    .eq("listing_status", "sold")
+    .eq("product_categories.slug", "bats")
+    .not("sold_at", "is", null)
+    .order("sold_at", { ascending: false })
+    .limit(limit);
+  if (error || !data) return [];
+  return data.map((l) => {
+    const images = ((l.listing_images as unknown as { image_url: string; alt_text: string | null; display_order: number }[]) ?? []).sort((a, b) => a.display_order - b.display_order);
+    return {
+      id: l.id,
+      title: l.title,
+      imageUrl: images[0]?.image_url ?? null,
+      imageAlt: images[0]?.alt_text ?? null,
+      soldAt: l.sold_at as string,
+      brand: (l.manufacturers as unknown as { name: string } | null)?.name ?? null,
+    };
+  });
+}
+
+/** Catalog models ranked by how many active listings they have right now (real data only; no listings means no list). */
+export async function getMostListedProductIds(limit = 8): Promise<{ productId: string; listings: number }[]> {
+  const supabase = await createClient();
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from("equipment_listings")
+    .select("product_id, product_categories!inner(slug)")
+    .eq("listing_status", "active")
+    .eq("product_categories.slug", "bats")
+    .not("product_id", "is", null)
+    .limit(2000);
+  if (error || !data) return [];
+  const counts = new Map<string, number>();
+  for (const r of data) counts.set(r.product_id as string, (counts.get(r.product_id as string) ?? 0) + 1);
+  return [...counts.entries()].sort((a, b) => b[1] - a[1]).slice(0, limit).map(([productId, listings]) => ({ productId, listings }));
 }

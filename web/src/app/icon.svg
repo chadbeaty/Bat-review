@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <circle cx="32" cy="32" r="29.5" fill="#f7f5ef" stroke="#4b2fa0" stroke-width="3"/>
+  <circle cx="32" cy="32" r="23.5" fill="none" stroke="#4b2fa0" stroke-width="1.2" stroke-dasharray="2.2 2.2"/>
+  <g transform="translate(32 32) rotate(-45) translate(-35.7 0)"><path d="M0 -1.58 L1.26 -1.58 Q2.1 -1.58 2.1 -1 L28.88 -1.05 C37.27 -1.1 40.43 -2.36 44.63 -2.36 L70.56 -2.36 Q71.4 -2.36 71.4 0 Q71.4 2.36 70.56 2.36 L44.63 2.36 C40.43 2.36 37.27 1.1 28.88 1.05 L2.1 1 Q2.1 1.58 1.26 1.58 L0 1.58 Z" fill="#121820" stroke="#121820" stroke-width=".6" stroke-linejoin="round"/></g>
+</svg>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { BrowsePage } from "@/components/shop/BrowsePage";
 import { browseTitle, readBrowseQuery } from "@/lib/browse";
+import { readViewMode } from "@/lib/view-mode";
 import { getCategoryDetail, getFacets } from "@/lib/listings";
 import { parseSearchParams, searchHref } from "@/lib/search";
 import { batWeights } from "@/data/reference";
@@ -14,7 +15,9 @@ export async function generateMetadata({ searchParams }: PageProps<"/bats">): Pr
 }
 
 export default async function BatsPage({ searchParams }: PageProps<"/bats">) {
-  const query = readBrowseQuery("/bats", await searchParams);
+  const params = await searchParams;
+  const query = readBrowseQuery("/bats", params);
+  const { view, explicit } = await readViewMode(params);
   const [category, facets] = await Promise.all([getCategoryDetail("bats"), getFacets("bats")]);
   // The common weights always show; any other weight appears once someone lists one.
   const weights = [...new Set([...batWeights, ...(facets.weight ?? []).map((f) => Number(f.value))])].sort((a, b) => a - b);
@@ -24,6 +27,8 @@ export default async function BatsPage({ searchParams }: PageProps<"/bats">) {
       path="/bats"
       query={query}
       variant="bats"
+      view={view}
+      explicitView={explicit}
       category={category ?? undefined}
       eyebrow="The bat marketplace"
       title="Slow-pitch bats"
@@ -39,7 +44,7 @@ export default async function BatsPage({ searchParams }: PageProps<"/bats">) {
                   key={w}
                   href={searchHref("/bats", query, { weights: active ? [] : [w] })}
                   aria-current={active ? "true" : undefined}
-                  className={`rounded-full border px-3.5 py-1.5 text-sm ${active ? "border-ink bg-ink text-surface" : "border-line-strong bg-surface hover:border-ink"}`}
+                  className="chip"
                 >
                   {w} oz
                 </Link>
