@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { safeNextPath } from "@/lib/auth/links";
 
-export type EnrollState = { error?: string; factorId?: string; qrCode?: string; secret?: string };
+export type EnrollState = { error?: string; factorId?: string; qrCode?: string; secret?: string; uri?: string };
 export type VerifyState = { error?: string };
 
 const CODE_RE = /^\d{6}$/;
@@ -26,7 +26,7 @@ export async function startEnrollment(): Promise<EnrollState> {
   }
   const { data, error } = await supabase.auth.mfa.enroll({ factorType: "totp", friendlyName: `Authenticator ${new Date().toISOString().slice(0, 16).replace("T", " ")}` });
   if (error || !data) return { error: "We couldn't start the setup. Try again in a minute." };
-  return { factorId: data.id, qrCode: data.totp.qr_code, secret: data.totp.secret };
+  return { factorId: data.id, qrCode: data.totp.qr_code, secret: data.totp.secret, uri: data.totp.uri };
 }
 
 /** Confirms the first code from the new authenticator; this also raises the session to two-step (aal2). */

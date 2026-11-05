@@ -14,6 +14,18 @@ function CodeField({ error }: { error?: string }) {
   );
 }
 
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  if (!text) return null;
+  return (
+    <button type="button" className="link mt-2 text-sm" onClick={async () => {
+      try { await navigator.clipboard.writeText(text); setCopied(true); setTimeout(() => setCopied(false), 2500); } catch { /* clipboard blocked: the key is still selectable */ }
+    }}>
+      {copied ? "Copied ✓" : "Copy setup key"}
+    </button>
+  );
+}
+
 /** Set up an authenticator app: show the QR code and setup key, then confirm the first code. */
 export function MfaEnroll({ next }: { next?: string }) {
   const [setup, setSetup] = useState<EnrollState | null>(null);
@@ -33,10 +45,16 @@ export function MfaEnroll({ next }: { next?: string }) {
   return (
     <div className="space-y-5">
       <ol className="list-decimal space-y-1 pl-5 text-ink-2">
-        <li>Open an authenticator app (1Password, Google Authenticator, Microsoft Authenticator, Authy…).</li>
-        <li>Scan this QR code, or type the setup key.</li>
-        <li>Enter the 6-digit code it shows.</li>
+        <li>Install an authenticator app if you don&rsquo;t have one (Google Authenticator, Microsoft Authenticator, 1Password…).</li>
+        <li>
+          <strong>On this phone:</strong> tap the button below to add the account to your app. <strong>On a computer:</strong> scan
+          the QR code with your phone. Either way, you can also type the setup key into the app by hand.
+        </li>
+        <li>Come back here and enter the 6-digit code the app shows.</li>
       </ol>
+      {setup.uri && (
+        <a href={setup.uri} className="btn">Add to my authenticator app</a>
+      )}
       <div className="flex flex-wrap items-start gap-5">
         {/* Supabase returns the QR code as an SVG data URI. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -44,6 +62,8 @@ export function MfaEnroll({ next }: { next?: string }) {
         <div className="min-w-0">
           <p className="kicker">Setup key</p>
           <code className="mt-1 block break-all bg-paper-2 px-2 py-1 font-mono text-sm">{setup.secret}</code>
+          <CopyButton text={setup.secret ?? ""} />
+          <p className="meta mt-2 max-w-xs">Typing it by hand? In the app choose &ldquo;Enter a setup key&rdquo;, use any name (e.g. Aged Takes) and keep &ldquo;Time based&rdquo; selected.</p>
         </div>
       </div>
       <form action={verifyAction} className="space-y-3">
