@@ -1,0 +1,40 @@
+# Applies agedtakes/supabase/migrations to your hosted Supabase project (and, on the first run, the demo seed).
+# Run it by hand: GitHub → Actions → "Aged Takes: deploy database" → Run workflow.
+# Needs repository secrets (Settings → Secrets and variables → Actions):
+#   AGEDTAKES_SUPABASE_ACCESS_TOKEN (or SUPABASE_ACCESS_TOKEN) – from supabase.com/dashboard/account/tokens
+#   AGEDTAKES_SUPABASE_DB_PASSWORD  (or SUPABASE_DB_PASSWORD)  – the project's database password
+name: "Aged Takes: deploy database"
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_ref:
+        description: Supabase project ref (the part before .supabase.co)
+        required: true
+      include_seed:
+        description: Also load the demo data and research candidates (first run only)
+        type: boolean
+        default: true
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: agedtakes
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.AGEDTAKES_SUPABASE_ACCESS_TOKEN || secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.AGEDTAKES_SUPABASE_DB_PASSWORD || secrets.SUPABASE_DB_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - run: supabase link --project-ref "${{ inputs.project_ref }}"
+      - name: Apply migrations
+        run: |
+          if [ "${{ inputs.include_seed }}" = "true" ]; then
+            supabase db push --remote --yes --include-seed
+          else
+            supabase db push --remote --yes
+          fi
