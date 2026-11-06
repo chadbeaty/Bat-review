@@ -14,7 +14,7 @@ const PAGE =
 function submission(overrides: Record<string, unknown> = {}) {
   return {
     person_slug: "cathie-wood",
-    case: { title: "A test prediction about bitcoin by 2030", case_type: "prediction_aged_poorly", summary: "Test summary." },
+    case: { title: "A test prediction about bitcoin by 2030", case_type: "prediction_aged_poorly", summary: "Test summary.", article_body: "## The claim\n\nA test article.", seo_description: "A test description." },
     sources: [{ key: "s1", source_type: "interview", title: "Test interview", url: "https://news.example.org/interview", publisher: "Example News", published_at: "2023-02-01", text: PAGE }],
     statements: [{ source_key: "s1", exact_quote: '"We think bitcoin will reach $1 million by 2030."', statement_type: "prediction", published_at: "2023-02-01", date_precision: "day" }],
     evidence: [{ source_key: "s1", role: "original_statement", what_it_proves: "She made the prediction." }],
@@ -34,8 +34,8 @@ d("research agent intake (database)", () => {
   it("creates an internal, unverified draft waiting for review", async () => {
     const r = await submit(submission());
     expect(r.ok).toBe(true);
-    const [c] = await db.owner<Record<string, unknown>>("select status, origin, ai_generated, approved_by, published_at from cases where id = $1", [r.case_id]);
-    expect(c).toMatchObject({ status: "needs_review", origin: "ai", ai_generated: true, approved_by: null, published_at: null });
+    const [c] = await db.owner<Record<string, unknown>>("select status, origin, ai_generated, approved_by, published_at, article_body, seo_description from cases where id = $1", [r.case_id]);
+    expect(c).toMatchObject({ status: "needs_review", origin: "ai", ai_generated: true, approved_by: null, published_at: null, article_body: "## The claim\n\nA test article.", seo_description: "A test description." });
     const [s] = await db.owner<Record<string, unknown>>(
       "select visibility, verification_status, quote_verified_verbatim from statements where id = (select primary_statement_id from cases where id = $1)", [r.case_id]);
     expect(s).toMatchObject({ visibility: "internal", verification_status: "unverified", quote_verified_verbatim: true });
