@@ -29,6 +29,9 @@ type Notes = {
   evidence_assessment?: { overall_classification: string; overall_reasoning: string; missing_evidence: string[] };
   distribution?: { language_flags?: string[]; suggested_related?: string[] };
   prompt_version?: string;
+  // Written by the scheduled research agent (agent_submit_research).
+  agent?: string; notes?: string; flags?: string[];
+  suggestions?: { legal?: Record<string, { ok?: boolean; reason?: string }>; confidence?: { level?: string; reason?: string } };
 };
 
 export default async function CaseReview({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: SearchParams }) {
@@ -64,6 +67,11 @@ export default async function CaseReview({ params, searchParams }: { params: Pro
   const supporting = evidence.filter((e) => ["supporting", "outcome", "disclosure", "market_data"].includes(e.evidence_role));
   const transitions = allowedTransitions(status).filter((t) => t !== "published" && (editor || !EDITOR_ONLY_TARGETS.includes(t)));
   const v = (k: string) => (c as Record<string, unknown>)[k] as string | null;
+  // The research agent's suggestions pre-fill the checklist and confidence until an editor saves their own answers.
+  const suggested = notes.suggestions ?? {};
+  const legalSaved = Boolean(c.legal_reviewed_at) || Object.keys(c.legal_review ?? {}).length > 0;
+  const useLegalSuggestions = !legalSaved && !!suggested.legal && !published;
+  const suggestedConfidence = CONFIDENCE_LEVELS.find((l) => l === suggested.confidence?.level);
 
   return (
     <div>
@@ -101,6 +109,12 @@ export default async function CaseReview({ params, searchParams }: { params: Pro
             {predictionRes.data && <p className="meta mt-3">Prediction: <Link className="link" href={`/admin/predictions/${predictionRes.data.id}`}>“{predictionRes.data.prediction_text.slice(0, 80)}” ({predictionRes.data.status})</Link></p>}
           </Panel>
 
+          {notes.agent && (!!notes.flags?.length || notes.notes) && (
+            <Panel title="Research agent: check these first" tone="warn" id="agent-notes">
+              {!!notes.flags?.length && <ul className="list-disc space-y-1 pl-5">{notes.flags.map((f, i) => <li key={i}>{f}</li>)}</ul>}
+              {notes.notes && <p className="mt-2"><strong>Agent note:</strong> {notes.notes}</p>}
+            </Panel>
+          )}
           {(notes.reasoning_summary || notes.candidate || notes.evidence_assessment) && (
             <Panel title="AI reasoning summary" tone="warn" id="ai-notes" note={notes.prompt_version}>
               {notes.candidate && <p className="mb-2"><strong>Why it was flagged ({notes.candidate.kind}, strength {notes.candidate.strength}):</strong> {notes.candidate.explanation}<br /><strong>Why it may not be a story:</strong> {notes.candidate.reasons_it_may_not_be_a_story}</p>}
@@ -119,7 +133,8 @@ export default async function CaseReview({ params, searchParams }: { params: Pro
               <Field label="Address (slug)" name="slug" defaultValue={c.slug} required readOnly={published} />
               <SelectField label="Case type" name="case_type" defaultValue={c.case_type} options={CASE_TYPES.map((t) => [t, CASE_TYPE_LABELS[t]] as const)} />
               <SelectField label="Subject" name="person_id" defaultValue={c.person_id} options={people} required />
-              <SelectField label="Evidence confidence" name="evidence_confidence" defaultValue={v("evidence_confidence")} empty="— not classified —" options={CONFIDENCE_LEVELS.map((l) => [l, CONFIDENCE[l].label] as const)} />
+              <SelectField label="Evidence confidence" name="evidence_confidence" defaultValue={v("evidence_confidence") ?? (published ? null : suggestedConfidence)} empty="— not classified —" options={CONFIDENCE_LEVELS.map((l) => [l, CONFIDENCE[l].label] as const)}
+                help={!v("evidence_confidence") && suggestedConfidence && !published ? `Suggested by the research agent: ${CONFIDENCE[suggestedConfidence].label}. ${suggested.confidence?.reason ?? ""} Not saved until you tap Save case.` : undefined} />
               <SelectField label="Primary statement" name="primary_statement_id" defaultValue={v("primary_statement_id")} empty="— none —" options={(statementsRes.data ?? []).map((s) => [s.id, `“${s.exact_quote.slice(0, 70)}”`] as [string, string])} />
               <SelectField label="Prediction" name="prediction_id" defaultValue={v("prediction_id")} empty="— none —" options={(predictionsRes.data ?? []).map((p) => [p.id, `“${p.prediction_text.slice(0, 70)}”`] as [string, string])} />
               <div className="md:col-span-2"><Field label="Summary" name="summary" defaultValue={v("summary")} rows={3} readOnly={published} /></div>
@@ -248,7 +263,13 @@ export default async function CaseReview({ params, searchParams }: { params: Pro
           <Panel title="Legal review checklist" id="legal" note={`${legal.done}/${legal.total}`} tone={legal.done === legal.total ? "default" : "warn"}>
             <form action={saveLegalReview} className="space-y-2">
               <input type="hidden" name="id" value={c.id} /><Return to={`${back}#legal`} />
-              {LEGAL_CHECKLIST.map((i) => <Check key={i.key} label={i.label} name={i.key} defaultChecked={c.legal_review?.[i.key] === true} help={i.help} />)}
+              {useLegalSuggestions && <p className="border border-amber bg-amber-wash px-3 py-2 text-sm text-amber">Pre-ticked from the research agent&apos;s suggestions. Check each item yourself, untick anything you are not sure of, then tap Save checklist. Nothing counts until you save.</p>}
+              {LEGAL_CHECKLIST.map((i) => {
+                const s = suggested.legal?.[i.key];
+                return <Check key={i.key} label={i.label} name={i.key}
+                  defaultChecked={useLegalSuggestions ? s?.ok === true : c.legal_review?.[i.key] === true}
+                  help={useLegalSuggestions && s?.reason ? `${i.help} Agent: ${s.ok ? "✓" : "✗"} ${s.reason}` : i.help} />;
+              })}
               <Field label="Legal notes" name="legal_notes" defaultValue={c.legal_review?.notes ?? null} rows={2} />
               {editor ? <Submit small>Save checklist</Submit> : <p className="meta">Only an editor can complete this checklist.</p>}
             </form>

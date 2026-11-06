@@ -19,6 +19,7 @@ function submission(overrides: Record<string, unknown> = {}) {
     statements: [{ source_key: "s1", exact_quote: '"We think bitcoin will reach $1 million by 2030."', statement_type: "prediction", published_at: "2023-02-01", date_precision: "day" }],
     evidence: [{ source_key: "s1", role: "original_statement", what_it_proves: "She made the prediction." }],
     flags: ["Check the interview date."],
+    suggestions: { legal: { quotes_verbatim_and_sourced: { ok: true, reason: "Quote found in the interview." }, not_a_real_item: { ok: true } }, confidence: { level: "strong", reason: "Reputable outlet." } },
     ...overrides,
   };
 }
@@ -44,6 +45,15 @@ d("research agent intake (database)", () => {
     // Nobody outside the newsroom can see it.
     const visible = await db.as("anon", "select id from cases where id = $1", [r.case_id]);
     expect(visible).toHaveLength(0);
+  });
+
+  it("stores checklist suggestions without completing the legal checklist", async () => {
+    const [c] = await db.owner<{ ai_notes: { suggestions: { legal: Record<string, unknown>; confidence: { level: string } } }; legal_review: Record<string, unknown>; evidence_confidence: string | null }>(
+      "select ai_notes, legal_review, evidence_confidence from cases where title = 'A test prediction about bitcoin by 2030'");
+    expect(Object.keys(c.ai_notes.suggestions.legal)).toEqual(["quotes_verbatim_and_sourced"]);
+    expect(c.ai_notes.suggestions.confidence.level).toBe("strong");
+    expect(c.legal_review).toEqual({});
+    expect(c.evidence_confidence).toBeNull();
   });
 
   it("rejects quotations that are not in the captured text, and creates nothing without one", async () => {
