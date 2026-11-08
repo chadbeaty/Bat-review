@@ -11,9 +11,6 @@
 - A nightly scheduled task, "Aged Takes daily research", researches people from `agent_research_brief()` and submits drafts through `agent_submit_research()`. Drafts always land in `needs_review`; only a signed-in human editor can approve or publish.
 - Setup and operations docs: `agedtakes/README.md` and `agedtakes/docs/`.
 
-## Product Radar (`productradar/`)
-- Early-warning product research tool for organic dropshipping. Plan, verified API access and costs: `productradar/docs/PLAN.md`; setup: `productradar/README.md`; operations: `productradar/docs/OPERATIONS.md`.
-- Needs its own Supabase project. As of 2026-11-08 the free Supabase org has no free project slot (aged-takes and slowpitch-marketplace are active); the owner must pause one or upgrade before go-live. Migrations: `productradar/supabase/migrations/` (apply to the live project too once it exists).
-- Vercel Hobby allows each cron entry once a day, so `vercel.json` lists four daily ingestion entries.
-- Never add a connector for an unverified endpoint, and never scrape platforms that forbid it (TikTok, Amazon, etc.). Missing data must stay NULL, never zero.
-- Tests: `npm test` in `productradar/` (DB tests need `TEST_DATABASE_URL`; `tests/db/pipeline.test.ts` exercises the whole pipeline with fake YouTube/Claude/Resend).
+## Product Radar skill (`.claude/skills/product-radar/`)
+- Early-warning dropshipping product research, run as a Claude skill (web search/fetch only, no app, no paid services). The owner chose this over a hosted app to avoid any costs.
+- Tracked creators: `references/creators.md` (only "verified" ones are checked). Run history is kept in `product-radar-data/` when a workspace exists.
