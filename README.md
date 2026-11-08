@@ -1,8 +1,9 @@
 # Slow-pitch marketplace and Barrel Talk
 
-This repository holds three projects:
+This repository holds four projects:
 
 - **`agedtakes/`**: AGED TAKES, an evidence-backed public accountability archive of what influential people said, what they did, and how their claims held up (Next.js, Supabase, Claude API, Resend). Self-contained; start with `agedtakes/README.md`.
+- **`productradar/`**: PRODUCT RADAR, an early-warning product intelligence tool for organic dropshipping: monitors YouTube creators and submitted links, uses Claude to identify and group products, scores early momentum and emails alerts (Next.js, Supabase, Claude API, Resend). Start with `productradar/README.md`.
 - **`web/`**: the nationwide used slow-pitch equipment marketplace (Next.js, Supabase, and Stripe Connect and Shippo to come). Start with `web/README.md`.
 - **The root folder**: Barrel Talk, the static bat research site described below. Its researched catalog (`data/bats.json`) seeds the marketplace's product database.
 

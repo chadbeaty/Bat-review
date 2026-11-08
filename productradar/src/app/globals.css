@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+/* Product Radar: a calm, clean SaaS palette. Slate neutrals, one indigo accent, semantic greens/ambers/reds. */
+@theme {
+  --color-canvas: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-ink: #0f172a;
+  --color-ink-2: #334155;
+  --color-muted: #64748b;
+  --color-line: #e2e8f0;
+  --color-accent: #4f46e5;
+  --color-accent-ink: #3730a3;
+  --color-accent-wash: #eef2ff;
+  --color-good: #047857;
+  --color-good-wash: #ecfdf5;
+  --color-warn: #b45309;
+  --color-warn-wash: #fffbeb;
+  --color-bad: #b91c1c;
+  --color-bad-wash: #fef2f2;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
