@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
+    { "path": "/api/cron/ingest?slot=1", "schedule": "7 1 * * *" },
+    { "path": "/api/cron/ingest?slot=2", "schedule": "7 7 * * *" },
+    { "path": "/api/cron/ingest?slot=3", "schedule": "7 13 * * *" },
+    { "path": "/api/cron/ingest?slot=4", "schedule": "7 19 * * *" },
+    { "path": "/api/cron/daily", "schedule": "37 11 * * *" }
+  ]
+}
