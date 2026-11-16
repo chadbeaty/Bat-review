@@ -178,6 +178,98 @@ input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;bac
 .saving{display:none;background:var(--cyan);color:var(--ink);font-weight:700;font-size:14px;border-radius:10px;padding:10px 12px;margin-bottom:14px;border:2px solid var(--ink)}
 .saving.show{display:block}
 
+/* estimator extras */
+.range-hint{font-size:12.5px;color:#b9afa4;margin-top:10px}
+.range-hint b{color:var(--yellow)}
+.field-label small{font-size:11px;letter-spacing:.08em;color:#9a9087;font-weight:700;margin-left:6px}
+.upload-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn-upload{display:inline-flex;align-items:center;gap:8px;padding:11px 16px;border-radius:12px;border:2px dashed #8a8077;color:#e9e1d5;font-weight:700;font-size:15px;cursor:pointer;background:transparent;max-width:100%}
+.btn-upload:hover{border-color:var(--yellow);color:var(--yellow)}
+.btn-upload input{display:none}
+.btn-upload svg{width:18px;height:18px;flex:none}
+.btn-upload span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.linkish{background:none;border:0;color:#b9afa4;text-decoration:underline;cursor:pointer;font:600 14px var(--body);padding:6px 0}
+.art-msg{display:none;margin-top:12px;font-size:14px;line-height:1.45;border-radius:10px;padding:10px 12px}
+.art-msg.show{display:block}
+.art-msg.good{background:rgba(29,185,84,.14);color:#a9ecc0;border:1.5px solid rgba(29,185,84,.5)}
+.art-msg.warn{background:rgba(255,201,40,.12);color:#ffe28a;border:1.5px solid rgba(255,201,40,.5)}
+.size-ctl{margin-top:16px;display:none}
+.size-ctl.show{display:block}
+.size-ctl .field-label{margin-bottom:8px;font-size:12px}
+.size-ctl .field-label output{font-size:22px}
+.xl-input{width:120px;font:700 18px var(--body);background:transparent;border:2px solid #5a514a;border-radius:12px;color:var(--paper);padding:10px 12px}
+.xl-input:focus{outline:none;border-color:var(--yellow)}
+.preview svg{touch-action:none}
+.pv-side{position:absolute;right:10px;top:8px;display:flex;background:var(--card);border:2px solid var(--ink);border-radius:999px;overflow:hidden;z-index:2}
+.pv-side button{border:0;background:none;font:800 12px var(--body);letter-spacing:.06em;text-transform:uppercase;padding:6px 11px;cursor:pointer;color:var(--ink)}
+.pv-side button.on{background:var(--ink);color:var(--paper)}
+.pv-add{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:var(--ink);color:var(--paper);border:0;border-radius:999px;font:700 13px var(--body);padding:8px 14px;cursor:pointer;white-space:nowrap;z-index:2}
+.pv-add:hover{background:var(--red)}
+.pv-hint{position:absolute;left:0;right:0;bottom:10px;text-align:center;font-size:12px;font-weight:700;color:var(--muted);display:none;pointer-events:none}
+.has-logo .pv-add{display:none}
+.has-logo .pv-hint{display:block}
+.preview.over{outline:3px dashed var(--red);outline-offset:-6px}
+#pvLogo{cursor:grab}
+#pvLogo:active{cursor:grabbing}
+.sample-badge{align-self:flex-start;background:var(--yellow);border:2px solid var(--ink);border-radius:999px;font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;margin-bottom:12px}
+.price-line[hidden]{display:none}
+.price-line.sub{font-size:14px;color:var(--muted)}
+.price-line.total{font-size:17px}
+.price-line.ready b{color:var(--red-dark)}
+
+/* uniform programs */
+.uni{background:var(--yellow);border-block:2.5px solid var(--ink)}
+.uni-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+.uni .eyebrow{color:var(--ink)}
+.uni h2{font-size:clamp(40px,6vw,68px);margin:10px 0 16px}
+.uni-lead{font-size:19px;color:var(--ink-2);max-width:560px}
+.uni-list{list-style:none;padding:0;margin:26px 0 30px;display:grid;grid-template-columns:1fr 1fr;gap:18px 26px}
+.uni-list li{border-top:2.5px solid var(--ink);padding-top:12px}
+.uni-list b{display:block;font-size:17px;font-weight:800;margin-bottom:2px}
+.uni-list span{font-size:15px;color:var(--ink-2)}
+.acct{background:var(--card);border:2.5px solid var(--ink);border-radius:20px;box-shadow:8px 8px 0 var(--ink);padding:26px;transform:rotate(1.2deg)}
+.acct-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
+.acct-top small{display:block;font-size:11.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.acct-top b{font-family:var(--display);font-weight:400;font-size:28px;text-transform:uppercase;line-height:1.1}
+.acct-ex{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;border:2px dashed var(--muted);color:var(--muted);border-radius:999px;padding:3px 9px;white-space:nowrap}
+.acct-item{display:grid;grid-template-columns:46px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-top:1.5px dashed var(--line)}
+.acct-item svg{width:46px;height:46px}
+.acct-item b{display:block;font-size:15.5px;line-height:1.3}
+.acct-item span{font-size:13px;color:var(--muted)}
+.acct-item em{font-style:normal;font-size:12.5px;font-weight:800;background:var(--paper-2);border-radius:999px;padding:5px 10px;white-space:nowrap}
+.acct-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:6px;padding-top:14px;border-top:2.5px solid var(--ink);font-size:14px;font-weight:700}
+.acct-foot span{color:var(--muted)}
+.acct-foot b{background:var(--red);color:#fff;border:2px solid var(--ink);border-radius:999px;padding:9px 14px;font-size:14px;box-shadow:3px 3px 0 var(--ink);white-space:nowrap}
+
+/* quote form extras */
+.qf span.lbl{display:block;font-weight:700;font-size:14px;margin-bottom:8px}
+.opt,.art-opt,.need{position:relative}
+.opt-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt label{display:inline-flex;align-items:center;padding:10px 14px;border:2px solid var(--line);border-radius:999px;font-weight:700;font-size:14px;cursor:pointer;background:var(--paper)}
+.opt input:checked + label{border-color:var(--ink);background:var(--yellow)}
+.opt input:focus-visible + label{outline:3px solid var(--cyan);outline-offset:2px}
+.sizes{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:6px}
+.sizes label{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;font-weight:800;letter-spacing:.04em}
+.qf .sizes input{padding:10px 4px;text-align:center;font-weight:700}
+.size-total{font-size:13px;color:var(--muted);margin-bottom:20px}
+.art-opts{display:grid;gap:8px;margin-bottom:16px}
+.art-opt input{position:absolute;opacity:0;pointer-events:none}
+.art-opt label{display:block;padding:12px 14px;border:2px solid var(--line);border-radius:12px;cursor:pointer;background:var(--paper)}
+.art-opt label b{display:block;font-size:15px}
+.art-opt label span{color:var(--muted);font-size:13.5px}
+.art-opt input:checked + label{border-color:var(--ink);background:#fff;box-shadow:3px 3px 0 var(--ink)}
+.art-opt input:focus-visible + label{outline:3px solid var(--cyan);outline-offset:2px}
+
+@media (max-width:1020px){
+  .uni-grid{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .uni-list{grid-template-columns:1fr}
+  .acct{transform:none;padding:20px}
+  .sizes{grid-template-columns:repeat(4,1fr)}
+}
+
 /* industries */
 .industries{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 .ind{border:2.5px solid var(--ink);border-radius:var(--radius);padding:24px;background:var(--card);display:flex;flex-direction:column;gap:10px;min-height:190px;position:relative;overflow:hidden}
@@ -504,7 +596,7 @@ footer a:hover{color:var(--yellow)}
     <div class="section-head reveal">
       <span class="eyebrow">Instant estimate</span>
       <h2>What will it cost? Find out in 30 seconds.</h2>
-      <p>Pick your garment, quantity and print, and see a ballpark price right now. Then lock in an exact quote from our team.</p>
+      <p>Pick your garment, drop in your logo, and see a ballpark price and ready-by date right now. Then lock in an exact quote from our team.</p>
     </div>
 
     <div class="est">
@@ -518,6 +610,7 @@ footer a:hover{color:var(--yellow)}
           <div class="field-label">2. Quantity <output id="qtyOut">72</output></div>
           <input type="range" id="qty" min="0" max="9" step="1" value="3" aria-label="Quantity">
           <div class="range-ticks"><span>12</span><span>48</span><span>144</span><span>500</span><span>1,000+</span></div>
+          <div class="range-hint"><b>12–23 pieces:</b> embroidery only. Screen printing starts at 24.</div>
         </div>
 
         <div class="field">
@@ -530,7 +623,7 @@ footer a:hover{color:var(--yellow)}
 
         <div class="two-col">
           <div class="field" id="colorsField">
-            <div class="field-label">Ink colors (front)</div>
+            <div class="field-label">Ink colors</div>
             <div class="stepper"><button type="button" data-step="colors" data-d="-1" aria-label="Fewer colors">−</button><span id="colorsOut">1</span><button type="button" data-step="colors" data-d="1" aria-label="More colors">+</button></div>
           </div>
           <div class="field">
@@ -540,22 +633,61 @@ footer a:hover{color:var(--yellow)}
         </div>
 
         <div class="field">
-          <div class="field-label">Garment color</div>
+          <div class="field-label">4. Garment color</div>
           <div class="swatches" id="swatches"></div>
+        </div>
+
+        <div class="field">
+          <div class="field-label"><span>5. Your logo <small>Optional</small></span></div>
+          <div class="upload-row">
+            <label class="btn-upload">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M6 10l6-6 6 6"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+              <span id="logoBtnText">Upload your logo</span>
+              <input type="file" id="logoFile" accept="image/png,image/jpeg,image/svg+xml,image/webp,.png,.jpg,.jpeg,.svg,.webp,.ai,.eps,.pdf">
+            </label>
+            <button type="button" class="linkish" id="logoRemove" hidden>Remove</button>
+          </div>
+          <div class="size-ctl" id="sizeCtl">
+            <div class="field-label">Logo size <output id="logoSizeOut">10"</output></div>
+            <input type="range" id="logoSize" min="0" max="100" value="60" aria-label="Logo size">
+          </div>
+          <div class="art-msg" id="artMsg" role="status"></div>
+        </div>
+
+        <div class="two-col">
+          <div class="field">
+            <div class="field-label"><label for="xl">2XL and up</label></div>
+            <input class="xl-input" type="number" id="xl" min="0" value="0" inputmode="numeric">
+          </div>
+          <div class="field">
+            <div class="field-label">Turnaround</div>
+            <div class="chips">
+              <div class="chip"><input type="radio" name="rush" id="r-std" value="0" checked><label for="r-std">Standard</label></div>
+              <div class="chip"><input type="radio" name="rush" id="r-rush" value="1"><label for="r-rush">Rush</label></div>
+            </div>
+          </div>
         </div>
       </div>
 
       <aside class="est-result" aria-live="polite">
-        <div class="preview">
-          <span class="pv-label">Preview</span>
-          <svg viewBox="0 0 200 200" id="pvShirt"><use href="#tee" id="pvFill" fill="#fffdf8"/><g id="pvArt"></g></svg>
+        <span class="sample-badge" id="sampleBadge">Sample pricing</span>
+        <div class="preview" id="preview">
+          <span class="pv-label" id="pvLabel">Front</span>
+          <div class="pv-side" id="pvSide"><button type="button" data-side="front" class="on">Front</button><button type="button" data-side="back">Back</button></div>
+          <svg viewBox="0 0 200 200" id="pvShirt" role="img" aria-label="Garment preview"><use href="#tee" id="pvFill" fill="#fffdf8"/><g id="pvArt"></g><image id="pvLogo" x="0" y="0" width="0" height="0" preserveAspectRatio="xMidYMid meet" style="display:none"/></svg>
+          <button type="button" class="pv-add" id="pvAdd">＋ Add your logo</button>
+          <div class="pv-hint">Drag your logo to move it</div>
         </div>
-        <div class="price-big"><span id="ppu">$0.00</span><small>per piece</small></div>
+        <div class="price-big"><span id="ppu">$6.20</span><small>per piece</small></div>
         <div class="saving" id="saving"></div>
         <div class="price-line"><span>Quantity</span><b id="rQty">72</b></div>
-        <div class="price-line"><span>One-time setup</span><b id="rSetup">$0</b></div>
-        <div class="price-line"><span>Estimated total</span><b id="rTotal">$0</b></div>
-        <p class="est-note">Ballpark only, including standard garments. Your exact quote depends on the brand, sizes (2XL and up cost a little more) and artwork. We confirm everything before you pay.</p>
+        <div class="price-line sub" id="lnDark" hidden><span>Includes white base layer for dark shirts</span><b id="rDark"></b></div>
+        <div class="price-line" id="lnXl" hidden><span id="rXlLabel">2XL+ upcharge</span><b id="rXl"></b></div>
+        <div class="price-line" id="lnRush" hidden><span>Rush service</span><b id="rRush"></b></div>
+        <div class="price-line"><span>One-time setup</span><b id="rSetup">$20</b></div>
+        <div class="price-line total"><span>Estimated total</span><b id="rTotal">≈ $466</b></div>
+        <div class="price-line ready"><span>Ready by about</span><b id="rReady">2 weeks</b></div>
+        <p class="est-note">Ballpark only, including standard garments. Your exact quote depends on the brand and your artwork. The ready-by date counts business days from when you approve your mockup. We confirm everything before you pay.</p>
         <a class="btn btn-primary" href="#quote" id="lockBtn">Lock in my exact quote</a>
       </aside>
     </div>
@@ -621,6 +753,40 @@ footer a:hover{color:var(--yellow)}
   </div>
 </section>
 
+<!-- UNIFORM PROGRAMS -->
+<section class="section uni" id="programs">
+  <div class="wrap uni-grid">
+    <div class="reveal">
+      <span class="eyebrow">Uniform programs</span>
+      <h2>Outfit your whole team. Reorder with one email.</h2>
+      <p class="uni-lead">For businesses that buy uniforms year after year. We set up your account once, and every new hire or busy season after that is quick and painless.</p>
+      <ul class="uni-list">
+        <li><b>Your approved list</b><span>The exact garments, colors and logo spots your team wears, saved on file.</span></li>
+        <li><b>Art and colors locked in</b><span>Your logo is set up once, so every reorder matches the last one.</span></li>
+        <li><b>New hire? Just email us</b><span>Send names and sizes. We can do a few pieces at a time.</span></li>
+        <li><b>Seasonal check-ins</b><span>We reach out before your busy season so you're never short on shirts.</span></li>
+      </ul>
+      <a class="btn btn-primary" href="#quote" id="programBtn">Set up a uniform program</a>
+    </div>
+    <div class="acct reveal" role="img" aria-label="Example of a uniform program for a plumbing company">
+      <div class="acct-top"><div><small>Uniform program</small><b>ABC Plumbing &amp; Heating</b></div><span class="acct-ex">Example</span></div>
+      <div class="acct-item">
+        <svg viewBox="0 0 200 200"><use href="#tee" fill="#1f2a44"/><circle cx="122" cy="68" r="9" fill="#ffc928"/></svg>
+        <div><b>Navy polo</b><span>Embroidered logo, left chest</span></div><em>Reorder</em>
+      </div>
+      <div class="acct-item">
+        <svg viewBox="0 0 200 200"><use href="#tee" fill="#1b1816"/><rect x="72" y="80" width="56" height="26" rx="4" fill="#ff3d2e"/></svg>
+        <div><b>Black hoodie</b><span>2-color print, front and back</span></div><em>Reorder</em>
+      </div>
+      <div class="acct-item">
+        <svg viewBox="0 0 200 200"><use href="#tee" fill="#c7f03a"/><rect x="70" y="84" width="60" height="18" rx="3" fill="#14110f"/></svg>
+        <div><b>Hi-vis safety tee</b><span>1-color print, back</span></div><em>Reorder</em>
+      </div>
+      <div class="acct-foot"><span>3 approved items · art on file</span><b>Add a new hire</b></div>
+    </div>
+  </div>
+</section>
+
 <!-- BAND -->
 <section class="band">
   <div class="wrap">
@@ -646,7 +812,12 @@ footer a:hover{color:var(--yellow)}
       <details><summary>What file should I send for my logo?</summary><p>Vector files (AI, EPS, PDF or SVG) work best. A high-resolution PNG or JPG also works. If all you have is a blurry logo, our art team can clean it up or redraw it.</p></details>
       <details><summary>Can I bring my own shirts?</summary><p>In many cases, yes. Contact us first so we can check the fabric and quantity. We usually save you money by supplying the garments at wholesale prices.</p></details>
       <details><summary>Do you offer mixed sizes and colors?</summary><p>Yes. Mix sizes freely within an order. Different garment colors are fine too, and the pricing barely changes.</p></details>
-      <details><summary>Do you set up accounts for businesses and schools?</summary><p>Yes. Repeat customers get their artwork kept on file, simple reorders, and invoicing options for schools and businesses.</p></details>
+      <details><summary>Do you set up accounts for businesses and schools?</summary><p>Yes. Repeat customers get their artwork kept on file, simple reorders, and invoicing options for schools and businesses. See <a href="#programs">uniform programs</a>.</p></details>
+      <details><summary>Will I see a proof before you print?</summary><p>Always. You'll get a digital mockup showing the placement, size and colors. Nothing goes to press until you approve it.</p></details>
+      <details><summary>Can you rush an order?</summary><p>Often, yes. Rush orders usually ship in about 5 business days after you approve your mockup, for an added fee. Tell us your in-hands date and we'll confirm right away.</p></details>
+      <details><summary>Do you need a deposit?</summary><p>Payment terms are confirmed with your quote. First orders usually need a deposit, and established business and school accounts can be invoiced.</p></details>
+      <details><summary>Can you deliver or ship?</summary><p>Pick up free at our Jefferson Park shop, or we can deliver locally or ship anywhere in the U.S. Delivery options and costs are listed on your quote.</p></details>
+      <details><summary>How do reorders work?</summary><p>Call or email with what you need and how many. Your artwork, ink colors and garment choices are already on file, so there's no new design work and no new embroidery setup fee.</p></details>
     </div>
   </div>
 </section>
@@ -695,26 +866,54 @@ footer a:hover{color:var(--yellow)}
             </select><div class="err">Choose a quantity.</div></div>
           <div><label class="lbl" for="fDate">Need them by</label><input type="date" id="fDate" name="in_hands_date"></div>
         </div>
+        <span class="lbl">Decoration</span>
+        <div class="opt-row">
+          <div class="opt"><input type="radio" name="decoration" value="Screen print" id="d-screen"><label for="d-screen">Screen print</label></div>
+          <div class="opt"><input type="radio" name="decoration" value="Embroidery" id="d-emb"><label for="d-emb">Embroidery</label></div>
+          <div class="opt"><input type="radio" name="decoration" value="Not sure" id="d-unsure"><label for="d-unsure">Not sure, help me choose</label></div>
+        </div>
+        <span class="lbl">Pickup or delivery?</span>
+        <div class="opt-row">
+          <div class="opt"><input type="radio" name="delivery" value="Pick up at the shop" id="dl-pick"><label for="dl-pick">Pick up at the shop</label></div>
+          <div class="opt"><input type="radio" name="delivery" value="Deliver or ship" id="dl-ship"><label for="dl-ship">Deliver or ship to me</label></div>
+        </div>
         <div class="qf-nav"><span></span><button type="button" class="btn btn-primary" data-next>Next</button></div>
       </div>
 
       <!-- step 2 -->
       <div class="qf-step" data-step="2">
-        <h3>Your design</h3>
-        <p class="hint">No logo yet? No problem. Describe what you want and we'll help.</p>
+        <h3>Sizes and artwork</h3>
+        <p class="hint">Rough numbers are fine. You can change them before we print.</p>
+        <span class="lbl">Size breakdown <span style="font-weight:500;color:var(--muted)">(optional)</span></span>
+        <div class="sizes" id="sizes">
+          <label>Youth<input type="number" min="0" inputmode="numeric" name="size_youth"></label>
+          <label>S<input type="number" min="0" inputmode="numeric" name="size_S"></label>
+          <label>M<input type="number" min="0" inputmode="numeric" name="size_M"></label>
+          <label>L<input type="number" min="0" inputmode="numeric" name="size_L"></label>
+          <label>XL<input type="number" min="0" inputmode="numeric" name="size_XL"></label>
+          <label>2XL<input type="number" min="0" inputmode="numeric" name="size_2XL"></label>
+          <label>3XL+<input type="number" min="0" inputmode="numeric" name="size_3XL_plus"></label>
+        </div>
+        <div class="size-total" id="sizeTotal">Total: 0 pieces</div>
+        <span class="lbl">Your artwork</span>
+        <div class="art-opts">
+          <div class="art-opt"><input type="radio" name="art_status" value="Print-ready" id="a1"><label for="a1"><b>My art is print-ready</b><span>A vector or high-resolution file</span></label></div>
+          <div class="art-opt"><input type="radio" name="art_status" value="Needs cleanup" id="a2"><label for="a2"><b>I have a logo, but it needs cleanup</b><span>Blurry, low-res or a screenshot. We'll redraw it.</span></label></div>
+          <div class="art-opt"><input type="radio" name="art_status" value="Needs a design" id="a3"><label for="a3"><b>I need a design made</b><span>Tell us your idea and our art team will create it.</span></label></div>
+        </div>
         <div class="full">
           <label class="drop" id="drop" for="fFile">
-            <input type="file" id="fFile" name="artwork" accept=".ai,.eps,.pdf,.svg,.png,.jpg,.jpeg,.psd">
+            <input type="file" id="fFile" name="artwork" accept=".ai,.eps,.pdf,.svg,.png,.jpg,.jpeg,.psd,.webp">
             <b id="dropText">Upload your logo or artwork</b>
             <small>AI, EPS, PDF, SVG, PNG or JPG. Click here or drag a file in.</small>
           </label>
         </div>
         <div class="full"><label class="lbl" for="fNotes">Anything else we should know?</label>
-          <textarea id="fNotes" name="notes" placeholder="Colors, print placement, sizes, the event you're ordering for…"></textarea></div>
+          <textarea id="fNotes" name="notes" placeholder="Colors, print placement, names on the back, the event you're ordering for…"></textarea></div>
         <div class="qf-nav"><button type="button" class="back" data-back>Back</button><button type="button" class="btn btn-primary" data-next>Next</button></div>
       </div>
 
-      <!-- step 3 -->
+<!-- step 3 -->
       <div class="qf-step" data-step="3">
         <h3>Where should we send your quote?</h3>
         <p class="hint">We'll reply within one business day, usually sooner.</p>
@@ -785,7 +984,7 @@ footer a:hover{color:var(--yellow)}
         <p style="margin-top:16px;font-size:15px;max-width:320px">Commercial screen printing and embroidery for Chicago businesses, schools and teams since 1984.</p>
       </div>
       <div><h4>Services</h4><ul><li><a href="#services">Screen printing</a></li><li><a href="#services">Embroidery</a></li><li><a href="#services">Uniforms &amp; workwear</a></li><li><a href="#services">Schools &amp; teams</a></li></ul></div>
-      <div><h4>Get started</h4><ul><li><a href="#estimate">Instant estimate</a></li><li><a href="#quote">Free quote</a></li><li><a href="#faq">FAQ</a></li></ul></div>
+      <div><h4>Get started</h4><ul><li><a href="#estimate">Instant estimate</a></li><li><a href="#quote">Free quote</a></li><li><a href="#programs">Uniform programs</a></li><li><a href="#faq">FAQ</a></li></ul></div>
       <div><h4>Visit</h4><ul><li>5644 W Lawrence Ave<br>Chicago, IL 60630</li><li><a data-phone-link data-phone href="tel:+13313052468">(331) 305-2468</a></li><li>Mon–Fri 8am–5pm</li></ul></div>
     </div>
     <div class="foot-bottom"><span>© <span id="yr">2026</span> Fantastic Lettering. All rights reserved.</span><span>Screen printing · Embroidery · Jefferson Park, Chicago</span></div>
@@ -797,10 +996,16 @@ footer a:hover{color:var(--yellow)}
   <a class="btn btn-primary" href="#quote">Free quote</a>
 </div>
 
-<!-- shared t-shirt shape -->
+<!-- shared garment shapes -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <path id="tee" stroke="#14110f" stroke-width="3" stroke-linejoin="round" d="M72 22 Q100 40 128 22 L168 40 Q176 44 178 52 L170 82 L146 74 L146 180 Q146 186 140 186 L60 186 Q54 186 54 180 L54 74 L30 82 L22 52 Q24 44 32 40 Z"/>
+    <path id="teeBack" stroke="#14110f" stroke-width="3" stroke-linejoin="round" d="M72 22 Q100 30 128 22 L168 40 Q176 44 178 52 L170 82 L146 74 L146 180 Q146 186 140 186 L60 186 Q54 186 54 180 L54 74 L30 82 L22 52 Q24 44 32 40 Z"/>
+    <g id="hat" stroke="#14110f" stroke-width="3" stroke-linejoin="round">
+      <path d="M42 122 Q40 52 100 48 Q160 52 158 122 Z"/>
+      <path d="M28 124 Q100 110 172 124 Q180 140 152 140 Q100 130 48 140 Q20 140 28 124 Z"/>
+      <circle cx="100" cy="49" r="4"/>
+    </g>
   </defs>
 </svg>
 
@@ -814,17 +1019,19 @@ const CONFIG = {
   // At launch, paste a form endpoint here (for example a free Formspree form URL)
   // and every request arrives in the shop's email inbox.
   formEndpoint: "",
+  // Shows a "Sample pricing" tag on the estimator. Set to false once real prices are in.
+  samplePricing: true,
 };
 
 /* Ballpark pricing. These are typical Chicago-area numbers, NOT the shop's real prices.
    The owner should replace them with their own price sheet. */
 const GARMENTS = [
-  { id:"tee",     name:"T-shirt",      base:4.25,  emb:false },
-  { id:"premium", name:"Premium tee",  base:7.00,  emb:false },
-  { id:"hoodie",  name:"Hoodie",       base:17.50, emb:true  },
-  { id:"polo",    name:"Polo",         base:13.00, emb:true  },
-  { id:"hat",     name:"Hat",          base:8.50,  emb:true, embOnly:true },
-  { id:"hivis",   name:"Hi-vis tee",   base:7.50,  emb:false },
+  { id:"tee",     name:"T-shirt",      base:4.25 },
+  { id:"premium", name:"Premium tee",  base:7.00 },
+  { id:"hoodie",  name:"Hoodie",       base:17.50 },
+  { id:"polo",    name:"Polo",         base:13.00 },
+  { id:"hat",     name:"Hat",          base:8.50, embOnly:true },
+  { id:"hivis",   name:"Hi-vis tee",   base:7.50 },
 ];
 const QTY_STEPS = [12, 24, 48, 72, 100, 144, 250, 500, 750, 1000];
 // per-piece print cost for 1 color, 1 location, by quantity break
@@ -832,18 +1039,23 @@ const SCREEN_BREAKS = [ [12,4.75], [24,3.25], [48,2.40], [72,1.95], [144,1.50], 
 const EXTRA_COLOR   = [ [12,1.00], [24,0.75], [48,0.55], [72,0.45], [144,0.35], [250,0.28], [500,0.22], [1000,0.18] ];
 const EMB_BREAKS    = [ [12,7.50], [24,6.25], [48,5.50], [72,5.00], [144,4.50], [250,4.10], [500,3.75], [1000,3.40] ];
 const SCREEN_SETUP_PER_COLOR = 20;   // per color, per location
-const SETUP_WAIVED_AT = 144;          // screens free at this quantity
-const DIGITIZING_FEE = 40;            // one-time embroidery setup
+const SETUP_WAIVED_AT = 144;         // screens free at this quantity
+const DIGITIZING_FEE = 40;           // one-time embroidery setup
 const SCREEN_MIN = 24;
+const DARK_BASE_PER_LOC = 0.40;      // white base layer under the ink on dark shirts
+const XL_UPCHARGE = 2.50;            // extra per piece for 2XL and larger
+const RUSH_PCT = 0.25;               // rush fee, as a share of the order
+const STANDARD_DAYS = 10;            // business days after mockup approval
+const RUSH_DAYS = 5;
 const COLORS = [
-  { name:"White", hex:"#fffdf8", ink:"#14110f" },
-  { name:"Black", hex:"#1b1816", ink:"#ffc928" },
+  { name:"White",        hex:"#fffdf8", ink:"#14110f" },
+  { name:"Black",        hex:"#1b1816", ink:"#ffc928", dark:true },
   { name:"Heather gray", hex:"#b9b4ad", ink:"#14110f" },
-  { name:"Navy", hex:"#1f2a44", ink:"#fffdf8" },
-  { name:"Red", hex:"#c8261c", ink:"#fffdf8" },
-  { name:"Royal", hex:"#2456b8", ink:"#fffdf8" },
+  { name:"Navy",         hex:"#1f2a44", ink:"#fffdf8", dark:true },
+  { name:"Red",          hex:"#c8261c", ink:"#fffdf8", dark:true },
+  { name:"Royal",        hex:"#2456b8", ink:"#fffdf8", dark:true },
   { name:"Safety green", hex:"#c7f03a", ink:"#14110f" },
-  { name:"Forest", hex:"#24442f", ink:"#fffdf8" },
+  { name:"Forest",       hex:"#24442f", ink:"#fffdf8", dark:true },
 ];
 /* =============================================================== */
 
@@ -852,11 +1064,13 @@ const $$ = (s, r=document) => [...r.querySelectorAll(s)];
 const money = n => "$" + n.toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2});
 const money0 = n => "$" + Math.round(n).toLocaleString("en-US");
 const tier = (table, q) => { let v = table[0][1]; for (const [min, p] of table) if (q >= min) v = p; return v; };
+const qtyLabel = q => q === 1000 ? "1,000+" : q.toLocaleString("en-US");
 
 // phone everywhere
 $$("[data-phone-link]").forEach(a => a.href = "tel:" + CONFIG.phoneDial);
 $$("[data-phone]").forEach(a => a.textContent = CONFIG.phoneDisplay);
 $("#yr").textContent = new Date().getFullYear();
+$("#sampleBadge").hidden = !CONFIG.samplePricing;
 
 // mobile menu
 const menuBtn = $("#menuBtn"), navLinks = $("#navLinks");
@@ -867,7 +1081,24 @@ menuBtn.addEventListener("click", () => {
 $$("#navLinks a").forEach(a => a.addEventListener("click", () => { navLinks.classList.remove("open"); menuBtn.setAttribute("aria-expanded", false); }));
 
 /* ---------- estimator ---------- */
-const state = { garment:"tee", qtyIdx:3, method:"screen", colors:1, locs:1, color:0 };
+const state = { garment:"tee", qtyIdx:3, method:"screen", colors:1, locs:1, color:0, xl:0, rush:false, side:"front", logo:null };
+
+// where a logo can go on each view, in preview units (the shirt drawing is 200 wide)
+const PLACES = {
+  front: { cx:100, cy:92, pct:60, min:24, max:70, box:[62,44,138,160], inPerUnit:12/68, name:"front" },
+  back:  { cx:100, cy:84, pct:75, min:24, max:70, box:[62,40,138,160], inPerUnit:12/68, name:"back" },
+  chest: { cx:122, cy:70, pct:45, min:14, max:34, box:[104,52,140,100], inPerUnit:12/68, name:"left chest" },
+  hat:   { cx:100, cy:92, pct:55, min:24, max:60, box:[52,58,148,116], inPerUnit:4.5/50, name:"hat front" },
+};
+const INKS = ["#ff3d2e","#1fb5d6","#ffc928","#2bb673","#8e44ad","#ff8a00"];
+const curG = () => GARMENTS.find(x => x.id === state.garment);
+function placeKey(){
+  if (state.garment === "hat") return "hat";
+  if (state.side === "front" && state.method === "emb") return "chest";
+  return state.side;
+}
+const logoW = p => p.min + (p.max - p.min) * p.pct / 100;
+const fmtIn = n => (Math.round(n * 2) / 2).toString().replace(/\.0$/, "") + '"';
 
 const gWrap = $("#garments");
 GARMENTS.forEach((g, i) => {
@@ -880,80 +1111,231 @@ COLORS.forEach((c, i) => {
     `<div class="swatch"><input type="radio" name="gcolor" id="c-${i}" value="${i}" ${i===0?"checked":""}><label for="c-${i}" title="${c.name}" style="background:${c.hex}"><span class="hp">${c.name}</span></label></div>`);
 });
 
+function decoFor(q){
+  if (state.method === "emb") return tier(EMB_BREAKS, q) * state.locs;
+  let d = (tier(SCREEN_BREAKS, q) + tier(EXTRA_COLOR, q) * (state.colors - 1)) * state.locs;
+  if (COLORS[state.color].dark) d += DARK_BASE_PER_LOC * state.locs;
+  return d;
+}
+function addBizDays(n){
+  const d = new Date();
+  while (n > 0) { d.setDate(d.getDate() + 1); const w = d.getDay(); if (w !== 0 && w !== 6) n--; }
+  return d;
+}
 function calc(){
-  const g = GARMENTS.find(x => x.id === state.garment);
-  const q = QTY_STEPS[state.qtyIdx];
-  let deco, setup, note = "";
-  if (state.method === "emb") {
-    deco = tier(EMB_BREAKS, q) * state.locs;
-    setup = DIGITIZING_FEE;
-  } else {
-    const first = tier(SCREEN_BREAKS, q);
-    const extra = tier(EXTRA_COLOR, q) * (state.colors - 1);
-    deco = (first + extra) * state.locs;
-    setup = q >= SETUP_WAIVED_AT ? 0 : SCREEN_SETUP_PER_COLOR * state.colors * state.locs;
-  }
-  const ppu = g.base + deco;
-  const total = ppu * q + setup;
+  const g = curG(), q = QTY_STEPS[state.qtyIdx];
+  const ppu = g.base + decoFor(q);
+  const setup = state.method === "emb" ? DIGITIZING_FEE
+    : (q >= SETUP_WAIVED_AT ? 0 : SCREEN_SETUP_PER_COLOR * state.colors * state.locs);
+  const darkPart = state.method === "screen" && COLORS[state.color].dark ? DARK_BASE_PER_LOC * state.locs : 0;
+  const xlCount = Math.min(state.xl, q);
+  const xl = xlCount * XL_UPCHARGE;
+  const sub = ppu * q + xl;
+  const rush = state.rush ? sub * RUSH_PCT : 0;
+  const total = sub + rush + setup;
+  const ready = addBizDays(state.rush ? RUSH_DAYS : STANDARD_DAYS);
 
   // savings nudge: what the next quantity break would cost
   let nudge = "";
-  const nextIdx = state.qtyIdx + 1;
-  if (nextIdx < QTY_STEPS.length) {
-    const nq = QTY_STEPS[nextIdx];
-    const table = state.method === "emb" ? EMB_BREAKS : SCREEN_BREAKS;
-    const nDeco = state.method === "emb" ? tier(EMB_BREAKS, nq) * state.locs
-      : (tier(SCREEN_BREAKS, nq) + tier(EXTRA_COLOR, nq) * (state.colors-1)) * state.locs;
-    const nPpu = g.base + nDeco;
-    if (nPpu < ppu - 0.05) nudge = `Order ${nq} and drop to about ${money(nPpu)} each.`;
+  const ni = state.qtyIdx + 1;
+  if (ni < QTY_STEPS.length) {
+    const nq = QTY_STEPS[ni];
+    const nP = g.base + decoFor(nq);
+    if (nP < ppu - 0.05) nudge = `Order ${qtyLabel(nq)} and drop to about ${money(nP)} each.`;
     if (state.method === "screen" && q < SETUP_WAIVED_AT && nq >= SETUP_WAIVED_AT) nudge += " Screen setup is free at 144+.";
   }
-  return { g, q, ppu, setup, total, nudge };
+  return { g, q, ppu, setup, darkPart, xlCount, xl, rush, total, ready, nudge };
 }
 
 function render(){
-  const g = GARMENTS.find(x => x.id === state.garment);
+  const g = curG();
   // hats are embroidery only; screen printing has a 24 minimum
   if (g.embOnly && state.method !== "emb") { state.method = "emb"; $("#m-emb").checked = true; }
   $("#m-screen").disabled = !!g.embOnly;
   $("#m-screen").nextElementSibling.style.opacity = g.embOnly ? .35 : 1;
   if (state.method === "screen" && QTY_STEPS[state.qtyIdx] < SCREEN_MIN) state.qtyIdx = QTY_STEPS.indexOf(SCREEN_MIN);
 
+  const q = QTY_STEPS[state.qtyIdx];
   const qtyEl = $("#qty");
   qtyEl.value = state.qtyIdx;
   qtyEl.style.setProperty("--fill", (state.qtyIdx / (QTY_STEPS.length-1) * 100) + "%");
-  const qLabel = QTY_STEPS[state.qtyIdx] === 1000 ? "1,000+" : QTY_STEPS[state.qtyIdx].toLocaleString();
-  $("#qtyOut").textContent = qLabel;
+  $("#qtyOut").textContent = qtyLabel(q);
   $("#colorsField").style.display = state.method === "emb" ? "none" : "";
   $("#colorsOut").textContent = state.colors;
   $("#locsOut").textContent = state.locs;
+  const xlEl = $("#xl");
+  xlEl.max = q;
+  if (state.xl > q) { state.xl = q; xlEl.value = q; }
 
   const r = calc();
   $("#ppu").textContent = money(r.ppu);
-  $("#rQty").textContent = qLabel;
+  $("#rQty").textContent = qtyLabel(q);
+  $("#lnDark").hidden = !r.darkPart;
+  $("#rDark").textContent = "+" + money(r.darkPart) + "/pc";
+  $("#lnXl").hidden = !r.xl;
+  $("#rXlLabel").textContent = `2XL+ upcharge (${r.xlCount} pcs)`;
+  $("#rXl").textContent = "+" + money0(r.xl);
+  $("#lnRush").hidden = !r.rush;
+  $("#rRush").textContent = "+" + money0(r.rush);
   $("#rSetup").textContent = r.setup ? money0(r.setup) : "Free";
   $("#rTotal").textContent = "≈ " + money0(r.total);
+  $("#rReady").textContent = r.ready.toLocaleDateString("en-US", { weekday:"short", month:"short", day:"numeric" });
   const sv = $("#saving"); sv.textContent = r.nudge; sv.classList.toggle("show", !!r.nudge);
+  $("#pvSide").style.display = g.id === "hat" ? "none" : "";
+  draw();
+}
 
-  // preview art
-  const c = COLORS[state.color];
-  $("#pvFill").setAttribute("fill", c.hex);
-  const inks = ["#ff3d2e","#1fb5d6","#ffc928","#2bb673","#8e44ad","#ff8a00"];
+function draw(){
+  const g = curG(), c = COLORS[state.color];
+  const shape = g.id === "hat" ? "#hat" : (state.side === "back" ? "#teeBack" : "#tee");
+  const fill = $("#pvFill");
+  fill.setAttribute("href", shape);
+  fill.setAttribute("fill", c.hex);
+  $("#pvLabel").textContent = g.id === "hat" ? "Hat front" : (state.side === "back" ? "Back" : "Front");
+  $$("#pvSide button").forEach(b => b.classList.toggle("on", b.dataset.side === state.side));
+
   let art = "";
-  if (g.id === "hat") {
-    art = `<rect x="70" y="80" width="60" height="34" rx="6" fill="none" stroke="${c.ink}" stroke-width="3" stroke-dasharray="3 3"/><text x="100" y="103" text-anchor="middle" font-family="Anton,Impact,sans-serif" font-size="16" fill="${c.ink}">LOGO</text>`;
-  } else if (state.method === "emb") {
-    art = `<circle cx="122" cy="70" r="13" fill="none" stroke="${c.ink}" stroke-width="2.5" stroke-dasharray="2.5 2.5"/><text x="122" y="74" text-anchor="middle" font-family="Anton,Impact,sans-serif" font-size="9" fill="${c.ink}">LOGO</text>`;
-  } else {
-    const n = state.colors;
-    for (let i = n-1; i >= 0; i--) {
-      art += `<text x="${100 + i*2.2}" y="${112 - i*1.6}" text-anchor="middle" font-family="Anton,Impact,sans-serif" font-size="30" fill="${i===0 ? c.ink : inks[i-1]}">YOUR</text>`;
+  if (!state.logo) {
+    if (g.id === "hat") {
+      art = `<rect x="70" y="80" width="60" height="30" rx="6" fill="none" stroke="${c.ink}" stroke-width="3" stroke-dasharray="3 3"/><text x="100" y="101" text-anchor="middle" font-family="Anton,Impact,sans-serif" font-size="16" fill="${c.ink}">LOGO</text>`;
+    } else if (state.side === "back") {
+      if (state.locs >= 2) {
+        art = `<text x="100" y="92" text-anchor="middle" font-family="Anton,Impact,sans-serif" font-size="30" fill="${c.ink}">YOUR</text><text x="100" y="124" text-anchor="middle" font-family="Anton,Impact,sans-serif" font-size="30" fill="${state.colors > 1 ? INKS[0] : c.ink}">CREW</text>`;
+      } else {
+        art = `<rect x="66" y="52" width="68" height="88" rx="6" fill="none" stroke="${c.ink}" stroke-opacity=".4" stroke-width="2" stroke-dasharray="4 4"/><text x="100" y="94" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="8" fill="${c.ink}" opacity=".7">No back print</text><text x="100" y="106" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="7" fill="${c.ink}" opacity=".6">Add a 2nd location</text>`;
+      }
+    } else if (state.method === "emb") {
+      art = `<circle cx="122" cy="70" r="13" fill="none" stroke="${c.ink}" stroke-width="2.5" stroke-dasharray="2.5 2.5"/><text x="122" y="74" text-anchor="middle" font-family="Anton,Impact,sans-serif" font-size="9" fill="${c.ink}">LOGO</text>`;
+    } else {
+      const n = state.colors;
+      for (let i = n-1; i >= 0; i--) {
+        art += `<text x="${100 + i*2.2}" y="${112 - i*1.6}" text-anchor="middle" font-family="Anton,Impact,sans-serif" font-size="30" fill="${i===0 ? c.ink : INKS[i-1]}">YOUR</text>`;
+      }
+      art += `<rect x="62" y="122" width="76" height="16" rx="3" fill="${n>1 ? INKS[0] : c.ink}"/><text x="100" y="134.5" text-anchor="middle" font-family="Inter,sans-serif" font-weight="800" font-size="10" letter-spacing="2" fill="${c.hex}">BRAND · CHICAGO</text>`;
     }
-    art += `<rect x="62" y="122" width="76" height="16" rx="3" fill="${n>1 ? inks[0] : c.ink}"/><text x="100" y="134.5" text-anchor="middle" font-family="Inter,sans-serif" font-weight="800" font-size="10" letter-spacing="2" fill="${c.hex}">BRAND · CHICAGO</text>`;
   }
   $("#pvArt").innerHTML = art;
-  const sq = $("#pvShirt"); sq.style.transform = "scale(.96)"; requestAnimationFrame(() => setTimeout(() => sq.style.transform = "", 80));
+  drawLogo();
 }
+
+function placeholderSrc(){
+  const ink = COLORS[state.color].ink;
+  return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100"><rect x="4" y="4" width="192" height="92" rx="12" fill="none" stroke="${ink}" stroke-width="6" stroke-dasharray="14 9"/><text x="100" y="62" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="30" fill="${ink}">YOUR LOGO</text></svg>`);
+}
+
+function drawLogo(){
+  const img = $("#pvLogo"), L = state.logo;
+  $("#preview").classList.toggle("has-logo", !!L);
+  if (!L) { img.style.display = "none"; $("#sizeCtl").classList.remove("show"); $("#artMsg").className = "art-msg"; return; }
+  const p = PLACES[placeKey()];
+  const w = logoW(p), h = w / L.aspect;
+  const [x1, y1, x2, y2] = p.box;
+  p.cx = w < x2 - x1 ? Math.min(Math.max(p.cx, x1 + w/2), x2 - w/2) : (x1 + x2) / 2;
+  p.cy = h < y2 - y1 ? Math.min(Math.max(p.cy, y1 + h/2), y2 - h/2) : (y1 + y2) / 2;
+  img.setAttribute("href", L.previewable ? L.src : placeholderSrc());
+  img.setAttribute("x", p.cx - w/2);
+  img.setAttribute("y", p.cy - h/2);
+  img.setAttribute("width", w);
+  img.setAttribute("height", h);
+  img.style.display = "";
+  $("#sizeCtl").classList.add("show");
+  const sizeEl = $("#logoSize");
+  sizeEl.value = p.pct;
+  sizeEl.style.setProperty("--fill", p.pct + "%");
+  const inches = w * p.inPerUnit;
+  $("#logoSizeOut").textContent = fmtIn(inches);
+  artCheck(inches);
+}
+
+// quick artwork check: is the file sharp enough for the print size?
+function artCheck(inches){
+  const L = state.logo, m = $("#artMsg");
+  let cls = "good", txt;
+  if (!L.previewable) {
+    txt = `${L.name} is attached to your quote. We can't preview this file type here, so we'll send you a mockup.` + (L.vector ? " Vector files print perfectly." : "");
+  } else if (state.method === "emb") {
+    txt = "We'll digitize this for embroidery. Any clear image works.";
+  } else if (L.vector) {
+    txt = "Vector file: it will print razor-sharp at any size.";
+  } else {
+    const need = Math.round(inches * 150);
+    if (L.w >= need) txt = `Good resolution for a ${fmtIn(inches)} print.`;
+    else { cls = "warn"; txt = `This image is ${L.w}px wide, a bit small for a ${fmtIn(inches)} print, so it may look soft. A bigger file or a vector file (AI, EPS, SVG, PDF) prints best. Don't have one? Our art team can redraw it.`; }
+  }
+  m.className = "art-msg show " + cls;
+  m.textContent = txt;
+}
+
+function attachToForm(file){
+  try {
+    const dt = new DataTransfer(); dt.items.add(file);
+    $("#fFile").files = dt.files;
+    $("#dropText").textContent = "✓ " + file.name;
+  } catch (e) { /* older browsers: they can attach it again in the form */ }
+}
+
+function loadLogo(file){
+  if (!file) return;
+  const ext = (file.name.split(".").pop() || "").toLowerCase();
+  const vector = ["svg","ai","eps","pdf"].includes(ext);
+  const canPreview = ["png","jpg","jpeg","svg","webp","gif"].includes(ext);
+  const done = (src, w, h, previewable) => {
+    state.logo = { src, w, h, aspect: (w && h) ? w / h : 2, vector, previewable, name:file.name };
+    $("#logoBtnText").textContent = "✓ " + file.name;
+    $("#logoRemove").hidden = false;
+    attachToForm(file);
+    draw();
+  };
+  if (!canPreview) { done(null, 0, 0, false); return; }
+  const rd = new FileReader();
+  rd.onload = () => {
+    const im = new Image();
+    im.onload = () => done(rd.result, im.naturalWidth, im.naturalHeight, true);
+    im.onerror = () => done(null, 0, 0, false);
+    im.src = rd.result;
+  };
+  rd.readAsDataURL(file);
+}
+
+const logoFile = $("#logoFile");
+logoFile.addEventListener("change", () => loadLogo(logoFile.files[0]));
+$("#pvAdd").addEventListener("click", () => logoFile.click());
+$("#logoRemove").addEventListener("click", () => {
+  state.logo = null; logoFile.value = "";
+  $("#logoBtnText").textContent = "Upload your logo";
+  $("#logoRemove").hidden = true;
+  draw();
+});
+$("#logoSize").addEventListener("input", e => { PLACES[placeKey()].pct = +e.target.value; drawLogo(); });
+$$("#pvSide button").forEach(b => b.addEventListener("click", () => { state.side = b.dataset.side; draw(); }));
+
+// drop a file straight onto the preview
+const preview = $("#preview");
+["dragover","dragenter"].forEach(ev => preview.addEventListener(ev, e => { e.preventDefault(); preview.classList.add("over"); }));
+["dragleave","drop"].forEach(ev => preview.addEventListener(ev, e => { e.preventDefault(); preview.classList.remove("over"); }));
+preview.addEventListener("drop", e => loadLogo(e.dataTransfer.files[0]));
+
+// drag the logo around on the garment
+const pvSvg = $("#pvShirt"), pvLogo = $("#pvLogo");
+let drag = null;
+function svgPt(e){
+  const pt = pvSvg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+  return pt.matrixTransform(pvSvg.getScreenCTM().inverse());
+}
+pvLogo.addEventListener("pointerdown", e => {
+  e.preventDefault();
+  const p = PLACES[placeKey()], pt = svgPt(e);
+  drag = { dx: pt.x - p.cx, dy: pt.y - p.cy };
+  pvLogo.setPointerCapture(e.pointerId);
+});
+pvLogo.addEventListener("pointermove", e => {
+  if (!drag) return;
+  const p = PLACES[placeKey()], pt = svgPt(e);
+  p.cx = pt.x - drag.dx; p.cy = pt.y - drag.dy;
+  drawLogo();
+});
+["pointerup","pointercancel"].forEach(ev => pvLogo.addEventListener(ev, () => drag = null));
 
 gWrap.addEventListener("change", e => { state.garment = e.target.value; render(); });
 $("#methods").addEventListener("change", e => { state.method = e.target.value; render(); });
@@ -966,19 +1348,26 @@ $("#qty").addEventListener("input", e => {
   }
   render();
 });
-$$("[data-step]").forEach(b => b.tagName === "BUTTON" && b.addEventListener("click", () => {
+$$("button[data-step]").forEach(b => b.addEventListener("click", () => {
   const k = b.dataset.step, d = +b.dataset.d;
   const max = k === "colors" ? 6 : 4;
   state[k] = Math.min(max, Math.max(1, state[k] + d));
   render();
 }));
+$("#xl").addEventListener("input", e => { state.xl = Math.max(0, parseInt(e.target.value, 10) || 0); render(); });
+$$("input[name=rush]").forEach(r => r.addEventListener("change", () => { state.rush = r.value === "1" && r.checked; render(); }));
 render();
 
-// carry estimate into the form
+// carry the estimate into the quote form
+let estQty = 0;
 $("#lockBtn").addEventListener("click", () => {
-  const r = calc();
+  const r = calc(), c = COLORS[state.color];
   const decoText = state.method === "emb" ? "embroidery" : `${state.colors}-color screen print`;
-  const txt = `${r.q === 1000 ? "1,000+" : r.q} ${COLORS[state.color].name.toLowerCase()} ${r.g.name.toLowerCase()}s, ${decoText}, ${state.locs} location${state.locs>1?"s":""} (≈ ${money(r.ppu)}/pc)`;
+  const parts = [`${qtyLabel(r.q)} ${c.name.toLowerCase()} ${r.g.name.toLowerCase()}s`, decoText, `${state.locs} location${state.locs>1?"s":""}`];
+  if (state.logo) parts.push(`logo on ${PLACES[placeKey()].name}, about ${$("#logoSizeOut").textContent} wide`);
+  if (r.xlCount) parts.push(`${r.xlCount} in 2XL+`);
+  if (state.rush) parts.push("rush");
+  const txt = parts.join(", ") + ` (≈ ${money(r.ppu)}/pc, ≈ ${money0(r.total)} total)`;
   $("#estimateField").value = txt;
   $("#estChipText").textContent = txt;
   $("#estChip").classList.add("show");
@@ -986,6 +1375,12 @@ $("#lockBtn").addEventListener("click", () => {
   const box = document.getElementById(map[r.g.id]); if (box) box.checked = true;
   const q = r.q;
   $("#fQty").value = q < 24 ? "12–23" : q < 48 ? "24–47" : q < 100 ? "48–99" : q < 250 ? "100–249" : q < 500 ? "250–499" : "500+";
+  $(state.method === "emb" ? "#d-emb" : "#d-screen").checked = true;
+  estQty = q; updateSizeTotal();
+});
+$("#programBtn").addEventListener("click", () => {
+  const n = $("#fNotes");
+  if (!n.value) n.value = "I'm interested in setting up a uniform program for my team.";
 });
 
 /* ---------- quote form ---------- */
@@ -1014,6 +1409,12 @@ $$("[data-next]", form).forEach(b => b.addEventListener("click", () => { if (val
 $$("[data-back]", form).forEach(b => b.addEventListener("click", () => showStep(step - 1)));
 $$("input,select", form).forEach(el => el.addEventListener("input", () => el.classList.remove("invalid")));
 $("#needGrid").addEventListener("change", () => $("#needErr").style.display = "none");
+
+function updateSizeTotal(){
+  const t = $$("#sizes input").reduce((s, i) => s + (parseInt(i.value, 10) || 0), 0);
+  $("#sizeTotal").textContent = estQty ? `Total: ${t} of ${qtyLabel(estQty)} pieces` : `Total: ${t} piece${t === 1 ? "" : "s"}`;
+}
+$("#sizes").addEventListener("input", updateSizeTotal);
 
 // artwork upload
 const drop = $("#drop"), file = $("#fFile");
