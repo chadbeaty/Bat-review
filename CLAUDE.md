@@ -24,7 +24,7 @@ Every site must look one-of-a-kind. Nobody should be able to tell an AI built it
 - Barrel Talk (root): Barlow Condensed, Public Sans, IBM Plex Mono.
 - Marketplace (`web/`): Anybody, Schibsted Grotesk, Martian Mono.
 - Aged Takes (`agedtakes/`): Fraunces, Source Serif 4, IBM Plex Mono.
-- Fantastic Lettering concept (`fantasticlettering/`): Big Shoulders Display, IBM Plex Sans, IBM Plex Mono; paper/ink with Chicago red and light blue; print-shop motifs (registration marks, squeegee animation, work-order ticket).
+- Fantastic Lettering concept (`fantasticlettering/`): Alfa Slab One, Libre Franklin; paper/ink with Chicago-flag red and light blue; print-shop motifs (registration marks, squeegee animation, quote worksheet and receipt, work-order ticket). Live preview: https://fantastic-lettering-concept.vercel.app (Vercel project `fantastic-lettering-concept`, root directory `fantasticlettering`).
 - Add each new site here when it's built.
 
 ## Aged Takes (`agedtakes/`)

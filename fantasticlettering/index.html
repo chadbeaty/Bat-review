@@ -10,7 +10,7 @@
 <meta name="theme-color" content="#17171b">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#f2eee4;
@@ -26,9 +26,9 @@
   --gold:#f2a900;
   --table:#1b1b20;
   --table-line:rgba(255,255,255,.06);
-  --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
-  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --display:"Alfa Slab One",Rockwell,"Roboto Slab",Georgia,serif;
+  --sans:"Libre Franklin",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Libre Franklin",system-ui,sans-serif;
   --star:polygon(50% 0,63% 27.5%,93.3% 25%,76% 50%,93.3% 75%,63% 72.5%,50% 100%,37% 72.5%,6.7% 75%,24% 50%,6.7% 25%,37% 27.5%);
 }
 *{box-sizing:border-box}
@@ -37,20 +37,20 @@ body{margin:0;color:var(--ink);font:400 17px/1.6 var(--sans);-webkit-font-smooth
   background:var(--paper) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.08  0 0 0 0 0.05  0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
 img,svg{display:block;max-width:100%}
 a{color:inherit}
-h1,h2,h3{font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.005em;line-height:.9;margin:0}
+h1,h2,h3{font-family:var(--display);font-weight:400;letter-spacing:-.005em;line-height:1.02;margin:0}
 p{margin:0 0 1em}
 .wrap{max-width:1240px;margin:0 auto;padding:0 28px}
-.mono{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase}
+.mono{font-family:var(--mono);font-size:11.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;font-variant-numeric:tabular-nums}
 .hp,.sr-only{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .red{color:var(--red)}
 .star-i{display:inline-block;width:.62em;height:.62em;background:var(--red);clip-path:var(--star);vertical-align:.05em}
 
 /* section label: "02 — Services ————" */
 .label{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:12.5px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;margin-bottom:28px}
-.label b{font-weight:600;color:var(--red)}
+.label::before{content:"";width:13px;height:13px;background:var(--red);clip-path:var(--star);flex:none}
 .label::after{content:"";flex:1;height:1.5px;background:currentColor;opacity:.85}
 .section{padding:112px 0}
-.section h2{font-size:clamp(48px,7.2vw,104px)}
+.section h2{font-size:clamp(38px,5vw,72px)}
 .lede{font-size:19px;color:var(--ink-2);max-width:560px}
 
 /* buttons: ink fills up from the bottom on hover, like a flood stroke */
@@ -84,7 +84,7 @@ header.site{position:sticky;top:0;z-index:50;background:rgba(242,238,228,.95);ba
 .logo{display:flex;align-items:center;gap:12px;text-decoration:none}
 .logo-star{width:30px;height:30px;color:var(--red);flex:none}
 .logo-word{display:flex;flex-direction:column;line-height:1}
-.logo-word strong{font-family:var(--display);font-weight:900;font-size:27px;letter-spacing:.02em;text-transform:uppercase}
+.logo-word strong{font-family:var(--display);font-weight:400;font-size:21px;letter-spacing:0}
 .logo-word small{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:4px}
 .nav-links{display:flex;align-items:center;gap:26px;font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase}
 .nav-links a{text-decoration:none}
@@ -101,7 +101,7 @@ header.site{position:sticky;top:0;z-index:50;background:rgba(242,238,228,.95);ba
 .hero{padding:26px 0 0}
 .hero-meta{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;padding-bottom:14px;border-bottom:1px solid var(--rule);color:var(--muted)}
 .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;padding:56px 0 84px}
-.hero h1{font-size:clamp(64px,8.4vw,128px);line-height:.84;letter-spacing:-.005em;margin:0 0 30px}
+.hero h1{font-size:clamp(46px,6vw,90px);line-height:.98;letter-spacing:-.01em;margin:0 0 30px}
 .hero h1 .outline{color:transparent;-webkit-text-stroke:2px var(--ink)}
 .hero-sub{font-size:19px;color:var(--ink-2);max-width:540px}
 .hero-ctas{display:flex;flex-wrap:wrap;gap:12px;margin:32px 0 34px}
@@ -133,8 +133,8 @@ header.site{position:sticky;top:0;z-index:50;background:rgba(242,238,228,.95);ba
 .svc-list li{display:grid;grid-template-columns:64px 1.05fr 1.35fr .9fr;gap:28px;align-items:baseline;padding:30px 18px;border-bottom:1px solid var(--rule);
   background:linear-gradient(var(--ink),var(--ink)) left/0% 100% no-repeat;transition:background-size .5s cubic-bezier(.2,.8,.2,1),color .25s}
 .svc-list li:hover{background-size:100% 100%;color:var(--paper)}
-.svc-list .n{color:var(--red)}
-.svc-list h3{font-size:42px}
+.svc-list .n{width:16px;height:16px;background:var(--red);clip-path:var(--star);align-self:center}
+.svc-list h3{font-size:29px}
 .svc-list p{margin:0;color:var(--ink-2);font-size:16px}
 .svc-list li:hover p,.svc-list li:hover .specs{color:#c9c3b7}
 .svc-list .specs{color:var(--muted);line-height:1.8}
@@ -153,7 +153,7 @@ header.site{position:sticky;top:0;z-index:50;background:rgba(242,238,228,.95);ba
 .field{margin-bottom:28px}
 .field:last-child{margin-bottom:0}
 .field-label{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);font-weight:500;font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;color:var(--muted)}
-.field-label output{font-family:var(--display);font-size:38px;font-weight:800;color:var(--ink);letter-spacing:0;line-height:.8}
+.field-label output{font-family:var(--display);font-size:28px;font-weight:400;color:var(--ink);letter-spacing:0;line-height:.8}
 .field-label small{font-size:10.5px;color:#9a948a;margin-left:6px}
 .field-label label{cursor:pointer}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
@@ -172,7 +172,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--ink)
 .stepper{display:flex;align-items:center;border:1.5px solid var(--rule);border-radius:2px;width:max-content;background:#fff}
 .stepper button{width:44px;height:44px;background:none;border:0;color:var(--ink);font-size:20px;cursor:pointer}
 .stepper button:hover{background:var(--paper)}
-.stepper span{min-width:48px;text-align:center;font-family:var(--display);font-weight:800;font-size:26px}
+.stepper span{min-width:48px;text-align:center;font-family:var(--display);font-weight:400;font-size:21px}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px}
 .two-col .field{margin-bottom:0}
 /* ink-book swatch chips */
@@ -199,7 +199,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--ink)
 .size-ctl{margin-top:16px;display:none}
 .size-ctl.show{display:block}
 .size-ctl .field-label{margin-bottom:8px}
-.size-ctl .field-label output{font-size:30px}
+.size-ctl .field-label output{font-size:23px}
 .xl-input{width:120px;font:600 17px var(--mono);background:#fff;border:1.5px solid var(--rule);border-radius:2px;color:var(--ink);padding:10px 12px}
 .xl-input:focus{outline:none;border-color:var(--ink)}
 
@@ -223,11 +223,11 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--ink)
 .has-logo .pv-hint{display:block}
 #pvLogo{cursor:grab}
 #pvLogo:active{cursor:grabbing}
-.price-big{font-family:var(--display);font-weight:900;font-size:80px;line-height:.85;letter-spacing:-.01em;margin-bottom:4px}
+.price-big{font-family:var(--display);font-weight:400;font-size:56px;line-height:1;letter-spacing:-.01em;margin-bottom:4px}
 .price-big small{font:500 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-left:8px}
 .saving{display:none;font-size:14px;color:var(--red-dark);border:1.5px dashed var(--red);padding:9px 12px;margin:12px 0 4px}
 .saving.show{display:block}
-.price-line{display:flex;align-items:baseline;gap:8px;font:400 13.5px/1.4 var(--mono);padding:7px 0}
+.price-line{display:flex;align-items:baseline;gap:8px;font:400 14px/1.4 var(--mono);font-variant-numeric:tabular-nums;padding:7px 0}
 .price-line[hidden]{display:none}
 .price-line span{flex:1;display:flex;align-items:baseline}
 .price-line span::after{content:"";flex:1;border-bottom:1.5px dotted var(--rule);margin:0 0 0 8px;transform:translateY(-3px)}
@@ -240,7 +240,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--ink)
 .est-result .btn{width:100%}
 
 /* who we print for: a type specimen */
-.who{list-style:none;padding:0;margin:0;font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:clamp(40px,6.4vw,92px);line-height:1.2}
+.who{list-style:none;padding:0;margin:0;font-family:var(--display);font-weight:400;font-size:clamp(32px,4.6vw,64px);line-height:1.55}
 .who li{display:inline-block;position:relative;white-space:nowrap;margin-right:.12em}
 .who li:nth-child(odd) .w{color:transparent;-webkit-text-stroke:1.5px var(--ink)}
 .who .w{transition:color .2s}
@@ -257,18 +257,18 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--ink)
 .tstep{padding:26px 22px 30px;border-right:1px solid var(--rule);position:relative}
 .tstep:last-child{border-right:0}
 .tstep .mono{color:var(--red)}
-.tstep h3{font-size:32px;margin:12px 0 10px}
+.tstep h3{font-size:23px;margin:12px 0 10px}
 .tstep p{font-size:15px;color:var(--muted);margin:0}
 .tstep .box{position:absolute;right:20px;top:24px;width:20px;height:20px;border:1.5px solid var(--ink);display:grid;place-items:center;font:700 15px var(--sans);color:var(--red)}
 .ticket-stub{border-left:2px dashed var(--ink);display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:8px;padding:22px 14px;position:relative;color:var(--muted)}
 .ticket-stub::before,.ticket-stub::after{content:"";position:absolute;left:-12px;width:22px;height:22px;border-radius:50%;background:var(--paper);border:1.5px solid var(--ink)}
 .ticket-stub::before{top:-12px;clip-path:inset(50% 0 0 0)}
 .ticket-stub::after{bottom:-12px;clip-path:inset(0 0 50% 0)}
-.ticket-stub b{font-family:var(--display);font-weight:900;font-size:44px;line-height:.9;color:var(--ink)}
+.ticket-stub b{font-family:var(--display);font-weight:400;font-size:30px;line-height:1;color:var(--ink)}
 
 /* why */
 .why{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start;margin-bottom:64px}
-.why h2{font-size:clamp(46px,6.4vw,92px)}
+.why h2{font-size:clamp(38px,4.8vw,68px)}
 .why-list{list-style:none;padding:0;margin:0;display:grid;gap:22px}
 .why-list li{display:grid;grid-template-columns:40px 1fr;gap:14px;padding-bottom:22px;border-bottom:1px solid var(--rule)}
 .why-list li:last-child{border-bottom:0;padding-bottom:0}
@@ -278,14 +278,14 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--ink)
 .stats{display:grid;grid-template-columns:repeat(4,1fr);border-block:1.5px solid var(--ink)}
 .stat{padding:26px 24px;border-right:1px solid var(--rule)}
 .stat:last-child{border-right:0}
-.stat b{display:block;font-family:var(--display);font-weight:900;font-size:clamp(56px,7vw,96px);line-height:.85;margin-bottom:10px}
+.stat b{display:block;font-family:var(--display);font-weight:400;font-size:clamp(40px,4.6vw,64px);line-height:1;margin-bottom:10px}
 .stat:first-child b{color:var(--red)}
 .stat span{color:var(--muted)}
 
 /* uniform programs */
 .uni{background:var(--paper-2);border-block:1.5px solid var(--ink)}
 .uni-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:72px;align-items:center}
-.uni h2{font-size:clamp(46px,6.2vw,88px);margin-bottom:22px}
+.uni h2{font-size:clamp(36px,4.6vw,64px);margin-bottom:22px}
 .uni-list{list-style:none;padding:0;margin:30px 0 34px;display:grid;grid-template-columns:1fr 1fr;gap:20px 28px}
 .uni-list li{border-top:1.5px solid var(--ink);padding-top:12px}
 .uni-list b{display:block;font-weight:600;font-size:16.5px;margin-bottom:2px}
@@ -294,7 +294,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--ink)
 .acct::before{content:"Standing order";position:absolute;left:-1.5px;top:-31px;background:var(--ink);color:var(--paper);font:600 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;padding:8px 14px}
 .acct-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px}
 .acct-top small{display:block;font:500 11px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
-.acct-top b{font-family:var(--display);font-weight:800;font-size:32px;text-transform:uppercase;line-height:.95}
+.acct-top b{font-family:var(--display);font-weight:400;font-size:23px;line-height:1.1}
 .acct-ex{font:600 10.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--red);border:1.5px solid var(--red);padding:4px 8px;transform:rotate(5deg);white-space:nowrap}
 .acct-item{display:grid;grid-template-columns:48px 1fr auto;gap:14px;align-items:center;padding:12px 0;border-top:1px dashed var(--rule)}
 .acct-item svg{width:48px;height:48px;background:#e4dfd3;padding:4px}
@@ -308,18 +308,18 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;background:var(--ink)
 .flag{background:linear-gradient(var(--blue),var(--blue)) top/100% 16px no-repeat,linear-gradient(var(--blue),var(--blue)) bottom/100% 16px no-repeat,var(--sheet);padding:84px 0;text-align:center;border-block:1.5px solid var(--ink)}
 .flag .stars{display:flex;justify-content:center;gap:22px;margin-bottom:26px}
 .flag .stars i{width:38px;height:38px;background:var(--red);clip-path:var(--star)}
-.flag h2{font-size:clamp(44px,6vw,84px);margin-bottom:16px}
+.flag h2{font-size:clamp(34px,4.4vw,60px);margin-bottom:16px}
 .flag p{font-size:18px;color:var(--ink-2);max-width:560px;margin:0 auto 30px}
 
 /* faq */
 .faq-grid{display:grid;grid-template-columns:.8fr 1.2fr;gap:72px}
-.faq-grid h2{font-size:clamp(46px,6vw,84px);margin-bottom:22px}
+.faq-grid h2{font-size:clamp(36px,4.4vw,60px);margin-bottom:22px}
 .faq-list{counter-reset:q}
 details{border-top:1px solid var(--rule);counter-increment:q}
 details:last-child{border-bottom:1px solid var(--rule)}
 summary{list-style:none;cursor:pointer;padding:20px 44px 20px 62px;font-weight:600;font-size:17.5px;position:relative}
 summary::-webkit-details-marker{display:none}
-summary::before{content:"Q." counter(q,decimal-leading-zero);position:absolute;left:0;top:23px;font:600 12px var(--mono);letter-spacing:.06em;color:var(--red)}
+summary::before{content:"Q" counter(q);position:absolute;left:0;top:23px;font:600 12px var(--mono);letter-spacing:.06em;color:var(--red)}
 summary::after{content:"+";position:absolute;right:6px;top:50%;transform:translateY(-50%);font:400 24px var(--mono);transition:transform .2s}
 details[open] summary::after{transform:translateY(-50%) rotate(45deg)}
 details p{color:var(--ink-2);padding:0 40px 20px 62px;margin:0}
@@ -328,14 +328,14 @@ details p{color:var(--ink-2);padding:0 40px 20px 62px;margin:0}
 .quote-sec{background:var(--ink);color:var(--paper)}
 .quote-sec .label{color:#d9d3c6}
 .quote{display:grid;grid-template-columns:.85fr 1.15fr;gap:64px;align-items:start}
-.quote-side h2{font-size:clamp(46px,6.2vw,88px);color:var(--sheet);margin-bottom:22px}
+.quote-side h2{font-size:clamp(36px,4.6vw,64px);color:var(--sheet);margin-bottom:22px}
 .quote-side .lede{color:#b8b2a5}
 .promise{list-style:none;padding:0;margin:30px 0 0;display:grid;gap:12px;color:#e6e0d3}
 .promise li{display:flex;gap:12px;align-items:center}
 .promise li::before{content:"";width:11px;height:11px;background:var(--red);clip-path:var(--star);flex:none}
 .call-card{margin-top:36px;padding-top:22px;border-top:1.5px solid #3a3a40}
 .call-card small{display:block;color:#9c968a}
-.call-card a{display:block;font-family:var(--display);font-weight:900;font-size:54px;line-height:1;text-decoration:none;color:var(--sheet);margin:6px 0}
+.call-card a{display:block;font-family:var(--display);font-weight:400;font-size:38px;line-height:1;text-decoration:none;color:var(--sheet);margin:6px 0}
 .call-card a:hover{color:var(--red)}
 form.qf{position:relative;background:var(--sheet);color:var(--ink);padding:0;border-radius:2px;box-shadow:0 30px 70px rgba(0,0,0,.4)}
 .qf-head{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:13px 28px;border-bottom:1.5px solid var(--ink);color:var(--muted)}
@@ -346,7 +346,7 @@ form.qf{position:relative;background:var(--sheet);color:var(--ink);padding:0;bor
 .qf-step{display:none}
 .qf-step.active{display:block;animation:fade .35s ease}
 @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-.qf h3{font-size:40px;margin-bottom:8px}
+.qf h3{font-size:28px;margin-bottom:8px}
 .qf .hint{color:var(--muted);font-size:15px;margin-bottom:22px}
 .qf label.lbl,.qf span.lbl{display:block;font:500 11.5px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
 .qf input[type=text],.qf input[type=email],.qf input[type=tel],.qf input[type=date],.qf select{width:100%;font:500 17px var(--sans);color:var(--ink);background:transparent;border:0;border-bottom:1.5px solid var(--ink);border-radius:0;padding:8px 2px 10px;transition:border-color .15s}
@@ -396,7 +396,7 @@ form.qf{position:relative;background:var(--sheet);color:var(--ink);padding:0;bor
 /* visit */
 .visit{display:grid;grid-template-columns:.9fr 1.1fr;border:1.5px solid var(--ink);background:var(--sheet)}
 .visit-info{padding:40px}
-.visit-info h2{font-size:clamp(46px,5.6vw,80px);margin:18px 0 20px}
+.visit-info h2{font-size:clamp(36px,4.4vw,60px);margin:18px 0 20px}
 .hours{width:100%;border-collapse:collapse;margin:20px 0 28px;font:400 13.5px var(--mono)}
 .hours td{padding:8px 0;border-bottom:1px dotted var(--rule)}
 .hours td:last-child{text-align:right;font-weight:600}
@@ -409,7 +409,7 @@ form.qf{position:relative;background:var(--sheet);color:var(--ink);padding:0;bor
 
 /* footer */
 footer{background:var(--ink);color:#aaa497;margin-top:112px;padding:0 0 120px}
-.foot-big{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:clamp(56px,12.5vw,190px);line-height:.82;color:var(--sheet);padding:70px 0 54px;display:flex;align-items:center;gap:.12em;flex-wrap:wrap}
+.foot-big{font-family:var(--display);font-weight:400;font-size:clamp(44px,8.6vw,132px);line-height:1;color:var(--sheet);padding:70px 0 54px;display:flex;align-items:center;gap:.12em;flex-wrap:wrap}
 .foot-big i{width:.5em;height:.5em;background:var(--red);clip-path:var(--star);flex:none}
 .foot{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:36px;padding-top:34px;border-top:1px solid #34343a}
 footer .logo-word strong{color:var(--sheet)}
@@ -468,7 +468,7 @@ footer a:hover{color:var(--sheet)}
   .hero-ctas .btn{width:100%}
   .svc-list li{grid-template-columns:1fr;gap:8px;padding:24px 4px}
   .svc-list .specs{grid-column:auto}
-  .svc-list h3{font-size:36px}
+  .svc-list h3{font-size:26px}
   .est-body,.qf-body{padding:22px 18px 26px}
   .sheet-head,.qf-head{padding:12px 18px}
   .two-col,.uni-list,.ticket-steps{grid-template-columns:1fr}
@@ -480,14 +480,14 @@ footer a:hover{color:var(--sheet)}
   .stats{grid-template-columns:1fr 1fr}
   .stat{padding:22px 16px}
   .who sup{display:none}
-  .who{line-height:1.05}
+  .who{line-height:1.3}
   .visit-info{padding:26px 20px}
-  .call-card a{font-size:44px}
+  .call-card a{font-size:32px}
   .foot{grid-template-columns:1fr}
   .mbar{display:flex}
   .nav-phone{display:none}
-  .logo-word strong{font-size:23px}
-  .price-big{font-size:68px}
+  .logo-word strong{font-size:18px}
+  .price-big{font-size:48px}
 }
 </style>
 </head>
@@ -560,18 +560,18 @@ footer a:hover{color:var(--sheet)}
 <!-- SERVICES -->
 <section class="section" id="services">
   <div class="wrap">
-    <div class="label"><b>01</b> What we do</div>
+    <div class="label">What we do</div>
     <div class="head-split">
       <h2>Every garment.<br>Every logo.<br><span class="red">One shop.</span></h2>
       <p class="lede">We source the garments, print or embroider them, and finish them in our own shop. One point of contact, one invoice, and the same result on every reorder.</p>
     </div>
     <ol class="svc-list">
-      <li class="reveal"><span class="n mono">01</span><h3>Screen printing</h3><p>Bold, durable prints that hold up to hundreds of washes, with spot colors matched to your brand.</p><span class="specs mono">Up to 6 colors<br>Front · back · sleeve<br>Water-based inks</span></li>
-      <li class="reveal"><span class="n mono">02</span><h3>Embroidery</h3><p>Clean stitching for polos, hats, jackets and bags. Your logo is digitized once and kept on file.</p><span class="specs mono">Polos &amp; hats<br>Names &amp; titles<br>Patches</span></li>
-      <li class="reveal"><span class="n mono">03</span><h3>Uniforms &amp; workwear</h3><p>Branded uniforms that make your team easy to spot and easy to trust, from the kitchen to the job site.</p><span class="specs mono">Hi-vis &amp; safety<br>Chef &amp; service<br>Jackets</span></li>
-      <li class="reveal"><span class="n mono">04</span><h3>Retail &amp; brand merch</h3><p>Retail-quality prints for brands, shops and online stores, finished and ready for the shelf.</p><span class="specs mono">Soft-hand inks<br>Printed neck labels<br>Fold &amp; bag</span></li>
-      <li class="reveal"><span class="n mono">05</span><h3>Schools &amp; teams</h3><p>Spirit wear, team uniforms, staff shirts and fundraiser gear for schools and leagues across Chicagoland.</p><span class="specs mono">Spirit wear<br>Names &amp; numbers<br>Fundraisers</span></li>
-      <li class="reveal"><span class="n mono">06</span><h3>Reorders</h3><p>New hires or a busy season? Your art, ink colors and sizes are on file, so a reorder takes one call.</p><span class="specs mono">Art on file<br>Same colors every time<br>Small top-ups</span></li>
+      <li class="reveal"><span class="n" aria-hidden="true"></span><h3>Screen printing</h3><p>Bold, durable prints that hold up to hundreds of washes, with spot colors matched to your brand.</p><span class="specs mono">Up to 6 colors<br>Front · back · sleeve<br>Water-based inks</span></li>
+      <li class="reveal"><span class="n" aria-hidden="true"></span><h3>Embroidery</h3><p>Clean stitching for polos, hats, jackets and bags. Your logo is digitized once and kept on file.</p><span class="specs mono">Polos &amp; hats<br>Names &amp; titles<br>Patches</span></li>
+      <li class="reveal"><span class="n" aria-hidden="true"></span><h3>Uniforms &amp; workwear</h3><p>Branded uniforms that make your team easy to spot and easy to trust, from the kitchen to the job site.</p><span class="specs mono">Hi-vis &amp; safety<br>Chef &amp; service<br>Jackets</span></li>
+      <li class="reveal"><span class="n" aria-hidden="true"></span><h3>Retail &amp; brand merch</h3><p>Retail-quality prints for brands, shops and online stores, finished and ready for the shelf.</p><span class="specs mono">Soft-hand inks<br>Printed neck labels<br>Fold &amp; bag</span></li>
+      <li class="reveal"><span class="n" aria-hidden="true"></span><h3>Schools &amp; teams</h3><p>Spirit wear, team uniforms, staff shirts and fundraiser gear for schools and leagues across Chicagoland.</p><span class="specs mono">Spirit wear<br>Names &amp; numbers<br>Fundraisers</span></li>
+      <li class="reveal"><span class="n" aria-hidden="true"></span><h3>Reorders</h3><p>New hires or a busy season? Your art, ink colors and sizes are on file, so a reorder takes one call.</p><span class="specs mono">Art on file<br>Same colors every time<br>Small top-ups</span></li>
     </ol>
   </div>
 </section>
@@ -579,7 +579,7 @@ footer a:hover{color:var(--sheet)}
 <!-- ESTIMATOR -->
 <section class="section table-sec" id="estimate">
   <div class="wrap">
-    <div class="label"><b>02</b> Instant estimate</div>
+    <div class="label">Instant estimate</div>
     <div class="head-split">
       <h2>Price it<br>in 30 seconds.</h2>
       <p class="lede">Pick a garment, drop in your logo, and get a ballpark price and ready-by date right now. Then lock in an exact quote from the shop.</p>
@@ -687,7 +687,7 @@ footer a:hover{color:var(--sheet)}
 <!-- WHO WE PRINT FOR -->
 <section class="section" id="industries">
   <div class="wrap">
-    <div class="label"><b>03</b> Who we print for</div>
+    <div class="label">Who we print for</div>
     <ul class="who reveal">
       <li><span class="w">Contractors</span><sup>Hi-vis · workwear</sup></li>
       <li><span class="w">Restaurants</span><sup>Staff · merch</sup></li>
@@ -708,15 +708,15 @@ footer a:hover{color:var(--sheet)}
 <!-- HOW IT WORKS -->
 <section class="section" style="padding-top:0">
   <div class="wrap">
-    <div class="label"><b>04</b> How it works</div>
+    <div class="label">How it works</div>
     <div class="ticket reveal">
       <div>
         <div class="ticket-head mono"><span>Work order</span><span>Fantastic Lettering · Chicago</span></div>
         <div class="ticket-steps">
-          <div class="tstep"><span class="mono">Step 01</span><span class="box">✓</span><h3>Send your art</h3><p>Use the quote form or call. Logo, quantities, deadline. Rough is fine.</p></div>
-          <div class="tstep"><span class="mono">Step 02</span><span class="box">✓</span><h3>Approve the proof</h3><p>A free digital proof and an exact price within one business day.</p></div>
-          <div class="tstep"><span class="mono">Step 03</span><span class="box">✓</span><h3>We print in-house</h3><p>Printed or stitched on our own equipment and checked piece by piece.</p></div>
-          <div class="tstep"><span class="mono">Step 04</span><span class="box">✓</span><h3>Pick up or delivery</h3><p>Grab it on Lawrence Ave or have it delivered. Your art stays on file.</p></div>
+          <div class="tstep"><span class="mono">Step 1</span><span class="box">✓</span><h3>Send your art</h3><p>Use the quote form or call. Logo, quantities, deadline. Rough is fine.</p></div>
+          <div class="tstep"><span class="mono">Step 2</span><span class="box">✓</span><h3>Approve the proof</h3><p>A free digital proof and an exact price within one business day.</p></div>
+          <div class="tstep"><span class="mono">Step 3</span><span class="box">✓</span><h3>We print in-house</h3><p>Printed or stitched on our own equipment and checked piece by piece.</p></div>
+          <div class="tstep"><span class="mono">Step 4</span><span class="box">✓</span><h3>Pick up or delivery</h3><p>Grab it on Lawrence Ave or have it delivered. Your art stays on file.</p></div>
         </div>
       </div>
       <div class="ticket-stub"><span class="mono">Order no.</span><b>001984</b><span class="mono">Keep for reorders</span></div>
@@ -727,7 +727,7 @@ footer a:hover{color:var(--sheet)}
 <!-- WHY -->
 <section class="section" style="padding-top:0">
   <div class="wrap">
-    <div class="label"><b>05</b> Why Fantastic Lettering</div>
+    <div class="label">Why Fantastic Lettering</div>
     <div class="why">
       <h2 class="reveal">Four decades<br>of Chicago<br><span class="red">printing.</span></h2>
       <ul class="why-list reveal">
@@ -750,7 +750,7 @@ footer a:hover{color:var(--sheet)}
 <section class="section uni" id="programs">
   <div class="wrap uni-grid">
     <div class="reveal">
-      <div class="label"><b>06</b> Uniform programs</div>
+      <div class="label">Uniform programs</div>
       <h2>Outfit the whole team. <span class="red">Reorder with one email.</span></h2>
       <p class="lede">For businesses that buy uniforms year after year. We set up your account once, and every new hire or busy season after that is quick and painless.</p>
       <ul class="uni-list">
@@ -794,7 +794,7 @@ footer a:hover{color:var(--sheet)}
 <section class="section" id="faq">
   <div class="wrap faq-grid">
     <div class="reveal">
-      <div class="label"><b>07</b> Questions</div>
+      <div class="label">Questions</div>
       <h2>Good to know before you order.</h2>
       <p class="lede">Don't see your question? Call <a data-phone-link data-phone href="tel:+13313052468">(331) 305-2468</a>. A real person picks up during business hours.</p>
     </div>
@@ -818,7 +818,7 @@ footer a:hover{color:var(--sheet)}
 <section class="section quote-sec" id="quote">
   <div class="wrap quote">
     <div class="quote-side reveal">
-      <div class="label"><b>08</b> Free quote</div>
+      <div class="label">Free quote</div>
       <h2>Your price and proof in one business day.</h2>
       <p class="lede">Takes about a minute. No obligation and no pushy follow-up, just a clear price and a proof of your design.</p>
       <ul class="promise">
@@ -942,7 +942,7 @@ footer a:hover{color:var(--sheet)}
 <!-- VISIT -->
 <section class="section" id="visit">
   <div class="wrap">
-    <div class="label"><b>09</b> Visit the shop</div>
+    <div class="label">Visit the shop</div>
     <div class="visit reveal">
       <div class="visit-info">
         <span class="open-pill" id="openPill"><i></i><span id="openText">Hours</span></span>
@@ -1028,10 +1028,10 @@ footer a:hover{color:var(--sheet)}
     <symbol id="star" viewBox="0 0 100 100"><path d="M50 0 L63 27.5 L93.3 25 L76 50 L93.3 75 L63 72.5 L50 100 L37 72.5 L6.7 75 L24 50 L6.7 25 L37 27.5 Z"/></symbol>
     <symbol id="reg" viewBox="0 0 26 26"><circle cx="13" cy="13" r="7.5" fill="none" stroke="currentColor" stroke-width="1.2"/><path d="M13 0V26M0 13H26" stroke="currentColor" stroke-width="1.2"/><path d="M13 9.5A3.5 3.5 0 0 1 16.5 13H13Z M13 16.5A3.5 3.5 0 0 1 9.5 13H13Z" fill="currentColor"/></symbol>
     <symbol id="printArt" viewBox="0 0 300 230">
-      <use href="#star" x="128" y="0" width="44" height="44"/>
-      <text x="150" y="120" text-anchor="middle" font-family="Big Shoulders Display, Arial Narrow, sans-serif" font-weight="900" font-size="76" textLength="276" lengthAdjust="spacingAndGlyphs">FANTASTIC</text>
-      <text x="150" y="190" text-anchor="middle" font-family="Big Shoulders Display, Arial Narrow, sans-serif" font-weight="900" font-size="76" textLength="276" lengthAdjust="spacingAndGlyphs">LETTERING</text>
-      <text x="150" y="224" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-weight="600" font-size="15" letter-spacing="3">CHICAGO · EST. 1984</text>
+      <use href="#star" x="128" y="4" width="44" height="44"/>
+      <text x="150" y="116" text-anchor="middle" font-family="Alfa Slab One, Rockwell, Georgia, serif" font-size="44" textLength="262" lengthAdjust="spacing">Fantastic</text>
+      <text x="150" y="172" text-anchor="middle" font-family="Alfa Slab One, Rockwell, Georgia, serif" font-size="44" textLength="262" lengthAdjust="spacing">Lettering</text>
+      <text x="150" y="214" text-anchor="middle" font-family="Libre Franklin, Arial, sans-serif" font-weight="700" font-size="13" letter-spacing="4">CHICAGO · EST. 1984</text>
     </symbol>
   </defs>
 </svg>
@@ -1225,21 +1225,21 @@ function draw(){
   let art = "";
   if (!state.logo) {
     if (g.id === "hat") {
-      art = `<rect x="70" y="80" width="60" height="30" rx="6" fill="none" stroke="${c.ink}" stroke-width="3" stroke-dasharray="3 3"/><text x="100" y="101" text-anchor="middle" font-family="Big Shoulders Display,Arial Narrow,sans-serif" font-weight="800" font-size="16" fill="${c.ink}">LOGO</text>`;
+      art = `<rect x="70" y="80" width="60" height="30" rx="6" fill="none" stroke="${c.ink}" stroke-width="3" stroke-dasharray="3 3"/><text x="100" y="101" text-anchor="middle" font-family="Alfa Slab One,Rockwell,Georgia,serif" font-weight="400" font-size="13" fill="${c.ink}">LOGO</text>`;
     } else if (state.side === "back") {
       if (state.locs >= 2) {
-        art = `<text x="100" y="92" text-anchor="middle" font-family="Big Shoulders Display,Arial Narrow,sans-serif" font-weight="800" font-size="30" fill="${c.ink}">YOUR</text><text x="100" y="124" text-anchor="middle" font-family="Big Shoulders Display,Arial Narrow,sans-serif" font-weight="800" font-size="30" fill="${state.colors > 1 ? INKS[0] : c.ink}">CREW</text>`;
+        art = `<text x="100" y="92" text-anchor="middle" font-family="Alfa Slab One,Rockwell,Georgia,serif" font-weight="400" font-size="21" fill="${c.ink}">YOUR</text><text x="100" y="124" text-anchor="middle" font-family="Alfa Slab One,Rockwell,Georgia,serif" font-weight="400" font-size="21" fill="${state.colors > 1 ? INKS[0] : c.ink}">CREW</text>`;
       } else {
         art = `<rect x="66" y="52" width="68" height="88" rx="6" fill="none" stroke="${c.ink}" stroke-opacity=".4" stroke-width="2" stroke-dasharray="4 4"/><text x="100" y="94" text-anchor="middle" font-family="Inter,sans-serif" font-weight="700" font-size="8" fill="${c.ink}" opacity=".7">No back print</text><text x="100" y="106" text-anchor="middle" font-family="Inter,sans-serif" font-weight="600" font-size="7" fill="${c.ink}" opacity=".6">Add a 2nd location</text>`;
       }
     } else if (state.method === "emb") {
-      art = `<circle cx="122" cy="70" r="13" fill="none" stroke="${c.ink}" stroke-width="2.5" stroke-dasharray="2.5 2.5"/><text x="122" y="74" text-anchor="middle" font-family="Big Shoulders Display,Arial Narrow,sans-serif" font-weight="800" font-size="9" fill="${c.ink}">LOGO</text>`;
+      art = `<circle cx="122" cy="70" r="13" fill="none" stroke="${c.ink}" stroke-width="2.5" stroke-dasharray="2.5 2.5"/><text x="122" y="74" text-anchor="middle" font-family="Alfa Slab One,Rockwell,Georgia,serif" font-weight="400" font-size="7.5" fill="${c.ink}">LOGO</text>`;
     } else {
       // a simple logo lockup; each ink color you add shows up as another element
       const n = state.colors, col = i => i < n ? (i === 0 ? c.ink : INKS[i-1]) : c.ink;
-      const F = 'font-family="Big Shoulders Display,Arial Narrow,sans-serif" text-anchor="middle"';
-      art = `<text x="100" y="98" ${F} font-weight="900" font-size="28" letter-spacing="1" fill="${col(0)}">YOUR</text>`
-          + `<text x="100" y="120" ${F} font-weight="900" font-size="28" letter-spacing="1" fill="${col(1)}">BRAND</text>`
+      const F = 'font-family="Alfa Slab One,Rockwell,Georgia,serif" text-anchor="middle"';
+      art = `<text x="100" y="98" ${F} font-weight="400" font-size="18" letter-spacing="0" fill="${col(0)}">YOUR</text>`
+          + `<text x="100" y="120" ${F} font-weight="400" font-size="18" letter-spacing="0" fill="${col(1)}">BRAND</text>`
           + `<rect x="80" y="127" width="40" height="3" fill="${col(2)}"/>`
           + `<text x="100" y="141" ${F} font-weight="600" font-size="7" letter-spacing="2.5" fill="${col(3)}">CHICAGO · IL</text>`;
     }
