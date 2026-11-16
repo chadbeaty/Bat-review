@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Website Design Options | Fantastic Lettering</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Libre+Franklin:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#f2eee4;--sheet:#fbf9f4;--ink:#17171b;--ink-2:#3a3a40;--muted:#6c675e;--rule:#cec6b4;--red:#e4002b;--blue:#41b6e6;
+  --star:polygon(50% 0,63% 27.5%,93.3% 25%,76% 50%,93.3% 75%,63% 72.5%,50% 100%,37% 72.5%,6.7% 75%,24% 50%,6.7% 25%,37% 27.5%)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.6 "Libre Franklin",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.top{border-top:16px solid var(--blue);border-bottom:1.5px solid var(--ink);background:var(--sheet)}
+.top .wrap{display:flex;align-items:center;gap:12px;height:76px}
+.star{width:26px;height:26px;background:var(--red);clip-path:var(--star);flex:none}
+.brand{font-family:"Alfa Slab One",Rockwell,Georgia,serif;font-size:21px}
+.tag{margin-left:auto;font-size:11.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+header.intro{padding:64px 0 44px}
+h1{font-family:"Alfa Slab One",Rockwell,Georgia,serif;font-weight:400;font-size:clamp(36px,5vw,64px);line-height:1.04;margin:0 0 18px;max-width:900px}
+.intro p{font-size:19px;color:var(--ink-2);max-width:720px;margin:0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:36px 32px;padding-bottom:40px}
+.opt{display:flex;flex-direction:column;text-decoration:none;background:var(--sheet);border:1.5px solid var(--ink);transition:transform .2s,box-shadow .2s}
+.opt:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(23,23,27,.14)}
+.shot{position:relative;aspect-ratio:16/10;overflow:hidden;border-bottom:1.5px solid var(--ink);background:#ddd}
+.shot img{width:100%;height:100%;object-fit:cover;object-position:top left;display:block}
+.pick{position:absolute;right:14px;top:14px;background:var(--red);color:#fff;font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:7px 11px}
+.meta{padding:22px 24px 24px;display:flex;flex-direction:column;gap:8px;flex:1}
+.num{font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.meta h2{font-family:"Alfa Slab One",Rockwell,Georgia,serif;font-weight:400;font-size:26px;line-height:1.1;margin:0}
+.meta p{margin:0;color:var(--ink-2);font-size:16px}
+.open{margin-top:auto;padding-top:12px;font-size:12.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;display:flex;align-items:center;gap:8px}
+.open::after{content:"→";font-size:16px;transition:transform .2s}
+.opt:hover .open::after{transform:translateX(4px)}
+.same{border-top:1.5px solid var(--ink);padding:28px 0 72px;display:grid;grid-template-columns:.8fr 1.2fr;gap:32px}
+.same h3{font-family:"Alfa Slab One",Rockwell,Georgia,serif;font-weight:400;font-size:24px;margin:0}
+.same ul{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:10px 28px;color:var(--ink-2)}
+.same li{display:flex;gap:10px;align-items:baseline}
+.same li::before{content:"";width:10px;height:10px;background:var(--red);clip-path:var(--star);flex:none;transform:translateY(1px)}
+.note{font-size:14px;color:var(--muted);margin-top:18px;grid-column:1/-1}
+@media (max-width:820px){
+  .grid,.same,.same ul{grid-template-columns:1fr}
+  .tag{display:none}
+  header.intro{padding:44px 0 32px}
+}
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap"><span class="star"></span><span class="brand">Fantastic Lettering</span><span class="tag">Website design options</span></div></div>
+
+<main class="wrap">
+  <header class="intro">
+    <h1>Four directions for your new website.</h1>
+    <p>Each design is a full, working page. Click any one to open it, scroll through, and try the price estimator and logo upload. Pick the one that feels most like your shop, or mix and match what you like.</p>
+  </header>
+
+  <section class="grid">
+    <a class="opt" href="../option-1/">
+      <div class="shot"><img src="option-1.jpg" alt="Option 1 preview: bright yellow, bold comic-poster style" loading="lazy"></div>
+      <div class="meta"><span class="num">Option 1</span><h2>Bold &amp; playful</h2><p>Bright yellow, chunky outlines and big poster lettering. Loud and fun, and stands out with schools, teams and events.</p><span class="open">Open option 1</span></div>
+    </a>
+    <a class="opt" href="../option-2/">
+      <div class="shot"><img src="option-2.jpg" alt="Option 2 preview: clean white and gray with a red accent" loading="lazy"></div>
+      <div class="meta"><span class="num">Option 2</span><h2>Clean &amp; corporate</h2><p>Crisp white and gray with one red accent and a product lineup up top. Familiar and buttoned-up, like a large national supplier.</p><span class="open">Open option 2</span></div>
+    </a>
+    <a class="opt" href="../option-3/">
+      <div class="shot"><img src="option-3.jpg" alt="Option 3 preview: Chicago print shop with tall poster lettering and an animated screen print" loading="lazy"></div>
+      <div class="meta"><span class="num">Option 3</span><h2>Chicago print shop: poster type</h2><p>Built around your trade and your city: an animated screen-print pull of your name, Chicago-flag stars, and tall poster lettering.</p><span class="open">Open option 3</span></div>
+    </a>
+    <a class="opt" href="../option-4/">
+      <div class="shot"><img src="option-4.jpg" alt="Option 4 preview: Chicago print shop with bold slab lettering" loading="lazy"><span class="pick">Recommended</span></div>
+      <div class="meta"><span class="num">Option 4</span><h2>Chicago print shop: sign-painter type</h2><p>The same print-shop concept with bold slab lettering that nods to hand-painted signs and wood type. A natural fit for a shop called Fantastic Lettering.</p><span class="open">Open option 4</span></div>
+    </a>
+  </section>
+
+  <section class="same">
+    <h3>Every option includes</h3>
+    <ul>
+      <li>Instant price estimator with a ready-by date</li>
+      <li>Upload-your-logo mockup on the shirt</li>
+      <li>Three-step quote request form</li>
+      <li>Uniform programs for repeat business accounts</li>
+      <li>Services, FAQ, hours and map</li>
+      <li>Call and quote buttons that stay on screen on phones</li>
+    </ul>
+    <p class="note">These are concept previews. Prices in the estimator are samples and would be replaced with your real pricing. The quote form is not connected yet, so nothing is sent.</p>
+  </section>
+</main>
+</body>
+</html>
