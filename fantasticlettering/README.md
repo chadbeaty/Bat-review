@@ -20,10 +20,11 @@ It's one file, `index.html`, with no build step. Open it in any browser.
 | Confirm the **phone number** | `CONFIG.phoneDisplay` / `phoneDial` in the script | Online listings disagree: (331) 305-2468, (773) 685-7650 and (847) 338-7652 all appear. The page uses the first. |
 | Connect the **quote form** | `CONFIG.formEndpoint` | It's empty right now, so nothing gets sent. Paste a Formspree (free) or similar endpoint so requests reach the shop's inbox. |
 | Replace the **ballpark prices** | `GARMENTS`, `SCREEN_BREAKS`, `EMB_BREAKS`, `DARK_BASE_PER_LOC`, `XL_UPCHARGE`, `RUSH_PCT`, `STANDARD_DAYS`, `RUSH_DAYS` | These are typical Chicago-area numbers, not the shop's real prices. Then set `CONFIG.samplePricing` to `false` to remove the "Sample pricing" tag. |
-| Confirm the **claims** | Hero, stats, FAQ | "Since 1984" (matches BBB; their old site said 1975, we went with 1984; confirm with the owner), 24-piece screen print minimum, 12-piece embroidery minimum, about 10 business days turnaround, rush in about 5 business days for 25% more, 1 business day quotes, free mockups, deposit and invoicing terms, local delivery and U.S. shipping, no new embroidery setup fee on reorders, the uniform program services (seasonal check-ins, small new-hire orders). |
+| Confirm the **claims** | Hero, stats, FAQ | "Since 1984" (matches BBB; their old site said 1975, we went with 1984; confirm with the owner), 24-piece screen print minimum, 12-piece embroidery minimum, about 10 business days turnaround, rush in about 5 business days for 25% more, 1 business day quotes, free mockups, deposit and invoicing terms, local delivery and U.S. shipping, no new embroidery setup fee on reorders, water-based inks, retail finishing (soft-hand inks, printed neck labels, folding and bagging), the uniform program services (seasonal check-ins, small new-hire orders). |
 | Add **real photos and reviews** | Services and hero | The shop's own work, press and team photos, and real Google reviews. We left reviews out on purpose rather than make any up. |
 | Remove the **concept banner** and the `noindex` meta tag | Top of `index.html` | They keep the preview from looking official and from showing up in search. |
 | Add their real **logo** | Header and footer | The "FL" mark is a placeholder. |
+| Swap in **real product photos** | Hero product tiles, estimator preview | The garment drawings are placeholders. Real photos of the shop's own work will look even more premium. |
 
 ## Hosting
 
