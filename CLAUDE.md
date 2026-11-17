@@ -32,3 +32,7 @@ Every site must look one-of-a-kind. Nobody should be able to tell an AI built it
 - Database: Supabase project `civiapzdudjjdyrmogux` ("aged-takes"). Migrations live in `agedtakes/supabase/migrations/`; apply new ones to the live project as well as committing them.
 - A nightly scheduled task, "Aged Takes daily research", researches people from `agent_research_brief()` and submits drafts through `agent_submit_research()`. Drafts always land in `needs_review`; only a signed-in human editor can approve or publish.
 - Setup and operations docs: `agedtakes/README.md` and `agedtakes/docs/`.
+
+## Product Radar skill (`.claude/skills/product-radar/`)
+- Early-warning dropshipping product research, run as a Claude skill (web search/fetch only, no app, no paid services). The owner chose this over a hosted app to avoid any costs.
+- Tracked creators: `references/creators.md` (only "verified" ones are checked). Run history is kept in `product-radar-data/` when a workspace exists.
