@@ -26,6 +26,7 @@ Every site must look one-of-a-kind. Nobody should be able to tell an AI built it
 - Aged Takes (`agedtakes/`): Fraunces, Source Serif 4, IBM Plex Mono.
 - Fantastic Lettering concept (`fantasticlettering/`): Alfa Slab One, Libre Franklin; paper/ink with Chicago-flag red and light blue; print-shop motifs (registration marks, squeegee animation, quote worksheet and receipt, work-order ticket). Live preview: https://fantastic-lettering-concept.vercel.app (Vercel project `fantastic-lettering-concept`, root directory `fantasticlettering`).
 - Fantastic Lettering premium concept (Base44 app `6afca7efb2c5fbb1bf9bc289`, https://fantastic-lettering-bf9bc289.base44.app): Hedvig Letters Serif, Hanken Grotesk; ivory, ink black and terracotta (#A64433); gallery-minimal layout with close-up product photography.
+- Fantastic Lettering "Press run" scroll concept (`fantasticlettering/option-6/`, built with the scroll-craft skill): Funnel Display, Host Grotesk; graphite and bone with one ink orange; chaptered editorial with a margin folio, scroll-driven shirt print with a step ledger, sentence-form quote close. Scroll-craft registry: `fantasticlettering/scrollcraft/FINGERPRINTS.md`.
 - Add each new site here when it's built.
 
 ## Aged Takes (`agedtakes/`)
