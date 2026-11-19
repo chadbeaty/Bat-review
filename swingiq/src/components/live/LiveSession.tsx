@@ -12,12 +12,14 @@ import { compactPose, db, uid } from "@/lib/store/db";
 import type { Bat, Session, SwingRecord } from "@/lib/store/types";
 import { ClipPlayer } from "../ClipPlayer";
 import { challengeProgress, coachingFor } from "@/engine/coaching";
+import { gapReading, scoreboardSpeech } from "@/engine/gap";
 import { BASIC_SLOTS, CueLine, GroupedMetrics, displayValue } from "../Metrics";
 import { PlayerForm } from "../PlayerForm";
 import { usePlayers } from "../PlayerProvider";
 import { GapMark as LogoMark } from "../Logo";
 import { Softball } from "../Softball";
 import { Button, Panel, Toggle, fmtDuration } from "../ui";
+import { Scoreboard } from "./Scoreboard";
 import { SetupChecklist } from "./SetupChecklist";
 import { ViewPicker, viewNote } from "./ViewPicker";
 
@@ -126,10 +128,15 @@ export function LiveSession() {
       setTimeout(() => setFlash(null), 1100);
       setCardOpen(true);
       if (cardTimer.current) clearTimeout(cardTimer.current);
-      cardTimer.current = setTimeout(() => setCardOpen(false), 9000);
+      // The small card tucks away after 9 s. The scoreboard stays up until the next swing: it's read from the plate.
+      if (!settingsRef.current.scoreboard) cardTimer.current = setTimeout(() => setCardOpen(false), 9000);
 
       const score = cap.analysis.score.overall;
-      const spoken = score !== null && cap.analysis.cue.tone !== "fix" ? `${score}. ${cap.analysis.cue.spoken}` : cap.analysis.cue.spoken;
+      const spoken = settingsRef.current.scoreboard
+        ? scoreboardSpeech(score, gapReading(cap.analysis), cap.analysis.cue.spoken)
+        : score !== null && cap.analysis.cue.tone !== "fix"
+          ? `${score}. ${cap.analysis.cue.spoken}`
+          : cap.analysis.cue.spoken;
       speak(spoken, cap.analysis.cue.tone === "fix", n);
 
       const scores = swingsRef.current.map((s) => s.analysis.score.overall).filter((x): x is number => x !== null);
@@ -405,6 +412,7 @@ export function LiveSession() {
 
               <Panel className="mt-6 divide-y divide-line px-4">
                 <Toggle id="mic" checked={settings.micOn} onChange={(v) => updateSettings({ micOn: v })} label="Listen for contact" hint="Uses the mic to hear bat-on-ball. Nothing is recorded or sent." />
+                <Toggle id="scoreboard" checked={settings.scoreboard} onChange={(v) => updateSettings({ scoreboard: v })} label="Scoreboard" hint="Big gap timer and score after each swing, readable from the plate." />
                 <Toggle id="voice" checked={settings.voiceOn && !settings.quiet} onChange={(v) => updateSettings({ voiceOn: v, quiet: false })} label="Voice cues" hint="A short tip after each swing. Great with earbuds." />
                 <div className="flex items-center justify-between py-3">
                   <span className="text-[15px]">Camera</span>
@@ -559,12 +567,23 @@ export function LiveSession() {
             </div>
           )}
 
-          <div className="flex-1" onClick={() => last && setCardOpen((o) => !o)} />
+          {settings.scoreboard && last && cardOpen ? (
+            <Scoreboard
+              key={last.id}
+              n={last.n}
+              score={last.analysis.score.overall}
+              gap={gapReading(last.analysis)}
+              cue={last.analysis.cue}
+              onClose={() => setCardOpen(false)}
+            />
+          ) : (
+            <div className="flex-1" onClick={() => last && setCardOpen((o) => !o)} />
+          )}
 
           {/* Result card */}
-          <div className="mx-auto w-full max-w-[34rem] px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+          <div className={`mx-auto w-full max-w-[34rem] px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] ${settings.scoreboard && last && cardOpen ? "pt-3" : ""}`}>
             {error && <p className="mb-2 rounded-xl bg-stitch-wash px-3 py-2 text-[13px] text-chalk">{error}</p>}
-            {last && cardOpen && (
+            {last && cardOpen && !settings.scoreboard && (
               <div key={last.id} className="mb-3 animate-slide-up rounded-2xl border border-line bg-night/92 p-4">
                 <div className="flex items-start gap-4">
                   <div className="text-center">
@@ -642,10 +661,24 @@ export function LiveSession() {
               </button>
             )}
             <div className="flex gap-2">
-              <Button variant="ghost" className="flex-1 bg-night/70" disabled={!last} onClick={() => last && openReview(last)}>
+              <Button variant="ghost" className="flex-1 whitespace-nowrap bg-night/70 px-2!" disabled={!last} onClick={() => last && openReview(last)}>
                 Review last
               </Button>
-              <Button variant="ghost" className="flex-1 border-stitch/40 bg-night/70" onClick={endSession}>
+              <Button
+                variant="ghost"
+                className="flex-1 whitespace-nowrap bg-night/70 px-2!"
+                aria-pressed={settings.scoreboard}
+                onClick={() => {
+                  const on = !settings.scoreboard;
+                  updateSettings({ scoreboard: on });
+                  if (last) setCardOpen(true);
+                  if (cardTimer.current) clearTimeout(cardTimer.current);
+                }}
+              >
+                <span className={`inline-block size-2 rounded-full ${settings.scoreboard ? "bg-optic" : "bg-chalk-3"}`} aria-hidden="true" />
+                Scoreboard
+              </Button>
+              <Button variant="ghost" className="flex-1 whitespace-nowrap border-stitch/40 bg-night/70 px-2!" onClick={endSession}>
                 End session
               </Button>
             </div>

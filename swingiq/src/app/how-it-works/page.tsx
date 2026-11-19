@@ -85,6 +85,14 @@ export default function HowItWorks() {
         Your shoes have to be in the picture. Setup won&apos;t start on its own until they are, and during a session you&apos;ll see a warning if they slip out.
       </p>
 
+      <h2 id="gap" className="mt-10 head text-lg">The gap timer</h2>
+      <p className="mt-2 text-[15px] leading-relaxed text-chalk-2">
+        In a live session, scoreboard mode puts one number up big enough to read from the plate: the gap, the time from your front foot landing to contact, in seconds. Next to it is
+        the slow-pitch reference (skilled hitters about 0.20 s). Live mode tracks at 30–60 frames a second, so the gap is only good to about one frame: it&apos;s rounded to hundredths,
+        shown with its ± and labeled an estimate. If your feet weren&apos;t clear or the tracking was shaky, you&apos;ll see a dash and the reason instead of a number. The scoreboard also
+        shows your swing score and the cue, and the voice can read them out. It never shows exit velo or bat speed: those need a slo-mo upload.
+      </p>
+
       <h2 className="mt-10 head text-lg">Why no hip-turn degrees?</h2>
       <p className="mt-2 text-[15px] leading-relaxed text-chalk-2">
         Measuring hip rotation needs depth, and one camera has to guess depth. Even a professional two-phone system filming at 240 frames a second misses hip rotation speed by about
