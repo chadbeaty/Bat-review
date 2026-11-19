@@ -66,6 +66,22 @@ export default function GuidePage() {
           </div>
         ))}
       </dl>
+      <h2 id="speed" className="mt-8 text-lg font-bold">Filming for exit velo and bat speed</h2>
+      <p className="mt-2 text-[15px] leading-relaxed text-chalk-2">
+        Speeds come from a slo-mo video you record or upload on the <Link href="/record" className="text-optic underline">Record</Link> screen. No extra gear.
+      </p>
+      <ol className="mt-3 list-decimal space-y-2 pl-5 text-[15px] leading-relaxed text-chalk-2">
+        <li><span className="text-chalk">Turn on Slo-mo</span> in the iPhone Camera app (swipe to SLO-MO). Settings › Camera › Record Slo-mo: 240 fps is best, 120 works.</li>
+        <li><span className="text-chalk">Phone on a stand or fence</span>, not in your hand. The background has to stay still.</li>
+        <li><span className="text-chalk">Side view</span>: across the plate facing the hitter&apos;s chest, 10 to 15 feet away, about waist high, level.</li>
+        <li><span className="text-chalk">Frame it wide enough</span> to see the pitch dropping in and 4 to 6 feet in front of the plate. The arc is SwingIQ&apos;s ruler.</li>
+        <li><span className="text-chalk">Bright light.</span> Daylight is best. Dim light blurs the ball and the numbers get a wider ± range or none at all.</li>
+        <li><span className="text-chalk">One or a few swings per clip.</span> On the Record screen tap <span className="text-chalk">Upload a video</span> (the Record button opens a normal-speed camera) and pick the slo-mo speed you filmed at. If you pick wrong, SwingIQ notices and fixes it.</li>
+      </ol>
+      <p className="mt-3 text-[14px] text-chalk-3">
+        Every speed shows a ± range. If something&apos;s off (no pitch in the shot, too dark), you&apos;ll see why instead of a number.
+      </p>
+
       <h2 className="mt-8 text-lg font-bold">What the live checks mean</h2>
       <ul className="mt-3 space-y-2 text-[15px] text-chalk-2">
         <li><span className="text-chalk">Lighting</span>: average brightness of the picture, and glare.</li>

@@ -211,12 +211,18 @@ function BatCard({ bat, s, onRemove }: { bat: Bat; s: BatStats | undefined; onRe
           <Row label="Timing spread" value={s.timingSpreadMs !== null ? `±${s.timingSpreadMs} ms` : "—"} note="How much foot-down timing varies" />
           <Row label="Contact heard" value={s.contactRate ? `${Math.round(s.contactRate.rate * 100)}%` : "—"} note={s.contactRate ? `of ${s.contactRate.n} mic-checked swings` : "Turn on Listen for contact"} />
           <Row label="Line drives" value={s.linerRate ? `${Math.round(s.linerRate.rate * 100)}%` : "—"} note={s.linerRate ? `of ${s.linerRate.n} tagged balls in play` : "Tag hits on a swing's page"} />
-          <Row label="Bat speed" value={s.batSpeed ? `${s.batSpeed.avg.toFixed(1)} mph` : "—"} note={s.batSpeed ? `sensor, ${s.batSpeed.n} readings` : "Needs a sensor reading"} />
-          <Row label="Launch angle" value={s.launchAngle ? `${Math.round(s.launchAngle.avg)}°` : "—"} note={s.launchAngle ? `sensor, ${s.launchAngle.n} readings` : "Needs a launch monitor reading"} />
+          <Row label="Exit velo" value={s.exitVelocity ? `${s.exitVelocity.avg.toFixed(1)} mph` : "—"} note={s.exitVelocity ? `best ${s.exitVelocity.best.toFixed(0)} · ${speedNote(s.exitVelocity)}` : "Film in slo-mo to measure it"} />
+          <Row label="Bat speed" value={s.batSpeed ? `${s.batSpeed.avg.toFixed(1)} mph` : "—"} note={s.batSpeed ? `best ${s.batSpeed.best.toFixed(0)} · ${speedNote(s.batSpeed)}` : "Film in slo-mo to measure it"} />
+          <Row label="Launch angle" value={s.launchAngle ? `${Math.round(s.launchAngle.avg)}°` : "—"} note={s.launchAngle ? speedNote(s.launchAngle) : "Film in slo-mo to measure it"} />
         </div>
       )}
     </Panel>
   );
+}
+
+function speedNote(st: { n: number; sensor: number; video: number }) {
+  if (st.sensor && st.video) return `${st.n} swings (sensor + slo-mo)`;
+  return `${st.n} ${st.sensor ? "sensor readings" : "slo-mo swings"}`;
 }
 
 function BatCompare({ a, b }: { a: BatStats; b: BatStats }) {
@@ -232,7 +238,9 @@ function BatCompare({ a, b }: { a: BatStats; b: BatStats }) {
       fmt: (x: number) => String(x),
     })),
     { label: "Contact heard (%)", va: a.contactRate ? Math.round(a.contactRate.rate * 100) : null, vb: b.contactRate ? Math.round(b.contactRate.rate * 100) : null, higherBetter: true, fmt: (x) => `${x}%` },
-    { label: "Bat speed (sensor)", va: a.batSpeed ? Math.round(a.batSpeed.avg * 10) / 10 : null, vb: b.batSpeed ? Math.round(b.batSpeed.avg * 10) / 10 : null, higherBetter: true, fmt: (x) => `${x} mph` },
+    { label: "Exit velo (avg)", va: a.exitVelocity ? Math.round(a.exitVelocity.avg * 10) / 10 : null, vb: b.exitVelocity ? Math.round(b.exitVelocity.avg * 10) / 10 : null, higherBetter: true, fmt: (x) => `${x} mph` },
+    { label: "Exit velo (best 3)", va: a.exitVelocity ? Math.round(a.exitVelocity.best) : null, vb: b.exitVelocity ? Math.round(b.exitVelocity.best) : null, higherBetter: true, fmt: (x) => `${x} mph` },
+    { label: "Bat speed (avg)", va: a.batSpeed ? Math.round(a.batSpeed.avg * 10) / 10 : null, vb: b.batSpeed ? Math.round(b.batSpeed.avg * 10) / 10 : null, higherBetter: true, fmt: (x) => `${x} mph` },
   ];
   return (
     <div className="mt-3 overflow-x-auto rounded-2xl border border-line">

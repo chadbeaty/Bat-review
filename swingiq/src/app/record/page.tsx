@@ -6,6 +6,7 @@ import { PlayerForm } from "@/components/PlayerForm";
 import { usePlayers } from "@/components/PlayerProvider";
 import { Button, PageTitle, Panel, Segmented } from "@/components/ui";
 import { ViewPicker, viewNote } from "@/components/live/ViewPicker";
+import { SOFTBALL_11, SOFTBALL_12 } from "@/engine/ballflight";
 import type { CameraView } from "@/engine/types";
 import { analyzeVideo, MAX_VIDEO_SECONDS, VideoFormatError, type VideoAnalysisResult } from "@/live/videoAnalyzer";
 import { compactPose, db, uid } from "@/lib/store/db";
@@ -14,9 +15,21 @@ import type { Bat, Session, SwingRecord } from "@/lib/store/types";
 type Stage = "choose" | "processing" | "done" | "error";
 const SLOWMO: { value: "1" | "4" | "8"; label: string }[] = [
   { value: "1", label: "Normal speed" },
-  { value: "4", label: "Slo-mo 4×" },
-  { value: "8", label: "Slo-mo 8×" },
+  { value: "4", label: "Slo-mo 120 fps (4×)" },
+  { value: "8", label: "Slo-mo 240 fps (8×)" },
 ];
+
+function SpeedLine({ m }: { m: SwingRecord["analysis"]["metrics"] }) {
+  const ev = m.exitVelocity;
+  const bat = m.batSpeed;
+  if (!ev || ev.source === "unavailable" || ev.value === null) return null;
+  return (
+    <span className="mt-1 block text-[13px] text-optic">
+      Exit velo {Math.round(ev.value)} mph
+      {bat && bat.source !== "unavailable" && bat.value !== null ? ` · bat ${Math.round(bat.value)} mph` : ""}
+    </span>
+  );
+}
 
 export default function RecordPage() {
   const { ready, player, settings, savePlayer, updateSettings } = usePlayers();
@@ -25,6 +38,8 @@ export default function RecordPage() {
   const [bats, setBats] = useState<Bat[]>([]);
   const [batId, setBatId] = useState<string>("");
   const [slowMo, setSlowMo] = useState<"1" | "4" | "8">("1");
+  const [ballSize, setBallSize] = useState<"12" | "11">("12");
+  const [note, setNote] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [progress, setProgress] = useState({ f: 0, stage: "" });
   const [error, setError] = useState<string | null>(null);
@@ -39,11 +54,12 @@ export default function RecordPage() {
 
   useEffect(() => () => abortRef.current?.abort(), []);
 
-  async function run(f: File, factor: number) {
+  async function run(f: File, factor: number, retried = false) {
     if (!player) return;
     setFile(f);
     setError(null);
     setSaved(null);
+    if (!retried) setNote(null);
     setStage("processing");
     setProgress({ f: 0, stage: "Opening your video…" });
     await updateSettings({ lastView: view });
@@ -62,8 +78,25 @@ export default function RecordPage() {
         onProgress: (fr, st) => setProgress({ f: fr, stage: st }),
         signal: ac.signal,
         videoEl: videoRef.current,
+        ball: ballSize === "11" ? SOFTBALL_11 : SOFTBALL_12,
+        certification: bats.find((b) => b.id === batId)?.certification,
       });
-      (window as unknown as { __swingiqVideo?: unknown }).__swingiqVideo = { ...result.debug, fps: result.fps, coverage: result.coverage };
+      (window as unknown as { __swingiqVideo?: unknown }).__swingiqVideo = {
+        ...result.debug,
+        fps: result.fps,
+        coverage: result.coverage,
+        timeBaseFix: result.timeBaseFix,
+      };
+      // The pitch's fall says the slow-motion setting was wrong: fix it and go again (once).
+      if (result.timeBaseFix && !retried) {
+        const nf = factor * result.timeBaseFix;
+        if ([1, 2, 4, 8, 16].includes(nf)) {
+          if (nf === 1 || nf === 4 || nf === 8) setSlowMo(String(nf) as "1" | "4" | "8");
+          setNote(nf === 1 ? "That video was normal speed, so it was re-analyzed as normal speed." : `That video was ${nf}× slow motion, so it was re-analyzed at ${nf}×.`);
+          abortRef.current = null;
+          return run(f, nf, true);
+        }
+      }
       const records: SwingRecord[] = [];
       if (result.swings.length) {
         const scores = result.swings.map((s) => s.analysis.score.overall).filter((x): x is number => x !== null);
@@ -184,9 +217,22 @@ export default function RecordPage() {
             <span className="mb-2 block text-sm text-chalk-2">Was it filmed in slow motion?</span>
             <Segmented label="Slow motion" value={slowMo} onChange={setSlowMo} options={SLOWMO} />
             <p className="mt-2 text-[13px] text-chalk-3">
-              If the video plays back slowed down (iPhone Slo-mo shared as a regular video), pick how much slower so swing timing comes out right. A true 120 or 240 fps file is
-              handled automatically: leave it on Normal.
+              Slo-mo is what unlocks exit velo and bat speed. iPhone: Settings › Camera › Record Slo-mo shows 120 or 240 fps. If you pick wrong, SwingIQ notices from how
+              the pitch falls and fixes it.
             </p>
+          </div>
+
+          <div className="mt-6">
+            <span className="mb-2 block text-sm text-chalk-2">Ball</span>
+            <Segmented
+              label="Ball size"
+              value={ballSize}
+              onChange={setBallSize}
+              options={[
+                { value: "12", label: '12" ball' },
+                { value: "11", label: '11" ball' },
+              ]}
+            />
           </div>
 
           {bats.length > 0 && (
@@ -213,6 +259,18 @@ export default function RecordPage() {
               <li>For live feedback on every swing in the cage, use <Link href="/live" className="text-optic">Live session</Link> instead.</li>
             </ul>
           </Panel>
+
+          <Panel className="mt-4 p-4">
+            <p className="text-[15px] font-bold">For exit velo and bat speed</p>
+            <ul className="mt-2 space-y-1.5 text-[14px] text-chalk-2">
+              <li>Film in the Camera app&apos;s Slo-mo mode, then tap Upload a video here (the Record button above can&apos;t shoot slo-mo).</li>
+              <li>Phone on a stand or fence, not in your hand.</li>
+              <li>Side view, 10 to 15 feet from the plate, about waist high.</li>
+              <li>Get the pitch coming in and 4 to 6 feet in front of the plate in the shot.</li>
+              <li>Daylight or bright lights. Dim light blurs the ball.</li>
+            </ul>
+            <Link href="/guide#speed" className="mt-2 inline-block text-[14px] text-optic">Full filming guide</Link>
+          </Panel>
         </>
       )}
 
@@ -237,6 +295,7 @@ export default function RecordPage() {
               <h2 className="display text-2xl">
                 {saved.swings.length} {saved.swings.length === 1 ? "swing" : "swings"} analyzed
               </h2>
+              {note && <p className="mt-1 text-[13px] text-optic">{note}</p>}
               <p className="mt-1 text-[13px] text-chalk-3">
                 Processed from video at {Math.round(saved.result.fps)} fps ({Math.round(saved.result.coverage * 100)}% of frames tracked)
                 {saved.result.heardAudio ? ", contact from the video's sound" : ""}.{saved.result.truncated ? ` Only the first ${MAX_VIDEO_SECONDS} s were analyzed.` : ""}
@@ -248,6 +307,7 @@ export default function RecordPage() {
                       <span className="num w-12 text-3xl text-chalk">{s.analysis.score.overall ?? "—"}</span>
                       <span className="min-w-0 flex-1">
                         <CueLine cue={s.analysis.cue} />
+                        <SpeedLine m={s.analysis.metrics} />
                       </span>
                       <span className="text-chalk-3" aria-hidden="true">›</span>
                     </Link>

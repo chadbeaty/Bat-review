@@ -80,8 +80,12 @@ for (const path of ["/swings", "/progress", "/guide", "/how-it-works", "/privacy
   });
 }
 
-test("how-it-works is honest about bat speed", async ({ page }) => {
+test("how-it-works is honest about bat speed and exit velo", async ({ page }) => {
   await page.goto("/how-it-works");
-  const row = page.getByRole("row", { name: /Bat speed/ });
-  await expect(row).toContainText("No");
+  // Not from live mode; from slo-mo video, bat speed is labeled an estimate.
+  const bat = page.getByRole("row", { name: /Bat speed/ });
+  await expect(bat).toContainText("No");
+  await expect(bat).toContainText("Estimate");
+  await expect(page.getByRole("row", { name: /Exit velocity/ })).toContainText("±");
+  await expect(page.getByRole("heading", { name: /Exit velo and bat speed from slo-mo/ })).toBeVisible();
 });

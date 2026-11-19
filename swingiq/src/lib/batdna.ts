@@ -3,8 +3,8 @@ import type { Bat, Session, SwingRecord } from "./store/types";
 
 /**
  * Bat DNA: how a hitter actually swings each of their bats, from recorded swings only.
- * Nothing here is estimated beyond what each swing already measured; bat speed and launch angle come only from
- * readings the player entered from a sensor or radar. Comparisons need enough swings to mean anything.
+ * Nothing here is estimated beyond what each swing already measured. Speeds come from a sensor/radar reading the
+ * player entered, or else from a slo-mo video's ball tracking. Comparisons need enough swings to mean anything.
  */
 export const MIN_SWINGS_TO_COMPARE = 15;
 
@@ -19,14 +19,24 @@ export type BatStats = {
   /** Standard deviation of foot-down timing, ms. Lower = more repeatable timing. */
   timingSpreadMs: number | null;
   categories: Partial<Record<string, number>>;
-  /** From sensor/radar readings the player entered. */
-  batSpeed: { avg: number; n: number } | null;
-  launchAngle: { avg: number; n: number } | null;
-  exitVelocity: { avg: number; n: number } | null;
+  /** From sensor/radar readings the player entered, else slo-mo video tracking. */
+  batSpeed: SpeedStat | null;
+  launchAngle: SpeedStat | null;
+  exitVelocity: SpeedStat | null;
   /** Share of mic-checked swings where contact was heard. */
   contactRate: { rate: number; n: number } | null;
   /** Share of tagged balls in play that were line drives. */
   linerRate: { rate: number; n: number } | null;
+};
+
+export type SpeedStat = {
+  avg: number;
+  n: number;
+  /** Average of the best three: what this hitter can do with this bat. */
+  best: number;
+  /** How many came from a sensor/radar vs slo-mo video. */
+  sensor: number;
+  video: number;
 };
 
 const mean = (xs: number[]) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
@@ -49,10 +59,28 @@ function metricValues(swings: SwingRecord[], k: MetricKey): number[] {
     .map((m) => m!.value!);
 }
 
-function external(swings: SwingRecord[], k: "batSpeed" | "launchAngle" | "exitVelocity") {
-  const xs = swings.flatMap((s) => (s.external ?? []).filter((e) => e.key === k).map((e) => e.value));
+/** A speed per swing: the player's sensor/radar reading if they entered one, else the slo-mo measurement. */
+export function speedStat(swings: SwingRecord[], k: "batSpeed" | "launchAngle" | "exitVelocity"): SpeedStat | null {
+  const xs: number[] = [];
+  let sensor = 0;
+  let video = 0;
+  for (const s of swings) {
+    const ext = (s.external ?? []).filter((e) => e.key === k).map((e) => e.value);
+    if (ext.length) {
+      xs.push(...ext);
+      sensor += ext.length;
+      continue;
+    }
+    const m = s.analysis.metrics[k];
+    if (m && m.source === "cv_estimated" && m.value !== null && m.plusMinus !== undefined) {
+      xs.push(m.value);
+      video++;
+    }
+  }
   const m = mean(xs);
-  return m === null ? null : { avg: m, n: xs.length };
+  if (m === null) return null;
+  const top = [...xs].sort((a, b) => b - a).slice(0, 3);
+  return { avg: m, n: xs.length, best: mean(top)!, sensor, video };
 }
 
 export function batStats(bat: Bat, all: SwingRecord[], sessions: Map<string, Session>): BatStats {
@@ -78,9 +106,9 @@ export function batStats(bat: Bat, all: SwingRecord[], sessions: Map<string, Ses
     scoreConsistency: scoreSd === null ? null : Math.max(0, Math.round(100 - scoreSd * 3)),
     timingSpreadMs: timingSd === null ? null : Math.round(timingSd),
     categories,
-    batSpeed: external(swings, "batSpeed"),
-    launchAngle: external(swings, "launchAngle"),
-    exitVelocity: external(swings, "exitVelocity"),
+    batSpeed: speedStat(swings, "batSpeed"),
+    launchAngle: speedStat(swings, "launchAngle"),
+    exitVelocity: speedStat(swings, "exitVelocity"),
     contactRate: micChecked.length ? { rate: micChecked.filter((s) => s.analysis.metrics.contact?.value === 1).length / micChecked.length, n: micChecked.length } : null,
     linerRate: inPlay.length ? { rate: inPlay.filter((s) => s.tag?.type === "liner").length / inPlay.length, n: inPlay.length } : null,
   };

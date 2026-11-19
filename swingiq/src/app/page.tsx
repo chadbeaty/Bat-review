@@ -70,6 +70,18 @@ export default function Home() {
   const trend = scoreOf(thisWeek) !== null && scoreOf(lastWeek) !== null ? scoreOf(thisWeek)! - scoreOf(lastWeek)! : null;
   const best = all.reduce<SwingRecord | null>((b, s) => ((s.analysis.score.overall ?? -1) > (b?.analysis.score.overall ?? -1) ? s : b), null);
   const pb = all.find((s) => s.pb) ?? null;
+  // Fastest swing/ball: a radar or sensor reading the player entered wins over the slo-mo measurement.
+  const speedOf = (s: SwingRecord, k: "exitVelocity" | "batSpeed") => {
+    const ext = (s.external ?? []).filter((e) => e.key === k).map((e) => e.value);
+    if (ext.length) return Math.max(...ext);
+    const m = s.analysis.metrics[k];
+    return m && m.source !== "unavailable" && m.value !== null ? m.value : null;
+  };
+  const topSpeed = (k: "exitVelocity" | "batSpeed") =>
+    all.reduce<{ id: string; v: number } | null>((b, s) => {
+      const v = speedOf(s, k);
+      return v !== null && (!b || v > b.v) ? { id: s.id, v } : b;
+    }, null);
   const footVals = all.map((s) => s.analysis.metrics.strideTiming).filter((m) => m && m.source !== "unavailable" && m.value !== null).map((m) => m!.value!);
   const onTime = footVals.length ? Math.round((footVals.filter((v) => v >= 140 && v <= 380).length / footVals.length) * 100) : null;
   const lastFix = lastSwings.filter((s) => s.analysis.cue.tone === "fix");
@@ -169,6 +181,22 @@ export default function Home() {
                   <span className="num text-2xl">{best?.analysis.score.overall ?? "—"}</span>
                 </Link>
               </li>
+              {topSpeed("exitVelocity") && (
+                <li>
+                  <Link href={`/swings/${topSpeed("exitVelocity")!.id}`} className="flex items-center justify-between px-4 py-3.5 hover:bg-night-3">
+                    <span className="text-[15px]">Top exit velo<span className="block text-[12px] text-chalk-3">From slo-mo video or your radar</span></span>
+                    <span className="num text-2xl">{Math.round(topSpeed("exitVelocity")!.v)}<span className="ml-1 text-sm text-chalk-3">mph</span></span>
+                  </Link>
+                </li>
+              )}
+              {topSpeed("batSpeed") && (
+                <li>
+                  <Link href={`/swings/${topSpeed("batSpeed")!.id}`} className="flex items-center justify-between px-4 py-3.5 hover:bg-night-3">
+                    <span className="text-[15px]">Top bat speed</span>
+                    <span className="num text-2xl">{Math.round(topSpeed("batSpeed")!.v)}<span className="ml-1 text-sm text-chalk-3">mph</span></span>
+                  </Link>
+                </li>
+              )}
               <li>
                 {pb ? (
                   <Link href={`/compare?a=${all[0].id}&b=${pb.id}`} className="flex items-center justify-between px-4 py-3.5 hover:bg-night-3">

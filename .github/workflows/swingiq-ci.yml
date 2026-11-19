@@ -38,9 +38,9 @@ jobs:
         run: npm test
       - run: npm run build
       - run: npx playwright install --with-deps chromium
-      - name: Download the real swing clip for the live-camera test
+      - name: Download the real swing clip and build the slo-mo speed clip
         id: clip
         continue-on-error: true
         run: ./scripts/fetch-test-video.sh
-      - name: Browser tests (pages on phone + desktop, live camera with a real swing)
+      - name: Browser tests (pages, live camera with a real swing, video upload, slo-mo speeds)
         run: npm run test:e2e
