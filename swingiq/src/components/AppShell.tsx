@@ -2,8 +2,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useState } from "react";
+import { LogoMark, Wordmark } from "./Logo";
 import { Softball } from "./Softball";
 import { Sheet } from "./ui";
+
+export { Wordmark };
 
 function PlateIcon() {
   return (
@@ -42,23 +45,6 @@ function BatIcon() {
       <path d="M5 19l11.5-11.5a2.5 2.5 0 0 1 3.5 3.5L8.5 22.5" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" transform="translate(0 -3)" />
       <path d="M3.5 20.5l2-2" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" />
     </svg>
-  );
-}
-
-/** Wordmark: the pitch arc over the name, ball at the top of the arc. */
-export function Wordmark({ compact = false }: { compact?: boolean }) {
-  return (
-    <span className="inline-flex items-center gap-2" aria-label="SwingIQ">
-      <svg viewBox="0 0 32 22" width={compact ? 28 : 32} height={compact ? 19 : 22} aria-hidden="true">
-        <path d="M2 20 Q16 -6 30 20" fill="none" stroke="var(--color-chalk-3)" strokeWidth="1.6" strokeDasharray="1.5 3" strokeLinecap="round" />
-        <circle cx="20.5" cy="8" r="3.4" fill="var(--color-optic)" />
-      </svg>
-      {!compact && (
-        <span className="display text-[17px] leading-none tracking-tight">
-          Swing<span className="text-optic">IQ</span>
-        </span>
-      )}
-    </span>
   );
 }
 
@@ -110,20 +96,20 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (immersive) return <>{children}</>;
 
   return (
-    <div className="mx-auto min-h-dvh max-w-[34rem] pb-[calc(6.5rem+env(safe-area-inset-bottom))] md:max-w-[66rem] md:pb-14 md:pl-56">
+    <div className="mx-auto min-h-dvh max-w-[34rem] pb-[calc(7.5rem+env(safe-area-inset-bottom))] md:max-w-[68rem] md:pb-14 md:pl-60">
       <main className="px-4 pt-[max(0.75rem,env(safe-area-inset-top))] md:px-10 md:pt-10">{children}</main>
 
-      {/* Phone: a solid bar under the thumb, one action in the middle. */}
-      <nav aria-label="Main" className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-[#090c10] pb-[env(safe-area-inset-bottom)] md:hidden">
-        <ul className="mx-auto flex max-w-[34rem] items-end justify-between px-1">
+      {/* Phone: a floating bar under the thumb, the mark in the middle as the one action. */}
+      <nav
+        aria-label="Main"
+        className="fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 mx-auto max-w-[32rem] rounded-[1.6rem] border border-white/[0.08] bg-[#111113] shadow-[0_20px_50px_-12px_rgb(0_0_0/0.95),inset_0_1px_0_rgb(255_255_255/0.05)] md:hidden"
+      >
+        <ul className="flex items-center justify-between px-1.5">
           {TABS.map((t) =>
             t.href === "#new" ? (
-              <li key={t.href} className="-mt-6">
-                <button type="button" onClick={() => setSheet(true)} aria-haspopup="dialog" className="group flex flex-col items-center gap-1 px-2">
-                  <span className="grid h-[62px] w-[62px] place-items-center rounded-full bg-[#090c10] ring-1 ring-line transition group-active:scale-95">
-                    <Softball size={52} className="drop-shadow-[0_0_16px_rgba(228,245,66,0.35)]" />
-                  </span>
-                  <span className="text-[11px] font-semibold text-optic">New swing</span>
+              <li key={t.href} className="-my-3">
+                <button type="button" onClick={() => setSheet(true)} aria-haspopup="dialog" aria-label="New swing" className="group grid h-[66px] w-[66px] place-items-center rounded-full bg-[#0b0b0d] shadow-[0_0_0_1px_rgb(215_180_106/0.35),0_10px_30px_-6px_rgb(215_180_106/0.45)] transition group-active:scale-95">
+                  <LogoMark size={54} />
                 </button>
               </li>
             ) : (
@@ -131,11 +117,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <Link
                   href={t.href}
                   aria-current={active(t.href) ? "page" : undefined}
-                  className={`relative flex min-w-16 flex-col items-center gap-1 px-2 pb-2.5 pt-3 text-[11px] transition ${active(t.href) ? "text-chalk" : "text-chalk-3 hover:text-chalk-2"}`}
+                  className={`relative flex min-w-[3.9rem] flex-col items-center gap-1 px-1.5 pb-2.5 pt-3 text-[11px] font-medium transition ${active(t.href) ? "text-chalk" : "text-chalk-3 hover:text-chalk-2"}`}
                 >
-                  {active(t.href) && <span className="absolute top-0 h-0.5 w-6 rounded-full bg-optic" aria-hidden="true" />}
-                  {t.icon}
-                  <span className={active(t.href) ? "font-semibold" : undefined}>{t.label}</span>
+                  <span className={active(t.href) ? "text-optic" : undefined}>{t.icon}</span>
+                  <span>{t.label}</span>
+                  {active(t.href) && <span className="absolute bottom-1 h-1 w-1 rounded-full bg-optic" aria-hidden="true" />}
                 </Link>
               </li>
             ),
@@ -144,12 +130,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </nav>
 
       {/* Desktop: a left rail with the wordmark, the action, and labeled sections. */}
-      <nav aria-label="Main" className="fixed inset-y-0 left-0 z-40 hidden w-56 flex-col border-r border-line bg-[#090c10] px-4 py-7 md:flex">
-        <Link href="/" className="mb-8 px-2">
-          <Wordmark />
+      <nav aria-label="Main" className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-white/[0.06] bg-[#0a0a0c] px-4 py-7 md:flex">
+        <Link href="/" className="mb-9 px-2">
+          <Wordmark size={34} />
         </Link>
-        <button type="button" onClick={() => setSheet(true)} aria-haspopup="dialog" className="press mb-6 flex items-center gap-3 rounded-xl bg-optic px-3 py-3 font-bold text-optic-ink">
-          <Softball size={26} />
+        <button type="button" onClick={() => setSheet(true)} aria-haspopup="dialog" className="press mb-7 flex items-center justify-center gap-2.5 rounded-xl bg-optic px-3 py-3 font-semibold text-optic-ink shadow-[0_12px_30px_-12px_rgb(215_180_106/0.7)]">
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v12M2 8h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
           New swing
         </button>
         <ul className="space-y-1">
@@ -158,7 +144,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <Link
                 href={t.href}
                 aria-current={active(t.href) ? "page" : undefined}
-                className={`press flex items-center gap-3 rounded-lg px-3 py-2.5 text-[15px] ${active(t.href) ? "bg-night-3 text-chalk" : "text-chalk-3 hover:bg-night-2 hover:text-chalk-2"}`}
+                className={`press flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] ${active(t.href) ? "bg-white/[0.06] text-chalk shadow-[inset_0_1px_0_rgb(255_255_255/0.05)]" : "text-chalk-3 hover:bg-white/[0.03] hover:text-chalk-2"}`}
               >
                 <span className={active(t.href) ? "text-optic" : undefined}>{t.icon}</span>
                 {t.label}

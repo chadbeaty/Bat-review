@@ -244,7 +244,7 @@ function CompareInner() {
             if (!playing && rel >= range[1] - 1) setRel(range[0]);
             setPlaying((p) => !p);
           }}
-          className="press grid h-12 w-16 place-items-center rounded-xl bg-optic text-optic-ink shadow-[0_10px_28px_-14px_rgb(228_245_66/0.7)]"
+          className="press grid h-12 w-16 place-items-center rounded-xl bg-optic text-optic-ink shadow-[0_10px_28px_-14px_rgb(215_180_106/0.7)]"
           aria-label={playing ? "Pause" : "Play both"}
         >
           {playing ? (
@@ -336,10 +336,10 @@ function Delta({ a, b, better, decimals, unit = "" }: { a: number | null; b: num
   const d = a - b;
   const good = better === "neither" || Math.abs(d) < Math.pow(10, -decimals) ? null : (better === "higher") === d > 0;
   return (
-    <td className={`num px-3 py-2 text-right ${good === null ? "text-chalk-2" : good ? "text-optic" : "text-amber"}`}>
+    <td className={`num whitespace-nowrap py-2 pl-2 pr-3 text-right ${good === null ? "text-chalk-2" : good ? "text-optic" : "text-amber"}`}>
       {d > 0 ? "+" : d < 0 ? "−" : ""}
       {Math.abs(d).toFixed(decimals)}
-      {unit && unit !== ": 1" ? ` ${unit}` : ""}
+      {unit && unit !== ": 1" ? <span className="ml-0.5 font-sans text-[11px] opacity-80">{unit}</span> : null}
     </td>
   );
 }

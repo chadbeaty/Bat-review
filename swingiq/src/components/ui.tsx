@@ -6,7 +6,7 @@ type BtnProps = React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "pri
 
 const variants = {
   primary:
-    "bg-optic text-optic-ink font-bold shadow-[inset_0_1px_0_rgb(255_255_255/0.45),0_10px_28px_-14px_rgb(228_245_66/0.7)] hover:bg-optic-2",
+    "bg-optic text-optic-ink font-bold shadow-[inset_0_1px_0_rgb(255_255_255/0.45),0_10px_28px_-14px_rgb(215_180_106/0.7)] hover:bg-optic-2",
   ghost: "border border-line-2 text-chalk hover:border-chalk-3 hover:bg-night-3",
   danger: "border border-stitch/50 text-stitch hover:bg-stitch-wash",
   quiet: "text-chalk-2 hover:text-chalk hover:bg-night-3",

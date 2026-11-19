@@ -1,56 +1,86 @@
+import { useId } from "react";
+
 /**
- * The score drawn as a slow-pitch arc: the ball sits along a 6–12 ft pitch arc at a height set by the score.
- * 0 sits at the release point, 100 lands on the plate. A null score shows an empty arc. An optional clay tick marks a
- * previous score for comparison.
+ * The SwingIQ score as a chronograph bezel: a 270° dial with fine ticks, lit in gold up to the score, a gold sweep with a
+ * marker at its tip, and a silver index for the previous score. A null score shows an unlit dial.
  */
 export function ArcScore({ score, size = 220, label = "SwingIQ score", previous = null }: { score: number | null; size?: number; label?: string; previous?: number | null }) {
-  const w = 300;
-  const h = 150;
-  const p0 = { x: 14, y: 140 };
-  const c = { x: 150, y: -95 };
-  const p1 = { x: 286, y: 140 };
-  const at = (t: number) => ({
-    x: (1 - t) ** 2 * p0.x + 2 * (1 - t) * t * c.x + t ** 2 * p1.x,
-    y: (1 - t) ** 2 * p0.y + 2 * (1 - t) * t * c.y + t ** 2 * p1.y,
-  });
-  const norm = (s: number) => Math.max(0, Math.min(100, s)) / 100;
-  const t = score === null ? 0 : norm(score);
-  const b = at(t);
-  const path = `M${p0.x},${p0.y} Q${c.x},${c.y} ${p1.x},${p1.y}`;
-  const prev = previous !== null ? at(norm(previous)) : null;
+  const id = useId().replace(/:/g, "");
+  const c = 100;
+  const a0 = 135;
+  const sweep = 270;
+  const rad = (d: number) => (d * Math.PI) / 180;
+  const pt = (r: number, deg: number) => ({ x: c + r * Math.cos(rad(deg)), y: c + r * Math.sin(rad(deg)) });
+  const ang = (v: number) => a0 + (sweep * Math.max(0, Math.min(100, v))) / 100;
+  const v = score === null ? null : Math.max(0, Math.min(100, score));
+  const R = 78;
+  const arc = (r: number, from: number, to: number) => {
+    const p0 = pt(r, from);
+    const p1 = pt(r, to);
+    return `M${p0.x.toFixed(2)},${p0.y.toFixed(2)} A${r},${r} 0 ${to - from > 180 ? 1 : 0} 1 ${p1.x.toFixed(2)},${p1.y.toFixed(2)}`;
+  };
+  const ticks = Array.from({ length: 51 }, (_, i) => i * 2);
+  const tip = v === null ? null : pt(R, ang(v));
+  const prev = previous === null ? null : ang(previous);
   return (
-    <div style={{ width: size }} role="img" aria-label={score === null ? `${label}: not enough data` : `${label}: ${score} out of 100`}>
-      <svg viewBox={`0 0 ${w} ${h}`} className="block w-full overflow-visible">
+    <div style={{ width: size }} className="relative" role="img" aria-label={score === null ? `${label}: not enough data` : `${label}: ${score} out of 100`}>
+      <svg viewBox="0 0 200 200" className="block w-full overflow-visible">
         <defs>
-          <radialGradient id="arc-glow">
-            <stop offset="0" stopColor="#e4f542" stopOpacity="0.55" />
-            <stop offset="1" stopColor="#e4f542" stopOpacity="0" />
+          <linearGradient id={`${id}-g`} x1="20" y1="180" x2="180" y2="20" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor="#a87f3e" />
+            <stop offset="0.55" stopColor="#d7b46a" />
+            <stop offset="1" stopColor="#f6e4ad" />
+          </linearGradient>
+          <radialGradient id={`${id}-face`} cx="100" cy="80" r="90" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor="#1a1a1e" />
+            <stop offset="1" stopColor="#0a0a0c" />
+          </radialGradient>
+          <radialGradient id={`${id}-glow`}>
+            <stop offset="0" stopColor="#e6c887" stopOpacity="0.55" />
+            <stop offset="1" stopColor="#e6c887" stopOpacity="0" />
           </radialGradient>
         </defs>
-        <path d={path} fill="none" stroke="var(--color-night-4)" strokeWidth="3" strokeDasharray="1 9" strokeLinecap="round" />
-        {[0.25, 0.5, 0.75].map((f) => {
-          const q = at(f);
-          return <circle key={f} cx={q.x} cy={q.y} r="1.8" fill="var(--color-line-2)" />;
+        {/* Dial face */}
+        <circle cx={c} cy={c} r="97" fill={`url(#${id}-face)`} stroke="rgb(255 255 255 / 0.07)" />
+        {/* Bezel ticks, lit up to the score */}
+        {ticks.map((t) => {
+          const major = t % 10 === 0;
+          const deg = ang(t);
+          const o = pt(93, deg);
+          const i = pt(major ? 85 : 89, deg);
+          const lit = v !== null && t <= v;
+          return <line key={t} x1={o.x} y1={o.y} x2={i.x} y2={i.y} stroke={lit ? `url(#${id}-g)` : major ? "#4a4a52" : "#2c2c32"} strokeWidth={major ? 1.6 : 1} strokeLinecap="round" />;
         })}
-        {score !== null && (
-          <path d={path} fill="none" stroke="var(--color-optic)" strokeWidth="3" strokeLinecap="round" pathLength={100} strokeDasharray={`${t * 100} 100`} style={{ transition: "stroke-dasharray .9s cubic-bezier(.3,.7,.2,1)" }} />
+        {/* Sweep */}
+        <path d={arc(R, a0, a0 + sweep)} fill="none" stroke="#1d1d21" strokeWidth="4" strokeLinecap="round" />
+        {v !== null && v > 0 && (
+          <path d={arc(R, a0, ang(v))} fill="none" stroke={`url(#${id}-g)`} strokeWidth="4" strokeLinecap="round" pathLength={1000} className="draw" style={{ ["--len" as string]: 1000 }} />
         )}
-        {prev && <circle cx={prev.x} cy={prev.y} r="4.5" fill="var(--color-night)" stroke="var(--color-clay)" strokeWidth="2" />}
-        {/* Plate */}
-        <path d="M274,144 h24 v5 l-12,7 l-12,-7 z" fill="var(--color-chalk-3)" />
-        {score !== null && (
+        {/* Scale numerals: 50 at the crown, 0 and 100 under the two ends of the sweep. */}
+        {[
+          { n: 0, p: { x: pt(R, a0).x, y: pt(R, a0).y + 15 } },
+          { n: 50, p: pt(65, 270) },
+          { n: 100, p: { x: pt(R, a0 + sweep).x, y: pt(R, a0 + sweep).y + 15 } },
+        ].map(({ n, p }) => (
+          <text key={n} x={p.x} y={p.y + 3} textAnchor="middle" fontSize="7.5" fill="#6d6a64" style={{ fontFamily: "var(--font-num)" }}>
+            {n}
+          </text>
+        ))}
+        {prev !== null && (
+          <path d={`M${pt(99, prev).x},${pt(99, prev).y} L${pt(93.5, prev - 2.2).x},${pt(93.5, prev - 2.2).y} L${pt(93.5, prev + 2.2).x},${pt(93.5, prev + 2.2).y} Z`} fill="var(--color-clay)" />
+        )}
+        {tip && (
           <g>
-            <circle cx={b.x} cy={b.y} r="26" fill="url(#arc-glow)" />
-            <g transform={`translate(${b.x - 11},${b.y - 11})`}>
-              <circle cx="11" cy="11" r="11" fill="#e4f542" />
-              <path d="M4 4c3 2.5 5 5 5 7s-2 4.5-5 7M18 4c-3 2.5-5 5-5 7s2 4.5 5 7" fill="none" stroke="#e5483a" strokeWidth="1.3" strokeDasharray="1.4 1.3" />
-            </g>
+            <circle cx={tip.x} cy={tip.y} r="14" fill={`url(#${id}-glow)`} />
+            <circle cx={tip.x} cy={tip.y} r="5" fill="#f3dfa6" stroke="#0a0a0c" strokeWidth="2" />
           </g>
         )}
       </svg>
-      <div className="-mt-[23%] text-center">
-        <div className="num text-[2.9rem] leading-none text-chalk">{score ?? "—"}</div>
-        <div className="mt-1.5 text-[12px] text-chalk-3">{label}</div>
+      <div className="absolute inset-0 flex flex-col items-center justify-center pt-1">
+        <div className="num leading-none text-chalk" style={{ fontSize: size * 0.24 }}>
+          {score ?? "—"}
+        </div>
+        <div className="mt-2 max-w-[60%] text-center text-[11px] leading-tight text-chalk-3">{label}</div>
       </div>
     </div>
   );

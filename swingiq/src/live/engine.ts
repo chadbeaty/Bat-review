@@ -370,16 +370,16 @@ export class LiveEngine {
       ctx.arc(p.x, p.y, 3.5 * dpr, 0, Math.PI * 2);
       ctx.fill();
     }
-    // Grip and its trail: the ball-yellow marks what the detector is watching.
+    // Grip and its trail: gold marks what the detector is watching.
     const g = P({ x: (lm[L.leftWrist].x + lm[L.rightWrist].x) / 2, y: (lm[L.leftWrist].y + lm[L.rightWrist].y) / 2, z: 0, v: 1 });
     this.trail.push(g);
     if (this.trail.length > (hot ? 24 : 8)) this.trail.shift();
-    ctx.strokeStyle = hot ? "rgba(228, 245, 66, 0.95)" : "rgba(228, 245, 66, 0.45)";
+    ctx.strokeStyle = hot ? "rgba(240, 205, 120, 0.95)" : "rgba(240, 205, 120, 0.45)";
     ctx.lineWidth = (hot ? 5 : 3) * dpr;
     ctx.beginPath();
     this.trail.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
     ctx.stroke();
-    ctx.fillStyle = "#E4F542";
+    ctx.fillStyle = "#F0CD78";
     ctx.beginPath();
     ctx.arc(g.x, g.y, (hot ? 9 : 6) * dpr, 0, Math.PI * 2);
     ctx.fill();

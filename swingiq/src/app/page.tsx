@@ -182,7 +182,7 @@ export default function Home() {
           </Panel>
 
           <div className="mt-3 grid grid-cols-[1.4fr_1fr] gap-3">
-            <Link href="/record" className="press flex min-h-14 items-center gap-3 rounded-xl bg-optic px-4 font-bold text-optic-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.45),0_10px_28px_-14px_rgb(228_245_66/0.7)]">
+            <Link href="/record" className="press flex min-h-14 items-center gap-3 rounded-xl bg-optic px-4 font-bold text-optic-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.45),0_10px_28px_-14px_rgb(215_180_106/0.7)]">
               <svg width="22" height="22" viewBox="0 0 30 30" aria-hidden="true">
                 <rect x="2" y="7" width="19" height="16" rx="3" fill="none" stroke="currentColor" strokeWidth="2.6" />
                 <path d="M21 13l7-4v12l-7-4z" fill="currentColor" />
@@ -236,7 +236,7 @@ export default function Home() {
           <div className="lg:-mt-5">
           <SectionTitle right={<Link href="/progress" className="text-[13px] text-optic">Details</Link>}>Field Print</SectionTitle>
           <Panel className="p-4">
-            <FieldPrint now={categoryAverages(recent)} before={before.length ? categoryAverages(before) : null} caption={before.length ? "Last 20 swings. Clay lines: the 20 before. Tap a wedge." : "Your six skill areas over your recent swings. Tap a wedge."} />
+            <FieldPrint now={categoryAverages(recent)} before={before.length ? categoryAverages(before) : null} caption={before.length ? "Last 20 swings. Silver lines: the 20 before. Tap a wedge." : "Your six skill areas over your recent swings. Tap a wedge."} />
           </Panel>
 
           <SectionTitle right={<Link href="/swings" className="text-[13px] text-optic">All swings</Link>}>Recent swings</SectionTitle>
