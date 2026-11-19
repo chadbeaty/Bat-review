@@ -124,14 +124,14 @@ export default function ProgressPage() {
               <div className="mb-2 flex items-center justify-between">
                 <h2 className="head text-[15px]">Field Print</h2>
                 <InfoTip label="the Field Print">
-                  Your six skill areas drawn as wedges of a ballfield. Each wedge reaches as far as its average score: the fence is 100. Clay lines show the 20 swings before, so you can see what moved.
+                  Your six skill areas drawn as wedges of a ballfield. Each wedge reaches as far as its average score: the fence is 100. Silver lines show the 20 swings before, so you can see what moved.
                 </InfoTip>
               </div>
-              <FieldPrint now={categoryAverages(recent)} before={before.length ? categoryAverages(before) : null} caption={before.length ? "Last 20 swings vs. the 20 before (clay). Tap a wedge." : "Tap a wedge. After 20 more swings, you'll see what moved."} />
+              <FieldPrint now={categoryAverages(recent)} before={before.length ? categoryAverages(before) : null} caption={before.length ? "Last 20 swings vs. the 20 before (silver). Tap a wedge." : "Tap a wedge. After 20 more swings, you'll see what moved."} />
             </Panel>
             <Panel className="mt-4 p-4 md:mt-0">
               <h2 className="head text-[15px]">Consistency</h2>
-              <p className="mt-1 text-[13px] text-chalk-3">Repeatable beats occasionally great. Last 20 swings, with the 20 before in clay.</p>
+              <p className="mt-1 text-[13px] text-chalk-3">Repeatable beats occasionally great. Last 20 swings, with the 20 before in silver.</p>
               <div className="mt-5 space-y-6">
                 <div>
                   <div className="flex items-end justify-between gap-3">

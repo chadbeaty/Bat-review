@@ -32,7 +32,7 @@ export function RangeBar({
         ) : null}
         {avg != null && <div className="absolute top-0.5 h-5 w-px bg-chalk-3" style={{ left: p(avg) }} />}
         {best != null && <div className="absolute top-0.5 h-5 w-0.5 bg-clay" style={{ left: p(best) }} />}
-        <div className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-night bg-optic shadow-[0_0_12px_rgb(228_245_66/0.6)]" style={{ left: p(value) }} />
+        <div className="absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-night bg-optic shadow-[0_0_12px_rgb(215_180_106/0.6)]" style={{ left: p(value) }} />
       </div>
       <div className="mt-1 flex justify-between text-[11px] text-chalk-3">
         <span>{lo}</span>

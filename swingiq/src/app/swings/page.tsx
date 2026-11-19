@@ -98,14 +98,16 @@ function SwingsInner() {
                 return (
                   <li key={s.id}>
                     <Link href={`/swings/${s.id}`} className="press flex items-center gap-4 px-4 py-3.5 hover:bg-night-3">
-                      <span className="w-8 text-[13px] text-chalk-3">#{s.n}</span>
-                      <span className={`num w-11 text-[1.6rem] leading-none ${best ? "text-optic" : "text-chalk"}`}>{s.analysis.score.overall ?? "—"}</span>
-                      <span className="min-w-0 flex-1 truncate text-[14px] text-chalk-2">{s.analysis.cue.spoken}</span>
-                      <span className="flex shrink-0 items-center gap-1">
-                        {s.pb && <Chip tone="optic"><span aria-label="Personal best">★</span></Chip>}
-                        {ev && <Chip tone="optic">{Math.round(ev.v)} mph</Chip>}
-                        {s.source === "video" && !ev && <Chip>video</Chip>}
-                        {s.tag?.type && <Chip>{s.tag.type}</Chip>}
+                      <span className={`num w-14 shrink-0 text-[1.5rem] leading-none ${best ? "text-optic" : "text-chalk"}`}>{s.analysis.score.overall ?? "—"}</span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-[14px] text-chalk">{s.analysis.cue.spoken}</span>
+                        <span className="mt-1.5 flex flex-wrap items-center gap-1">
+                          <span className="mr-1 text-[12px] text-chalk-3">Swing {s.n}</span>
+                          {s.pb && <Chip tone="optic"><span aria-label="Personal best">★</span></Chip>}
+                          {ev && <Chip tone="optic">{Math.round(ev.v)} mph</Chip>}
+                          {s.source === "video" && !ev && <Chip>video</Chip>}
+                          {s.tag?.type && <Chip>{s.tag.type}</Chip>}
+                        </span>
                       </span>
                       <span className="text-chalk-3" aria-hidden="true">›</span>
                     </Link>

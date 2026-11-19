@@ -26,7 +26,7 @@ export function fitCanvas(c: HTMLCanvasElement, frameSize: { width: number; heig
 
 /**
  * Draws one moment of a swing: the video frame (when saved), the grip's path so far, the skeleton, and the front leg
- * in ball yellow with its knee angle. Shared by the single-swing player and the side-by-side comparison.
+ * in gold with its knee angle. Shared by the single-swing player and the side-by-side comparison.
  */
 export function drawSwingFrame(
   c: HTMLCanvasElement,
@@ -35,13 +35,13 @@ export function drawSwingFrame(
   const ctx = c.getContext("2d")!;
   if (o.bitmap) ctx.drawImage(o.bitmap, 0, 0, c.width, c.height);
   else {
-    ctx.fillStyle = "#131614";
+    ctx.fillStyle = "#101012";
     ctx.fillRect(0, 0, c.width, c.height);
   }
   const k = c.width / 400;
   const path = o.handPath.filter((p) => p.t <= o.t);
   if (path.length > 1) {
-    ctx.strokeStyle = "rgba(228,245,66,0.9)";
+    ctx.strokeStyle = "rgba(240,205,120,0.9)";
     ctx.lineWidth = 3 * k;
     ctx.lineJoin = "round";
     ctx.beginPath();
@@ -52,7 +52,7 @@ export function drawSwingFrame(
   const pf = o.pose[nearestIndex(o.pose, o.t)];
   if (!pf.lm || Math.abs(pf.t - o.t) >= 60) return;
   const lm = pf.lm;
-  ctx.strokeStyle = "rgba(242,241,234,0.9)";
+  ctx.strokeStyle = "rgba(245,242,234,0.9)";
   ctx.lineWidth = 2.5 * k;
   ctx.lineCap = "round";
   for (const [a, b] of BONES) {
@@ -68,7 +68,7 @@ export function drawSwingFrame(
   if (lm[lh].v > 0.4 && lm[lk].v > 0.4 && lm[la].v > 0.4) {
     const P = (i: number) => ({ x: lm[i].x * c.width, y: lm[i].y * c.height });
     const [h, kn, an] = [P(lh), P(lk), P(la)];
-    ctx.strokeStyle = "rgba(228,245,66,0.95)";
+    ctx.strokeStyle = "rgba(240,205,120,0.95)";
     ctx.lineWidth = 3.5 * k;
     ctx.beginPath();
     ctx.moveTo(h.x, h.y);
@@ -83,12 +83,12 @@ export function drawSwingFrame(
     const tw = ctx.measureText(label).width;
     const lx = kn.x + 10 * k;
     const ly = kn.y - 8 * k;
-    ctx.fillStyle = "rgba(11,13,12,0.85)";
+    ctx.fillStyle = "rgba(8,8,9,0.85)";
     ctx.fillRect(lx - 4 * k, ly - 13 * k, tw + 8 * k, 18 * k);
-    ctx.fillStyle = "#E4F542";
+    ctx.fillStyle = "#F0CD78";
     ctx.fillText(label, lx, ly);
   }
-  ctx.fillStyle = "#E4F542";
+  ctx.fillStyle = "#F0CD78";
   const gx = ((lm[L.leftWrist].x + lm[L.rightWrist].x) / 2) * c.width;
   const gy = ((lm[L.leftWrist].y + lm[L.rightWrist].y) / 2) * c.height;
   ctx.beginPath();

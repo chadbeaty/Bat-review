@@ -1,44 +1,53 @@
-# SwingIQ design system: "the lights-out lab"
+# SwingIQ design system: "championship night"
 
 ## Concept
-Slow pitch is played after work, under banks of field lights, on a ball that drops in on a 6–12 ft arc. SwingIQ is the
-scouting lab for that world. The screen is the field at night (blue-black, lit from above like a ballfield), chalk
-lines do the structural work (hairline rules and batter's-box corner ticks instead of boxes around everything), and the
-optic-yellow ball is the only thing that glows: it marks what's live and what's yours. Infield clay is the one
-comparison colour ("before", "the other swing"). Stitch red is reserved for the one thing to fix.
+Slow pitch is played for rings and plaques, under field lights, on a ball that drops in on a 6–12 ft arc. SwingIQ is
+the instrument a serious hitter keeps for that: a dark onyx case, a gold-cased gauge, numbers engraved like a
+chronograph. Gold is the one precious thing on the screen and it marks what's yours (your score, your speeds, the
+primary action). Silver is the comparison metal (before, the other swing, your best on a scale). Crimson, the colour
+of a ball's stitching, is reserved for the one thing to fix.
+
+v1 ("lights-out lab": blue-black, optic yellow, Archivo/Atkinson) was replaced because it didn't read as premium.
+
+## Brand
+- Mark (`src/components/Logo.tsx`): a gold ball whose seam runs as one "S" for swing, laced along its length. The
+  lacing is placed by arc length and skipped where the seam bends too tight, so it stays clean at every size.
+  `LogoMark` (React), `Wordmark` (mark + "SWINGIQ" in Michroma, "IQ" in gold), `LOGO_SVG()` (string, for icons).
+- Icons: `src/app/icon.svg` (favicon), `apple-icon.tsx` (180), `icon-192.png` and `icon-512.png` routes (PWA,
+  maskable), all drawn from `LOGO_SVG`. Link preview: `opengraph-image.tsx` / `twitter-image.tsx` (1200×630).
 
 ## Tokens (`src/app/globals.css`)
-- Surfaces: `night` #07090c (field), `night-2` #0d1116 (raised), `night-3` #141a21 (hover/inputs), `night-4` #1d252e (tracks).
-- Lines: `line` #222b35 (hairline), `line-2` #33404d (stronger rule, borders on controls).
-- Text: `chalk` #f3f4ef, `chalk-2` #b6bec6, `chalk-3` #7a8591. Sentence case labels; no small uppercase eyebrows.
-- Accent: `optic` #e4f542 (yours / live / primary action), `optic-wash` for highlighted cells.
-- Comparison: `clay` #d49b6b (previous period, swing B, your best on a scale, bat balance point).
-- Fix: `stitch` #ef5243 (only the thing to fix, destructive actions). Caution: `amber`.
-- Radii: tight, instrument-like (`lg` 7px, `xl` 9px, `2xl` 12px).
-- Type: Archivo (wide axis) for numbers (`.num`), titles (`.display`) and section heads (`.head`); Atkinson Hyperlegible
-  Next for everything else.
+The token names are kept from v1 so every screen picked up the new palette: `optic` now means gold, `clay` silver,
+`stitch` crimson.
+- Surfaces: `night` #060607 (onyx), `night-2` #0f0f11, `night-3` #17171a, `night-4` #222226.
+- Lines: `line` #232327, `line-2` #36363d.
+- Text: `chalk` #f5f2ea (warm white), `chalk-2` #bfbab0, `chalk-3` #87837b. Sentence case; no small uppercase eyebrows.
+- Gold: `optic` #d7b46a, `optic-2` #e6c887, `optic-ink` #1a1306 (text on gold), `optic-wash`. `--gold` is the
+  metallic gradient used on primary buttons, the score sweep and `.gold-text`.
+- Silver: `clay` #b4bcc5. Crimson: `stitch` #e5484d. Caution: `amber` #e8a33d.
+- Radii: `lg` 10px, `xl` 14px, `2xl` 20px.
+- Type: Instrument Sans for UI and headings (`.display` 650 weight, tight tracking; `.head` 600). Michroma for numbers
+  and the wordmark (`.num`, size-adjusted so it sits with the sans).
 
 ## Utilities
-- `.surface`: raised panel (hairline, top light, soft drop).
-- `.boxed`: batter's-box corner ticks. Only on modules that carry a headline number (score, speed, key panels).
+- `.surface`: raised panel with a gradient hairline edge (lighter on top, like a lit case).
+- `.boxed`: gold corner on the edge. Only on modules that carry a headline number.
 - `.hatch`: "not measured". Never draw a fake zero.
-- `.skel`: loading shimmer. `.press`: press/hover feedback. `.draw` / `.grow`: chart draw-in.
-- Background: one fixed floodlight falloff from above catching a faint cage net (`body::before`).
+- `.skel`, `.press`, `.draw` / `.grow`: loading, press feedback, chart draw-in.
+- Background: warm light from above, vignette below (`body::before`).
 
 ## Components (`src/components/ui.tsx`)
-`Button`/`ButtonLink` (primary, ghost, quiet, danger), `PageTitle`, `SectionTitle` (title + chalk line out to the edge),
-`Panel` (`boxed` option), `Segmented`, `Toggle`, `Stat` (value + unit + ± + source dot), `Meter` (0–100, hatched when
-unmeasured, optional clay compare tick), `InfoTip` (contextual explanation), `Sheet` (bottom sheet dialog), `Chip`,
-`Skeleton`/`PageSkeleton`, `Empty` (chalk field drawing).
+`Button`/`ButtonLink` (primary = gold metal, ghost, quiet, danger), `PageTitle`, `SectionTitle`, `Panel` (`boxed`),
+`Segmented`, `Toggle`, `Stat` (value + unit + ± + source dot), `Meter`, `InfoTip`, `Sheet`, `Chip`, `Skeleton`,
+`Empty`.
 
-## Signature visuals (`src/components/viz/`, real data only)
-- Pitch-arc score gauge (`ArcScore`): the ball rides a slow-pitch arc; clay ring = previous score.
-- Field Print (`FieldPrint`): six score categories as wedges of a ballfield; fence = 100; clay = the block before.
-- Swing timeline (`PhaseLine`): load → contact as a line score, slow-pitch foot-down window shaded.
-- Speed range bar (`RangeBar`): reading ± band, the player's own average and best as ticks.
-- Trend chart with session range bands, session spark bars, spray chart with tagged-hit dots, bat profile drawn to
-  length with its balance point.
+## Signature visuals (real data only)
+- Score dial (`ArcScore`): a chronograph bezel, 270°, ticks every 2 points lit gold up to the score, gold sweep with a
+  glowing tip, silver marker for the previous score.
+- Field Print, swing timeline (`PhaseLine`), speed range bars, trend chart with session bands, spark bars, spray chart,
+  bat profile drawn to length.
 
 ## Navigation
-Phone: solid bottom bar, one center action (softball) that opens a sheet: Record or upload / Live cage session.
-Desktop: left rail with wordmark, the action, Home / Swings / Progress / Bat DNA / Profile.
+Phone: a floating pill bar under the thumb; the logo in the middle is the one action and opens a sheet (Record or
+upload / Live cage session). Active tab = gold icon + dot.
+Desktop: onyx left rail with the wordmark, a gold "New swing" button, Home / Swings / Progress / Bat DNA / Profile.

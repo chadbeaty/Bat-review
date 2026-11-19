@@ -1,22 +1,22 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, Atkinson_Hyperlegible_Next } from "next/font/google";
+import { Instrument_Sans, Michroma } from "next/font/google";
 import { AppShell } from "@/components/AppShell";
 import { PlayerProvider } from "@/components/PlayerProvider";
 import "./globals.css";
 
-const archivo = Archivo({ subsets: ["latin"], axes: ["wdth"], variable: "--font-archivo", display: "swap" });
-const atkinson = Atkinson_Hyperlegible_Next({ subsets: ["latin"], variable: "--font-atkinson", display: "swap" });
+const instrument = Instrument_Sans({ subsets: ["latin"], variable: "--font-instrument", display: "swap" });
+const michroma = Michroma({ subsets: ["latin"], weight: "400", variable: "--font-michroma", display: "swap" });
 
 export const metadata: Metadata = {
   title: { default: "SwingIQ Live", template: "%s · SwingIQ Live" },
-  description: "Real-time slow-pitch softball swing analysis from your phone. Know your swing. Own your at-bat.",
+  description: "The slow-pitch swing lab in your pocket: every swing scored, legs and feet first, exit velo from slo-mo.",
   applicationName: "SwingIQ Live",
   appleWebApp: { capable: true, title: "SwingIQ", statusBarStyle: "black-translucent" },
   formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b0d0c",
+  themeColor: "#060607",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -24,7 +24,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${archivo.variable} ${atkinson.variable}`}>
+    <html lang="en" className={`${instrument.variable} ${michroma.variable}`}>
       <body>
         <PlayerProvider>
           <AppShell>{children}</AppShell>

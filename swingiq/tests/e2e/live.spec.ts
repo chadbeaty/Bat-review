@@ -46,7 +46,7 @@ test("catches a real swing from the camera with no taps", async ({ page }) => {
   await page.getByRole("button", { name: "End session" }).click();
   await expect(page.getByRole("heading", { name: /swings? logged/ })).toBeVisible();
   await page.getByRole("button", { name: "Review swings" }).click();
-  await page.getByRole("link", { name: /#1/ }).click();
+  await page.getByRole("link", { name: /Swing 1\b/ }).click();
   await expect(page.getByRole("heading", { name: "Swing 1" })).toBeVisible();
   // The clip's frames were saved on the device.
   await expect(page.getByText("Video not saved for this swing")).toHaveCount(0);

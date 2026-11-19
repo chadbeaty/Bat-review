@@ -5,7 +5,7 @@ import { CATEGORY_KEYS, CATEGORY_SHORT, type CategorySummary } from "@/lib/insig
 
 /**
  * Field Print: a hitter's six score categories drawn as wedges in the shape of a softball field. Each wedge reaches as
- * far out as its score (the fence is 100). A clay outline shows the block before, for comparison. A category that
+ * far out as its score (the fence is 100). A silver outline shows the block before, for comparison. A category that
  * was never measured is a dashed, empty wedge: never a fake zero.
  */
 export function FieldPrint({
