@@ -9,7 +9,7 @@ import type { CameraView, MetricKey, MetricValue } from "@/engine/types";
 import { LiveEngine, type CapturedSwing, type LiveTick } from "@/live/engine";
 import { shouldSpeak, voice } from "@/live/voice";
 import { compactPose, db, uid } from "@/lib/store/db";
-import type { Bat, Session, SwingRecord } from "@/lib/store/types";
+import { defaultFacing, type Bat, type CameraFacing, type Session, type SwingRecord } from "@/lib/store/types";
 import { ClipPlayer } from "../ClipPlayer";
 import { challengeProgress, coachingFor } from "@/engine/coaching";
 import { gapReading, scoreboardSpeech } from "@/engine/gap";
@@ -35,7 +35,8 @@ export function LiveSession() {
   const [stage, setStage] = useState<Stage>("prep");
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<CameraView>(settings.lastView);
-  const [facing, setFacing] = useState<"environment" | "user">("environment");
+  const facing = settings.cameraFacing?.[view] ?? defaultFacing(view);
+  const setFacing = (f: CameraFacing) => updateSettings({ cameraFacing: { ...settings.cameraFacing, [view]: f } });
   const [bats, setBats] = useState<Bat[]>([]);
   const [batId, setBatId] = useState<string | null>(null);
   const [tick, setTick] = useState<LiveTick | null>(null);
@@ -414,9 +415,14 @@ export function LiveSession() {
                 <Toggle id="mic" checked={settings.micOn} onChange={(v) => updateSettings({ micOn: v })} label="Listen for contact" hint="Uses the mic to hear bat-on-ball. Nothing is recorded or sent." />
                 <Toggle id="scoreboard" checked={settings.scoreboard} onChange={(v) => updateSettings({ scoreboard: v })} label="Scoreboard" hint="Big gap timer and score after each swing, readable from the plate." />
                 <Toggle id="voice" checked={settings.voiceOn && !settings.quiet} onChange={(v) => updateSettings({ voiceOn: v, quiet: false })} label="Voice cues" hint="A short tip after each swing. Great with earbuds." />
-                <div className="flex items-center justify-between py-3">
-                  <span className="text-[15px]">Camera</span>
-                  <button type="button" onClick={() => setFacing((f) => (f === "environment" ? "user" : "environment"))} className="min-h-10 rounded-xl border border-line px-3 text-sm text-chalk-2">
+                <div className="flex items-center justify-between gap-3 py-3">
+                  <span>
+                    <span className="block text-[15px]">Camera</span>
+                    <span className="block text-[13px] text-chalk-3">
+                      {facing === "user" ? "Screen faces you, so you can read each swing from the plate." : "Sharper picture, but the screen faces away from you."}
+                    </span>
+                  </span>
+                  <button type="button" onClick={() => setFacing(facing === "environment" ? "user" : "environment")} className="min-h-10 shrink-0 rounded-xl border border-line px-3 text-sm text-chalk-2">
                     {facing === "environment" ? "Back camera" : "Front camera"}
                   </button>
                 </div>
