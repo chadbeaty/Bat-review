@@ -5,7 +5,7 @@ import { TestDb, canConnect } from "./harness";
 const reachable = await canConnect();
 const d = reachable ? describe : describe.skip;
 
-d("SwingIQ schema and Row Level Security", () => {
+d("Gapper schema and Row Level Security", () => {
   const db = new TestDb();
   let a: { id: string };
   let b: { id: string };

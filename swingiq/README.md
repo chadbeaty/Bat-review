@@ -1,6 +1,6 @@
-# SwingIQ Live
+# Gapper
 
-Real-time slow-pitch softball swing analysis from a phone. Put the phone on a tripod, step in, and hit. SwingIQ spots every swing on its own, saves a clip, scores your mechanics and gives one cue, spoken if you want.
+Real-time slow-pitch softball swing analysis from a phone. Put the phone on a tripod, step in, and hit. Gapper spots every swing on its own, saves a clip, scores your mechanics and gives one cue, spoken if you want.
 
 - **Architecture, feasibility, costs, roadmap:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md). Start there.
 - **What a phone can and can't measure** is in that doc, and also inside the app at `/how-it-works`.
@@ -16,7 +16,7 @@ Real-time slow-pitch softball swing analysis from a phone. Put the phone on a tr
 | Bat-ball contact from the mic | `src/engine/contact.ts`, `public/worklets/contact-energy.js` |
 | Phases: stance, load, stride, launch, contact, finish | `src/engine/analyzer.ts` |
 | Metrics with source + confidence + method on every number; unavailable ones explain why | `src/engine/analyzer.ts`, `src/engine/catalog.ts` |
-| SwingIQ mechanics score and one cue per swing (slow-pitch rules) | `src/engine/scoring.ts`, `src/engine/feedback.ts` |
+| Gapper mechanics score and one cue per swing (slow-pitch rules) | `src/engine/scoring.ts`, `src/engine/feedback.ts` |
 | Voice cues (on/off, frequency, voice, quiet mode) | `src/live/voice.ts` |
 | Basic/Advanced live view, pause, end, review last swing, session notes, end-of-session summary with next focus | `src/components/live/LiveSession.tsx` |
 | Frame-by-frame review with skeleton, grip path and phase jumps | `src/components/ClipPlayer.tsx` |

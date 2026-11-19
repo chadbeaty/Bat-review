@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { cloudEnabled, supabase } from "@/lib/supabase/client";
+import { GapMark as LogoMark } from "./Logo";
 import { Button } from "./ui";
 
 type Mode = "sign-in" | "sign-up" | "forgot" | "reset";
@@ -23,9 +24,10 @@ export function AuthForm({ mode }: { mode: Mode }) {
 
   if (!cloudEnabled) {
     return (
-      <div className="pt-10">
-        <h1 className="display text-2xl">Accounts aren&apos;t switched on yet</h1>
-        <p className="mt-3 text-[15px] text-chalk-2">SwingIQ works fully without an account. Your swings are saved on this phone.</p>
+      <div className="mx-auto max-w-sm pt-10">
+        <LogoMark size={44} />
+        <h1 className="display mt-6 text-2xl">Accounts aren&apos;t switched on yet</h1>
+        <p className="mt-3 text-[15px] text-chalk-2">Gapper works fully without an account. Your swings are saved on this phone.</p>
         <Link href="/" className="mt-6 inline-block text-optic">Back home</Link>
       </div>
     );
@@ -68,7 +70,9 @@ export function AuthForm({ mode }: { mode: Mode }) {
   const input = "min-h-12 w-full rounded-xl border border-line bg-night-2 px-4 text-[16px] text-chalk focus:border-chalk-3 focus:outline-none";
   return (
     <div className="mx-auto max-w-sm pt-8">
-      <h1 className="display text-[1.9rem] leading-tight">{COPY[mode].title}</h1>
+      <LogoMark size={44} />
+      <h1 className="display mt-6 text-[1.9rem] leading-tight">{COPY[mode].title}</h1>
+      {mode === "sign-up" && <p className="mt-2 text-[15px] text-chalk-2">Back up your swings and use Gapper on more than one device.</p>}
       <form onSubmit={submit} className="mt-6 space-y-4">
         {mode !== "reset" && (
           <div>

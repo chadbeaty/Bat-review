@@ -118,7 +118,7 @@ export default function BatsPage() {
 
       {bats.length === 0 && !adding && (
         <Empty title="No bats yet">
-          <p>Add the bats you swing. Pick one when you record or start a live session, and SwingIQ builds each bat&apos;s profile from your real swings.</p>
+          <p>Add the bats you swing. Pick one when you record or start a live session, and Gapper builds each bat&apos;s profile from your real swings.</p>
           <Button className="mt-5" onClick={() => setAdding(true)}>Add a bat</Button>
         </Empty>
       )}
@@ -166,7 +166,7 @@ export default function BatsPage() {
       )}
       <p className="mt-8 text-xs leading-relaxed text-chalk-3">
         Exit velo, bat speed and launch angle come from slo-mo videos you upload, or from a sensor or radar reading you type in on a swing&apos;s page (that wins when both exist).{" "}
-        <Link href="/how-it-works#speed" className="underline">How SwingIQ measures</Link>
+        <Link href="/how-it-works#speed" className="underline">How Gapper measures</Link>
       </p>
     </div>
   );
@@ -209,9 +209,9 @@ function BatProfile({ bat }: { bat: Bat }) {
     <svg viewBox={`0 0 ${w} 52`} className="mt-3 w-full" aria-hidden="true">
       <defs>
         <linearGradient id={`bat-${bat.id}`} x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0" stopColor="#3a4654" />
-          <stop offset="0.35" stopColor="#252e38" />
-          <stop offset="1" stopColor="#11161c" />
+          <stop offset="0" stopColor="#4a5b74" />
+          <stop offset="0.35" stopColor="#2e3d55" />
+          <stop offset="1" stopColor="#18233a" />
         </linearGradient>
       </defs>
       <path d={path} fill={`url(#bat-${bat.id})`} stroke="var(--color-line-2)" strokeWidth="1" />

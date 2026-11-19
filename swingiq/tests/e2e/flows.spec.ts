@@ -112,7 +112,7 @@ test("record a swing from a video: analyzed, coached, saved, comparable", async 
   await expect(page.getByLabel(/^B · Swing.*best/)).toBeVisible();
   await page.getByRole("button", { name: "Play both" }).click();
   await page.getByRole("radio", { name: "Foot down" }).click();
-  await expect(page.getByRole("row", { name: /SwingIQ score/ })).toBeVisible();
+  await expect(page.getByRole("row", { name: /Gapper Score/ })).toBeVisible();
   await expect(page.getByRole("row", { name: /Foot down/ })).toBeVisible();
 
   // The dashboard shows recent swings and the personal best.

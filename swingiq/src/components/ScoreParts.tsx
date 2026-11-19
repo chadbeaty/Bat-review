@@ -6,7 +6,7 @@ import { scoreSwing } from "@/engine/scoring";
 import type { SwingAnalysis } from "@/engine/types";
 
 function barColor(s: number) {
-  return s >= 70 ? "bg-optic" : s >= 50 ? "bg-chalk-2" : "bg-stitch";
+  return s >= 85 ? "bg-optic" : s >= 50 ? "bg-chalk-2" : "bg-stitch";
 }
 
 /** The six score categories, each with the checks behind it. Unmeasured categories say why instead of guessing. */

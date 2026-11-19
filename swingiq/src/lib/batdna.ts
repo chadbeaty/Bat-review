@@ -14,7 +14,7 @@ export type BatStats = {
   enough: boolean;
   needMore: number;
   avgScore: number | null;
-  /** 0–100: 100 = every swing scored the same. From the spread of SwingIQ scores. */
+  /** 0–100: 100 = every swing scored the same. From the spread of Gapper Scores. */
   scoreConsistency: number | null;
   /** Standard deviation of foot-down timing, ms. Lower = more repeatable timing. */
   timingSpreadMs: number | null;

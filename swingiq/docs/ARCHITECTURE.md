@@ -1,12 +1,12 @@
-# SwingIQ Live: architecture, feasibility and roadmap
+# Gapper: architecture, feasibility and roadmap
 
-This is the plan behind SwingIQ Live, plus a straight answer on what a phone camera can and can't measure. Read the "What an iPhone can measure" table first. It drives every product decision below.
+This is the plan behind Gapper, plus a straight answer on what a phone camera can and can't measure. Read the "What an iPhone can measure" table first. It drives every product decision below.
 
 ## 1. Existing environment
 
-- Monorepo `chadbeaty/Bat-review`. Sibling apps: Barrel Talk (static, root), slow-pitch marketplace (`web/`), Aged Takes (`agedtakes/`). They all run Next.js 16, React 19, Tailwind 4, Supabase and Vercel. SwingIQ uses the same stack so it can share habits, CI patterns and hosting.
-- SwingIQ lives in `swingiq/` and stands on its own: its own `package.json`, its own Supabase schema, and its own Vercel project.
-- Supabase org is on the free plan with two active projects already (Aged Takes and the marketplace), so a third free project can't be created right now. SwingIQ is built **local-first**. Everything works on the phone with no account. Accounts and cloud backup switch on as soon as a Supabase project is connected (see `README.md`, "Turn on accounts").
+- Monorepo `chadbeaty/Bat-review`. Sibling apps: Barrel Talk (static, root), slow-pitch marketplace (`web/`), Aged Takes (`agedtakes/`). They all run Next.js 16, React 19, Tailwind 4, Supabase and Vercel. Gapper uses the same stack so it can share habits, CI patterns and hosting.
+- Gapper lives in `swingiq/` and stands on its own: its own `package.json`, its own Supabase schema, and its own Vercel project.
+- Supabase org is on the free plan with two active projects already (Aged Takes and the marketplace), so a third free project can't be created right now. Gapper is built **local-first**. Everything works on the phone with no account. Accounts and cloud backup switch on as soon as a Supabase project is connected (see `README.md`, "Turn on accounts").
 - Barrel Talk's bat catalog (`data/bats.json`, 121 bats) is the natural seed for "My Bats" model pickers later.
 
 ## 2. System architecture
@@ -101,7 +101,7 @@ Owner's call: no extra hardware, everything in the app. So speeds come from **sl
 - **Pitch speed and descent angle** from the pitch track.
 - **Slow-motion setting check**: with the ball as the ruler, a wrong time base makes gravity come out wrong by the square of the error (8× read as 1× → g/64). The analyzer votes across the clip and the Record screen re-runs once with the corrected factor. Only long, clean arcs can vote.
 - **Bat speed**: from one side camera the barrel points at the lens at contact, so its speed can't be seen directly (an MIT thesis only got single-camera bat speed working on synthetic data). It's computed from measured exit velo and pitch speed with the collision efficiency bats are certified by: EV = eA·pitch + (1 + eA)·bat; eA ≈ 0.12 for USA/ASA (25 + 85 mph lab test → 98 mph limit), ≈ 0.17 USSSA. Labeled as assuming a sweet-spot hit. Attack angle still needs a sensor.
-- **Performance**: ball tracking runs on every frame at ≤ 960 px wide (~5 ms/frame on a laptop CPU); body tracking runs on every Nth frame (~60 per real second). The frame for ball tracking is grabbed before anything slow, because at 240 fps one frame of drift between a picture and its timestamp wrecks a speed. Browsers can't play slower than 1/16 speed, which caps coverage on slow devices.
+- **Performance**: ball tracking runs on every frame at ≤ 960 px wide (~5 ms/frame on a laptop CPU); body tracking runs on every Nth frame (~60 per real second). The frame for ball tracking is grabbed before anything slow, because at 240 fps one frame of drift between a picture and its timestamp wrecks a speed. Browsers can't play slower than 1/16 speed, so with body tracking running the first pass sees only about two thirds of a 240 fps clip's frames on a laptop (fewer on a slow phone or a busy CI runner), and the batted ball can end up with a handful of points that change run to run (one CI run read 99 mph on the 85 mph test clip). So each swing gets a **second, ball-only pass** over contact −1.75 s to +0.6 s, played at ~24 frames a second on screen with only the ball tracker running; it sees ~95% of frames, and its speeds replace the first pass's when it covered ≥ 90% and found the batted ball. Three back-to-back runs on the test clip: 83, 84, 84 mph (first pass alone: 80, 86, 80).
 - **Accuracy so far**: 40 random rendered hits (55–110 mph, ±30° spray, spin, blur, noise): median error 1.4%, worst 5.1%, every reading inside 2× its ±. Real batter footage at 240 fps with a known-speed ball drawn in, through the browser: 83–88 mph on an 85 mph truth, launch 18° on 18°, pitch 24.5 on 25. **Not yet validated against a radar on real slo-mo footage**: do that once with a borrowed radar gun before advertising a number.
 - **Sensors** still plug in through `src/engine/external.ts`; a typed-in radar or sensor reading takes priority over the video estimate everywhere.
 

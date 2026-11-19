@@ -183,7 +183,7 @@ export default function SwingDetail() {
           )}
         </div>
         <div>
-          <Panel boxed className="mt-6 p-4 md:mt-0">
+          <Panel className="turf cut mt-6 p-4 md:mt-0">
             <div className="flex items-center gap-4">
               <ArcScore score={a.score.overall} size={150} />
               <div className="min-w-0 flex-1">
@@ -222,7 +222,7 @@ export default function SwingDetail() {
           action={
             <Link
               href={`/live?challenge=${encodeURIComponent(coachingFor(a.cue, a.metrics, a.score.overall).issueId)}${a.score.overall !== null ? `&target=${Math.max(0, a.score.overall - 5)}` : ""}`}
-              className="press inline-flex min-h-11 items-center rounded-xl bg-optic px-4 text-[15px] font-bold text-optic-ink"
+              className="cut cut-sm press inline-flex min-h-11 items-center rounded-xl bg-optic px-4 text-[15px] font-bold text-optic-ink"
             >
               Take the challenge live
             </Link>

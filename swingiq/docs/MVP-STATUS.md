@@ -1,12 +1,12 @@
 # MVP directive: what's built
 
-Status of each item in the "SwingIQ MVP Product Enhancement Directive", checked against the code. "Not yet" items are
+Status of each item in the "Gapper MVP Product Enhancement Directive", checked against the code. "Not yet" items are
 left out on purpose: the camera can't measure them reliably, and the directive says to show unavailable rather than
 make numbers up.
 
 ## 1. Dashboard (`src/app/page.tsx`)
 - Built: "Record my swing" as the main button, "Start live analysis" next to it.
-- Built: overall SwingIQ score (last 20 swings) with the trend against last week and the foot-down on-time rate.
+- Built: overall Gapper Score (last 20 swings) with the trend against last week and the foot-down on-time rate.
 - Built: recent swings, personal records (top score, personal best with a compare link), last session focus and
   category averages. A first-run card explains how to film.
 

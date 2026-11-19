@@ -35,7 +35,7 @@ const CATEGORY_GAP: Record<ScoreCategoryKey, string> = {
 };
 
 /**
- * The SwingIQ score: a 0–100 grade of mechanics, NOT a prediction of how hard the ball is hit.
+ * The Gapper Score: a 0–100 grade of mechanics, NOT a prediction of how hard the ball is hit.
  * Six categories, each built only from checks the footage actually supported. A check counts more when its
  * measurement is more trustworthy. A category with no measurable checks is shown as "not measured", never guessed.
  * Thresholds follow slow-pitch coaching (see docs/reports/Slow pitch lower body mechanics.md).

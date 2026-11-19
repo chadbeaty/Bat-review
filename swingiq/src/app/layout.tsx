@@ -1,22 +1,27 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Sans, Michroma } from "next/font/google";
+import { Mona_Sans } from "next/font/google";
 import { AppShell } from "@/components/AppShell";
 import { PlayerProvider } from "@/components/PlayerProvider";
+import { SITE } from "@/brand/site";
 import "./globals.css";
 
-const instrument = Instrument_Sans({ subsets: ["latin"], variable: "--font-instrument", display: "swap" });
-const michroma = Michroma({ subsets: ["latin"], weight: "400", variable: "--font-michroma", display: "swap" });
+/** One family for the whole brand: wide for headings and numbers, normal width for reading. */
+const mona = Mona_Sans({ subsets: ["latin"], axes: ["wdth"], variable: "--font-mona", display: "swap" });
 
 export const metadata: Metadata = {
-  title: { default: "SwingIQ Live", template: "%s · SwingIQ Live" },
-  description: "The slow-pitch swing lab in your pocket: every swing scored, legs and feet first, exit velo from slo-mo.",
-  applicationName: "SwingIQ Live",
-  appleWebApp: { capable: true, title: "SwingIQ", statusBarStyle: "black-translucent" },
+  metadataBase: new URL(SITE.url),
+  title: { default: `${SITE.name}: ${SITE.taglineTitle}`, template: `%s · ${SITE.name}` },
+  description: SITE.description,
+  applicationName: SITE.name,
+  alternates: { canonical: "/" },
+  openGraph: { type: "website", siteName: SITE.name, url: SITE.url, title: `${SITE.name}. ${SITE.taglineTitle}`, description: SITE.description },
+  twitter: { card: "summary_large_image", title: `${SITE.name}. ${SITE.taglineTitle}`, description: SITE.description },
+  appleWebApp: { capable: true, title: SITE.name, statusBarStyle: "black-translucent" },
   formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#060607",
+  themeColor: "#101827",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -24,7 +29,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${instrument.variable} ${michroma.variable}`}>
+    <html lang="en" className={mona.variable}>
       <body>
         <PlayerProvider>
           <AppShell>{children}</AppShell>

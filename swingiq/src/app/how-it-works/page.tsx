@@ -4,8 +4,8 @@ import { METRICS } from "@/engine/catalog";
 import type { MetricKey } from "@/engine/types";
 
 export const metadata: Metadata = {
-  title: "How SwingIQ measures",
-  description: "What a phone camera can and can't measure about a slow-pitch swing, and exactly how each SwingIQ number is made.",
+  title: "How Gapper measures",
+  description: "What a phone camera can and can't measure about a slow-pitch swing, and exactly how each Gapper number is made.",
 };
 
 const ROWS: { k: MetricKey; now: string; slomo: string }[] = [
@@ -37,9 +37,9 @@ const ROWS: { k: MetricKey; now: string; slomo: string }[] = [
 export default function HowItWorks() {
   return (
     <div className="animate-rise pb-12">
-      <h1 className="display mt-3 text-[2.15rem] leading-[1.02] md:text-[2.6rem]">How SwingIQ measures</h1>
+      <h1 className="display mt-3 text-[2.15rem] leading-[1.02] md:text-[2.6rem]">How Gapper measures</h1>
       <p className="mt-3 text-[16px] leading-relaxed text-chalk-2">
-        SwingIQ tracks 33 points on your body in every camera frame, right on your phone. From how those points move, it finds your swing, splits it into phases and measures your mechanics.
+        Gapper tracks 33 points on your body in every camera frame, right on your phone. From how those points move, it finds your swing, splits it into phases and measures your mechanics.
         We never make up a number. If the footage can&apos;t support a measurement, you&apos;ll see why instead of a guess.
       </p>
 
@@ -77,7 +77,7 @@ export default function HowItWorks() {
       <h2 className="mt-10 head text-lg">Legs and feet come first</h2>
       <p className="mt-2 text-[15px] leading-relaxed text-chalk-2">
         Slow pitch is a timing game on a ball dropping in on a 6–12 ft arc. Skilled slow-pitch hitters start their step near the top of the arc and land the front heel about 0.2 seconds
-        before contact, then firm up the front side and turn against it. So SwingIQ reads your feet first: your timing move (toe tap, stride or leg lift), when your front foot lands,
+        before contact, then firm up the front side and turn against it. So Gapper reads your feet first: your timing move (toe tap, stride or leg lift), when your front foot lands,
         whether it stays planted, how much your front leg firms up, your back leg and back heel, and where your weight is at contact. Foot-plant timing is one of the most reliable things a
         phone can measure. Knee angles are shown as a change from foot-down to contact, because one camera reads absolute knee angles to within roughly 10°.
       </p>
@@ -88,18 +88,18 @@ export default function HowItWorks() {
       <h2 className="mt-10 head text-lg">Why no hip-turn degrees?</h2>
       <p className="mt-2 text-[15px] leading-relaxed text-chalk-2">
         Measuring hip rotation needs depth, and one camera has to guess depth. Even a professional two-phone system filming at 240 frames a second misses hip rotation speed by about
-        150°/s on average. Rather than show you a made-up number, SwingIQ leaves it out.
+        150°/s on average. Rather than show you a made-up number, Gapper leaves it out.
       </p>
 
       <h2 id="speed" className="mt-10 head text-lg">Exit velo and bat speed from slo-mo</h2>
       <p className="mt-2 text-[15px] leading-relaxed text-chalk-2">
-        At 30 frames a second a 90 mph ball crosses the picture in a frame or two, so live mode can&apos;t time it. In slo-mo (120 or 240 frames a second) SwingIQ follows the ball frame
-        by frame. The hard part with one camera is knowing how many pixels make a foot. SwingIQ uses two independent rulers and checks them against each other:
+        At 30 frames a second a 90 mph ball crosses the picture in a frame or two, so live mode can&apos;t time it. In slo-mo (120 or 240 frames a second) Gapper follows the ball frame
+        by frame. The hard part with one camera is knowing how many pixels make a foot. Gapper uses two independent rulers and checks them against each other:
       </p>
       <ul className="mt-3 list-disc space-y-2 pl-5 text-[15px] leading-relaxed text-chalk-2">
         <li>
           <span className="text-chalk">Gravity.</span> A slow-pitch pitch is in free fall on its arc, and gravity pulls everything down at the same 32 feet per second per second. How fast
-          the pitch speeds up on its way down tells SwingIQ the scale right over the plate, where contact happens. Air drag is accounted for; spin it can&apos;t see goes into the ± range.
+          the pitch speeds up on its way down tells Gapper the scale right over the plate, where contact happens. Air drag is accounted for; spin it can&apos;t see goes into the ± range.
         </li>
         <li>
           <span className="text-chalk">The ball itself.</span> A 12&quot; softball is 3.82&quot; across, so its width in pixels is a second ruler. As a hit flies away it shrinks (pulled)
@@ -116,7 +116,7 @@ export default function HowItWorks() {
         Got a radar or bat sensor? Enter its reading on any swing and it takes priority. <Link href="/guide#speed" className="text-optic underline">How to film for speed</Link>
       </p>
 
-      <h2 className="mt-10 head text-lg">The SwingIQ score</h2>
+      <h2 className="mt-10 head text-lg">The Gapper Score</h2>
       <p className="mt-2 text-[15px] leading-relaxed text-chalk-2">
         A 0–100 grade of your mechanics, not a prediction of how hard you hit it. It blends the checks your footage supports: quiet head, hands that stay up, staying back, a balanced finish,
         a controlled stride, hips leading shoulders, and sequence. Each check counts more when we trust it more. Every swing page shows exactly what went into its score.

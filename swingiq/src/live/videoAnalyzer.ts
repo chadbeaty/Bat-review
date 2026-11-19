@@ -171,6 +171,8 @@ export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalys
     let timed = 0;
     let maxSpeed = 0;
     const rejected: string[] = [];
+    /** Swings whose ball speeds get a second, ball-only pass (see refineSpeeds). */
+    const speedJobs: { entry: VideoSwing; win: SwingWindow; bodyPxPerIn: number | null; hintT: number | null }[] = [];
 
     const capture = (win: SwingWindow) => {
       const clipFrames = history.filter((f) => f.t >= win.clipStart && f.t <= win.clipEnd);
@@ -206,6 +208,7 @@ export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalys
       const canvases = buffer.detach(win.clipStart, win.clipEnd);
       const entry: VideoSwing = { window: win, analysis, pose: clipFrames, frameSize: geom, clip: [] };
       swings.push(entry);
+      speedJobs.push({ entry, win, bodyPxPerIn: bodyPxPerIn(clipFrames), hintT: analysis.phases.contact ?? null });
       pending.push(encodeFrames(canvases).then((c) => void (entry.clip = c)));
     };
 
@@ -351,6 +354,91 @@ export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalys
     // Release a swing that ended right at the end of the video.
     const tail = detector.push({ t: (lastMedia * 1000) / o.slowMo + detector.config.postRollMs + 50, lm: null });
     if (tail.swing) capture(tail.swing);
+
+    // Ball speeds, second pass. The first pass also runs body tracking, and even at the slowest playback a browser
+    // allows (1/16) a slow phone or a busy computer skips a third or more of a 240 fps clip's frames: the batted ball
+    // then has only a handful of points and the reading depends on which frames happened to be dropped. So for each
+    // swing, replay just the stretch around contact with the cheap ball tracker alone, fast enough to keep up with
+    // every frame, and take its speeds when it really did see (nearly) every frame.
+    if (mCtx && v.requestVideoFrameCallback && mediaGaps.length > 3) {
+      const gapS = srcGap(mediaGaps) / 1000;
+      const fpsRealAll = 1 / (gapS / o.slowMo);
+      const jobs = speedJobs.filter((j) => j.hintT !== null);
+      if (fpsRealAll >= 100 && jobs.length) {
+        progress(0.95, "Measuring ball speed frame by frame…");
+        for (const job of jobs) {
+          const hint = job.hintT as number;
+          const m0 = Math.max(0, ((hint - 1750) * o.slowMo) / 1000);
+          const m1 = Math.min(limitS, ((hint + 600) * o.slowMo) / 1000);
+          if (m1 - m0 < gapS * 20) continue;
+          const tracker = new MotionTracker(tw, th, { keepMs: 6000 });
+          let last = -1;
+          let got = 0;
+          video.pause();
+          video.currentTime = m0;
+          await new Promise<void>((r) => {
+            video.onseeked = () => r();
+          });
+          // About 24 frames a second on screen: the ball tracker alone needs well under the ~40 ms that leaves.
+          video.playbackRate = clamp(24 * gapS, minRate(), 1);
+          await new Promise<void>((resolve, reject) => {
+            let done = false;
+            const end = () => {
+              if (done) return;
+              done = true;
+              video.pause();
+              resolve();
+            };
+            const onFrame = (_now: number, meta: { mediaTime: number }) => {
+              if (done) return;
+              if (o.signal?.aborted) {
+                done = true;
+                video.pause();
+                reject(new DOMException("Cancelled", "AbortError"));
+                return;
+              }
+              const mt = meta.mediaTime;
+              if (mt > last && mt >= m0 - gapS / 2) {
+                last = mt;
+                mCtx.drawImage(video, 0, 0, tw, th);
+                tracker.push((mt * 1000) / o.slowMo, mCtx.getImageData(0, 0, tw, th).data);
+                got++;
+              }
+              if (mt >= m1) return end();
+              v.requestVideoFrameCallback!(onFrame);
+            };
+            v.requestVideoFrameCallback!(onFrame);
+            video.onended = end;
+            video.play().catch(reject);
+          });
+          const expectedFrames = (Math.min(m1, Math.max(last, m0)) - m0) / gapS + 1;
+          const cov = expectedFrames > 0 ? Math.min(1, got / expectedFrames) : 0;
+          if (cov < 0.9) {
+            speedDebug.push({ t: Math.round(job.win.peak), refine: "skipped", cov: Math.round(cov * 100) / 100 });
+            continue;
+          }
+          try {
+            const sp = analyzeSpeeds(tracker.frames(job.win.clipStart, job.win.clipEnd), {
+              bodyPxPerIn: job.bodyPxPerIn,
+              ball,
+              cam,
+              certification: o.certification,
+              hintT: hint,
+              fps: fpsRealAll,
+              frameHeight: th,
+            });
+            // Use the full-coverage reading whenever it found the batted ball; otherwise keep the first pass.
+            if (sp.debug.battedN >= 5) {
+              for (const k of ["exitVelocity", "launchAngle", "batSpeed", "pitchSpeed", "descentAngle"] as const) delete job.entry.analysis.metrics[k];
+              Object.assign(job.entry.analysis.metrics, sp.metrics);
+            }
+            speedDebug.push({ t: Math.round(job.win.peak), refine: sp.debug.battedN >= 5 ? "used" : "kept first pass", cov: Math.round(cov * 100) / 100, ...sp.debug });
+          } catch (e) {
+            speedDebug.push({ refine: "error", error: String(e) });
+          }
+        }
+      }
+    }
 
     progress(0.97, swings.length ? `Found ${swings.length} ${swings.length === 1 ? "swing" : "swings"}. Saving…` : "Finishing…");
     await Promise.all(pending);

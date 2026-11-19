@@ -16,7 +16,7 @@ async function noSideScroll(page: import("@playwright/test").Page) {
 test("first run: set up a hitter, then home shows the live session button", async ({ page }) => {
   const errors = errorsOf(page);
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: /Know your swing/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Own the gap/ })).toBeVisible();
   await page.getByLabel("Name").fill("Chad");
   await page.getByRole("radio", { name: "Left-handed" }).click();
   await page.getByLabel("Feet").fill("6");

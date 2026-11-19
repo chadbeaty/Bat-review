@@ -2,29 +2,15 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArcScore } from "@/components/ArcScore";
-import { Wordmark } from "@/components/AppShell";
-import { PlayerForm } from "@/components/PlayerForm";
+import { GapMark, LockupH } from "@/components/Logo";
+import { Landing } from "@/components/Landing";
 import { usePlayers } from "@/components/PlayerProvider";
 import { Softball } from "@/components/Softball";
 import { Chip, InfoTip, Meter, PageSkeleton, Panel, SectionTitle, Skeleton, Stat, fmtDate } from "@/components/ui";
 import { FieldPrint } from "@/components/viz/FieldPrint";
 import { db } from "@/lib/store/db";
 import { FOOT_DOWN_WINDOW, categoryAverages, consistency, metricValues, recentVsBefore, speedOf } from "@/lib/insights";
-import type { Session, SwingRecord } from "@/lib/store/types";
-
-function PitchTracer() {
-  // The arc a slow-pitch ball travels, drawn like a broadcast tracer over a chalk field outline.
-  return (
-    <svg viewBox="0 0 360 150" className="w-full" aria-hidden="true">
-      <path d="M180 146 L60 40 M180 146 L300 40" stroke="var(--color-line-2)" strokeWidth="1" />
-      <path d="M60 40 Q180 -24 300 40" fill="none" stroke="var(--color-line)" strokeWidth="1" strokeDasharray="2 5" />
-      <path d="M180 146 l22 -22 l-22 -22 l-22 22 z" fill="none" stroke="var(--color-chalk-3)" strokeWidth="1" />
-      <path d="M20 118 Q96 -8 176 132" fill="none" stroke="var(--color-optic)" strokeWidth="1.6" strokeDasharray="1 6" strokeLinecap="round" />
-      <path d="M176 132 L318 30" fill="none" stroke="var(--color-optic)" strokeWidth="2" strokeLinecap="round" opacity="0.9" className="draw" pathLength={1000} style={{ ["--len" as string]: 1000 }} />
-      <circle cx="318" cy="30" r="5" fill="var(--color-optic)" />
-    </svg>
-  );
-}
+import { LEVEL_LABEL, type Session, type SwingRecord } from "@/lib/store/types";
 
 function CageDiagram() {
   return (
@@ -40,6 +26,29 @@ function CageDiagram() {
       <text x="206" y="100" fontSize="10.5" fill="var(--color-optic)">phone, waist high</text>
       <text x="30" y="100" fontSize="10.5" fill="var(--color-chalk-2)">you</text>
     </svg>
+  );
+}
+
+/** Recent form: the last dozen swing scores as bars, oldest to newest; the latest is lit. Real scores only. */
+function RecentForm({ swings }: { swings: SwingRecord[] }) {
+  const xs = swings
+    .slice(0, 12)
+    .map((s) => s.analysis.score.overall)
+    .filter((v): v is number => v !== null)
+    .reverse();
+  if (xs.length < 2) return null;
+  return (
+    <div className="relative mt-5 border-t border-white/[0.07] pt-4">
+      <div className="mb-2 flex items-baseline justify-between text-[12px] text-chalk-3">
+        <span>Recent form</span>
+        <span>last {xs.length} swings</span>
+      </div>
+      <div className="flex h-12 items-end gap-1.5" role="img" aria-label={`Recent scores, oldest to newest: ${xs.join(", ")}`}>
+        {xs.map((v, i) => (
+          <div key={i} className="grow-y max-w-7 flex-1 rounded-t-sm" style={{ height: `${Math.max(8, v)}%`, background: i === xs.length - 1 ? "var(--color-optic)" : "rgb(255 255 255 / 0.22)", animationDelay: `${i * 40}ms` }} />
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -62,43 +71,7 @@ export default function Home() {
 
   if (!ready) return <PageSkeleton />;
 
-  if (!player) {
-    return (
-      <div className="animate-rise pb-10">
-        <div className="pt-3">
-          <Wordmark />
-        </div>
-        <div className="mt-8 md:grid md:grid-cols-[1.1fr_1fr] md:items-center md:gap-10">
-          <div>
-            <h1 className="display text-[2.7rem] leading-[0.98] md:text-[3.4rem]">
-              Know your swing.
-              <br />
-              <span className="text-chalk-2">Own your at‑bat.</span>
-            </h1>
-            <p className="mt-5 max-w-md text-[17px] leading-relaxed text-chalk-2">
-              A swing lab for slow pitch that lives on your phone. It catches every swing on its own, reads your legs and feet first, and tells you the one thing to fix.
-              Film in slo-mo and it measures exit velo too.
-            </p>
-          </div>
-          <div className="mt-6 md:mt-0">
-            <PitchTracer />
-          </div>
-        </div>
-        {!storageOk && <p className="mt-6 rounded-xl border border-amber/40 bg-amber-wash px-4 py-3 text-sm text-chalk">This browser is blocking storage (private mode?). Swings won&apos;t be saved.</p>}
-        <Panel boxed className="mt-8 p-5 md:max-w-xl">
-          <h2 className="head text-[19px]">Set up your hitter</h2>
-          <p className="mb-5 mt-1 text-[14px] text-chalk-3">Stays on this phone. No account, no sign-up.</p>
-          <PlayerForm onSave={savePlayer} submitLabel="Let's hit" />
-        </Panel>
-        <p className="mt-6 text-[13px] text-chalk-3">
-          Curious what a phone can really measure?{" "}
-          <Link href="/how-it-works" className="text-chalk-2 underline">
-            Here&apos;s the honest version.
-          </Link>
-        </p>
-      </div>
-    );
-  }
+  if (!player) return <Landing onSave={savePlayer} storageOk={storageOk} />;
 
   const last = sessions?.[0] ?? null;
   const weekAgo = now - 7 * 864e5;
@@ -140,7 +113,7 @@ export default function Home() {
     <div className="animate-rise pb-6">
       <div className="flex items-center justify-between pt-3">
         <span className="md:invisible">
-          <Wordmark />
+          <LockupH height={26} />
         </span>
         <Link href="/profile" className="press rounded-lg border border-line-2 px-3 py-1.5 text-[13px] text-chalk-2 hover:text-chalk">
           {player.name} · {player.hand === "R" ? "Righty" : "Lefty"}
@@ -156,15 +129,21 @@ export default function Home() {
       ) : all.length > 0 ? (
         <div className="lg:grid lg:grid-cols-[1.1fr_1fr] lg:items-start lg:gap-x-6">
           <div>
-          <Panel boxed as="section" aria-label="Your SwingIQ score" className="mt-5 overflow-hidden p-5">
-            <div className="flex items-center justify-between">
-              <span className="head text-[15px]">Your SwingIQ score</span>
-              <Link href="/progress" className="text-[13px] text-optic">
+          <section aria-label="Your Gapper Score" className="turf cut relative mt-5 overflow-hidden rounded-2xl border border-white/[0.08] p-5 shadow-[0_30px_60px_-36px_rgb(3_6_12/0.9)]">
+            <GapMark size={320} ink="#ffffff" accent="#ffffff" className="pointer-events-none absolute -right-20 -top-4 opacity-[0.045]" />
+            <div className="relative flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h2 className="brandline slant max-w-full truncate pr-2 text-[2.35rem] leading-[0.92]">{player.name}</h2>
+                <p className="mt-1.5 text-[13px] text-chalk-2">
+                  Bats {player.hand === "R" ? "right" : "left"} · {Math.floor(player.heightIn / 12)}′{player.heightIn % 12}″{player.level ? ` · ${LEVEL_LABEL[player.level]}` : ""}
+                </p>
+              </div>
+              <Link href="/progress" className="shrink-0 pt-1 text-[13px] text-chalk-2 hover:text-chalk">
                 Progress
               </Link>
             </div>
-            <div className="mt-2 grid grid-cols-[auto_1fr] items-center gap-5">
-              <ArcScore score={overall} size={176} label={`Last ${Math.min(20, recent.length)} swings`} previous={prevOverall} />
+            <div className="relative mt-4 grid grid-cols-[auto_1fr] items-center gap-5">
+              <ArcScore score={overall} size={172} label="Gapper Score" previous={prevOverall} />
               <div className="space-y-4">
                 {trend !== null ? (
                   <Stat label="vs last week" value={`${trend >= 0 ? "+" : "−"}${Math.abs(trend)}`} tone={trend >= 0 ? "optic" : "chalk"} size="sm" />
@@ -178,11 +157,12 @@ export default function Home() {
                 <Stat label="Consistency" value={steady ?? "—"} size="sm" note={steady === null ? "After 3 swings" : undefined} />
               </div>
             </div>
-            {prevOverall !== null && <p className="mt-3 text-[12px] text-chalk-3"><span className="text-clay">○</span> the 20 swings before: {prevOverall}</p>}
-          </Panel>
+            <RecentForm swings={all} />
+            {prevOverall !== null && <p className="relative mt-3 text-[12px] text-chalk-3"><span className="text-clay">▲</span> the 20 swings before: {prevOverall}</p>}
+          </section>
 
           <div className="mt-3 grid grid-cols-[1.4fr_1fr] gap-3">
-            <Link href="/record" className="press flex min-h-14 items-center gap-3 rounded-xl bg-optic px-4 font-bold text-optic-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.45),0_10px_28px_-14px_rgb(215_180_106/0.7)]">
+            <Link href="/record" className="cut cut-sm press flex min-h-14 items-center gap-3 rounded-xl bg-optic px-4 font-bold text-optic-ink hover:bg-optic-2">
               <svg width="22" height="22" viewBox="0 0 30 30" aria-hidden="true">
                 <rect x="2" y="7" width="19" height="16" rx="3" fill="none" stroke="currentColor" strokeWidth="2.6" />
                 <path d="M21 13l7-4v12l-7-4z" fill="currentColor" />
@@ -222,7 +202,7 @@ export default function Home() {
 
           {last && focus && (
             <>
-              <SectionTitle right={<Link href={`/swings?session=${last.id}`} className="text-[13px] text-optic">Review</Link>}>Work on this next</SectionTitle>
+              <SectionTitle right={<Link href={`/swings?session=${last.id}`} className="text-[13px] text-chalk-2 hover:text-chalk">Review</Link>}>Work on this next</SectionTitle>
               <Panel className="relative overflow-hidden p-4 pl-5">
                 <span className="absolute inset-y-0 left-0 w-1 bg-stitch" aria-hidden="true" />
                 <p className="text-[15px] leading-snug text-chalk">{focus.text}</p>
@@ -234,12 +214,12 @@ export default function Home() {
           )}
           </div>
           <div className="lg:-mt-5">
-          <SectionTitle right={<Link href="/progress" className="text-[13px] text-optic">Details</Link>}>Field Print</SectionTitle>
+          <SectionTitle right={<Link href="/progress" className="text-[13px] text-chalk-2 hover:text-chalk">Details</Link>}>Field Print</SectionTitle>
           <Panel className="p-4">
             <FieldPrint now={categoryAverages(recent)} before={before.length ? categoryAverages(before) : null} caption={before.length ? "Last 20 swings. Silver lines: the 20 before. Tap a wedge." : "Your six skill areas over your recent swings. Tap a wedge."} />
           </Panel>
 
-          <SectionTitle right={<Link href="/swings" className="text-[13px] text-optic">All swings</Link>}>Recent swings</SectionTitle>
+          <SectionTitle right={<Link href="/swings" className="text-[13px] text-chalk-2 hover:text-chalk">All swings</Link>}>Recent swings</SectionTitle>
           <ol className="surface divide-y divide-line overflow-hidden rounded-2xl">
             {all.slice(0, 5).map((s) => {
               const ev = speedOf(s, "exitVelocity");
@@ -289,7 +269,15 @@ export default function Home() {
         </div>
       ) : (
         <>
-          <Panel boxed className="mt-5 p-5">
+          <section aria-label="Welcome" className="turf cut relative mt-5 overflow-hidden rounded-2xl border border-white/[0.08] p-5">
+            <GapMark size={300} ink="#ffffff" accent="#ffffff" className="pointer-events-none absolute -right-20 -top-6 opacity-[0.045]" />
+            <p className="relative text-[13px] text-chalk-3">Rookie card</p>
+            <h2 className="brandline slant relative mt-1 max-w-full truncate pr-2 text-[2.35rem] leading-[0.92]">{player.name}</h2>
+            <p className="relative mt-1.5 text-[13px] text-chalk-2">
+              Bats {player.hand === "R" ? "right" : "left"} · {Math.floor(player.heightIn / 12)}′{player.heightIn % 12}″ · your Gapper Score shows up after your first swing
+            </p>
+          </section>
+          <Panel boxed className="mt-4 p-5">
             <h2 className="head text-[19px]">Your first swing</h2>
             <p className="mt-1 text-[14px] text-chalk-2">Set the phone up like this, whole body in the picture, shoes included.</p>
             <div className="mt-4">
@@ -297,7 +285,7 @@ export default function Home() {
             </div>
           </Panel>
           <div className="mt-3 grid grid-cols-[1.4fr_1fr] gap-3">
-            <Link href="/record" className="press flex min-h-14 items-center gap-3 rounded-xl bg-optic px-4 font-bold text-optic-ink">
+            <Link href="/record" className="cut cut-sm press flex min-h-14 items-center gap-3 rounded-xl bg-optic px-4 font-bold text-optic-ink hover:bg-optic-2">
               Record my swing
             </Link>
             <Link href="/live" className="press flex min-h-14 items-center gap-2.5 rounded-xl border border-line-2 bg-night-2 px-3.5 text-[15px]">
@@ -312,7 +300,7 @@ export default function Home() {
       )}
 
       <div className="mt-12 flex flex-wrap gap-x-4 gap-y-1 border-t border-line pt-5 text-[13px] text-chalk-3">
-        <Link href="/how-it-works" className="hover:text-chalk-2">How SwingIQ measures</Link>
+        <Link href="/how-it-works" className="hover:text-chalk-2">How Gapper measures</Link>
         <Link href="/bats" className="hover:text-chalk-2">Bat DNA</Link>
         <Link href="/guide" className="hover:text-chalk-2">Camera setup guide</Link>
       </div>

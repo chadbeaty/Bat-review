@@ -1,7 +1,7 @@
 import type { Cue, MetricKey, MetricValue } from "./types";
 
 /**
- * SwingIQ Coach: for the biggest issue in a swing, a plain-language explanation, one correction, a drill and a
+ * Gapper Coach: for the biggest issue in a swing, a plain-language explanation, one correction, a drill and a
  * 10-swing challenge. Rules-based on measured metrics only (no language model guessing), so every word traces back
  * to a number on the swing. Drills come from slow-pitch coaching sources (see docs/reports).
  */
@@ -137,11 +137,11 @@ export function coachingFor(cue: Cue, metrics: Metrics, score: number | null): C
     why:
       cue.tone === "praise"
         ? "Nothing stood out as a problem on this swing. The fastest way to get better now is to make this swing repeatable."
-        : "SwingIQ needs a few more swings to see your patterns. Repeat your normal swing.",
+        : "Gapper needs a few more swings to see your patterns. Repeat your normal swing.",
     fix: cue.text,
     drill: { name: "Same swing, ten times", how: "Take ten swings with the same timing and the same finish. Hold every finish for a two count." },
     challenge: {
-      goal: score !== null ? `SwingIQ score ${Math.max(0, score - 5)} or better` : "Ten clean swings with your whole body in view",
+      goal: score !== null ? `Gapper Score ${Math.max(0, score - 5)} or better` : "Ten clean swings with your whole body in view",
       metric: "balance",
       test: (m) => {
         void m;

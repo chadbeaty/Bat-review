@@ -2,8 +2,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useState } from "react";
-import { LogoMark, Wordmark } from "./Logo";
+import { GapMark, LockupH, Wordmark } from "./Logo";
 import { Softball } from "./Softball";
+import { usePlayers } from "./PlayerProvider";
 import { Sheet } from "./ui";
 
 export { Wordmark };
@@ -61,7 +62,7 @@ function NewSwingSheet({ open, onClose }: { open: boolean; onClose: () => void }
     <Sheet open={open} onClose={onClose} title="New swing">
       <ul className="space-y-2.5">
         <li>
-          <Link href="/record" onClick={onClose} className="press group flex items-center gap-4 rounded-xl bg-optic px-4 py-4 text-optic-ink">
+          <Link href="/record" onClick={onClose} className="cut press group flex items-center gap-4 rounded-xl bg-optic px-4 py-4 text-optic-ink hover:bg-optic-2">
             <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
               <rect x="2" y="7" width="19" height="16" rx="3" fill="none" stroke="currentColor" strokeWidth="2.2" />
               <path d="M21 13l7-4v12l-7-4z" fill="currentColor" />
@@ -90,10 +91,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   const [sheet, setSheet] = useState(false);
   const close = useCallback(() => setSheet(false), []);
+  const { ready, player } = usePlayers();
   const immersive = path === "/live";
   const active = (href: string) => (href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`));
 
   if (immersive) return <>{children}</>;
+  // getgapper.com before a hitter is set up is the landing page: no app chrome, full width.
+  if (path === "/" && ready && !player) return <main>{children}</main>;
 
   return (
     <div className="mx-auto min-h-dvh max-w-[34rem] pb-[calc(7.5rem+env(safe-area-inset-bottom))] md:max-w-[68rem] md:pb-14 md:pl-60">
@@ -102,14 +106,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       {/* Phone: a floating bar under the thumb, the mark in the middle as the one action. */}
       <nav
         aria-label="Main"
-        className="fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 mx-auto max-w-[32rem] rounded-[1.6rem] border border-white/[0.08] bg-[#111113] shadow-[0_20px_50px_-12px_rgb(0_0_0/0.95),inset_0_1px_0_rgb(255_255_255/0.05)] md:hidden"
+        className="fixed inset-x-3 bottom-[calc(0.75rem+env(safe-area-inset-bottom))] z-40 mx-auto max-w-[32rem] rounded-[1.6rem] border border-white/[0.08] bg-[#172133] shadow-[0_20px_50px_-12px_rgb(3_6_12/0.95),inset_0_1px_0_rgb(255_255_255/0.05)] md:hidden"
       >
         <ul className="flex items-center justify-between px-1.5">
           {TABS.map((t) =>
             t.href === "#new" ? (
               <li key={t.href} className="-my-3">
-                <button type="button" onClick={() => setSheet(true)} aria-haspopup="dialog" aria-label="New swing" className="group grid h-[66px] w-[66px] place-items-center rounded-full bg-[#0b0b0d] shadow-[0_0_0_1px_rgb(215_180_106/0.35),0_10px_30px_-6px_rgb(215_180_106/0.45)] transition group-active:scale-95">
-                  <LogoMark size={54} />
+                <button type="button" onClick={() => setSheet(true)} aria-haspopup="dialog" aria-label="New swing" className="grid h-[62px] w-[62px] place-items-center rounded-full bg-optic shadow-[0_0_0_5px_var(--color-night),0_10px_28px_-8px_rgb(183_243_74/0.45)] transition active:scale-95">
+                  <GapMark size={40} ink="var(--color-optic-ink)" accent="var(--color-optic-ink)" />
                 </button>
               </li>
             ) : (
@@ -130,11 +134,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </nav>
 
       {/* Desktop: a left rail with the wordmark, the action, and labeled sections. */}
-      <nav aria-label="Main" className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-white/[0.06] bg-[#0a0a0c] px-4 py-7 md:flex">
-        <Link href="/" className="mb-9 px-2">
-          <Wordmark size={34} />
+      <nav aria-label="Main" className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-white/[0.06] bg-[#0d1421] px-4 py-7 md:flex">
+        <Link href="/" className="mb-9 px-2" aria-label="Gapper home">
+          <LockupH height={30} />
         </Link>
-        <button type="button" onClick={() => setSheet(true)} aria-haspopup="dialog" className="press mb-7 flex items-center justify-center gap-2.5 rounded-xl bg-optic px-3 py-3 font-semibold text-optic-ink shadow-[0_12px_30px_-12px_rgb(215_180_106/0.7)]">
+        <button type="button" onClick={() => setSheet(true)} aria-haspopup="dialog" className="cut cut-sm press mb-7 flex items-center justify-center gap-2.5 rounded-xl bg-optic px-3 py-3 font-semibold text-optic-ink hover:bg-optic-2">
           <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v12M2 8h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>
           New swing
         </button>
@@ -154,7 +158,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </ul>
         <div className="mt-auto space-y-1 px-3 text-[13px] text-chalk-3">
           <Link href="/guide" className="block hover:text-chalk-2">Camera setup guide</Link>
-          <Link href="/how-it-works" className="block hover:text-chalk-2">How SwingIQ measures</Link>
+          <Link href="/how-it-works" className="block hover:text-chalk-2">How Gapper measures</Link>
         </div>
       </nav>
 
