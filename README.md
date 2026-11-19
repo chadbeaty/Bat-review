@@ -1,7 +1,8 @@
 # Slow-pitch marketplace and Barrel Talk
 
-This repository holds three projects:
+This repository holds four projects:
 
+- **`swingiq/`**: SwingIQ Live, real-time slow-pitch swing analysis from a phone on a tripod (Next.js, MediaPipe on device, Supabase). Start with `swingiq/README.md` and `swingiq/docs/ARCHITECTURE.md`.
 - **`agedtakes/`**: AGED TAKES, an evidence-backed public accountability archive of what influential people said, what they did, and how their claims held up (Next.js, Supabase, Claude API, Resend). Self-contained; start with `agedtakes/README.md`.
 - **`web/`**: the nationwide used slow-pitch equipment marketplace (Next.js, Supabase, and Stripe Connect and Shippo to come). Start with `web/README.md`.
 - **The root folder**: Barrel Talk, the static bat research site described below. Its researched catalog (`data/bats.json`) seeds the marketplace's product database.

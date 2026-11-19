@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+/*
+  SwingIQ: "night league under the lights".
+  Charcoal field at 9:40 pm, chalk-white type, one optic softball yellow for whatever is live, stitch red only for the
+  one thing to fix. Faint cage-net mesh in the background. Wide Archivo numbers read from 8 feet away in a cage;
+  Atkinson Hyperlegible Next keeps every label readable at a glance.
+*/
+@theme {
+  --color-night: #0b0d0c;
+  --color-night-2: #131614;
+  --color-night-3: #1b1f1c;
+  --color-night-4: #252a26;
+  --color-line: #2c312d;
+  --color-chalk: #f2f1ea;
+  --color-chalk-2: #bdbfb6;
+  --color-chalk-3: #81857d;
+  --color-optic: #e4f542;
+  --color-optic-2: #c9d936;
+  --color-optic-ink: #181b04;
+  --color-stitch: #e5483a;
+  --color-stitch-wash: #3a1714;
+  --color-amber: #f0b13c;
+  --color-amber-wash: #33270f;
+
+  --font-display: var(--font-archivo), "Arial Black", system-ui, sans-serif;
+  --font-sans: var(--font-atkinson), "Verdana", system-ui, sans-serif;
+
+  --animate-rise: rise 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-slide-up: slide-up 0.4s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+  --animate-pop: pop 0.6s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  background: var(--color-night);
+}
+
+body {
+  background-color: var(--color-night);
+  /* Batting-cage net: two faint diagonal line sets. */
+  background-image:
+    repeating-linear-gradient(45deg, rgb(242 241 234 / 0.028) 0 1px, transparent 1px 22px),
+    repeating-linear-gradient(-45deg, rgb(242 241 234 / 0.028) 0 1px, transparent 1px 22px);
+  color: var(--color-chalk);
+  font-family: var(--font-sans);
+  min-height: 100dvh;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.display {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 118;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.num {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 112;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-optic);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Range inputs in the clip player. */
+input[type="range"].scrub {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  width: 100%;
+  height: 28px;
+}
+input[type="range"].scrub::-webkit-slider-runnable-track { height: 4px; background: var(--color-night-4); border-radius: 2px; }
+input[type="range"].scrub::-moz-range-track { height: 4px; background: var(--color-night-4); border-radius: 2px; }
+input[type="range"].scrub::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--color-optic); margin-top: -8px; border: 3px solid var(--color-night);
+}
+input[type="range"].scrub::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--color-optic); border: 3px solid var(--color-night); }

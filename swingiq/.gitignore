@@ -1,0 +1,13 @@
+node_modules/
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo
+.env*.local
+.vercel
+# Generated at install time by scripts/copy-vision-assets.mjs
+public/vision/
+# Downloaded test footage (license doesn't allow redistribution)
+tests/fixtures/video/
+test-results/
+playwright-report/
