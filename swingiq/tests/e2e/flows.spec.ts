@@ -160,13 +160,14 @@ test("slo-mo video: exit velo, launch angle, pitch speed and bat speed", async (
 
 test("slo-mo video filmed at 8x but uploaded as normal speed gets fixed automatically", async ({ page }) => {
   test.skip(!existsSync(speed240x8), "Run scripts/fetch-test-video.sh to build the slo-mo test clip.");
-  test.setTimeout(600_000);
+  // Two full passes over a 29 s clip: slow on a CI runner (about 8 minutes there).
+  test.setTimeout(900_000);
   await newHitter(page, "Wrong Setting");
   await page.goto("/record");
   await page.getByRole("radio", { name: /Front/ }).click();
   // An iPhone Slo-mo share: 30 fps, slowed 8x. Left on "Normal speed" on purpose.
   await page.setInputFiles("#up-input", speed240x8);
-  await expect(page.getByRole("heading", { name: /1 swing analyzed/ })).toBeVisible({ timeout: 540_000 });
+  await expect(page.getByRole("heading", { name: /1 swing analyzed/ })).toBeVisible({ timeout: 840_000 });
   await expect(page.getByText(/8× slow motion, so it was re-analyzed/)).toBeVisible();
   const { ev } = await speedOnSwingPage(page);
   expect(ev).toBeGreaterThan(76);

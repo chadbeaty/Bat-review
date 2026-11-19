@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { CueLine } from "@/components/Metrics";
 import { PlayerForm } from "@/components/PlayerForm";
 import { usePlayers } from "@/components/PlayerProvider";
-import { Button, PageTitle, Panel, Segmented } from "@/components/ui";
+import { Button, PageTitle, Panel, SectionTitle, Segmented } from "@/components/ui";
 import { ViewPicker, viewNote } from "@/components/live/ViewPicker";
 import { SOFTBALL_11, SOFTBALL_12 } from "@/engine/ballflight";
 import type { CameraView } from "@/engine/types";
@@ -14,9 +14,9 @@ import type { Bat, Session, SwingRecord } from "@/lib/store/types";
 
 type Stage = "choose" | "processing" | "done" | "error";
 const SLOWMO: { value: "1" | "4" | "8"; label: string }[] = [
-  { value: "1", label: "Normal speed" },
-  { value: "4", label: "Slo-mo 120 fps (4×)" },
-  { value: "8", label: "Slo-mo 240 fps (8×)" },
+  { value: "1", label: "Normal" },
+  { value: "4", label: "120 fps · 4×" },
+  { value: "8", label: "240 fps · 8×" },
 ];
 
 function SpeedLine({ m }: { m: SwingRecord["analysis"]["metrics"] }) {
@@ -169,7 +169,7 @@ export default function RecordPage() {
       <div className="animate-rise pb-8">
         <PageTitle title="Record a swing" />
         <Panel className="p-5">
-          <h2 className="mb-4 text-lg font-bold">First, who&apos;s hitting?</h2>
+          <h2 className="head mb-4 text-lg">First, who&apos;s hitting?</h2>
           <PlayerForm onSave={savePlayer} submitLabel="Save and continue" />
         </Panel>
       </div>
@@ -183,31 +183,32 @@ export default function RecordPage() {
       {stage === "choose" && (
         <>
           <div className="grid gap-3 sm:grid-cols-2">
-            <label htmlFor="rec-input" className="flex min-h-20 cursor-pointer items-center gap-4 rounded-2xl bg-optic px-5 py-4 text-optic-ink transition active:scale-[0.99]">
+            <label htmlFor="up-input" className="press flex min-h-[5.5rem] cursor-pointer items-center gap-4 rounded-2xl bg-optic px-5 py-4 text-optic-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.45),0_14px_34px_-18px_rgb(228_245_66/0.8)]">
+              <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+                <path d="M15 20V5M9 11l6-6 6 6" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+                <path d="M4 19v5a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-5" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" />
+              </svg>
+              <span>
+                <span className="display block text-[1.35rem] leading-tight">Upload a video</span>
+                <span className="block text-[13px] font-semibold opacity-75">Slo-mo clips also get exit velo and bat speed · up to {MAX_VIDEO_SECONDS} s</span>
+              </span>
+            </label>
+            <input id="up-input" type="file" accept="video/*" className="sr-only" onChange={onPick} aria-label="Upload a video" />
+            <label htmlFor="rec-input" className="press surface flex min-h-[5.5rem] cursor-pointer items-center gap-4 rounded-2xl px-5 py-4 hover:border-chalk-3">
               <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
                 <rect x="2" y="7" width="19" height="16" rx="3" fill="none" stroke="currentColor" strokeWidth="2.4" />
                 <path d="M21 13l7-4v12l-7-4z" fill="currentColor" />
               </svg>
               <span>
-                <span className="display block text-xl leading-tight">Record with camera</span>
-                <span className="block text-[13px] font-semibold opacity-75">Opens your phone&apos;s camera</span>
+                <span className="display block text-[1.35rem] leading-tight">Record with camera</span>
+                <span className="block text-[13px] text-chalk-3">Opens your phone&apos;s camera at normal speed</span>
               </span>
             </label>
             <input id="rec-input" type="file" accept="video/*" capture="environment" className="sr-only" onChange={onPick} />
-            <label htmlFor="up-input" className="flex min-h-20 cursor-pointer items-center gap-4 rounded-2xl border border-line bg-night-2 px-5 py-4 transition hover:border-chalk-3 active:scale-[0.99]">
-              <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
-                <path d="M15 20V5M9 11l6-6 6 6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M4 19v5a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-5" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
-              </svg>
-              <span>
-                <span className="display block text-xl leading-tight">Upload a video</span>
-                <span className="block text-[13px] text-chalk-3">From your photos or files, up to {MAX_VIDEO_SECONDS} s</span>
-              </span>
-            </label>
-            <input id="up-input" type="file" accept="video/*" className="sr-only" onChange={onPick} aria-label="Upload a video" />
           </div>
 
-          <div className="mt-7">
+          <SectionTitle>About the clip</SectionTitle>
+          <div>
             <span className="mb-2 block text-sm text-chalk-2">Where was the camera?</span>
             <ViewPicker value={view} onChange={setView} hand={player.hand} />
             <p className="mt-2 text-[13px] text-chalk-3">{viewNote(view)}</p>
@@ -238,7 +239,7 @@ export default function RecordPage() {
           {bats.length > 0 && (
             <div className="mt-6">
               <label htmlFor="rbat" className="mb-2 block text-sm text-chalk-2">Bat</label>
-              <select id="rbat" value={batId} onChange={(e) => setBatId(e.target.value)} className="min-h-12 w-full rounded-xl border border-line bg-night-2 px-3 text-[16px] text-chalk">
+              <select id="rbat" value={batId} onChange={(e) => setBatId(e.target.value)} className="min-h-12 w-full rounded-xl border border-line-2 bg-night-2 px-3 text-[16px] text-chalk">
                 <option value="">Not tracking a bat</option>
                 {bats.map((b) => (
                   <option key={b.id} value={b.id}>
@@ -250,8 +251,10 @@ export default function RecordPage() {
             </div>
           )}
 
-          <Panel className="mt-7 p-4">
-            <p className="text-[15px] font-bold">For the best read</p>
+          <SectionTitle>Filming tips</SectionTitle>
+          <div className="grid gap-3 md:grid-cols-2">
+          <Panel className="p-4">
+            <p className="head text-[15px]">For the best read</p>
             <ul className="mt-2 space-y-1.5 text-[14px] text-chalk-2">
               <li>Whole body in the picture, head to shoes, phone held still or on a tripod.</li>
               <li>Side view, facing your chest, gives the most numbers.</li>
@@ -260,8 +263,8 @@ export default function RecordPage() {
             </ul>
           </Panel>
 
-          <Panel className="mt-4 p-4">
-            <p className="text-[15px] font-bold">For exit velo and bat speed</p>
+          <Panel boxed className="p-4">
+            <p className="head text-[15px] text-optic">For exit velo and bat speed</p>
             <ul className="mt-2 space-y-1.5 text-[14px] text-chalk-2">
               <li>Film in the Camera app&apos;s Slo-mo mode, then tap Upload a video here (the Record button above can&apos;t shoot slo-mo).</li>
               <li>Phone on a stand or fence, not in your hand.</li>
@@ -271,16 +274,20 @@ export default function RecordPage() {
             </ul>
             <Link href="/guide#speed" className="mt-2 inline-block text-[14px] text-optic">Full filming guide</Link>
           </Panel>
+          </div>
         </>
       )}
 
       <div className={stage === "processing" ? "" : "hidden"}>
-        <div className="overflow-hidden rounded-2xl border border-line bg-night-2">
+        <div className="surface boxed overflow-hidden rounded-2xl">
           <video ref={videoRef} className="max-h-[52dvh] w-full object-contain" muted playsInline aria-label="Your video, playing slowed down while it's analyzed" />
         </div>
         <div className="mt-4" role="status" aria-live="polite">
-          <p className="text-[15px] text-chalk">{progress.stage}</p>
-          <div className="mt-2 h-2 overflow-hidden rounded-full bg-night-4" aria-hidden="true">
+          <div className="flex items-baseline justify-between gap-3">
+            <p className="text-[15px] text-chalk">{progress.stage}</p>
+            <span className="num text-[15px] text-optic">{Math.round(progress.f * 100)}%</span>
+          </div>
+          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-night-4" aria-hidden="true">
             <div className="h-full bg-optic transition-[width] duration-200" style={{ width: `${Math.round(progress.f * 100)}%` }} />
           </div>
           <p className="mt-2 text-[13px] text-chalk-3">Plays slowed down so every frame gets tracked. Keep this screen open.</p>
@@ -300,10 +307,10 @@ export default function RecordPage() {
                 Processed from video at {Math.round(saved.result.fps)} fps ({Math.round(saved.result.coverage * 100)}% of frames tracked)
                 {saved.result.heardAudio ? ", contact from the video's sound" : ""}.{saved.result.truncated ? ` Only the first ${MAX_VIDEO_SECONDS} s were analyzed.` : ""}
               </p>
-              <ol className="mt-4 divide-y divide-line overflow-hidden rounded-2xl border border-line bg-night-2">
+              <ol className="surface mt-4 divide-y divide-line overflow-hidden rounded-2xl">
                 {saved.swings.map((s) => (
                   <li key={s.id}>
-                    <Link href={`/swings/${s.id}`} className="flex items-center gap-4 px-4 py-4 hover:bg-night-3">
+                    <Link href={`/swings/${s.id}`} className="press flex items-center gap-4 px-4 py-4 hover:bg-night-3">
                       <span className="num w-12 text-3xl text-chalk">{s.analysis.score.overall ?? "—"}</span>
                       <span className="min-w-0 flex-1">
                         <CueLine cue={s.analysis.cue} />
@@ -317,7 +324,7 @@ export default function RecordPage() {
             </>
           ) : (
             <Panel className="p-5">
-              <h2 className="text-lg font-bold">No swing found in that video</h2>
+              <h2 className="head text-lg">No swing found in that video</h2>
               <ul className="mt-2 space-y-1.5 text-[14px] text-chalk-2">
                 <li>Make sure your whole body, including your shoes, stays in the picture.</li>
                 <li>If it was filmed in slow motion, pick 4× or 8× and try again.</li>
@@ -339,7 +346,7 @@ export default function RecordPage() {
 
       {stage === "error" && (
         <Panel className="p-5">
-          <h2 className="text-lg font-bold">Couldn&apos;t analyze that video</h2>
+          <h2 className="head text-lg">Couldn&apos;t analyze that video</h2>
           <p role="alert" className="mt-2 text-[14px] text-chalk-2">{error}</p>
           <Button className="mt-4" onClick={() => setStage("choose")}>Try another video</Button>
         </Panel>

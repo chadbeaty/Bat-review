@@ -3,7 +3,9 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
 import { usePlayers } from "@/components/PlayerProvider";
-import { ButtonLink, Empty, PageTitle, fmtDate, fmtTime } from "@/components/ui";
+import { ButtonLink, Chip, Empty, PageSkeleton, PageTitle, fmtDate, fmtTime } from "@/components/ui";
+import { SparkBars } from "@/components/viz/SparkBars";
+import { speedOf } from "@/lib/insights";
 import { db } from "@/lib/store/db";
 import type { Session, SwingRecord } from "@/lib/store/types";
 
@@ -36,7 +38,7 @@ function SwingsInner() {
       .filter((g) => g.swings.length);
   }, [sessions, swings, sessionFilter]);
 
-  if (!ready) return null;
+  if (!ready) return <PageSkeleton />;
   if (!player)
     return (
       <>
@@ -52,16 +54,17 @@ function SwingsInner() {
         sub={sessions ? `${swings.length} swings · ${sessions.length} sessions` : " "}
         right={
           sessionFilter ? (
-            <button type="button" onClick={() => router.push("/swings")} className="rounded-lg border border-line px-3 py-1.5 text-sm text-chalk-2">
+            <button type="button" onClick={() => router.push("/swings")} className="press rounded-lg border border-line-2 px-3 py-1.5 text-sm text-chalk-2 hover:text-chalk">
               All sessions
             </button>
           ) : swings.length >= 2 ? (
-            <Link href="/compare" className="rounded-lg border border-line px-3 py-1.5 text-sm text-chalk-2">
+            <Link href="/compare" className="press rounded-lg border border-line-2 px-3 py-1.5 text-sm text-chalk-2 hover:text-chalk">
               Compare
             </Link>
           ) : null
         }
       />
+      {sessions === null && <PageSkeleton />}
       {sessions !== null && grouped.length === 0 && (
         <Empty title="No swings yet">
           <p>Start a live session and every swing you take shows up here, with video and a frame-by-frame breakdown.</p>
@@ -71,32 +74,39 @@ function SwingsInner() {
           </div>
         </Empty>
       )}
-      <div className="space-y-8">
+      <div className="space-y-9">
         {grouped.map(({ session, swings: list }) => (
           <section key={session.id} aria-labelledby={`s-${session.id}`}>
-            <div className="mb-3 flex items-baseline justify-between gap-3">
-              <h2 id={`s-${session.id}`} className="text-[17px] font-bold">
-                {fmtDate(session.startedAt)} <span className="font-normal text-chalk-3">· {fmtTime(session.startedAt)}</span>
-              </h2>
-              <span className="text-[13px] text-chalk-3">
-                {session.kind === "video" ? "From video · " : ""}
-                {VIEW_LABEL[session.view]}
-                {session.avgScore !== null && ` · avg ${session.avgScore}`}
-              </span>
+            <div className="mb-3 flex items-end justify-between gap-3">
+              <div className="min-w-0">
+                <h2 id={`s-${session.id}`} className="head text-[17px]">
+                  {fmtDate(session.startedAt)} <span className="font-sans text-[14px] font-normal text-chalk-3">· {fmtTime(session.startedAt)}</span>
+                </h2>
+                <p className="mt-0.5 text-[12px] text-chalk-3">
+                  {session.kind === "video" ? "From video · " : "Live · "}
+                  {VIEW_LABEL[session.view]} · {list.length} {list.length === 1 ? "swing" : "swings"}
+                  {session.avgScore !== null && ` · avg ${session.avgScore}`}
+                </p>
+              </div>
+              {list.length >= 3 && <SparkBars scores={list.map((x) => x.analysis.score.overall)} />}
             </div>
             {session.notes && <p className="mb-3 text-[14px] italic text-chalk-2">“{session.notes}”</p>}
-            <ol className="divide-y divide-line overflow-hidden rounded-2xl border border-line bg-night-2">
+            <ol className="surface divide-y divide-line overflow-hidden rounded-2xl">
               {list.map((s) => {
-                const best = session.bestScore !== null && s.analysis.score.overall === session.bestScore;
+                const best = list.length > 1 && session.bestScore !== null && s.analysis.score.overall === session.bestScore;
+                const ev = speedOf(s, "exitVelocity");
                 return (
                   <li key={s.id}>
-                    <Link href={`/swings/${s.id}`} className="flex items-center gap-4 px-4 py-3.5 hover:bg-night-3">
-                      <span className="w-8 text-sm text-chalk-3">#{s.n}</span>
-                      <span className={`num w-12 text-2xl ${best ? "text-optic" : "text-chalk"}`}>{s.analysis.score.overall ?? "—"}</span>
+                    <Link href={`/swings/${s.id}`} className="press flex items-center gap-4 px-4 py-3.5 hover:bg-night-3">
+                      <span className="w-8 text-[13px] text-chalk-3">#{s.n}</span>
+                      <span className={`num w-11 text-[1.6rem] leading-none ${best ? "text-optic" : "text-chalk"}`}>{s.analysis.score.overall ?? "—"}</span>
                       <span className="min-w-0 flex-1 truncate text-[14px] text-chalk-2">{s.analysis.cue.spoken}</span>
-                      {s.pb && <span className="text-optic" aria-label="Personal best">★</span>}
-                      {s.source === "video" && <span className="rounded-md border border-optic/40 px-1.5 py-0.5 text-[11px] text-optic">video</span>}
-                      {s.tag?.type && <span className="rounded-md border border-line px-1.5 py-0.5 text-[11px] text-chalk-2">{s.tag.type}</span>}
+                      <span className="flex shrink-0 items-center gap-1">
+                        {s.pb && <Chip tone="optic"><span aria-label="Personal best">★</span></Chip>}
+                        {ev && <Chip tone="optic">{Math.round(ev.v)} mph</Chip>}
+                        {s.source === "video" && !ev && <Chip>video</Chip>}
+                        {s.tag?.type && <Chip>{s.tag.type}</Chip>}
+                      </span>
                       <span className="text-chalk-3" aria-hidden="true">›</span>
                     </Link>
                   </li>

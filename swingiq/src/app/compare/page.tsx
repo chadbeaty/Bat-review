@@ -88,10 +88,16 @@ function Panel({ loaded, rel, anchor, showSkeleton, label }: { loaded: Loaded | 
   const s = loaded?.swing;
   return (
     <figure className="min-w-0">
-      <div className="overflow-hidden rounded-2xl border border-line bg-night-2">
+      <div className="surface relative overflow-hidden rounded-2xl">
         <canvas ref={ref} className="block w-full" style={{ aspectRatio: s ? `${s.frameSize.width} / ${s.frameSize.height}` : "9 / 16" }} aria-label={label} />
+        <span
+          className={`num absolute left-2 top-2 grid h-7 w-7 place-items-center rounded-md text-[14px] ${label.startsWith("A") ? "bg-optic text-optic-ink" : "bg-clay text-night"}`}
+          aria-hidden="true"
+        >
+          {label.startsWith("A") ? "A" : "B"}
+        </span>
       </div>
-      <figcaption className="mt-1.5 text-[13px] text-chalk-2">{label}</figcaption>
+      <figcaption className="mt-1.5 truncate text-[13px] text-chalk-2">{label.slice(4)}</figcaption>
     </figure>
   );
 }
@@ -197,7 +203,7 @@ function CompareInner() {
           return (
             <div key={w}>
               <label htmlFor={`pick-${w}`} className="mb-1 block text-xs text-chalk-3">{w === "a" ? "Swing A" : "Swing B"}</label>
-              <select id={`pick-${w}`} value={cur.id} onChange={(e) => pick(w, e.target.value)} className="min-h-11 w-full rounded-xl border border-line bg-night-2 px-2 text-[14px] text-chalk">
+              <select id={`pick-${w}`} value={cur.id} onChange={(e) => pick(w, e.target.value)} className="min-h-11 w-full rounded-xl border border-line-2 bg-night-2 px-2 text-[14px] text-chalk">
                 {(all ?? []).map((s) => (
                   <option key={s.id} value={s.id}>{label(s)}</option>
                 ))}
@@ -238,7 +244,7 @@ function CompareInner() {
             if (!playing && rel >= range[1] - 1) setRel(range[0]);
             setPlaying((p) => !p);
           }}
-          className="grid h-12 w-16 place-items-center rounded-xl bg-optic text-optic-ink"
+          className="press grid h-12 w-16 place-items-center rounded-xl bg-optic text-optic-ink shadow-[0_10px_28px_-14px_rgb(228_245_66/0.7)]"
           aria-label={playing ? "Pause" : "Play both"}
         >
           {playing ? (
@@ -254,7 +260,7 @@ function CompareInner() {
           type="button"
           onClick={() => setShowSkeleton((s) => !s)}
           aria-pressed={showSkeleton}
-          className={`min-h-12 rounded-xl border px-3 text-sm ${showSkeleton ? "border-chalk-3 text-chalk" : "border-line text-chalk-3"}`}
+          className={`press min-h-12 rounded-xl border px-3 text-sm ${showSkeleton ? "border-chalk-3 text-chalk" : "border-line-2 text-chalk-3"}`}
         >
           Skeleton
         </button>
@@ -272,8 +278,8 @@ function CompareInner() {
         />
       </div>
 
-      <h2 className="mb-2 mt-8 text-lg font-bold">Side by side</h2>
-      <div className="overflow-x-auto rounded-2xl border border-line">
+      <h2 className="head mb-3 mt-10 text-[17px]">Side by side</h2>
+      <div className="surface overflow-x-auto rounded-2xl">
         <table className="w-full min-w-[22rem] text-[14px]">
           <thead className="bg-night-2 text-left text-[12px] text-chalk-3">
             <tr>
