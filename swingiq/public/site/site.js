@@ -64,7 +64,9 @@
   h1.parentNode.insertBefore(h1wrap, h1);
   h1wrap.appendChild(h1);
 
-  var POSE = null, box = null, nominal = { w: 0, h: 0 }, shiftX = 0;
+  var POSE = null, box = null, nominal = { w: 0, h: 0 }, shiftX = 0, stageH = 0;
+  // Phones scroll the middle acts as ordinary sections (set up before the engine mounts, in index.html).
+  var phoneFlow = root.classList.contains('is-phone');
 
   function coverBox(w, h) {
     var A = 0.8, bw, bh, x = 0, y = 0;
@@ -76,13 +78,21 @@
     return { x: x, y: y, w: bw, h: bh };
   }
 
+  function nominalSize() {
+    // The size of one half while the split is 50/50, whatever the closing collapse is doing to --split right now.
+    var sh = hero.querySelector('[data-sc-stage]').clientHeight || innerHeight;
+    var w = document.documentElement.clientWidth;
+    return phone.matches ? { w: w, h: Math.round(sh / 2), sh: sh } : { w: Math.round(w / 2), h: sh, sh: sh };
+  }
+
   function layout() {
-    var ref = hero.querySelector('.pane--eye');
-    nominal.w = ref.clientWidth; nominal.h = ref.clientHeight;
+    var n = nominalSize();
+    nominal.w = n.w; nominal.h = n.h; stageH = n.sh;
     box = coverBox(nominal.w, nominal.h);
     // On a phone the halves stack, so Gapper's figure moves right and leaves the left for the words.
     shiftX = phone.matches ? nominal.w * 0.2 : 0;
     [].forEach.call(document.querySelectorAll('[data-frame]'), function (el) {
+      if (el.closest('.act--flow')) { el.style.cssText = 'left:0;top:0;right:auto;width:100%;height:100%'; return; }
       el.style.left = (el.closest('.close') ? 'auto' : box.x + 'px');
       el.style.right = (el.closest('.close') ? (nominal.w - box.w - box.x) + 'px' : 'auto');
       el.style.top = box.y + 'px'; el.style.width = box.w + 'px'; el.style.height = box.h + 'px';
@@ -176,7 +186,8 @@
       var face = bn[0] < 11;
       ctx.strokeStyle = front ? '#B7F34A' : 'rgba(255,255,255,' + ((face ? 0.45 : 0.82) * (1 - dim * 0.78)).toFixed(3) + ')';
       ctx.lineWidth = (front ? 4.2 : face ? 1.3 : 2.9) * u;
-      ctx.shadowColor = front ? 'rgba(183,243,74,0.55)' : 'transparent'; ctx.shadowBlur = front ? 10 * DPR : 0;
+      // The glow is the costliest thing on the canvas, so phones go without it.
+      if (!phone.matches) { ctx.shadowColor = front ? 'rgba(183,243,74,0.55)' : 'transparent'; ctx.shadowBlur = front ? 10 * DPR : 0; }
       ctx.beginPath(); ctx.moveTo(P[bn[0]][0], P[bn[0]][1]); ctx.lineTo(P[bn[1]][0], P[bn[1]][1]); ctx.stroke();
     });
     ctx.shadowBlur = 0; ctx.shadowColor = 'transparent';
@@ -211,9 +222,9 @@
 
   // ---- per frame ------------------------------------------------------------------------------------------------
   var last = {}, maxFill = 0;
-  function pinP(el) {
-    var r = el.getBoundingClientRect(), vh = innerHeight;
-    return { p: c01(-r.top / Math.max(1, r.height - vh)), on: r.top < vh && r.bottom > 0, r: r };
+  function pinP(r, vh) {
+    // Pinned travel is the section minus its sticky stage (100svh), which does not change when a phone's URL bar does.
+    return { p: c01(-r.top / Math.max(1, r.height - (stageH || vh))), on: r.top < vh && r.bottom > 0, r: r };
   }
   function set(el, prop, val, key) {
     if (last[key] === val) return;
@@ -223,10 +234,16 @@
   function frame() {
     requestAnimationFrame(frame);
     if (!POSE || !box) return;
+    // Every layout read happens here, before any write. Interleaving them forces a fresh layout per read, which is
+    // exactly the stutter a phone shows.
     var vh = innerHeight, y = scrollY;
+    var rh = hero.getBoundingClientRect(), r = peak.getBoundingClientRect(), rr = read.getBoundingClientRect();
+    var rx = fix.getBoundingClientRect(), rc = close.getBoundingClientRect();
+    var maxY = Math.max(1, document.documentElement.scrollHeight - vh);
+    var sh = stageH || vh;
 
     // ACT 1: depth push, then the push in to the front foot
-    var H = pinP(hero);
+    var H = pinP(rh, vh);
     if (H.on) {
       var k1 = reduce ? 0 : smooth(H.p / 0.45), z = reduce ? 0 : smooth((H.p - 0.48) / 0.5);
       var hk = k1.toFixed(4) + '|' + z.toFixed(4);
@@ -251,7 +268,6 @@
     }
 
     // ACT 2: the swing, the heel catch, the count
-    var r = peak.getBoundingClientRect();
     var vraw = c01((vh - r.top) / (r.height + vh));
     var Ttarget = vraw * POSE.total;
     var painted = !reduce && peak.classList.contains('sc-has-clip') && video.readyState >= 1;
@@ -284,7 +300,6 @@
 
     // THE CHALK LINE: laid as you scroll, following the swing while it plays
     var peakTop = r.top + y, startY = peakTop - vh, endY = peakTop + r.height;
-    var maxY = Math.max(1, document.documentElement.scrollHeight - vh);
     var chalk;
     if (vraw <= 0) chalk = 0.19 * c01(y / Math.max(1, startY));
     else if (vraw >= 1) chalk = 0.80 + 0.20 * c01((y - endY) / Math.max(1, maxY - endY));
@@ -307,18 +322,25 @@
       });
     }
 
-    // ACT 3: bars grow with the numbers
-    var R = pinP(read);
-    if (R.on) set(read, '--grow', (reduce ? 1 : smooth((R.p - 0.06) / 0.45)).toFixed(4), 'grow');
+    // ACT 3: bars grow with the numbers (on phones the section scrolls normally and CSS grows them on entry)
+    var R = pinP(rr, vh);
+    if (R.on && !phoneFlow) set(read, '--grow', (reduce ? 1 : smooth((R.p - 0.06) / 0.45)).toFixed(4), 'grow');
 
     // ACT 4: the ten tips fade back once the one fix lands
-    var X = pinP(fix);
-    if (X.on) { var dimv = (1 - 0.74 * smooth((X.p - 0.3) / 0.28)).toFixed(3); if (last.tips !== dimv) { last.tips = dimv; tips.style.opacity = dimv; } }
+    var X = pinP(rx, vh);
+    if (X.on && !phoneFlow) { var dimv = (1 - 0.74 * smooth((X.p - 0.3) / 0.28)).toFixed(3); if (last.tips !== dimv) { last.tips = dimv; tips.style.opacity = dimv; } }
 
     // ACT 6: the collapse. The chalk line runs to the edge and Gapper's side takes the screen.
-    var C = pinP(close);
+    var C = pinP(rc, vh);
     var k = reduce ? (C.p > 0.3 ? 1 : 0) : smooth((C.p - 0.03) / 0.44);
     set(root, '--split', (50 * (1 - k)).toFixed(3) + '%', 'split');
+    set(root, '--splitn', (0.5 * (1 - k)).toFixed(4), 'splitn');
+
+    // Phones: the chalk line only shows while a split stage is locked in place, so it never slides across content.
+    if (phoneFlow) {
+      var held = [rh, r, rc].some(function (q) { return q.top <= 2 && q.bottom >= sh - 2; });
+      if (last.held !== held) { last.held = held; rail.classList.toggle('is-away', !held); }
+    }
     var closed = k > 0.9;
     if (last.closed !== closed) { last.closed = closed; rail.classList.toggle('is-closed', closed); }
   }
@@ -330,7 +352,16 @@
   }).catch(function () { /* the photo side and the copy still tell the story */ });
 
   var rt = 0;
-  addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(function () { if (POSE) layout(); }, 120); });
+  addEventListener('resize', function () {
+    clearTimeout(rt);
+    rt = setTimeout(function () {
+      if (!POSE) return;
+      // A phone's URL bar showing or hiding fires resize without changing anything this page draws; skip those.
+      var n = nominalSize();
+      if (n.w === nominal.w && n.h === nominal.h && n.sh === stageH) return;
+      layout();
+    }, 150);
+  });
   phone.addEventListener && phone.addEventListener('change', function () { if (POSE) layout(); });
   requestAnimationFrame(frame);
 })();
