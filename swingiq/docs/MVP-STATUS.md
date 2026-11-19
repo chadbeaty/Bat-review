@@ -63,6 +63,18 @@ make numbers up.
 ## 8. Real-time mode
 - Built: the live session (`src/components/live/LiveSession.tsx`) is labeled "Live estimate". Swings from video are
   labeled "Processed from video · every frame". Both labels show on every swing page.
+- Built: scoreboard mode (`src/components/live/Scoreboard.tsx`, on by default, toggle on the live screen and on the
+  setup screen, remembered on the device). After each swing it fills the screen with numbers you can read from the
+  plate, portrait or landscape: the gap timer as the headline, the swing score and the cue. It stays up until the
+  next swing (tap to tuck it away).
+- Built: the gap timer (`src/engine/gap.ts`): front foot down to contact, in seconds, from the swing's phases. Shown
+  next to the slow-pitch reference (skilled hitters ≈ 0.20 s, window 0.14–0.38 s, Wu et al.), never baseball's "foot
+  down early" norm. Rounded to hundredths with ± one tracking frame (about ± 0.02–0.04 s at 30–60 fps) and labeled an
+  estimate with its source and confidence. Low confidence, feet out of view, no stride, or contact before foot down
+  show a dash and a short reason instead of a number.
+- Built: in scoreboard mode the voice reads the numbers ("72. Gap, point two one. Hands dropped."), following the
+  existing voice, quiet-mode and how-often settings.
+- Not in live mode, on purpose: exit velo, bat speed, launch angle and pitch speed (slo-mo uploads only).
 
 ## 9. UX
 - Built: mobile-first, big touch targets, the camera opens straight from Record. Empty, loading, processing (with

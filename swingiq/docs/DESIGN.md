@@ -50,6 +50,15 @@ only, no numbers). Landing page: `src/components/Landing.tsx` (shown at `/` unti
 (primary = lime, ghost, quiet, danger), `PageTitle`, `SectionTitle`, `Panel` (`boxed`), `Segmented`, `Toggle`,
 `Stat`, `Meter`, `InfoTip`, `Sheet`, `Chip`, `Skeleton`, `Empty`.
 
+## Live scoreboard
+Scoreboard mode (`src/components/live/Scoreboard.tsx`) is the after-swing readout for a phone on a tripod 10–15 ft
+away. One turf panel with the gap cut fills the space between the live top bar and the buttons. The gap timer is the
+headline in `.jumbo` sized off the viewport (about 31vw in portrait, 16vw in landscape), then a plain verdict line, a
+reference bar (the 0.14–0.38 s window in steel, a white tick at 0.20 s, this swing as the lime ball), then the score
+in `.jumbo` and the spoken cue. White on navy for contrast; lime only on the heading ball, the marker and an
+in-window verdict. Portrait stacks gap over score; landscape puts them side by side. The fine print (± one frame,
+source, confidence) stays small: it's for reading up close, not from the plate. No ball or bat speeds here.
+
 ## Signature visuals (real data only)
 Gapper Score dial (`ArcScore`), Field Print, swing timeline (`PhaseLine`), speed range bars, trend chart with
 session bands, spark bars, spray chart, bat profile drawn to length.

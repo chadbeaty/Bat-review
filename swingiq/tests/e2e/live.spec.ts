@@ -30,8 +30,31 @@ test("catches a real swing from the camera with no taps", async ({ page }) => {
 
   // Batting: wait for the first swing to be captured (the clip loops every ~4.6 s).
   await expect(page.getByLabel(/^[1-9]\d* swings?$/)).toBeVisible({ timeout: 60_000 });
-  // Result card with a cue.
-  await expect(page.getByText(/^Swing 1$/).first()).toBeVisible();
+  // Scoreboard mode is on by default: the big readout with the gap timer headline and the score.
+  const board = page.getByRole("region", { name: "Scoreboard" });
+  await expect(board).toBeVisible();
+  await expect(board.getByText(/Swing 1 · live estimate/)).toBeVisible();
+  // The gap is either a number in seconds with its ± and source tag, or a dash with a short reason. Never a guess.
+  const gap = board.getByTestId("gap-value");
+  await expect(gap).toHaveText(/^(\d\.\d\ds|—.+)$/);
+  if (/^\d/.test((await gap.textContent()) ?? "")) {
+    await expect(board.getByText(/Estimate ± 0\.\d\d s · (High|Medium) confidence · Camera estimate · one frame at \d+ fps/)).toBeVisible();
+    await expect(board.getByText("Skilled hitters ≈ 0.20")).toBeVisible();
+  }
+  await expect(board.getByTestId("scoreboard-score")).toHaveText(/^(\d{1,3}|—)$/);
+  // Live mode never shows ball or bat speeds (slo-mo uploads only).
+  await expect(board).not.toContainText(/mph|exit velo|bat speed|launch/i);
+  await page.screenshot({ path: test.info().outputPath("scoreboard.png") });
+
+  // The toggle switches back to the small result card, and the choice sticks.
+  const toggle = page.getByRole("button", { name: "Scoreboard" });
+  await expect(toggle).toHaveAttribute("aria-pressed", "true");
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-pressed", "false");
+  await expect(board).toHaveCount(0);
+  await expect(page.getByText(/^Swing \d+$/).first()).toBeVisible();
+  await toggle.click();
+  await expect(board).toBeVisible();
 
   await page.getByRole("button", { name: "Review last" }).click();
   await expect(page.getByRole("dialog")).toBeVisible();

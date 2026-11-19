@@ -119,6 +119,8 @@ export type Settings = {
   modelQuality: ModelQuality;
   lastView: CameraView;
   advancedView: boolean;
+  /** Live mode: big after-swing readout (gap, score, cue) sized to read from the plate. */
+  scoreboard: boolean;
   keepClips: boolean;
 };
 
@@ -132,5 +134,6 @@ export const DEFAULT_SETTINGS: Settings = {
   modelQuality: "full",
   lastView: "side",
   advancedView: false,
+  scoreboard: true,
   keepClips: true,
 };
