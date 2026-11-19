@@ -27,6 +27,7 @@ Every site must look one-of-a-kind. Nobody should be able to tell an AI built it
 - Fantastic Lettering concept (`fantasticlettering/`): Alfa Slab One, Libre Franklin; paper/ink with Chicago-flag red and light blue; print-shop motifs (registration marks, squeegee animation, quote worksheet and receipt, work-order ticket). Live preview: https://fantastic-lettering-concept.vercel.app (Vercel project `fantastic-lettering-concept`, root directory `fantasticlettering`).
 - Fantastic Lettering premium concept (Base44 app `6afca7efb2c5fbb1bf9bc289`, https://fantastic-lettering-bf9bc289.base44.app): Hedvig Letters Serif, Hanken Grotesk; ivory, ink black and terracotta (#A64433); gallery-minimal layout with close-up product photography.
 - Fantastic Lettering "Press run" scroll concept (`fantasticlettering/option-6/`, built with the scroll-craft skill): Funnel Display, Host Grotesk; graphite and bone with one ink orange; chaptered editorial with a margin folio, scroll-driven shirt print with a step ledger, sentence-form quote close. Scroll-craft registry: `fantasticlettering/scrollcraft/FINGERPRINTS.md`.
+- SwingIQ Live (`swingiq/`): Archivo (wide width axis, for numbers and headings), Atkinson Hyperlegible Next; night-field charcoal with a faint cage-net mesh, chalk white, optic softball yellow (#E4F542) as the single live accent, stitch red (#E5483A) only for the one fix; pitch-arc score gauge, softball Live button, home-plate/helmet nav icons.
 - Add each new site here when it's built.
 
 ## Aged Takes (`agedtakes/`)
@@ -38,3 +39,9 @@ Every site must look one-of-a-kind. Nobody should be able to tell an AI built it
 ## Product Radar skill (`.claude/skills/product-radar/`)
 - Early-warning dropshipping product research, run as a Claude skill (web search/fetch only, no app, no paid services). The owner chose this over a hosted app to avoid any costs.
 - Tracked creators: `references/creators.md` (only "verified" ones are checked). Run history is kept in `product-radar-data/` when a workspace exists.
+
+## SwingIQ Live (`swingiq/`)
+- Real-time slow-pitch swing analysis. Everything runs on the phone (MediaPipe Pose in the browser); data is stored on the device (IndexedDB) and works with no account.
+- Plan, honest measurement limits, costs and roadmap: `swingiq/docs/ARCHITECTURE.md`. Never show a bat speed, exit velocity or launch angle from the camera until the Phase 2 high-speed native capture is built and validated; every metric carries a source tag and confidence.
+- Supabase schema + RLS is in `swingiq/supabase/migrations/` but no project is connected yet (the free org already has two active projects). Accounts switch on when `NEXT_PUBLIC_SUPABASE_URL`/`NEXT_PUBLIC_SUPABASE_ANON_KEY` are set.
+- The live-camera browser test needs `swingiq/scripts/fetch-test-video.sh` (stock clip, not committed).
