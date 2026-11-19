@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LogoMark } from "@/components/Logo";
+import { GapMark as LogoMark } from "@/components/Logo";
 
 export default function NotFound() {
   return (

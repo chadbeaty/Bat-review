@@ -217,3 +217,92 @@ input[type="range"].scrub::-moz-range-thumb { width: 18px; height: 18px; border-
 select {
   background-color: var(--color-night-3);
 }
+
+/* ===================================================================== Gapper signatures */
+
+/*
+  Turf: the mowing pattern of an outfield under the lights. Wide diagonal stripes a shade apart, with the light
+  falling from the top. Used behind hero moments (landing, player card, the score), never behind reading text.
+*/
+.turf {
+  background:
+    radial-gradient(70% 55% at 18% -8%, rgb(234 244 255 / 0.10), transparent 60%),
+    radial-gradient(70% 55% at 86% -10%, rgb(234 244 255 / 0.07), transparent 60%),
+    repeating-linear-gradient(112deg, rgb(255 255 255 / 0.028) 0 38px, rgb(255 255 255 / 0) 38px 76px),
+    linear-gradient(180deg, #162236 0%, #111a2b 100%);
+}
+
+/* The gap cut: key panels and the main buttons lose their top-right corner, like the cut in the logo. */
+.cut {
+  clip-path: polygon(0 0, calc(100% - var(--cut, 18px)) 0, 100% var(--cut, 18px), 100% 100%, 0 100%);
+}
+.cut-sm {
+  --cut: 10px;
+}
+
+/* Jumbotron numbers: as wide and heavy as the face goes. */
+.jumbo {
+  font-family: var(--font-num);
+  font-stretch: 125%;
+  font-weight: 850;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.035em;
+  line-height: 0.88;
+}
+
+/* Hero lines lean forward, like the lettering on a jersey. */
+.slant {
+  display: inline-block;
+  transform: skewX(-8deg);
+  transform-origin: left bottom;
+}
+
+/* Uppercase brand lines (taglines only; body copy stays sentence case). */
+.brandline {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 860;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+/* Broadcast crawl. */
+@keyframes crawl {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.crawl {
+  display: flex;
+  width: max-content;
+  animation: crawl 38s linear infinite;
+}
+
+/* The ball leaving the bat: a streak draws, then the ball lands. */
+@keyframes streak {
+  from { stroke-dashoffset: var(--len, 400); opacity: 0.2; }
+  to { stroke-dashoffset: 0; opacity: 1; }
+}
+.streak {
+  stroke-dasharray: var(--len, 400);
+  animation: streak 0.9s cubic-bezier(0.25, 0.8, 0.25, 1) both;
+}
+@keyframes land {
+  0% { transform: scale(0); opacity: 0; }
+  70% { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(1); }
+}
+.land {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: land 0.45s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+
+/* Bars that grow up from the floor (recent form). */
+@keyframes grow-y {
+  from { transform: scaleY(0); }
+  to { transform: scaleY(1); }
+}
+.grow-y {
+  transform-origin: center bottom;
+  animation: grow-y 0.7s cubic-bezier(0.3, 0.7, 0.2, 1) both;
+}

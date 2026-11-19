@@ -1,14 +1,17 @@
 # Gapper design system
 
-Brand kit (logo files, colors, rules): `public/brand/BRAND.md`. Logo geometry: `src/brand/geometry.ts`. Name, domain
-and taglines: `src/brand/site.ts` (use these instead of typing the name in copy).
+Brand kit (logo files, print files, colors, rules): `public/brand/BRAND.md`. Logo geometry: `src/brand/emblem.ts`
+(Gap Mark, crest, patch, lockup) and `src/brand/geometry.ts` (the drawn letters). Name, domain and taglines:
+`src/brand/site.ts` (use these instead of typing the name in copy).
 
-## Concept
-A gapper splits two outfielders and runs to the wall. Gapper is the instrument a hitter uses to find that swing:
-midnight navy like a night game, deep slate panels, white numbers that read at arm's length, and one electric lime
-that marks only what matters. The G symbol (an outfield arc with the ball in the gap) recurs in the score dial (a
-270° arc open at the bottom with the ball at the tip) and the landing illustration (three fielders, a line drive
-splitting left-center).
+## Concept: night game, fresh-cut outfield
+A gapper splits two outfielders and runs to the wall. Gapper looks like the outfield under the lights: midnight navy,
+the diagonal mowing stripes of fresh-cut grass ("turf"), chalk lines, and one electric lime ball that marks what
+matters. The Gap Mark (the field from above, split by the gap, the ball streaking out) is the logo, the app icon,
+the center action and a watermark on player cards. Hero moments get the turf, jersey-style slanted headlines,
+jumbotron numbers that count up, and the "gap cut" (top-right corner taken off key panels and main buttons). Section
+headings end in the ball. The landing page is a full-width brand page with the crest, a broadcast crawl of what
+Gapper measures, the tracked-skeleton illustration and the ball-flight diagram.
 
 History: v1 "lights-out lab" (blue-black, optic yellow, Archivo/Atkinson) and v2 "championship night" (onyx and
 gold, Instrument Sans/Michroma, SwingIQ name) were replaced by this rebrand.
@@ -34,11 +37,16 @@ Mona Sans only (variable width and weight, loaded with `next/font`):
 - Body: normal width, 400–500.
 
 ## Utilities
-`.surface` (slate panel, hairline edge), `.boxed` (key panels: lime catches the top-left edge), `.hatch` ("not
-measured", never a fake zero), `.skel` (loading shimmer), `.press`, `.draw` / `.grow` (chart draw-in).
+`.surface` (slate panel, hairline edge), `.boxed` (key panels: lime catches the top-left edge), `.turf` (mowing
+stripes + light, hero moments only), `.cut` / `.cut-sm` (the gap cut), `.jumbo` (jumbotron numerals), `.slant`
+(forward lean for headlines), `.brandline` (wide uppercase tagline type), `.crawl` (ticker), `.streak` / `.land`
+(the ball leaving the bat), `.grow-y`, `.hatch` ("not measured", never a fake zero), `.skel`, `.press`, `.draw` /
+`.grow`.
 
 ## Components
-Logos: `LogoMark`, `Wordmark`, `Lockup` in `src/components/Logo.tsx`. UI kit in `src/components/ui.tsx`: `Button`
+Logos: `GapMark`, `LockupH`, `Crest`, `Patch`, `Wordmark`, `Lockup` in `src/components/Logo.tsx`. Brand pieces in
+`src/components/brand.tsx`: `useCountUp` / `CountUp`, `Crawl`, `Streak`, `SwingFigure`, `FlightDiagram` (illustrations
+only, no numbers). Landing page: `src/components/Landing.tsx` (shown at `/` until a hitter is set up; no app chrome). UI kit in `src/components/ui.tsx`: `Button`
 (primary = lime, ghost, quiet, danger), `PageTitle`, `SectionTitle`, `Panel` (`boxed`), `Segmented`, `Toggle`,
 `Stat`, `Meter`, `InfoTip`, `Sheet`, `Chip`, `Skeleton`, `Empty`.
 
@@ -47,9 +55,10 @@ Gapper Score dial (`ArcScore`), Field Print, swing timeline (`PhaseLine`), speed
 session bands, spark bars, spray chart, bat profile drawn to length.
 
 ## Navigation
-Phone: floating bar; the lime button in the middle carries the G and opens New swing (Record or upload / Live cage
-session). Active tab = lime icon and dot. Desktop: navy rail with the wordmark, a lime New swing button and the
-sections.
+Phone: floating bar; the lime button in the middle carries the Gap Mark and opens New swing (Record or upload / Live
+cage session). Active tab = lime icon and dot. Desktop: navy rail with the horizontal lockup, a lime New swing button
+and the sections. Dashboard hero = player card (name in slanted jersey type, bats/height/level, score dial, recent
+form); a new hitter gets a "rookie card".
 
 ## Icons and sharing
 `src/app/icon.svg`, `apple-icon.tsx`, `icon-192.png` / `icon-512.png` routes (maskable) and the link preview

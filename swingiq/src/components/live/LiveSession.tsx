@@ -15,7 +15,7 @@ import { challengeProgress, coachingFor } from "@/engine/coaching";
 import { BASIC_SLOTS, CueLine, GroupedMetrics, displayValue } from "../Metrics";
 import { PlayerForm } from "../PlayerForm";
 import { usePlayers } from "../PlayerProvider";
-import { LogoMark } from "../Logo";
+import { GapMark as LogoMark } from "../Logo";
 import { Softball } from "../Softball";
 import { Button, Panel, Toggle, fmtDuration } from "../ui";
 import { SetupChecklist } from "./SetupChecklist";

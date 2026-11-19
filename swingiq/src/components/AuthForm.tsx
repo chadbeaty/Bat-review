@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { cloudEnabled, supabase } from "@/lib/supabase/client";
-import { LogoMark } from "./Logo";
+import { GapMark as LogoMark } from "./Logo";
 import { Button } from "./ui";
 
 type Mode = "sign-in" | "sign-up" | "forgot" | "reset";

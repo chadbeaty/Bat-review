@@ -41,3 +41,40 @@ describe("Gapper brand assets", () => {
     expect(mark().paths.length).toBe(2);
   });
 });
+
+describe("Gapper emblem", () => {
+  it("the Gap Mark has the field in ink and the ball + streak in the accent, ball out past the wall in the gap", async () => {
+    const { gapMark, MARK_GEOM } = await import("@/brand/emblem");
+    const m = gapMark();
+    expect(m.shapes.map((s) => s.role)).toEqual(["ink", "accent", "accent"]);
+    const g = MARK_GEOM;
+    expect(g.ballAt - g.ballR).toBeGreaterThan(g.rOut); // the ball clears the wall
+    expect(g.gapAt).toBeGreaterThan(225 + 10); // the gap is inside fair territory, left of center
+    expect(g.gapAt).toBeLessThan(270);
+    expect(g.gapW).toBeGreaterThan(g.ballR * 0.8); // wide enough to read as a gap at small sizes
+  });
+
+  it("the crest is a badge (ground, keyline, art) and the ball breaks out through its rim", async () => {
+    const { crest } = await import("@/brand/emblem");
+    const c = crest();
+    const roles = new Set(c.shapes.map((s) => s.role));
+    expect([...roles].sort()).toEqual(["accent", "ground", "ink"]);
+    // Circles are drawn as "M x cy A r r ...": the topmost accent circle's top must clear the shield's flat top (y = 20).
+    const tops = c.shapes
+      .filter((s) => s.role === "accent")
+      .map((s) => s.d.match(/^M([\d.-]+) ([\d.-]+)A([\d.-]+)/))
+      .filter((m): m is RegExpMatchArray => m !== null)
+      .map((m) => Number(m[2]) - Number(m[3]));
+    expect(Math.min(...tops)).toBeLessThan(20);
+  });
+
+  it("every colorway renders, and one-color badges knock the art out with masks", async () => {
+    const { artSvg } = await import("@/brand/svg");
+    const { crest, patch } = await import("@/brand/emblem");
+    for (const art of [crest(), patch()]) {
+      expect(artSvg(art, "black", "x")).toContain("<mask");
+      expect(artSvg(art, "white", "x")).not.toContain("#101827");
+      expect(artSvg(art, "dark", "x")).toContain("#B7F34A");
+    }
+  });
+});

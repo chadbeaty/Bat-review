@@ -6,7 +6,7 @@ type BtnProps = React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "pri
 
 const variants = {
   primary:
-    "bg-optic text-optic-ink font-bold shadow-[inset_0_1px_0_rgb(255_255_255/0.45),0_10px_28px_-14px_rgb(183_243_74/0.22)] hover:bg-optic-2",
+    "cut cut-sm bg-optic text-optic-ink font-bold hover:bg-optic-2",
   ghost: "border border-line-2 text-chalk hover:border-chalk-3 hover:bg-night-3",
   danger: "border border-stitch/50 text-stitch hover:bg-stitch-wash",
   quiet: "text-chalk-2 hover:text-chalk hover:bg-night-3",
@@ -45,7 +45,7 @@ export function PageTitle({ title, sub, right, context }: { title: string; sub?:
       {context && <div className="mb-2 text-[13px] text-chalk-3">{context}</div>}
       <div className="flex items-end justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="display text-[2.15rem] leading-[1.02] text-chalk md:text-[2.6rem]">{title}</h1>
+          <h1 className="display slant text-[2.15rem] leading-[1.02] text-chalk md:text-[2.6rem]">{title}</h1>
           {sub && <p className="mt-2 max-w-prose text-[15px] leading-relaxed text-chalk-2">{sub}</p>}
         </div>
         {right && <div className="shrink-0">{right}</div>}
@@ -61,7 +61,10 @@ export function SectionTitle({ children, right, id }: { children: React.ReactNod
       <h2 id={id} className="head shrink-0 text-[17px] text-chalk">
         {children}
       </h2>
-      <span className="h-px flex-1 bg-gradient-to-r from-line-2 to-transparent" aria-hidden="true" />
+      <span className="flex flex-1 items-center" aria-hidden="true">
+        <span className="h-px flex-1 bg-line-2/70" />
+        <span className="ml-1 h-1.5 w-1.5 rounded-full bg-optic/70" />
+      </span>
       {right && <div className="shrink-0">{right}</div>}
     </div>
   );

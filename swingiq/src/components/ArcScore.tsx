@@ -1,4 +1,6 @@
+"use client";
 import { useId } from "react";
+import { useCountUp } from "./brand";
 
 /**
  * The Gapper Score dial: a 270° arc open at the bottom, like the G in the logo. Fine ticks light up in lime to the
@@ -6,6 +8,7 @@ import { useId } from "react";
  */
 export function ArcScore({ score, size = 220, label = "Gapper Score", previous = null }: { score: number | null; size?: number; label?: string; previous?: number | null }) {
   const id = useId().replace(/:/g, "");
+  const shown = useCountUp(score);
   const c = 100;
   const a0 = 135;
   const sweep = 270;
@@ -72,8 +75,8 @@ export function ArcScore({ score, size = 220, label = "Gapper Score", previous =
         )}
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center pt-1">
-        <div className="num leading-none text-chalk" style={{ fontSize: size * 0.24 }}>
-          {score ?? "—"}
+        <div className="jumbo text-chalk" style={{ fontSize: size * 0.27 }}>
+          {shown ?? "—"}
         </div>
         <div className="mt-2 max-w-[60%] text-center text-[11px] leading-tight text-chalk-3">{label}</div>
       </div>

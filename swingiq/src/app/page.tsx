@@ -2,50 +2,15 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArcScore } from "@/components/ArcScore";
-import { Lockup, Wordmark } from "@/components/Logo";
-import { PlayerForm } from "@/components/PlayerForm";
+import { GapMark, LockupH } from "@/components/Logo";
+import { Landing } from "@/components/Landing";
 import { usePlayers } from "@/components/PlayerProvider";
 import { Softball } from "@/components/Softball";
 import { Chip, InfoTip, Meter, PageSkeleton, Panel, SectionTitle, Skeleton, Stat, fmtDate } from "@/components/ui";
 import { FieldPrint } from "@/components/viz/FieldPrint";
 import { db } from "@/lib/store/db";
 import { FOOT_DOWN_WINDOW, categoryAverages, consistency, metricValues, recentVsBefore, speedOf } from "@/lib/insights";
-import type { Session, SwingRecord } from "@/lib/store/types";
-
-/**
- * The brand idea, drawn from above: three outfielders and their range, and a line drive splitting the gap between
- * left and center to the wall. No numbers: it's an illustration, not a reading.
- */
-function GapField() {
-  const home = { x: 180, y: 196 };
-  const fielders = [
-    { x: 92, y: 92 },
-    { x: 180, y: 66 },
-    { x: 268, y: 92 },
-  ];
-  return (
-    <svg viewBox="0 0 360 210" className="w-full" aria-hidden="true">
-      <path d={`M${home.x} ${home.y} L22 48 M${home.x} ${home.y} L338 48`} stroke="var(--color-line-2)" strokeWidth="1" />
-      <path d="M22 48 Q180 -30 338 48" fill="none" stroke="var(--color-chalk-3)" strokeOpacity="0.55" strokeWidth="1.4" />
-      <path d="M126 150 Q180 118 234 150" fill="none" stroke="var(--color-line-2)" strokeWidth="1" />
-      {fielders.map((f) => (
-        <g key={f.x}>
-          <circle cx={f.x} cy={f.y} r="30" fill="var(--color-chalk)" fillOpacity="0.035" stroke="var(--color-chalk-3)" strokeOpacity="0.35" strokeDasharray="2 4" />
-          <circle cx={f.x} cy={f.y} r="4" fill="var(--color-chalk-2)" />
-        </g>
-      ))}
-      <path d={`M${home.x} ${home.y - 6} l9 -9 l-9 -9 l-9 9 z`} fill="none" stroke="var(--color-chalk-2)" strokeWidth="1.2" />
-      <path d={`M${home.x} ${home.y - 14} L115 23`} fill="none" stroke="var(--color-optic)" strokeWidth="2.4" strokeLinecap="round" className="draw" pathLength={1000} style={{ ["--len" as string]: 1000 }} />
-      <circle cx="115" cy="23" r="6" fill="var(--color-optic)" className="animate-pop" style={{ animationDelay: "0.9s" }} />
-    </svg>
-  );
-}
-
-const READS = [
-  { h: "Legs and feet first", p: "Foot-down timing, stride and front-leg block, judged against slow-pitch norms, not baseball's." },
-  { h: "The one thing to fix", p: "Every swing scored across six skill areas, with the single change that matters most and a drill for it." },
-  { h: "Speed from slo-mo", p: "Exit velo, launch angle, pitch speed and bat speed from 120–240 fps video, always with a ± range." },
-];
+import { LEVEL_LABEL, type Session, type SwingRecord } from "@/lib/store/types";
 
 function CageDiagram() {
   return (
@@ -61,6 +26,29 @@ function CageDiagram() {
       <text x="206" y="100" fontSize="10.5" fill="var(--color-optic)">phone, waist high</text>
       <text x="30" y="100" fontSize="10.5" fill="var(--color-chalk-2)">you</text>
     </svg>
+  );
+}
+
+/** Recent form: the last dozen swing scores as bars, oldest to newest; the latest is lit. Real scores only. */
+function RecentForm({ swings }: { swings: SwingRecord[] }) {
+  const xs = swings
+    .slice(0, 12)
+    .map((s) => s.analysis.score.overall)
+    .filter((v): v is number => v !== null)
+    .reverse();
+  if (xs.length < 2) return null;
+  return (
+    <div className="relative mt-5 border-t border-white/[0.07] pt-4">
+      <div className="mb-2 flex items-baseline justify-between text-[12px] text-chalk-3">
+        <span>Recent form</span>
+        <span>last {xs.length} swings</span>
+      </div>
+      <div className="flex h-12 items-end gap-1.5" role="img" aria-label={`Recent scores, oldest to newest: ${xs.join(", ")}`}>
+        {xs.map((v, i) => (
+          <div key={i} className="grow-y max-w-7 flex-1 rounded-t-sm" style={{ height: `${Math.max(8, v)}%`, background: i === xs.length - 1 ? "var(--color-optic)" : "rgb(255 255 255 / 0.22)", animationDelay: `${i * 40}ms` }} />
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -83,76 +71,7 @@ export default function Home() {
 
   if (!ready) return <PageSkeleton />;
 
-  if (!player) {
-    return (
-      <div className="animate-rise pb-10">
-        <header className="flex items-center justify-between pt-3">
-          <span className="md:invisible">
-            <Wordmark height={20} />
-          </span>
-          <Link href="/how-it-works" className="text-[14px] text-chalk-2 hover:text-chalk">
-            How it measures
-          </Link>
-        </header>
-        <div className="mt-9 md:grid md:grid-cols-[1.4fr_1fr] md:items-center md:gap-10">
-          <div>
-            <h1 className="display text-[3rem] leading-[0.95] md:text-[3.4rem]">
-              <span className="whitespace-nowrap">Own the gap.</span>
-              <span className="mt-3 block text-[1.35rem] font-semibold leading-tight tracking-[-0.01em] text-chalk-2 [font-stretch:108%] md:text-[1.6rem]">Know your swing. Own your game.</span>
-            </h1>
-            <p className="mt-5 max-w-md text-[17px] leading-relaxed text-chalk-2">
-              Gapper is a hitting lab on your phone. It catches every swing on its own, reads your legs and feet first, and tells you the one thing to fix. Film in slo-mo and it
-              measures exit velo and bat speed too.
-            </p>
-            <div className="mt-7 flex flex-wrap items-center gap-3">
-              <a href="#start" className="press inline-flex min-h-12 items-center rounded-xl bg-optic px-5 font-semibold text-optic-ink hover:bg-optic-2">
-                Set up your hitter
-              </a>
-              <Link href="/guide" className="press inline-flex min-h-12 items-center rounded-xl border border-line-2 px-5 text-chalk hover:border-chalk-3">
-                Camera setup
-              </Link>
-            </div>
-          </div>
-          <div className="mt-10 md:mt-0">
-            <GapField />
-          </div>
-        </div>
-
-        <section aria-label="What Gapper reads" className="mt-12">
-          <dl className="surface divide-y divide-line rounded-2xl md:grid md:grid-cols-3 md:divide-x md:divide-y-0">
-            {READS.map((r) => (
-              <div key={r.h} className="p-5">
-                <dt className="head text-[17px]">{r.h}</dt>
-                <dd className="mt-1.5 text-[14px] leading-relaxed text-chalk-3">{r.p}</dd>
-              </div>
-            ))}
-          </dl>
-          <p className="mt-3 text-[13px] leading-relaxed text-chalk-3">
-            Estimates from one phone camera: every number shows how sure it is, and what a phone can&apos;t measure is left out.{" "}
-            <Link href="/how-it-works" className="text-chalk-2 underline">
-              Here&apos;s the honest version.
-            </Link>{" "}
-            Built for slow-pitch softball first; baseball is on the way.
-          </p>
-        </section>
-
-        {!storageOk && <p className="mt-6 rounded-xl border border-amber/40 bg-amber-wash px-4 py-3 text-sm text-chalk">This browser is blocking storage (private mode?). Swings won&apos;t be saved.</p>}
-        <Panel boxed id="start" className="mt-10 scroll-mt-6 p-5 md:max-w-xl">
-          <h2 className="head text-[19px]">Set up your hitter</h2>
-          <p className="mb-5 mt-1 text-[14px] text-chalk-3">Stays on this phone. No account, no sign-up.</p>
-          <PlayerForm onSave={savePlayer} submitLabel="Let's hit" />
-        </Panel>
-
-        <footer className="mt-14 flex items-end justify-between border-t border-line pt-6">
-          <Lockup width={132} />
-          <div className="flex gap-4 text-[13px] text-chalk-3">
-            <Link href="/privacy" className="hover:text-chalk-2">Privacy</Link>
-            <Link href="/sign-in" className="hover:text-chalk-2">Sign in</Link>
-          </div>
-        </footer>
-      </div>
-    );
-  }
+  if (!player) return <Landing onSave={savePlayer} storageOk={storageOk} />;
 
   const last = sessions?.[0] ?? null;
   const weekAgo = now - 7 * 864e5;
@@ -194,7 +113,7 @@ export default function Home() {
     <div className="animate-rise pb-6">
       <div className="flex items-center justify-between pt-3">
         <span className="md:invisible">
-          <Wordmark />
+          <LockupH height={26} />
         </span>
         <Link href="/profile" className="press rounded-lg border border-line-2 px-3 py-1.5 text-[13px] text-chalk-2 hover:text-chalk">
           {player.name} · {player.hand === "R" ? "Righty" : "Lefty"}
@@ -210,15 +129,21 @@ export default function Home() {
       ) : all.length > 0 ? (
         <div className="lg:grid lg:grid-cols-[1.1fr_1fr] lg:items-start lg:gap-x-6">
           <div>
-          <Panel boxed as="section" aria-label="Your Gapper Score" className="mt-5 overflow-hidden p-5">
-            <div className="flex items-center justify-between">
-              <span className="head text-[15px]">Your Gapper Score</span>
-              <Link href="/progress" className="text-[13px] text-chalk-2 hover:text-chalk">
+          <section aria-label="Your Gapper Score" className="turf cut relative mt-5 overflow-hidden rounded-2xl border border-white/[0.08] p-5 shadow-[0_30px_60px_-36px_rgb(3_6_12/0.9)]">
+            <GapMark size={320} ink="#ffffff" accent="#ffffff" className="pointer-events-none absolute -right-20 -top-4 opacity-[0.045]" />
+            <div className="relative flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h2 className="brandline slant max-w-full truncate pr-2 text-[2.35rem] leading-[0.92]">{player.name}</h2>
+                <p className="mt-1.5 text-[13px] text-chalk-2">
+                  Bats {player.hand === "R" ? "right" : "left"} · {Math.floor(player.heightIn / 12)}′{player.heightIn % 12}″{player.level ? ` · ${LEVEL_LABEL[player.level]}` : ""}
+                </p>
+              </div>
+              <Link href="/progress" className="shrink-0 pt-1 text-[13px] text-chalk-2 hover:text-chalk">
                 Progress
               </Link>
             </div>
-            <div className="mt-2 grid grid-cols-[auto_1fr] items-center gap-5">
-              <ArcScore score={overall} size={176} label={`Last ${Math.min(20, recent.length)} swings`} previous={prevOverall} />
+            <div className="relative mt-4 grid grid-cols-[auto_1fr] items-center gap-5">
+              <ArcScore score={overall} size={172} label="Gapper Score" previous={prevOverall} />
               <div className="space-y-4">
                 {trend !== null ? (
                   <Stat label="vs last week" value={`${trend >= 0 ? "+" : "−"}${Math.abs(trend)}`} tone={trend >= 0 ? "optic" : "chalk"} size="sm" />
@@ -232,11 +157,12 @@ export default function Home() {
                 <Stat label="Consistency" value={steady ?? "—"} size="sm" note={steady === null ? "After 3 swings" : undefined} />
               </div>
             </div>
-            {prevOverall !== null && <p className="mt-3 text-[12px] text-chalk-3"><span className="text-clay">○</span> the 20 swings before: {prevOverall}</p>}
-          </Panel>
+            <RecentForm swings={all} />
+            {prevOverall !== null && <p className="relative mt-3 text-[12px] text-chalk-3"><span className="text-clay">▲</span> the 20 swings before: {prevOverall}</p>}
+          </section>
 
           <div className="mt-3 grid grid-cols-[1.4fr_1fr] gap-3">
-            <Link href="/record" className="press flex min-h-14 items-center gap-3 rounded-xl bg-optic px-4 font-bold text-optic-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.45),0_10px_28px_-14px_rgb(183_243_74/0.22)]">
+            <Link href="/record" className="cut cut-sm press flex min-h-14 items-center gap-3 rounded-xl bg-optic px-4 font-bold text-optic-ink hover:bg-optic-2">
               <svg width="22" height="22" viewBox="0 0 30 30" aria-hidden="true">
                 <rect x="2" y="7" width="19" height="16" rx="3" fill="none" stroke="currentColor" strokeWidth="2.6" />
                 <path d="M21 13l7-4v12l-7-4z" fill="currentColor" />
@@ -343,7 +269,15 @@ export default function Home() {
         </div>
       ) : (
         <>
-          <Panel boxed className="mt-5 p-5">
+          <section aria-label="Welcome" className="turf cut relative mt-5 overflow-hidden rounded-2xl border border-white/[0.08] p-5">
+            <GapMark size={300} ink="#ffffff" accent="#ffffff" className="pointer-events-none absolute -right-20 -top-6 opacity-[0.045]" />
+            <p className="relative text-[13px] text-chalk-3">Rookie card</p>
+            <h2 className="brandline slant relative mt-1 max-w-full truncate pr-2 text-[2.35rem] leading-[0.92]">{player.name}</h2>
+            <p className="relative mt-1.5 text-[13px] text-chalk-2">
+              Bats {player.hand === "R" ? "right" : "left"} · {Math.floor(player.heightIn / 12)}′{player.heightIn % 12}″ · your Gapper Score shows up after your first swing
+            </p>
+          </section>
+          <Panel boxed className="mt-4 p-5">
             <h2 className="head text-[19px]">Your first swing</h2>
             <p className="mt-1 text-[14px] text-chalk-2">Set the phone up like this, whole body in the picture, shoes included.</p>
             <div className="mt-4">
@@ -351,7 +285,7 @@ export default function Home() {
             </div>
           </Panel>
           <div className="mt-3 grid grid-cols-[1.4fr_1fr] gap-3">
-            <Link href="/record" className="press flex min-h-14 items-center gap-3 rounded-xl bg-optic px-4 font-bold text-optic-ink">
+            <Link href="/record" className="cut cut-sm press flex min-h-14 items-center gap-3 rounded-xl bg-optic px-4 font-bold text-optic-ink hover:bg-optic-2">
               Record my swing
             </Link>
             <Link href="/live" className="press flex min-h-14 items-center gap-2.5 rounded-xl border border-line-2 bg-night-2 px-3.5 text-[15px]">

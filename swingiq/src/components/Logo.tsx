@@ -1,60 +1,67 @@
-import { joined, mark, tagline, wordmark } from "@/brand/geometry";
+import { crest, gapMark, lockupH, patch, type Art } from "@/brand/emblem";
+import { wordmarkArt, wordmarkTaglineArt } from "@/brand/svg";
 
 /*
-  Gapper logos for the app, drawn from the same geometry as the files in public/brand/ (src/brand/geometry.ts).
-  Colors default to the dark-background version: white letters, lime ball. Pass `fill`/`ball` for other grounds
-  (e.g. navy on the lime action button).
+  Gapper logos for the app, drawn from the same geometry as the files in public/brand/ (src/brand/emblem.ts).
+  Colors are CSS values per role: ink (field, letters), accent (the ball and its streak), ground (badge background).
 */
 
-const MARK = mark();
-const MARK_D = joined(MARK.paths);
-const WORD = wordmark();
-const WORD_D = joined(WORD.paths);
-const TAG = tagline();
-const TAG_D = joined(TAG.paths);
+const ART = {
+  mark: gapMark(),
+  crest: crest(),
+  patch: patch(),
+  lockup: lockupH(),
+  wordmark: wordmarkArt(),
+  wordmarkTagline: wordmarkTaglineArt(),
+};
 
-type Ink = { fill?: string; ball?: string; className?: string };
+type Colors = { ink?: string; accent?: string; ground?: string };
+type Props = Colors & { className?: string; title?: string; animate?: boolean };
 
-/** The G symbol: the outfield arc with the ball in the gap. */
-export function LogoMark({ size = 32, fill = "var(--color-chalk)", ball = "var(--color-optic)", className = "" }: Ink & { size?: number }) {
+function ArtSvg({ art, width, height, ink = "var(--color-chalk)", accent = "var(--color-optic)", ground = "var(--color-night)", className = "", title, animate, pad = 2, box }: Props & { art: Art; width?: number; height?: number; pad?: number; box?: [number, number, number, number] }) {
+  const [vx, vy, vw, vh] = box ?? [-pad, -pad, art.w + pad * 2, art.h + pad * 2];
+  const w = width ?? (height ? (height * vw) / vh : undefined);
+  const h = height ?? (width ? (width * vh) / vw : undefined);
+  const fill = { ink, accent, ground };
   return (
-    <svg width={size} height={size} viewBox="-2 -4 108 108" className={className} aria-hidden="true">
-      <path d={MARK_D} fill={fill} />
-      {MARK.ball && <circle cx={MARK.ball.cx} cy={MARK.ball.cy} r={MARK.ball.r} fill={ball} />}
-    </svg>
-  );
-}
-
-/** The primary logo: GAPPER, led by the G symbol. `height` is the cap height in px. */
-export function Wordmark({ height = 20, fill = "var(--color-chalk)", ball = "var(--color-optic)", className = "" }: Ink & { height?: number }) {
-  const k = height / 100;
-  return (
-    <svg width={(WORD.w + 4) * k} height={108 * k} viewBox={`-2 -4 ${WORD.w + 4} 108`} className={className} role="img" aria-label="Gapper">
-      <path d={WORD_D} fill={fill} />
-      {WORD.balls.map((b) => (
-        <circle key={b.cx} cx={b.cx} cy={b.cy} r={b.r} fill={ball} />
+    <svg width={w} height={h} viewBox={`${vx} ${vy} ${vw} ${vh}`} className={className} role={title ? "img" : undefined} aria-label={title} aria-hidden={title ? undefined : true}>
+      {art.shapes.map((s, i) => (
+        <path key={i} d={s.d} fill={fill[s.role]} className={animate && s.role === "accent" ? "land" : undefined} style={animate && s.role === "accent" ? { animationDelay: `${0.5 + i * 0.12}s` } : undefined} />
       ))}
     </svg>
   );
 }
 
-/** The secondary logo: the wordmark over OWN THE GAP., the tagline set to the same width. */
-export function Lockup({ width = 220, fill = "var(--color-chalk)", sub = "var(--color-chalk-3)", ball = "var(--color-optic)", className = "" }: Ink & { width?: number; sub?: string }) {
-  const s = WORD.w / TAG.w;
-  const y = 136;
-  const h = y + 100 * s + 8;
-  return (
-    <svg width={width} height={(width * h) / (WORD.w + 4)} viewBox={`-2 -4 ${WORD.w + 4} ${h}`} className={className} role="img" aria-label="Gapper. Own the gap.">
-      <path d={WORD_D} fill={fill} />
-      {WORD.balls.map((b) => (
-        <circle key={b.cx} cx={b.cx} cy={b.cy} r={b.r} fill={ball} />
-      ))}
-      <g transform={`translate(0 ${y}) scale(${s})`}>
-        <path d={TAG_D} fill={sub} />
-        {TAG.balls.map((b) => (
-          <circle key={b.cx} cx={b.cx} cy={b.cy} r={b.r} fill={ball} />
-        ))}
-      </g>
-    </svg>
-  );
+/** The Gap Mark: a ballfield from above, the outfield split by the gap, the ball streaking out past the wall. */
+export function GapMark({ size = 32, ...p }: Props & { size?: number }) {
+  // Cropped to the drawing (the 200-unit box has air above the ball), so it centers where it's placed.
+  return <ArtSvg art={ART.mark} width={size} box={[-2, 23, 204, 169]} {...p} />;
 }
+
+/** Mark + GAPPER side by side: headers and the desktop rail. `height` is the overall height in px. */
+export function LockupH({ height = 28, ...p }: Props & { height?: number }) {
+  return <ArtSvg art={ART.lockup} height={height} title="Gapper" {...p} />;
+}
+
+/** The home-plate crest: the printable badge. */
+export function Crest({ width = 160, ...p }: Props & { width?: number }) {
+  return <ArtSvg art={ART.crest} width={width} title="Gapper. Own the gap." {...p} />;
+}
+
+/** The round patch. */
+export function Patch({ width = 160, ...p }: Props & { width?: number }) {
+  return <ArtSvg art={ART.patch} width={width} title="Gapper. Own the gap." {...p} />;
+}
+
+/** The GAPPER wordmark on its own. `height` is the cap height in px. */
+export function Wordmark({ height = 20, ...p }: Props & { height?: number }) {
+  return <ArtSvg art={ART.wordmark} height={height * 1.04} title="Gapper" {...p} />;
+}
+
+/** Wordmark over OWN THE GAP. */
+export function Lockup({ width = 200, ...p }: Props & { width?: number }) {
+  return <ArtSvg art={ART.wordmarkTagline} width={width} title="Gapper. Own the gap." ink={p.ink} {...p} />;
+}
+
+/** Back-compat name: the symbol. */
+export const LogoMark = GapMark;
