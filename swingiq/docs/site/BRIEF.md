@@ -124,3 +124,14 @@ Done from the harness contact sheets and a top-to-bottom pass, writing one word 
 | 6 Own the gap | Resolve | Abrupt: the first version collapsed in about 135 px of scroll | Span 1.3 to 1.6, the line and button now land after the collapse finishes |
 
 Harness results on the final build: no dead scroll, the clip keeps moving whenever it is on screen, no console errors through the production server (with the app's content security policy). Contrast flags that remain are understood: "You see a swing." measures 2.6:1 at its worst pixel because the hitter's white trousers pass in front of the letters by design (mean 11:1); on phones a few lines dip while their stage slides past the fixed chalk line.
+
+## Phones (revised after Chad's first look)
+
+Chad liked the desktop page and found the phone version hard to scroll: every act locked the screen, so the thumb moved and the page did not, and the fixed chalk line slid across content between scenes. The phone cut, set up in a small script before the engine mounts (`index.html`), keeps desktop exactly as it was:
+
+- Only the stance (span 1.6), the swing (3.2) and the close (1.4) lock the screen. The swing's cues are re-timed for the shorter span so each line still lands on the same frame of the clip.
+- The read, the fix and speed scroll as ordinary sections: a photo block ("What you see") over a Gapper block ("What Gapper sees") with the chalk line drawn between them. Their content fades in once on entry, the scores tick up once and the bars grow.
+- The fixed chalk line only shows while a split stage is locked in place, and it is positioned in `svh` so it sits on the seam even when the URL bar moves.
+- Lighter work per frame: all layout reads happen before any write, the canvas glow is off on phones, and URL-bar resizes no longer redraw the canvases.
+
+Phone page length went from about 11.75 locked screens to about 10.25 screens, of which only 6.2 are locked.
