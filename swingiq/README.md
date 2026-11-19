@@ -1,6 +1,6 @@
 # Gapper
 
-Live at **https://getgapper.com** (also https://swingiq-live.vercel.app). Brand kit: `public/brand/BRAND.md`.
+Live at **https://getgapper.com** (also https://swingiq-live.vercel.app). New visitors get the scroll site (`public/site/`, see `docs/site/BRIEF.md`); anyone with a hitter set up gets the app. Brand kit: `public/brand/BRAND.md`.
 
 Real-time slow-pitch softball swing analysis from a phone. Put the phone on a tripod, step in, and hit. Gapper spots every swing on its own, saves a clip, scores your mechanics and gives one cue, spoken if you want.
 

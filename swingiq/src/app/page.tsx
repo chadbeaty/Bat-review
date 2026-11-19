@@ -3,8 +3,8 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArcScore } from "@/components/ArcScore";
 import { GapMark, LockupH } from "@/components/Logo";
-import { Landing } from "@/components/Landing";
 import { usePlayers } from "@/components/PlayerProvider";
+import { Setup } from "@/components/Setup";
 import { Softball } from "@/components/Softball";
 import { Chip, InfoTip, Meter, PageSkeleton, Panel, SectionTitle, Skeleton, Stat, fmtDate } from "@/components/ui";
 import { FieldPrint } from "@/components/viz/FieldPrint";
@@ -71,7 +71,9 @@ export default function Home() {
 
   if (!ready) return <PageSkeleton />;
 
-  if (!player) return <Landing onSave={savePlayer} storageOk={storageOk} />;
+  // New visitors get the scroll site at "/" (public/site, via the rewrite in next.config.ts). Anyone who reaches the
+  // app here without a hitter (storage cleared, say) gets setup.
+  if (!player) return <Setup onSave={savePlayer} storageOk={storageOk} />;
 
   const last = sessions?.[0] ?? null;
   const weekAgo = now - 7 * 864e5;

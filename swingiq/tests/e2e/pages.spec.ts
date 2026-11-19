@@ -13,10 +13,14 @@ async function noSideScroll(page: import("@playwright/test").Page) {
   expect(overflow).toBeLessThanOrEqual(1);
 }
 
-test("first run: set up a hitter, then home shows the live session button", async ({ page }) => {
+test("first run: the scroll site, then setup, then home shows the live session button", async ({ page }) => {
   const errors = errorsOf(page);
+  // A new visitor gets the scroll site at "/" (public/site), not the app.
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: /Own the gap/ })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "You see a swing." })).toBeVisible();
+  await expect(page.locator("main section[data-sc-act]")).toHaveCount(6);
+  await page.getByRole("link", { name: "Start swinging" }).first().click();
+  await expect(page).toHaveURL(/\/start$/);
   await page.getByLabel("Name").fill("Chad");
   await page.getByRole("radio", { name: "Left-handed" }).click();
   await page.getByLabel("Feet").fill("6");
@@ -26,11 +30,44 @@ test("first run: set up a hitter, then home shows the live session button", asyn
   await expect(page.getByRole("link", { name: /Start live analysis/ })).toBeVisible();
   await expect(page.getByText("Chad · Lefty")).toBeVisible();
   await noSideScroll(page);
+  // Once a hitter exists, "/" is the app on every visit.
+  await page.goto("/");
+  await expect(page.getByRole("link", { name: /Record my swing/ })).toBeVisible();
   expect(errors).toEqual([]);
 });
 
-test("validates the hitter form", async ({ page }) => {
+test("scroll site: the swing scrubs, the heel catch counts frames, and the page ends on the button", async ({ page }) => {
+  const errors = errorsOf(page);
   await page.goto("/");
+  await noSideScroll(page);
+  const gap = page.locator("#gap");
+  await gap.scrollIntoViewIfNeeded();
+  // Scroll to the end of the gap (contact): the counter shows the six frames from heel down to contact.
+  await page.evaluate(() => {
+    const el = document.getElementById("gap")!;
+    const top = el.getBoundingClientRect().top + scrollY;
+    scrollTo(0, top + (el.offsetHeight - innerHeight) * 0.82);
+  });
+  await expect(page.locator("[data-frames]")).toHaveText("6");
+  await expect(page.locator("#rail")).toHaveClass(/is-stamped|is-peak/);
+  await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
+  await expect(page.locator("#start .cta")).toBeVisible();
+  await expect(page.locator("#start .cta")).toHaveAttribute("href", "/start");
+  expect(errors).toEqual([]);
+});
+
+test("a returning hitter without the cookie is sent from the site to the app", async ({ page, context }) => {
+  await page.goto("/start");
+  await page.getByLabel("Name").fill("Returning");
+  await page.getByRole("button", { name: "Let's hit" }).click();
+  await expect(page.getByRole("link", { name: /Record my swing/ })).toBeVisible();
+  await context.clearCookies();
+  await page.goto("/");
+  await expect(page.getByRole("link", { name: /Record my swing/ })).toBeVisible();
+});
+
+test("validates the hitter form", async ({ page }) => {
+  await page.goto("/start");
   await page.getByLabel("Feet").fill("9");
   await page.getByLabel("Name").fill("X");
   await page.getByRole("button", { name: "Let's hit" }).click();
@@ -39,7 +76,7 @@ test("validates the hitter form", async ({ page }) => {
 
 test("profile: add a bat, change settings, add a second hitter", async ({ page }) => {
   const errors = errorsOf(page);
-  await page.goto("/");
+  await page.goto("/start");
   await page.getByLabel("Name").fill("Sam");
   await page.getByRole("button", { name: "Let's hit" }).click();
   await page.getByRole("link", { name: "Profile" }).click();
@@ -69,7 +106,7 @@ test("profile: add a bat, change settings, add a second hitter", async ({ page }
 for (const path of ["/swings", "/progress", "/guide", "/how-it-works", "/privacy", "/sign-in", "/live", "/record", "/bats", "/compare"]) {
   test(`renders ${path}`, async ({ page }) => {
     const errors = errorsOf(page);
-    await page.goto("/");
+    await page.goto("/start");
     await page.getByLabel("Name").fill("Pat");
     await page.getByRole("button", { name: "Let's hit" }).click();
     await expect(page.getByRole("link", { name: /Record my swing/ })).toBeVisible();

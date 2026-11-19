@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Gapper: Own the gap.</title>
+<meta name="description" content="Gapper is slow-pitch swing analysis on the phone you already have. It tracks 33 points on your body every frame, times your front foot to contact, and gives you one fix and one drill.">
+<meta name="theme-color" content="#101827">
+<link rel="canonical" href="https://getgapper.com/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Gapper">
+<meta property="og:title" content="Gapper: Own the gap.">
+<meta property="og:description" content="Slow-pitch swing analysis on the phone you already have.">
+<meta property="og:url" content="https://getgapper.com/">
+<meta property="og:image" content="https://getgapper.com/opengraph-image">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://getgapper.com/twitter-image">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-icon">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="preload" as="font" type="font/woff2" href="/site/fonts/mona-sans-latin.woff2" crossorigin>
+<link rel="preload" as="image" href="/site/assets/hero-plate.webp">
+<link rel="preload" as="image" href="/site/assets/hero-cut.webp">
+<link rel="stylesheet" href="/site/scrollcraft.css">
+<style>
+  /* Mona Sans (SIL Open Font License, see /site/fonts/OFL.txt), served from this site so the app's
+     content security policy holds. Variable width 75 to 125 and weight 200 to 900. */
+  @font-face { font-family: "Mona Sans"; font-style: normal; font-weight: 200 900; font-stretch: 75% 125%; font-display: swap;
+    src: url(/site/fonts/mona-sans-latin.woff2) format("woff2"); }
+  @font-face { font-family: "Mona Sans"; font-style: italic; font-weight: 200 900; font-stretch: 75% 125%; font-display: swap;
+    src: url(/site/fonts/mona-sans-italic-latin.woff2) format("woff2"); }
+  :root {
+    --navy: #101827; --slate: #202D40; --steel: #8995A6; --lime: #B7F34A; --deep-lime: #6CA81B;
+    --sc-canvas: #101827; --sc-surface: #202D40;
+    --sc-ink: #FFFFFF; --sc-ink-soft: #A9B3C1;
+    --sc-accent: #B7F34A; --sc-accent-ink: #101827;
+    --sc-font-display: "Mona Sans", sans-serif;
+    --sc-font-text: "Mona Sans", sans-serif;
+    --split: 50%;
+    --gut: clamp(1.25rem, 3.2vw, 3.25rem);
+    --clear: 6.75rem;           /* room beside the chalk line for the phase labels */
+    --rail-pad: 1.25rem;
+  }
+  html { background: var(--navy); }
+  body { background: var(--navy); color: #fff; font-family: "Mona Sans", sans-serif; font-stretch: 100%; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ------------------------------------------------------------ the split */
+  .split { display: grid; grid-template-columns: var(--split) 1fr; }
+  .pane { position: relative; overflow: hidden; min-width: 0; min-height: 0; }
+  .pane--eye { background: #2a3442; }
+  .pane--gap {
+    background:
+      repeating-linear-gradient(90deg, rgb(255 255 255 / 0.022) 0 46px, rgb(255 255 255 / 0) 46px 92px),
+      radial-gradient(90% 60% at 70% -10%, rgb(234 244 255 / 0.08), transparent 62%),
+      linear-gradient(180deg, #131d2f 0%, var(--navy) 70%);
+  }
+  .frame { position: absolute; left: 0; top: 0; width: 100%; height: 100%; }
+  .frame > img.fill { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .pose { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .scrim { position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(10deg, rgb(16 24 39 / 0.86) 0%, rgb(16 24 39 / 0.55) 30%, rgb(16 24 39 / 0) 58%); }
+  .scrim--top { background: linear-gradient(180deg, rgb(16 24 39 / 0.8) 0%, rgb(16 24 39 / 0.35) 34%, rgb(16 24 39 / 0) 55%); }
+
+  /* Two voices from one family: the eye is narrow and upright, Gapper is wide and leans like a jersey. */
+  .eye-h { font-stretch: 87.5%; font-weight: 540; letter-spacing: -0.03em; line-height: 0.98; margin: 0;
+    font-size: clamp(2rem, 0.9rem + 2.9vw, 4rem); text-wrap: balance; text-shadow: 0 1px 18px rgb(16 24 39 / 0.45); }
+  .eye-p { font-stretch: 92%; font-size: clamp(1rem, 0.92rem + 0.3vw, 1.2rem); line-height: 1.45; color: rgb(255 255 255 / 0.86);
+    max-width: 30ch; margin: 1rem 0 0; text-shadow: 0 1px 12px rgb(16 24 39 / 0.6); }
+  .gap-h { font-stretch: 125%; font-weight: 820; font-style: italic; letter-spacing: -0.035em; line-height: 0.98; margin: 0;
+    font-size: clamp(1.7rem, 0.7rem + 2.5vw, 3.4rem); text-wrap: balance; }
+  .gap-p { font-size: clamp(0.98rem, 0.9rem + 0.3vw, 1.15rem); line-height: 1.5; color: var(--sc-ink-soft); max-width: 36ch; margin: 1rem 0 0; }
+  .gap-p strong { color: #fff; font-weight: 640; }
+  .ball { display: inline-block; width: 0.2em; height: 0.2em; border-radius: 50%; background: var(--lime); margin-left: 0.09em; vertical-align: baseline; }
+  sup { font-size: 0.62em; line-height: 0; }
+  sup a { text-decoration: none; color: var(--lime); }
+  .jumbo { font-stretch: 125%; font-weight: 860; font-variant-numeric: tabular-nums; letter-spacing: -0.04em; line-height: 0.86; }
+  .tag { display: inline-flex; gap: 0.5em; align-items: baseline; font-size: 0.8rem; font-weight: 560; color: var(--steel); margin: 0.9rem 0 0; max-width: 40ch; line-height: 1.4; }
+  .tag::before { content: ""; flex: none; width: 0.55em; height: 0.55em; border: 1.5px solid var(--steel); border-radius: 50%; transform: translateY(0.05em); }
+
+  .eye-copy { position: absolute; left: var(--gut); right: calc(var(--gut) + 1.5rem); bottom: clamp(2.5rem, 11vh, 7rem); }
+  .eye-copy > * { position: relative; }
+  .stack { display: grid; }
+  .stack > * { grid-area: 1 / 1; align-self: end; }
+  .gap-copy { position: absolute; left: var(--clear); right: var(--gut); top: clamp(5.5rem, 15vh, 9rem); }
+  .gap-copy.stack > * { align-self: start; }
+
+  /* -------------------------------------------------- the chalk line (chrome) */
+  .rail { position: fixed; z-index: 60; top: 0; bottom: 0; left: max(var(--split), var(--rail-pad)); width: 0; pointer-events: none; }
+  .rail a { pointer-events: auto; }
+  .rail__line { position: absolute; left: -0.5px; width: 1px; top: 0; bottom: 0; background: rgb(255 255 255 / 0.2); }
+  .rail__laid { position: absolute; left: -2px; width: 4px; top: 0; height: calc(var(--chalk, 0) * 100%);
+    background: #fff; -webkit-mask: url(/site/assets/chalk.png) repeat-y 0 0 / 100% 256px; mask: url(/site/assets/chalk.png) repeat-y 0 0 / 100% 256px; opacity: 0.94; }
+  .rail__head { position: absolute; left: 0; top: calc(var(--chalk, 0) * 100%); width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 3px rgb(16 24 39 / 0.55); }
+  .rail__mark { position: absolute; top: 1.1rem; left: 0; transform: translateX(-50%); width: 50px; height: 50px; border-radius: 50%;
+    display: grid; place-items: center; background: var(--navy); box-shadow: 0 0 0 1px rgb(255 255 255 / 0.24), 0 6px 18px -6px rgb(0 0 0 / 0.5); }
+  .rail__mark img { width: 31px; height: 31px; }
+  .rail__label { position: absolute; top: 2.05rem; font-size: 0.8rem; font-weight: 620; letter-spacing: 0.005em; white-space: nowrap; color: #fff;
+    text-shadow: 0 1px 10px rgb(16 24 39 / 0.75); transition: opacity 240ms ease; }
+  .rail__label--eye { right: 2.35rem; }
+  .rail__label--gap { left: 2.35rem; color: var(--lime); }
+  .rail__cta { position: absolute; bottom: 1.1rem; left: 0; transform: translateX(-50%); white-space: nowrap; text-decoration: none;
+    font-size: 0.86rem; font-weight: 680; font-stretch: 110%; color: #fff; background: var(--navy); padding: 0.72em 1.15em 0.72em 1.05em;
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.28); clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 0 100%); transition: background 180ms ease, color 180ms ease, opacity 240ms ease; }
+  .rail__cta:hover { background: var(--lime); color: var(--navy); }
+  .rail__cta:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; }
+
+  .ticks { position: absolute; inset: 0; opacity: 0; transition: opacity 320ms ease; }
+  .rail.is-peak .ticks { opacity: 1; }
+  .tick { position: absolute; left: 0; top: calc(var(--at) * 100%); }
+  .tick::before { content: ""; position: absolute; left: -7px; top: -1px; width: 14px; height: 2px; background: rgb(255 255 255 / 0.55); }
+  .tick span { position: absolute; left: 15px; top: -0.62em; font-size: 0.74rem; font-weight: 600; white-space: nowrap; color: var(--steel); transition: color 160ms ease; }
+  .tick.is-past span { color: rgb(255 255 255 / 0.72); }
+  .tick.is-now span { color: #fff; }
+  .tick.is-now::before { background: #fff; }
+  .rail__gap { position: absolute; left: -3px; width: 6px; top: calc(var(--g0) * 100%); height: calc((var(--g1) - var(--g0)) * var(--fill, 0) * 100%);
+    background: var(--lime); border-radius: 3px; box-shadow: 0 0 14px rgb(183 243 74 / 0.35); }
+  .rail__gaplabel { position: absolute; left: 15px; top: calc((var(--g0) + (var(--g1) - var(--g0)) / 2) * 100%); transform: translateY(-50%);
+    font-size: 0.78rem; font-weight: 720; font-style: italic; font-stretch: 120%; color: var(--lime); white-space: nowrap; opacity: 0; transition: opacity 300ms ease; }
+  .rail.is-stamped .rail__gaplabel { opacity: 1; }
+  .rail.is-peak .rail__gaplabel { opacity: 0; }
+  .gapticks { position: absolute; inset: 0; opacity: 0; transition: opacity 300ms ease; }
+  .rail.is-stamped .gapticks, .rail.is-peak .gapticks { opacity: 1; }
+  .rail.is-closed .rail__label--eye, .rail.is-closed .rail__cta { opacity: 0; pointer-events: none; }
+
+  /* ------------------------------------------------------------ act 1: stance */
+  .hero .frame { will-change: transform; }
+  .hero .plate, .hero .cut { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hero .plate { z-index: 0; }
+  .hero .shade { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: linear-gradient(180deg, rgb(16 24 39 / 0) 34%, rgb(16 24 39 / 0.58) 49%, rgb(16 24 39 / 0.7) 72%, rgb(16 24 39 / 0.3) 92%); }
+  .hero .cut { z-index: 2; }
+  .hero h1 { position: absolute; z-index: 1; left: var(--gut); top: 51%; right: 4%; margin: 0; font-size: clamp(3.2rem, 0.4rem + 6.6vw, 7.6rem); line-height: 0.9; letter-spacing: -0.035em; }
+  .hero h1 span { display: block; }
+  .hero .eye-copy { z-index: 3; }
+  .hero .gap-copy { top: clamp(5.25rem, 12vh, 8rem); }
+  .hero .gap-h { font-size: clamp(1.9rem, 0.6rem + 3vw, 3.9rem); }
+
+  /* ------------------------------------------------------------- act 2: gap */
+  .ring { position: absolute; z-index: 3; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; border: 3px solid var(--lime);
+    box-shadow: 0 0 0 1px rgb(16 24 39 / 0.35), 0 0 22px rgb(183 243 74 / 0.4); opacity: 0; pointer-events: none; }
+  .counter { position: absolute; left: var(--clear); bottom: clamp(2.5rem, 10vh, 6rem); display: flex; align-items: flex-end; gap: 1rem; }
+  .counter .jumbo { font-size: clamp(4.5rem, 2rem + 7vw, 9.5rem); color: #fff; }
+  .counter .jumbo.is-done { color: var(--lime); }
+  .counter p { margin: 0 0 0.5rem; font-size: 0.95rem; line-height: 1.3; color: #C9D1DC; max-width: 14ch; }
+  .peak .eye-copy { right: 50%; }
+  .peak .eye-h { font-size: clamp(1.7rem, 0.7rem + 2.3vw, 3.1rem); }
+  .peak .gap-copy > div > * + * { margin-top: 0.9rem; }
+
+  /* ------------------------------------------------------------ act 3: read */
+  .read { position: absolute; left: var(--clear); right: var(--gut); top: 50%; transform: translateY(-50%); max-width: 34rem; }
+  .score { display: flex; align-items: flex-end; gap: 0.9rem; margin: 1.6rem 0 1.4rem; }
+  .score .jumbo { font-size: clamp(4rem, 2rem + 5vw, 7.5rem); }
+  .score span:last-child { font-size: 0.9rem; font-weight: 640; color: var(--sc-ink-soft); margin-bottom: 0.55rem; }
+  .lines { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgb(255 255 255 / 0.12); }
+  .lines li { display: grid; grid-template-columns: 8.5rem 1fr 3.2rem; align-items: center; gap: 0.25rem 1rem; padding: 0.62rem 0; border-bottom: 1px solid rgb(255 255 255 / 0.08); }
+  .lines .name { font-size: 0.95rem; font-weight: 560; }
+  .lines .bar { height: 6px; background: rgb(255 255 255 / 0.08); overflow: hidden; }
+  .lines .bar i { display: block; height: 100%; background: rgb(255 255 255 / 0.78); transform-origin: left; transform: scaleX(calc(var(--v) * var(--grow, 1))); }
+  .lines .flag .bar i { background: var(--lime); }
+  .lines b { font-stretch: 125%; font-weight: 800; font-size: 1.2rem; text-align: right; font-variant-numeric: tabular-nums; }
+  .lines em { grid-column: 1 / -1; font-style: normal; font-size: 0.84rem; color: var(--sc-ink-soft); }
+  .lines .na .name, .lines .na b { color: var(--steel); }
+
+  /* ------------------------------------------------------------- act 4: fix */
+  .tips { position: absolute; inset: 0; }
+  .tips span { position: absolute; font-stretch: 85%; font-weight: 520; white-space: nowrap; color: #fff; text-shadow: 0 1px 14px rgb(16 24 39 / 0.7); }
+  .fix .gap-copy { top: 50%; transform: translateY(-50%); }
+  .fix .gap-h { font-size: clamp(2.4rem, 1rem + 4vw, 5.2rem); }
+  .fix .cue-text { font-size: clamp(1.2rem, 0.9rem + 0.9vw, 1.75rem); font-weight: 560; line-height: 1.3; margin: 1.25rem 0 0; max-width: 24ch; text-wrap: pretty; }
+  .drill { margin-top: 1.75rem; padding: 1.1rem 1.25rem 1.2rem; background: var(--slate); max-width: 30rem;
+    clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%); }
+  .drill h3 { margin: 0; font-size: 0.8rem; font-weight: 650; color: var(--lime); }
+  .drill p { margin: 0.4rem 0 0; font-size: 0.95rem; line-height: 1.5; color: rgb(255 255 255 / 0.86); }
+  .drill p strong { color: #fff; font-weight: 700; }
+
+  /* ----------------------------------------------------------- act 5: speed */
+  .speed .gap-copy { top: clamp(5rem, 13vh, 8rem); }
+  .flight { position: absolute; left: var(--clear); right: var(--gut); bottom: clamp(2rem, 9vh, 5rem); height: 44%; }
+  .flight svg { width: 100%; height: 100%; overflow: visible; }
+  .flight text { font-family: "Mona Sans", sans-serif; font-size: 16px; font-weight: 600; fill: #fff; }
+  .flight text.soft { fill: var(--steel); font-weight: 560; }
+
+  /* ----------------------------------------------------------- act 6: close */
+  .close .crest { position: absolute; right: clamp(1.5rem, 7vw, 8rem); top: clamp(4.5rem, 11vh, 7rem); height: min(50vh, 30rem); width: auto; }
+  .close .gap-copy { top: auto; bottom: clamp(3rem, 14vh, 8rem); left: max(var(--clear), 5.5rem); }
+  .close .gap-h { font-size: clamp(3.4rem, 0.5rem + 8.2vw, 10rem); line-height: 0.9; }
+  .close .gap-p { color: rgb(255 255 255 / 0.82); }
+  .cta { display: inline-flex; align-items: center; gap: 0.7em; margin-top: 1.6rem; padding: 1.05rem 1.6rem 1.05rem 1.4rem; background: var(--lime); color: var(--navy);
+    font-weight: 780; font-stretch: 112%; font-size: 1.08rem; text-decoration: none; clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+    transition: transform 160ms var(--sc-ease-out), background 160ms ease; }
+  .cta:hover { background: #c6f86a; }
+  .cta:active { transform: scale(0.97); }
+  .cta:focus-visible { outline: 2px solid #fff; outline-offset: 4px; }
+  .cta svg { width: 1.1em; height: 1.1em; }
+  .foot { position: absolute; left: max(var(--clear), 5.5rem); right: var(--gut); bottom: 1.1rem; display: flex; flex-wrap: wrap; gap: 0.35rem 1.4rem; font-size: 0.74rem; color: var(--steel); }
+  .foot a { color: var(--steel); }
+  .foot a:hover { color: #fff; }
+
+  /* ------------------------------------------------------------------ phones */
+  @media (max-width: 860px) {
+    :root { --clear: 1.25rem; --gut: 1.25rem; }
+    .split { grid-template-columns: 1fr; grid-template-rows: var(--split) 1fr; }
+    .rail { top: max(var(--split), 0px); left: 0; right: 0; bottom: auto; height: 0; width: auto; }
+    .rail__line { left: 0; right: 0; width: auto; top: -0.5px; bottom: auto; height: 1px; }
+    .rail__laid { left: 0; top: -2px; height: 4px; width: calc(var(--chalk, 0) * 100%);
+      -webkit-mask: url(/site/assets/chalk.png) repeat-x 0 0 / 256px 100%; mask: none; background: #fff; }
+    .rail__head { left: calc(var(--chalk, 0) * 100%); top: 0; }
+    .rail__mark { top: 0; left: 0.75rem; transform: translateY(-50%); width: 42px; height: 42px; }
+    .rail__mark img { width: 26px; height: 26px; }
+    .rail__label { top: auto; font-size: 0.72rem; }
+    .rail__label--eye { left: 3.6rem; right: auto; bottom: 0.45rem; }
+    .rail__label--gap { left: 3.6rem; top: 0.45rem; }
+    .rail__cta { left: auto; right: 0.75rem; bottom: auto; top: 0; transform: translateY(-50%); font-size: 0.78rem; padding: 0.6em 0.95em; }
+    .tick { left: calc(var(--at) * 100%); top: 0; }
+    .tick::before { left: -1px; top: -6px; width: 2px; height: 12px; }
+    .tick span { left: 0; top: 0.7rem; transform: translateX(-50%); font-size: 0.68rem; opacity: 0; }
+    .tick.is-now span { opacity: 1; }
+    .rail__gap { left: calc(var(--g0) * 100%); top: -3px; height: 6px; width: calc((var(--g1) - var(--g0)) * var(--fill, 0) * 100%); }
+    .rail__gaplabel { left: calc((var(--g0) + (var(--g1) - var(--g0)) / 2) * 100%); top: auto; bottom: 0.5rem; transform: translateX(-50%); }
+    .rail.is-stamped:not(.is-peak) .rail__label--eye { opacity: 0; }
+    .rail.is-peak .rail__label { opacity: 0; }
+    .peak .gap-copy { right: 44%; }
+    .counter { left: 1.25rem; right: auto; bottom: 1.1rem; gap: 0.6rem; }
+    .counter .jumbo { font-size: 3.8rem; }
+    .lines .na em { display: none; }
+    .hero .gap-copy { right: 38%; }
+
+    .eye-h { font-size: clamp(1.6rem, 1rem + 3vw, 2.4rem); }
+    .eye-p { font-size: 0.95rem; margin-top: 0.6rem; }
+    .gap-h { font-size: clamp(1.35rem, 0.9rem + 2.2vw, 1.9rem); }
+    .gap-p { font-size: 0.92rem; margin-top: 0.6rem; }
+    .eye-copy { left: 1.25rem; right: 1.25rem; bottom: 2.6rem; }
+    .gap-copy { left: 1.25rem; right: 1.25rem; top: 2.6rem; }
+    .hero h1 { font-size: clamp(2.6rem, 1.2rem + 7vw, 3.8rem); top: 50%; }
+    .peak .eye-copy { right: 46%; }
+    .peak .eye-h { font-size: 1.45rem; }
+    .hero .gap-copy { top: 2.5rem; }
+    .hero .gap-h { font-size: clamp(1.45rem, 0.9rem + 2.6vw, 2rem); }
+    .hero .gap-p { display: none; }
+    .counter p { font-size: 0.78rem; margin: 0 0 0.3rem; }
+    .read { left: 1.25rem; right: 1.25rem; top: 2.5rem; transform: none; }
+    .score { margin: 0.6rem 0 0.6rem; }
+    .score .jumbo { font-size: 3.2rem; }
+    .lines li { grid-template-columns: 6.6rem 1fr 2.4rem; padding: 0.34rem 0; gap: 0.1rem 0.7rem; }
+    .lines .name { font-size: 0.82rem; }
+    .lines b { font-size: 0.98rem; }
+    .lines em { font-size: 0.72rem; }
+    .read .tag { display: none; }
+    .read .tag-m { display: block; }
+    .fix .gap-copy { top: 2.5rem; transform: none; }
+    .fix .gap-h { font-size: 2rem; }
+    .fix .cue-text { font-size: 1.02rem; margin-top: 0.6rem; }
+    .drill { margin-top: 0.9rem; padding: 0.75rem 0.9rem 0.85rem; }
+    .drill p { font-size: 0.82rem; }
+    .tips span { font-size: 0.92rem !important; }
+    .speed .gap-copy { top: 2.5rem; }
+    .flight { left: 1.25rem; right: 1.25rem; bottom: 1rem; height: 40%; }
+    .flight text { font-size: 19px; }
+    .close .crest { right: 50%; transform: translate(50%, -50%); top: 34%; height: 30vh; }
+    .close .gap-copy { left: 1.25rem; right: 1.25rem; bottom: 4.5rem; }
+    .close .gap-h { font-size: 3.4rem; }
+    .foot { left: 1.25rem; right: 1.25rem; bottom: 0.8rem; font-size: 0.68rem; gap: 0.2rem 0.9rem; }
+  }
+  .tag-m { display: none; font-size: 0.7rem; color: var(--steel); margin: 0.3rem 0 0; }
+  @media (max-width: 860px) and (max-height: 700px) {
+    .lines em { display: none; }
+    .drill { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="rail" id="rail" aria-label="Gapper">
+  <div class="rail__line"></div>
+  <div class="rail__laid"></div>
+  <div class="ticks" aria-hidden="true">
+    <div class="tick" style="--at:.20" data-s="0.13"><span>Load</span></div>
+    <div class="tick" style="--at:.34" data-s="3.07"><span>Stride</span></div>
+    <div class="tick" style="--at:.45" data-s="4.00"><span>Hands go</span></div>
+    <div class="tick" style="--at:.66" data-s="4.52"><span>Contact</span></div>
+    <div class="tick" style="--at:.80" data-s="7.20"><span>Finish</span></div>
+  </div>
+  <div class="gapticks" aria-hidden="true">
+    <div class="tick tick--gap" style="--at:.52" data-s="4.28"><span>Foot down</span></div>
+  </div>
+  <div class="rail__gap" style="--g0:.52;--g1:.66" aria-hidden="true"></div>
+  <div class="rail__gaplabel" style="--g0:.52;--g1:.66" aria-hidden="true">the gap</div>
+  <div class="rail__head" aria-hidden="true"></div>
+  <a class="rail__mark" href="#top" aria-label="Gapper, back to the top"><img src="/brand/gapper-mark.svg" alt="" width="31" height="31"></a>
+  <span class="rail__label rail__label--eye">What you see</span>
+  <span class="rail__label rail__label--gap">What Gapper sees</span>
+  <a class="rail__cta" href="/start">Start swinging</a>
+</nav>
+
+<main id="top">
+
+  <!-- 1 · STANCE. Recognition, then the push to the front foot. -->
+  <section class="hero" id="stance" data-sc-act="pin" data-sc-span="2">
+    <div data-sc-stage class="split">
+      <div class="pane pane--eye">
+        <div class="frame" data-frame>
+          <img class="plate" src="/site/assets/hero-plate.webp" alt="" width="720" height="900">
+          <div class="shade" aria-hidden="true"></div>
+          <h1 class="eye-h" data-sc-cue="0 0.44 0 0.3"><span>You see</span> <span>a swing.</span></h1>
+          <img class="cut" src="/site/assets/hero-cut.webp" alt="A hitter in his stance at home plate, bat up, on a sunny day." width="720" height="900">
+        </div>
+        <div class="scrim" style="opacity:.75"></div>
+        <div class="eye-copy">
+          <p class="eye-h" data-sc-cue="0.52 1 0.18 0">Watch the front foot.</p>
+        </div>
+      </div>
+      <div class="pane pane--gap">
+        <canvas class="pose" data-pose="hero" role="img" aria-label="The same hitter as Gapper sees him: 33 tracked points joined into a skeleton, front leg in lime."></canvas>
+        <div class="gap-copy stack">
+          <div data-sc-cue="0 0.44 0 0.3">
+            <h2 class="gap-h">Gapper sees 33&nbsp;points. Every frame<span class="ball"></span></h2>
+            <p class="gap-p">Swing analysis for slow pitch, on the phone you already have.</p>
+          </div>
+          <p class="gap-h" data-sc-cue="0.52 1 0.18 0">So does Gapper, until it lands<span class="ball"></span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · THE GAP. The peak: the only clip, the largest span. The hold is baked into the clip. -->
+  <section class="peak" id="gap" data-sc-act="scrub" data-sc-span="4.2">
+    <div data-sc-stage class="split">
+      <div class="pane pane--eye">
+        <div class="frame" data-frame>
+          <img class="sc-stage__poster" src="/site/assets/swing-poster.webp" alt="The hitter's front foot landing as the pitch arrives." width="720" height="900">
+          <video data-sc-scrub data-sc-src="/site/assets/swing.mp4" data-sc-src-mobile="/site/assets/swing-m.mp4" muted playsinline aria-hidden="true"></video>
+          <div class="ring" data-ring aria-hidden="true"></div>
+        </div>
+        <div class="scrim"></div>
+        <div class="eye-copy stack">
+          <p class="eye-h" data-sc-cue="0.02 0.3 0.12 0.1">Toe tap. Leg lift. Here it comes.</p>
+          <p class="eye-h" data-sc-cue="0.275 0.545 0.06 0.1">Front heel down.</p>
+          <p class="eye-h" data-sc-cue="0.52 0.765 0.1 0.1">To your eye, this is one instant.</p>
+          <p class="eye-h" data-sc-cue="0.745 1 0.1 0">Contact.</p>
+        </div>
+      </div>
+      <div class="pane pane--gap">
+        <canvas class="pose" data-pose="swing" role="img" aria-label="Gapper's skeleton of the same swing, frame by frame, with the front heel ringed in lime when it lands."></canvas>
+        <div class="gap-copy stack">
+          <p class="gap-h" data-sc-cue="0.02 0.3 0.12 0.1">Gapper tags every phase as it happens<span class="ball"></span></p>
+          <p class="gap-h" data-sc-cue="0.275 0.545 0.06 0.1">Foot down. Gapper starts counting<span class="ball"></span></p>
+          <div data-sc-cue="0.745 1 0.1 0">
+            <p class="gap-h">That window is the gap<span class="ball"></span></p>
+            <p class="gap-p">Skilled slow-pitch hitters land the front heel about <strong>0.2&nbsp;s</strong> before contact.<sup><a href="#source-1" aria-label="Source 1">1</a></sup> Gapper times yours.</p>
+          </div>
+        </div>
+        <div class="counter" data-sc-cue="0.52 1 0.06 0">
+          <span class="jumbo" data-frames aria-live="off">6</span>
+          <p>frames of slow motion from heel down to contact</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 · THE READ. Real output of Gapper's analyzer on this clip. -->
+  <section id="read" data-sc-act="pin" data-sc-span="1.4">
+    <div data-sc-stage class="split">
+      <div class="pane pane--eye">
+        <div class="frame" data-frame><img class="fill" src="/site/assets/eye-read.webp" alt="" width="720" height="900"></div>
+        <div class="scrim"></div>
+        <div class="eye-copy">
+          <h2 class="eye-h" data-sc-cue="0.02 1 0.25 0">Looked good from the dugout.</h2>
+          <p class="eye-p" data-sc-cue="0.1 1 0.25 0">You get one look at full speed, and a teammate's opinion.</p>
+        </div>
+      </div>
+      <div class="pane pane--gap">
+        <div class="read" data-sc-cue="0 1 0 0">
+          <h2 class="gap-h">Gapper's read<span class="ball"></span></h2>
+          <p class="tag">Sample: a stock clip of a real hitter, run through Gapper.</p>
+          <p class="tag-m">Sample: a stock clip of a real hitter.</p>
+          <div class="score"><span class="jumbo" data-sc-count="0 72" data-sc-count-at="0.06 0.42">72</span><span>Gapper Score</span></div>
+          <ol class="lines">
+            <li style="--v:1"><span class="name">Balance</span><span class="bar"><i></i></span><b data-sc-count="0 100" data-sc-count-at="0.08 0.46">100</b></li>
+            <li style="--v:.97"><span class="name">Follow-through</span><span class="bar"><i></i></span><b data-sc-count="0 97" data-sc-count-at="0.1 0.48">97</b></li>
+            <li style="--v:.89"><span class="name">Rotation</span><span class="bar"><i></i></span><b data-sc-count="0 89" data-sc-count-at="0.12 0.5">89</b></li>
+            <li style="--v:.46" class="flag"><span class="name">Timing</span><span class="bar"><i></i></span><b data-sc-count="0 46" data-sc-count-at="0.14 0.52">46</b><em>Still landing when the hands started.</em></li>
+            <li style="--v:.30" class="flag"><span class="name">Bat path</span><span class="bar"><i></i></span><b data-sc-count="0 30" data-sc-count-at="0.16 0.54">30</b><em>The hands dropped during the load.</em></li>
+            <li style="--v:0" class="na"><span class="name">Contact</span><span class="bar"><i></i></span><b>n/a</b><em>Contact position reads from a side view; this clip is filmed from the front.</em></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 · ONE FIX. Ten tips crowd the left; Gapper's real coaching for this swing on the right. -->
+  <section class="fix" id="fix" data-sc-act="pin" data-sc-span="1.3">
+    <div data-sc-stage class="split">
+      <div class="pane pane--eye">
+        <div class="frame" data-frame><img class="fill" src="/site/assets/eye-fix.webp" alt="" width="720" height="900" style="filter:brightness(.62) saturate(.9)"></div>
+        <div class="scrim scrim--top" style="opacity:.6"></div>
+        <div class="tips" aria-label="Ten tips from ten people" role="list">
+          <span role="listitem" data-sc-cue="0 1 0 0" style="left:9%;top:15%;font-size:1.65rem">Keep your eye on it.</span>
+          <span role="listitem" data-sc-cue="0.03 1 0.2 0" style="left:42%;top:24%;font-size:1.15rem">Squash the bug.</span>
+          <span role="listitem" data-sc-cue="0.06 1 0.2 0" style="left:14%;top:33%;font-size:1.3rem">Stay back!</span>
+          <span role="listitem" data-sc-cue="0.09 1 0.2 0" style="left:52%;top:39%;font-size:1.9rem">Swing level.</span>
+          <span role="listitem" data-sc-cue="0.12 1 0.2 0" style="left:7%;top:47%;font-size:1.05rem">Hips first, hands last.</span>
+          <span role="listitem" data-sc-cue="0.15 1 0.2 0" style="left:40%;top:54%;font-size:1.4rem">Load earlier.</span>
+          <span role="listitem" data-sc-cue="0.18 1 0.2 0" style="left:11%;top:62%;font-size:1.2rem">Don't drop your shoulder.</span>
+          <span role="listitem" data-sc-cue="0.21 1 0.2 0" style="left:55%;top:68%;font-size:1.05rem">Choke up.</span>
+          <span role="listitem" data-sc-cue="0.24 1 0.2 0" style="left:20%;top:75%;font-size:1.55rem">Relax your hands.</span>
+          <span role="listitem" data-sc-cue="0.27 1 0.2 0" style="left:48%;top:83%;font-size:1.25rem">Get that foot down early.</span>
+        </div>
+        <div class="eye-copy" style="bottom:auto;top:clamp(4.5rem,7vh,6rem)">
+          <h2 class="eye-h" data-sc-cue="0 1 0 0" style="font-size:clamp(1.3rem,0.9rem + 1vw,1.8rem);font-weight:600">Ten people, ten tips.</h2>
+        </div>
+      </div>
+      <div class="pane pane--gap">
+        <div class="gap-copy">
+          <h2 class="gap-h" data-sc-cue="0.24 1 0.25 0" data-sc-kinetic="words">One fix<span class="ball"></span></h2>
+          <p class="cue-text" data-sc-cue="0.34 1 0.3 0" data-sc-kinetic="lines">Your hands dropped during the load. Keep them at shoulder height as you start the swing.</p>
+          <div class="drill" data-sc-cue="0.46 1 0.3 0">
+            <h3>The drill Gapper gave this swing</h3>
+            <p><strong>Hands-at-the-shoulder holds.</strong> Take your stance, load, and freeze for two seconds at launch with your hands still at shoulder height. Ten reps, then swing for real.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · SPEED. A blur on the left; the flight path draws itself on the right. -->
+  <section class="speed" id="speed" data-sc-act="pin" data-sc-span="1.25">
+    <div data-sc-stage class="split">
+      <div class="pane pane--eye">
+        <div class="frame" data-frame><img class="fill" src="/site/assets/eye-speed.webp" alt="" width="720" height="900"></div>
+        <div class="scrim"></div>
+        <div class="eye-copy">
+          <h2 class="eye-h" data-sc-cue="0.02 1 0.25 0">Speed used to mean a radar gun and somebody to hold it.</h2>
+        </div>
+      </div>
+      <div class="pane pane--gap">
+        <div class="gap-copy">
+          <h2 class="gap-h" data-sc-cue="0 1 0 0">Speed, from slo-mo<span class="ball"></span></h2>
+          <p class="gap-p" data-sc-cue="0.2 1 0.3 0">Film in slo-mo and Gapper reads <strong>exit velo</strong>, <strong>launch angle</strong> and <strong>pitch speed</strong> off the frames, each with an honest &plusmn; range.</p>
+          <p class="gap-p" data-sc-cue="0.32 1 0.3 0" style="font-size:0.85rem">Needs 120 to 240 fps. Bat speed is worked out from exit velo and pitch speed, assuming a sweet-spot hit.</p>
+        </div>
+        <div class="flight" data-sc-reveal="right" data-sc-reveal-at="0.04 0.55" aria-hidden="true">
+          <svg viewBox="0 0 560 260" preserveAspectRatio="xMinYMax meet">
+            <line x1="0" y1="232" x2="560" y2="232" stroke="#8995A6" stroke-opacity=".45" stroke-width="1.5"/>
+            <path d="M44 232 l10 -6 l10 6 l0 6 l-20 0 z" fill="#fff" fill-opacity=".9"/>
+            <path d="M548 214 C 470 40, 300 30, 74 196" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="3 7" stroke-linecap="round" stroke-opacity=".7"/>
+            <path d="M74 196 C 190 92, 330 58, 520 118" fill="none" stroke="#B7F34A" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="520" cy="118" r="7" fill="#B7F34A"/>
+            <path d="M118 196 A 44 44 0 0 0 108 166" fill="none" stroke="#fff" stroke-width="1.5"/>
+            <line x1="74" y1="196" x2="150" y2="196" stroke="#fff" stroke-opacity=".4" stroke-width="1.2"/>
+            <text x="126" y="182">Launch angle &plusmn;</text>
+            <text x="254" y="64">Exit velo &plusmn;</text>
+            <text x="404" y="24" class="soft">Pitch speed &plusmn;</text>
+            <text x="34" y="254" class="soft">Plate</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 · OWN THE GAP. The collapse: the chalk line runs to the edge and Gapper takes the screen. -->
+  <section class="close" id="start" data-sc-act="pin" data-sc-span="1.6">
+    <div data-sc-stage class="split">
+      <div class="pane pane--eye">
+        <div class="frame" data-frame><img class="fill" src="/site/assets/eye-finish.webp" alt="The hitter holding his finish." width="720" height="900"></div>
+        <div class="scrim"></div>
+        <div class="eye-copy">
+          <p class="eye-h" data-sc-cue="0 0.3 0 0.5">You saw a swing.</p>
+        </div>
+      </div>
+      <div class="pane pane--gap">
+        <img class="crest" src="/brand/gapper-crest.svg" alt="Gapper crest: a ballfield seen from above with the ball breaking out through the gap." width="228" height="316">
+        <div class="gap-copy">
+          <h2 class="gap-h" data-sc-cue="0.5">Own the gap<span class="ball"></span></h2>
+          <p class="gap-p" data-sc-cue="0.58">Free. Works on the phone you have. Your swings stay on it.</p>
+          <a class="cta" href="/start" data-sc-cue="0.6">Start swinging
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 5l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square"/></svg></a>
+        </div>
+        <footer class="foot" data-sc-cue="0.64">
+          <span id="source-1">1. Wu et al., slow-pitch softball hitting, 10 skilled adult hitters: <a href="https://ojs.ub.uni-konstanz.de/cpa/article/view/5606/5100" rel="noopener">study</a>.</span>
+          <span>Sample footage: Pexels clip 5182770.</span>
+          <a href="/privacy">Privacy</a>
+          <a href="/how-it-works">How it works</a>
+        </footer>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="/site/scrollcraft.js"></script>
+<script>ScrollCraft.mount(document.body);</script>
+<script src="/site/site.js"></script>
+</body>
+</html>

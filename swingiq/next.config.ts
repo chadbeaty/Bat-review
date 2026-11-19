@@ -45,6 +45,15 @@ const nextConfig: NextConfig = {
       "*.css": { loaders: ["@tailwindcss/turbopack"], as: "*.css" },
     },
   },
+  // getgapper.com: visitors without a hitter on this device see the scroll site; hitters get the app. The cookie is
+  // set by PlayerProvider (src/lib/hitterCookie.ts).
+  async rewrites() {
+    return {
+      beforeFiles: [{ source: "/", missing: [{ type: "cookie", key: "gapper_hitter" }], destination: "/site/index.html" }],
+      afterFiles: [],
+      fallback: [],
+    };
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
