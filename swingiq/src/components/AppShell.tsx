@@ -62,23 +62,23 @@ function NewSwingSheet({ open, onClose }: { open: boolean; onClose: () => void }
     <Sheet open={open} onClose={onClose} title="New swing">
       <ul className="space-y-2.5">
         <li>
-          <Link href="/record" onClick={onClose} className="cut press group flex items-center gap-4 rounded-xl bg-optic px-4 py-4 text-optic-ink hover:bg-optic-2">
+          <Link href="/live" onClick={onClose} className="cut press group flex items-center gap-4 rounded-xl bg-optic px-4 py-4 text-optic-ink hover:bg-optic-2">
+            <Softball size={30} />
+            <span className="min-w-0 flex-1">
+              <span className="display block text-[19px] leading-tight">Hit live</span>
+              <span className="block text-[13px] font-semibold opacity-75">Prop up your phone. Feedback after every swing.</span>
+            </span>
+          </Link>
+        </li>
+        <li>
+          <Link href="/record" onClick={onClose} className="press flex items-center gap-4 rounded-xl border border-line-2 bg-night-3 px-4 py-4 hover:border-chalk-3">
             <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
               <rect x="2" y="7" width="19" height="16" rx="3" fill="none" stroke="currentColor" strokeWidth="2.2" />
               <path d="M21 13l7-4v12l-7-4z" fill="currentColor" />
             </svg>
             <span className="min-w-0 flex-1">
-              <span className="display block text-[19px] leading-tight">Record or upload</span>
-              <span className="block text-[13px] font-semibold opacity-75">Every frame analyzed. Slo-mo adds exit velo and bat speed.</span>
-            </span>
-          </Link>
-        </li>
-        <li>
-          <Link href="/live" onClick={onClose} className="press flex items-center gap-4 rounded-xl border border-line-2 bg-night-3 px-4 py-4 hover:border-chalk-3">
-            <Softball size={30} />
-            <span className="min-w-0 flex-1">
-              <span className="display block text-[19px] leading-tight">Live cage session</span>
-              <span className="block text-[13px] text-chalk-3">Phone on the fence. A voice cue after every swing.</span>
+              <span className="display block text-[19px] leading-tight">Upload a video</span>
+              <span className="block text-[13px] text-chalk-3">Or film one now. Slo-mo clips get exit velo and bat speed.</span>
             </span>
           </Link>
         </li>
