@@ -73,7 +73,11 @@ export type MetricKey =
   | "strideDirection"
   | "hipLead"
   | "frontFootSlide"
-  | "handCast";
+  | "handCast"
+  | "handPathAngle"
+  | "contactPoint"
+  | "finishHeight"
+  | "shoulderDrop";
 
 export type MetricValue = {
   key: MetricKey;
@@ -86,12 +90,19 @@ export type MetricValue = {
   confidence: number;
   /** Why it's unavailable or low-confidence, in plain words. */
   reason?: string;
+  /** A supporting number used by scoring and challenges (e.g. stance-to-plant width ratio for stride). */
+  aux?: number;
 };
 
+export type ScoreCategoryKey = "balance" | "timing" | "rotation" | "batPath" | "contact" | "followThrough";
+
 export type ScoreBreakdown = {
-  /** 0–100 composite of the component checks that the footage supported. */
+  /** 0–100: average of the categories the footage supported. */
   overall: number | null;
-  components: { key: string; label: string; score: number; weight: number }[];
+  /** The individual checks, each tied to one measured metric. */
+  components: { key: string; label: string; score: number; weight: number; category?: ScoreCategoryKey; metric?: MetricKey }[];
+  /** Balance, Timing, Rotation, Bat path, Contact, Follow-through. null score = nothing measurable for it. */
+  categories?: { key: ScoreCategoryKey; label: string; score: number | null; inputs: string[]; reason?: string }[];
 };
 
 export type CueTone = "fix" | "praise" | "info";

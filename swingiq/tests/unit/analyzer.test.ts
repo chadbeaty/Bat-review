@@ -137,6 +137,32 @@ describe("swing analyzer: honesty rules", () => {
   });
 });
 
+describe("swing analyzer: bat path, contact and finish", () => {
+  it("reads hand path, contact point, shoulders and finish from the side", () => {
+    const { a } = run({ fps: 60 });
+    for (const k of ["handPathAngle", "contactPoint", "finishHeight", "shoulderDrop"] as MetricKey[]) {
+      expect(a.metrics[k]?.source).toBe("cv_estimated");
+      expect(Number.isFinite(a.metrics[k]?.value)).toBe(true);
+    }
+    // The synthetic hands finish high (62 in) above the shoulders (56 in).
+    expect(a.metrics.finishHeight!.value!).toBeGreaterThan(3);
+  });
+
+  it("says contact point and hand path need the side view", () => {
+    const { a } = run({}, { view: "behind" });
+    expect(a.metrics.contactPoint?.source).toBe("unavailable");
+    expect(a.metrics.handPathAngle?.source).toBe("unavailable");
+  });
+
+  it("scores six categories and leaves unmeasured ones empty", () => {
+    const { a } = run({ fps: 60 });
+    const cats = a.score.categories!;
+    expect(cats.map((c) => c.key)).toEqual(["balance", "timing", "rotation", "batPath", "contact", "followThrough"]);
+    expect(cats.find((c) => c.key === "timing")!.score).not.toBeNull();
+    expect(cats.every((c) => c.score === null || (c.score >= 0 && c.score <= 100))).toBe(true);
+  });
+});
+
 describe("swing analyzer: one cue per swing, based on what happened", () => {
   it("calls out dropped hands", () => {
     const { a } = run({ handDropIn: 7, fps: 60 });

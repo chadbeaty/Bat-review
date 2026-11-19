@@ -26,6 +26,11 @@ export default defineConfig({
       testMatch: /pages\.spec\.ts/,
     },
     {
+      name: "flows",
+      testMatch: /flows\.spec\.ts/,
+      use: { ...devices["Desktop Chrome"], viewport: { width: 430, height: 900 }, launchOptions: { args: ["--autoplay-policy=no-user-gesture-required", "--enable-unsafe-swiftshader"] } },
+    },
+    {
       name: "live-camera",
       testMatch: /live\.spec\.ts/,
       use: {

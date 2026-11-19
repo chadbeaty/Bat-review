@@ -287,6 +287,7 @@ export function analyzeSwing(frames: PoseFrame[], win: SwingWindow, ctx: Analyze
           lb.stanceWidthLegs && lb.plantWidthLegs
             ? `Feet went from ${Math.round(lb.stanceWidthLegs * legIn)} in apart to ${Math.round(lb.plantWidthLegs * legIn)} in at foot down (${(lb.plantWidthLegs / lb.stanceWidthLegs).toFixed(2)}× your stance)`
             : undefined,
+        aux: lb.stanceWidthLegs && lb.plantWidthLegs ? lb.plantWidthLegs / lb.stanceWidthLegs : undefined,
       });
       // Hip center between the rear (0%) and lead (100%) ankle at contact.
       const r = rows[iContact];
@@ -449,13 +450,66 @@ export function analyzeSwing(frames: PoseFrame[], win: SwingWindow, ctx: Analyze
     m.hipLead = unavailable("hipLead", "Couldn't tell when your hips started turning.");
   }
 
+  // ---------- Bat path, contact and finish (from the hands and shoulders) ----------
+  if (ctx.view === "side") {
+    // Hand path through contact: which way the grip is moving from just before to just after contact. This is the
+    // hands, not the barrel: bat path and attack angle need bat tracking.
+    const pre = rows.filter((r) => r.t >= contact - 70 && r.t <= contact + 35);
+    if (pre.length >= 2) {
+      const a = pre[0].hands;
+      const b = pre[pre.length - 1].hands;
+      const dx = Math.abs(b.x - a.x);
+      const dy = a.y - b.y; // image y grows downward, so a rising grip has positive dy
+      if (Math.hypot(dx, dy) / scalePx > 0.15) {
+        const deg = (Math.atan2(dy, dx) * 180) / Math.PI;
+        m.handPathAngle = estimate("handPathAngle", deg, 0.2 + 0.35 * fpsFactor * visFactor, {
+          text: deg > 25 ? "Steeply upward" : deg >= 3 ? "Slightly upward" : deg > -8 ? "Level" : "Downward",
+        });
+      }
+    }
+    if (!m.handPathAngle) m.handPathAngle = unavailable("handPathAngle", "Not enough frames around contact. Faster tracking or a recorded video helps.");
+
+    // Hands at contact relative to the front hip, along the pitch line.
+    const rc = rows[iContact];
+    const leadHipX = rc.lm[s.leadHip].x * g.width;
+    const ahead = (rc.hands.x - leadHipX) * fwd * inPerPx;
+    m.contactPoint = estimate("contactPoint", ahead, 0.3 + 0.35 * visFactor * scaleConfidence * (audioOk ? 1 : 0.8), {
+      text: ahead < -2 ? "Hands behind the front hip (deep)" : ahead <= 12 ? "Out in front of the front hip" : "Far out in front (reaching)",
+      reason: audioOk ? undefined : "Contact moment estimated from peak hand speed (no contact sound heard).",
+    });
+
+    // Back-shoulder drop at contact: shoulder line tilt, back shoulder low = positive.
+    const ls = rc.leadShoulder;
+    const rs = rc.rearShoulder;
+    const tilt = (Math.atan2(rs.y - ls.y, Math.abs(ls.x - rs.x) + 1e-6) * 180) / Math.PI;
+    m.shoulderDrop = estimate("shoulderDrop", tilt, 0.25 + 0.3 * visFactor, {
+      text: tilt > 40 ? "Back shoulder dropped a lot" : tilt > 25 ? "Back shoulder lower" : "Shoulders fairly level",
+    });
+  } else {
+    const why = "Shows best from the side view.";
+    m.handPathAngle = unavailable("handPathAngle", why);
+    m.contactPoint = unavailable("contactPoint", why);
+    m.shoulderDrop = unavailable("shoulderDrop", why);
+  }
+
+  // Finish height: highest the hands get after contact, relative to the shoulders (+ = above).
+  const fin = rows.filter((r) => r.t > contact && r.t <= finish + 250);
+  if (fin.length >= 2) {
+    const best = Math.max(...fin.map((r) => (r.leadShoulder.y + r.rearShoulder.y) / 2 - r.hands.y));
+    m.finishHeight = estimate("finishHeight", best * inPerPx, 0.3 + 0.35 * visFactor * scaleConfidence, {
+      text: best >= 0 ? "Hands finished at or above the shoulders" : "Hands finished low",
+    });
+  } else {
+    m.finishHeight = unavailable("finishHeight", "The clip ended before the finish.");
+  }
+
   if (ctx.micOn) {
     m.contact = { key: "contact", source: "measured", value: audioOk ? 1 : 0, confidence: 0.8, text: audioOk ? "Contact" : "No contact heard" };
   } else {
     m.contact = unavailable("contact", "Mic is off. Turn on “Listen for contact” in the session settings.");
   }
 
-  const score = scoreSwing(m, ctx.view, ctx.heightIn, { widthRatio: lb.stanceWidthLegs && lb.plantWidthLegs ? lb.plantWidthLegs / lb.stanceWidthLegs : null });
+  const score = scoreSwing(m, ctx.view);
   const observations = buildCues(m, { view: ctx.view, micOn: ctx.micOn, previous: ctx.previous?.[0], headFwdIn, headDownIn, legIn, lateFoot: lb.lateFoot,
     widthRatio: lb.stanceWidthLegs && lb.plantWidthLegs ? lb.plantWidthLegs / lb.stanceWidthLegs : null });
   const handPath = rows

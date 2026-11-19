@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { METRICS } from "@/engine/catalog";
 import type { SetupCheck } from "@/engine/setup";
@@ -11,6 +11,7 @@ import { shouldSpeak, voice } from "@/live/voice";
 import { compactPose, db, uid } from "@/lib/store/db";
 import type { Bat, Session, SwingRecord } from "@/lib/store/types";
 import { ClipPlayer } from "../ClipPlayer";
+import { challengeProgress, coachingFor } from "@/engine/coaching";
 import { BASIC_SLOTS, CueLine, GroupedMetrics, displayValue } from "../Metrics";
 import { PlayerForm } from "../PlayerForm";
 import { usePlayers } from "../PlayerProvider";
@@ -41,6 +42,13 @@ export function LiveSession() {
   const [flash, setFlash] = useState<"swing" | "contact" | null>(null);
   const [micNote, setMicNote] = useState(false);
   const [review, setReview] = useState<SwingRecord | null>(null);
+  const searchParams = useSearchParams();
+  // A 10-swing challenge: started from a swing's coach card (?challenge=issue) or from the result card.
+  const [challenge, setChallenge] = useState<{ issueId: string; startN: number; target?: number } | null>(() => {
+    const id = searchParams.get("challenge");
+    const target = Number(searchParams.get("target"));
+    return id ? { issueId: id, startN: 0, target: Number.isFinite(target) && target > 0 ? target : undefined } : null;
+  });
   const [now, setNow] = useState(() => Date.now());
   const [notes, setNotes] = useState("");
   const [startedAt, setStartedAt] = useState<number | null>(null);
@@ -108,6 +116,8 @@ export function LiveSession() {
         pose: compactPose(cap.pose),
         frameSize: cap.frameSize,
         clipFrames: 0,
+        batId: sess.batId,
+        source: "live",
       };
       swingsRef.current = [...swingsRef.current, rec];
       setSwings(swingsRef.current);
@@ -508,6 +518,25 @@ export function LiveSession() {
             </div>
           </div>
 
+          {challenge && (() => {
+            const run = swings.filter((s) => s.n > challenge.startN);
+            const c = coachingFor({ id: challenge.issueId, tone: "fix", text: "", spoken: "", basedOn: [] }, {}, challenge.target ?? null).challenge;
+            const prog = challengeProgress(c, run.map((s) => s.analysis.metrics), run.map((s) => s.analysis.score.overall), challenge.target);
+            const done = prog.counted >= 10;
+            return (
+              <div role="status" className="mx-4 mt-3 flex max-w-sm items-center gap-3 self-start rounded-xl bg-night/85 px-3 py-2 text-[13px] backdrop-blur">
+                <span className="min-w-0 flex-1">
+                  <span className="block font-bold text-optic">{done ? "Challenge done" : "10-swing challenge"}</span>
+                  <span className="block text-chalk-2">{c.goal}</span>
+                </span>
+                <span className="num text-xl text-chalk" aria-label={`${prog.passed} of ${Math.min(10, prog.counted)} swings hit the goal`}>
+                  {prog.passed}/{Math.min(10, prog.counted)}
+                </span>
+                <button type="button" onClick={() => setChallenge(null)} className="text-chalk-3" aria-label="End challenge">✕</button>
+              </div>
+            );
+          })()}
+
           {feetOut && !paused && (
             <p role="status" className="mx-4 mt-3 self-start rounded-xl bg-stitch px-3 py-2 text-[13px] font-bold text-chalk">
               Feet out of the picture: leg and foot numbers are off until your shoes are back in view.
@@ -542,8 +571,43 @@ export function LiveSession() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <CueLine cue={last.analysis.cue} large />
+                    {(() => {
+                      // Next swing vs. the previous one, on the thing being coached.
+                      const prev = swings.length > 1 ? swings[swings.length - 2] : null;
+                      const k = last.analysis.cue.basedOn[0];
+                      const now = k ? last.analysis.metrics[k] : undefined;
+                      const was = k && prev ? prev.analysis.metrics[k] : undefined;
+                      if (!k || !now || !was || now.source === "unavailable" || was.source === "unavailable") return null;
+                      return (
+                        <p className="mt-1.5 text-[12px] text-chalk-3">
+                          {METRICS[k].label}: <span className="num text-chalk">{displayValue(now)}</span>
+                          {METRICS[k].suffix && ` ${METRICS[k].suffix}`} · last swing {displayValue(was)}
+                          {METRICS[k].suffix && ` ${METRICS[k].suffix}`}
+                        </p>
+                      );
+                    })()}
                   </div>
                 </div>
+                {(() => {
+                  const coach = coachingFor(last.analysis.cue, last.analysis.metrics, last.analysis.score.overall);
+                  return (
+                    <div className="mt-3 flex items-center justify-between gap-3 rounded-xl bg-night-3 px-3 py-2 text-[12px]">
+                      <span className="min-w-0 text-chalk-2">
+                        <span className="text-chalk-3">Drill: </span>
+                        {coach.drill.name}
+                      </span>
+                      {challenge?.issueId !== coach.issueId && (
+                        <button
+                          type="button"
+                          onClick={() => setChallenge({ issueId: coach.issueId, startN: last.n, target: coach.issueId === "repeat" && last.analysis.score.overall !== null ? Math.max(0, last.analysis.score.overall - 5) : undefined })}
+                          className="shrink-0 rounded-lg border border-optic/60 px-2 py-1 font-bold text-optic"
+                        >
+                          Start 10-swing challenge
+                        </button>
+                      )}
+                    </div>
+                  );
+                })()}
                 {settings.advancedView ? (
                   <div className="mt-3 max-h-[34dvh] overflow-y-auto pr-1">
                     <GroupedMetrics metrics={last.analysis.metrics} />

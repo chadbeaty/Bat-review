@@ -55,13 +55,20 @@ function SwingsInner() {
             <button type="button" onClick={() => router.push("/swings")} className="rounded-lg border border-line px-3 py-1.5 text-sm text-chalk-2">
               All sessions
             </button>
+          ) : swings.length >= 2 ? (
+            <Link href="/compare" className="rounded-lg border border-line px-3 py-1.5 text-sm text-chalk-2">
+              Compare
+            </Link>
           ) : null
         }
       />
       {sessions !== null && grouped.length === 0 && (
         <Empty title="No swings yet">
           <p>Start a live session and every swing you take shows up here, with video and a frame-by-frame breakdown.</p>
-          <ButtonLink href="/live" className="mt-5">Start live session</ButtonLink>
+          <div className="mt-5 flex flex-wrap justify-center gap-3">
+            <ButtonLink href="/record">Record a swing</ButtonLink>
+            <ButtonLink href="/live" variant="ghost">Start live session</ButtonLink>
+          </div>
         </Empty>
       )}
       <div className="space-y-8">
@@ -72,6 +79,7 @@ function SwingsInner() {
                 {fmtDate(session.startedAt)} <span className="font-normal text-chalk-3">· {fmtTime(session.startedAt)}</span>
               </h2>
               <span className="text-[13px] text-chalk-3">
+                {session.kind === "video" ? "From video · " : ""}
                 {VIEW_LABEL[session.view]}
                 {session.avgScore !== null && ` · avg ${session.avgScore}`}
               </span>
@@ -86,6 +94,8 @@ function SwingsInner() {
                       <span className="w-8 text-sm text-chalk-3">#{s.n}</span>
                       <span className={`num w-12 text-2xl ${best ? "text-optic" : "text-chalk"}`}>{s.analysis.score.overall ?? "—"}</span>
                       <span className="min-w-0 flex-1 truncate text-[14px] text-chalk-2">{s.analysis.cue.spoken}</span>
+                      {s.pb && <span className="text-optic" aria-label="Personal best">★</span>}
+                      {s.source === "video" && <span className="rounded-md border border-optic/40 px-1.5 py-0.5 text-[11px] text-optic">video</span>}
                       {s.tag?.type && <span className="rounded-md border border-line px-1.5 py-0.5 text-[11px] text-chalk-2">{s.tag.type}</span>}
                       <span className="text-chalk-3" aria-hidden="true">›</span>
                     </Link>

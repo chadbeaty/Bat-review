@@ -158,6 +158,50 @@ const RULES: Rule[] = [
     improved: { text: "Better: your hands stayed tight to your body.", spoken: "Better. Hands tight." },
   },
   {
+    id: "shoulderDrop",
+    basedOn: ["shoulderDrop"],
+    severity: (m) => {
+      const v = val(m, "shoulderDrop", 0.25);
+      return v === null ? 0 : (v - 40) / 12;
+    },
+    text: "Your back shoulder dropped a lot at contact. Keep your shoulders more level and drive through the middle of the ball.",
+    spoken: "Level shoulders.",
+    improved: { text: "Better: your shoulders stayed more level.", spoken: "Better. Level shoulders." },
+  },
+  {
+    id: "uppercut",
+    basedOn: ["handPathAngle"],
+    severity: (m) => {
+      const v = val(m, "handPathAngle", 0.25);
+      return v === null ? 0 : (v - 30) / 12;
+    },
+    text: "Your hands were swinging steeply upward through contact. Flatten it out: aim for line drives up the middle, not lift.",
+    spoken: "Flatter. Line drives.",
+    improved: { text: "Better: a flatter path through contact.", spoken: "Better. Flatter path." },
+  },
+  {
+    id: "chop",
+    basedOn: ["handPathAngle"],
+    severity: (m) => {
+      const v = val(m, "handPathAngle", 0.25);
+      return v === null ? 0 : (-12 - v) / 10;
+    },
+    text: "Your hands were moving down through contact. Stay behind the ball and match its path with a slightly upward swing.",
+    spoken: "Stay behind it. Finish high.",
+    improved: { text: "Better: your hands came through level or slightly up.", spoken: "Better path." },
+  },
+  {
+    id: "contactDeep",
+    basedOn: ["contactPoint"],
+    severity: (m) => {
+      const v = val(m, "contactPoint", 0.3);
+      return v === null ? 0 : (-3 - v) / 5;
+    },
+    text: "You made contact with your hands behind your front hip. Get the foot down a beat earlier so you meet the ball out in front.",
+    spoken: "Meet it out front.",
+    improved: { text: "Better: you met the ball out in front.", spoken: "Better. Out front." },
+  },
+  {
     id: "overstride",
     basedOn: ["strideLength"],
     severity: (_m, c) => (c.widthRatio ? (c.widthRatio - 1.6) / 0.4 : 0),
@@ -172,6 +216,11 @@ export function buildCues(m: Metrics, c: CueContext): Cue[] {
     .filter((x) => x.sev > 0)
     .sort((a, b) => b.sev - a.sev)
     .map(({ r }): Cue => ({ id: r.id, tone: "fix", text: r.text, spoken: r.spoken, basedOn: r.basedOn }));
+  // Root causes before symptoms: deep contact usually comes from drifting forward or a late front foot, so when
+  // either is present, coach that first.
+  const deep = fixes.findIndex((f) => f.id === "contactDeep");
+  const cause = fixes.findIndex((f) => f.id === "drift" || f.id === "lateFoot");
+  if (deep >= 0 && cause > deep) fixes.splice(cause + 1, 0, fixes.splice(deep, 1)[0]);
 
   const improvements: Cue[] = [];
   if (c.previous) {

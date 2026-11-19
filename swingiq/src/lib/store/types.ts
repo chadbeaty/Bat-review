@@ -3,12 +3,37 @@ import type { CameraView, Handedness, ManualHitTag, PoseFrame, SwingAnalysis } f
 import type { ModelQuality } from "@/live/pose";
 import type { VoiceFrequency } from "@/live/voice";
 
+export type PlayingLevel = "rec" | "league" | "competitive" | "tournament" | "senior";
+export type Position = "P" | "C" | "1B" | "2B" | "3B" | "SS" | "LF" | "LCF" | "RCF" | "RF" | "Rover" | "EH" | "Utility";
+export type HittingGoal = "power" | "liners" | "consistency" | "oppo" | "fewerPopups" | "fewerGrounders" | "timing";
+
+export const LEVEL_LABEL: Record<PlayingLevel, string> = {
+  rec: "Recreational",
+  league: "League",
+  competitive: "Competitive (C/D)",
+  tournament: "Tournament (A/B and up)",
+  senior: "Senior",
+};
+export const POSITIONS: Position[] = ["P", "C", "1B", "2B", "3B", "SS", "LF", "LCF", "RCF", "RF", "Rover", "EH", "Utility"];
+export const GOAL_LABEL: Record<HittingGoal, string> = {
+  power: "More power",
+  liners: "More line drives",
+  consistency: "More consistent",
+  oppo: "Hit to the opposite field",
+  fewerPopups: "Fewer pop-ups",
+  fewerGrounders: "Fewer ground balls",
+  timing: "Better timing",
+};
+
 export type Player = {
   id: string;
   name: string;
   hand: Handedness;
   heightIn: number;
   createdAt: number;
+  level?: PlayingLevel;
+  positions?: Position[];
+  goals?: HittingGoal[];
   /** Supabase player_profiles.id once synced. */
   remoteId?: string | null;
 };
@@ -21,12 +46,24 @@ export type Bat = {
   lengthIn: number | null;
   weightOz: number | null;
   certification: string;
+  /** Balance class: where the weight sits. */
+  balance?: BatBalance;
   createdAt: number;
+};
+
+export type BatBalance = "balanced" | "half-end" | "end-loaded" | "unknown";
+export const BALANCE_LABEL: Record<BatBalance, string> = {
+  balanced: "Balanced",
+  "half-end": "Half-ounce end load",
+  "end-loaded": "End-loaded (1 oz or more)",
+  unknown: "Not sure",
 };
 
 export type Session = {
   id: string;
   playerId: string;
+  /** "live" session or a processed "video". Older sessions have none (live). */
+  kind?: "live" | "video";
   view: CameraView;
   startedAt: number;
   endedAt: number | null;
@@ -54,6 +91,14 @@ export type SwingRecord = {
   pose: PoseFrame[];
   frameSize: { width: number; height: number };
   clipFrames: number;
+  /** Bat used for this swing (from the session, changeable per swing). */
+  batId?: string | null;
+  /** "live": measured in real time during a live session. "video": processed from a recorded or uploaded video, every frame. */
+  source?: "live" | "video";
+  /** For processed videos: slow-motion factor the user set (1 = real speed). */
+  slowMo?: number;
+  /** Player marked this as their personal best / model swing. */
+  pb?: boolean;
   tag?: ManualHitTag;
   note?: string;
   external?: ExternalMeasurement[];

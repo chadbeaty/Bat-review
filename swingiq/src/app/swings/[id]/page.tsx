@@ -5,13 +5,15 @@ import { useEffect, useMemo, useState } from "react";
 import { ArcScore } from "@/components/ArcScore";
 import { ClipPlayer } from "@/components/ClipPlayer";
 import { CueLine, GroupedMetrics, averageMetrics } from "@/components/Metrics";
+import { CoachCard, CompareLink, ScoreCategories, SourceBadge } from "@/components/ScoreParts";
 import { usePlayers } from "@/components/PlayerProvider";
 import { Button, Panel, Segmented, SectionTitle, fmtDate, fmtTime } from "@/components/ui";
 import { METRICS } from "@/engine/catalog";
+import { coachingFor } from "@/engine/coaching";
 import { EXTERNAL_LIMITS, applyExternal, validExternal, type ExternalKey } from "@/engine/external";
 import type { HitDirection, HitType, MetricKey } from "@/engine/types";
 import { db } from "@/lib/store/db";
-import type { ClipRecord, SwingRecord } from "@/lib/store/types";
+import type { Bat, ClipRecord, SwingRecord } from "@/lib/store/types";
 
 const TYPES: { value: HitType; label: string }[] = [
   { value: "grounder", label: "Grounder" },
@@ -39,6 +41,9 @@ export default function SwingDetail() {
   const [extVal, setExtVal] = useState("");
   const [extDevice, setExtDevice] = useState("");
   const [extErr, setExtErr] = useState<string | null>(null);
+  const [bats, setBats] = useState<Bat[]>([]);
+  const [prevId, setPrevId] = useState<string | null>(null);
+  const [pbId, setPbId] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -49,6 +54,15 @@ export default function SwingDetail() {
       setClip((await db.clip(id)) ?? null);
       const all = await db.swingsForPlayer(s.playerId);
       setAverages(averageMetrics(all.filter((x) => x.id !== s.id).slice(0, 50).map((x) => x.analysis.metrics)));
+      // all is newest first: the previous swing is the next one in the list after this one.
+      const i = all.findIndex((x) => x.id === s.id);
+      setPrevId(i >= 0 && i + 1 < all.length ? all[i + 1].id : null);
+      setPbId(all.find((x) => x.pb)?.id ?? null);
+      setBats(await db.bats(s.playerId));
+      if (s.batId === undefined) {
+        const sess = await db.session(s.sessionId);
+        if (sess?.batId) setSwing({ ...s, batId: sess.batId });
+      }
     })().catch(() => setSwing(null));
   }, [id]);
 
@@ -93,6 +107,17 @@ export default function SwingDetail() {
     router.push("/swings");
   }
 
+  async function togglePb() {
+    if (!swing) return;
+    const on = !swing.pb;
+    if (on) {
+      // One personal best per hitter: unmark the old one.
+      for (const x of await db.swingsForPlayer(swing.playerId)) if (x.pb && x.id !== swing.id) await db.saveSwing({ ...x, pb: false });
+    }
+    await update({ pb: on });
+    setPbId(on ? swing.id : null);
+  }
+
   async function removeVideo() {
     if (!swing || !confirm("Delete the video for this swing? The tracking data and numbers stay.")) return;
     await db.deleteClip(swing.id);
@@ -116,8 +141,20 @@ export default function SwingDetail() {
         <Link href={`/swings?session=${swing.sessionId}`} className="-ml-2 rounded-lg px-2 py-2 text-[15px] text-chalk-2 hover:text-chalk">← Session</Link>
         <span className="text-[13px] text-chalk-3">{fmtDate(swing.at)} · {fmtTime(swing.at)}</span>
       </div>
-      <div className="mt-2 flex items-end justify-between gap-4">
+      <div className="mt-2 flex flex-wrap items-end justify-between gap-3">
         <h1 className="display text-[2rem] leading-none">Swing {swing.n}</h1>
+        <button
+          type="button"
+          onClick={togglePb}
+          aria-pressed={!!swing.pb}
+          className={`min-h-10 rounded-xl border px-3 text-sm ${swing.pb ? "border-optic bg-optic font-bold text-optic-ink" : "border-line text-chalk-2 hover:text-chalk"}`}
+        >
+          {swing.pb ? "★ Personal best" : "☆ Mark as personal best"}
+        </button>
+      </div>
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <SourceBadge source={swing.source} />
+        {swing.source === "video" && swing.slowMo && swing.slowMo > 1 && <span className="text-[11px] text-chalk-3">slow motion corrected {swing.slowMo}×</span>}
         {player && swing.playerId !== player.id && <span className="text-xs text-chalk-3">Another hitter&apos;s swing</span>}
       </div>
 
@@ -143,24 +180,47 @@ export default function SwingDetail() {
               ))}
             </div>
           )}
-          {a.score.components.length > 0 && (
-            <div className="mt-5">
-              <p className="mb-2 text-xs text-chalk-3">What went into the score</p>
-              <ul className="space-y-2">
-                {a.score.components.map((c) => (
-                  <li key={c.key} className="flex items-center gap-3 text-[13px]">
-                    <span className="w-36 shrink-0 text-chalk-2">{c.label}</span>
-                    <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-night-4">
-                      <span className={`block h-full ${c.score >= 75 ? "bg-optic" : c.score >= 50 ? "bg-amber" : "bg-stitch"}`} style={{ width: `${c.score}%` }} />
-                    </span>
-                    <span className="num w-8 text-right text-chalk">{c.score}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          <div className="mt-5">
+            <ScoreCategories analysis={a} view={swing.view} />
+          </div>
         </div>
       </div>
+
+      <div className="mt-6">
+        <CoachCard
+          analysis={a}
+          action={
+            <Link
+              href={`/live?challenge=${encodeURIComponent(coachingFor(a.cue, a.metrics, a.score.overall).issueId)}${a.score.overall !== null ? `&target=${Math.max(0, a.score.overall - 5)}` : ""}`}
+              className="inline-flex min-h-11 items-center rounded-xl bg-optic px-4 text-[15px] font-bold text-optic-ink"
+            >
+              Take the challenge live
+            </Link>
+          }
+        />
+      </div>
+
+      <div className="mt-4 flex flex-wrap gap-3">
+        {prevId && <CompareLink a={swing.id} b={prevId}>Compare with previous swing</CompareLink>}
+        {pbId && pbId !== swing.id && <CompareLink a={swing.id} b={pbId}>Compare with my best</CompareLink>}
+      </div>
+
+      {bats.length > 0 && (
+        <div className="mt-6">
+          <label htmlFor="sbat" className="mb-2 block text-sm text-chalk-2">Bat used</label>
+          <select
+            id="sbat"
+            value={swing.batId ?? ""}
+            onChange={(e) => update({ batId: e.target.value || null })}
+            className="min-h-12 w-full max-w-sm rounded-xl border border-line bg-night-2 px-3 text-[16px] text-chalk"
+          >
+            <option value="">No bat recorded</option>
+            {bats.map((b) => (
+              <option key={b.id} value={b.id}>{b.brand} {b.model}</option>
+            ))}
+          </select>
+        </div>
+      )}
 
       <SectionTitle>Numbers</SectionTitle>
       <p className="-mt-1 mb-2 text-[13px] text-chalk-3">Tap any row for what it means and exactly how it was measured.</p>
