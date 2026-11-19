@@ -40,6 +40,8 @@ export type LowerBodyResult = {
   lateFoot: boolean;
   /** Stride along the pitch line, leg lengths (side view only). */
   strideLegs: number | null;
+  /** How far the front foot (heel/ankle) kept moving between plant and contact, leg lengths ("happy feet"). */
+  footSlideLegs: number | null;
   /** Ankle-to-ankle distance in the stance and at foot plant, leg lengths (side view only). */
   stanceWidthLegs: number | null;
   plantWidthLegs: number | null;
@@ -107,6 +109,7 @@ export function analyzeLowerBody(
     footPlant: null,
     lateFoot: false,
     strideLegs: null,
+    footSlideLegs: null,
     stanceWidthLegs: null,
     plantWidthLegs: null,
     strideOffsetLegs: null,
@@ -243,6 +246,15 @@ export function analyzeLowerBody(
     }
   } else if (!before.length && view === "side") strideLegs = 0;
 
+  // Happy feet: the heel/ankle should stay put after plant (the toes may pivot open, which we don't count).
+  const iContactL = nearest(ts, ctx.contact);
+  let footSlideLegs: number | null = null;
+  if (iPlant !== null && iContactL > iPlant) {
+    let maxD = 0;
+    for (let i = iPlant; i <= iContactL; i++) maxD = Math.max(maxD, Math.hypot(fx[i] - fx[iPlant], fy[i] - fy[iPlant]) / legLen);
+    footSlideLegs = maxD;
+  }
+
   // Base width (side view): ankle to ankle along the pitch line, in the stance and at plant.
   const ankleGap = (i: number) => Math.abs(frames[i].lm[s.leadAnkle].x - frames[i].lm[s.rearAnkle].x) * g.width / legLen;
   const stanceWidthLegs = view === "side" ? median(stanceIdx.map(ankleGap)) : null;
@@ -317,6 +329,7 @@ export function analyzeLowerBody(
     footPlant,
     lateFoot,
     strideLegs,
+    footSlideLegs,
     stanceWidthLegs,
     plantWidthLegs,
     strideOffsetLegs,

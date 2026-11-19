@@ -10,7 +10,7 @@ import { db } from "@/lib/store/db";
 import type { Session, SwingRecord } from "@/lib/store/types";
 
 type Range = "30d" | "season" | "all";
-const TREND_KEYS: MetricKey[] = ["swingTime", "headMovement", "handDrop", "balance", "handSpeed", "strideLength"];
+const TREND_KEYS: MetricKey[] = ["strideTiming", "frontLegBlock", "frontFootSlide", "swingTime", "headMovement", "handDrop", "balance", "strideLength", "handSpeed"];
 
 export default function ProgressPage() {
   const { ready, player } = usePlayers();

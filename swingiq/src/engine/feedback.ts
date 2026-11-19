@@ -136,6 +136,28 @@ const RULES: Rule[] = [
     improved: { text: "Better: you stayed taller on your back side.", spoken: "Better. Stayed tall." },
   },
   {
+    id: "happyFeet",
+    basedOn: ["frontFootSlide"],
+    severity: (m) => {
+      const v = val(m, "frontFootSlide");
+      return v === null ? 0 : (v - 4) / 3;
+    },
+    text: "Your front foot kept moving after it landed. Plant it early and turn around it.",
+    spoken: "Plant and turn.",
+    improved: { text: "Better: your front foot stayed planted.", spoken: "Better. Planted." },
+  },
+  {
+    id: "barCast",
+    basedOn: ["handCast"],
+    severity: (m) => {
+      const v = val(m, "handCast", 0.25);
+      return v === null ? 0 : (v - 40) / 25;
+    },
+    text: "Your hands pushed away from your body before your hips turned. Keep them tight until the hips start.",
+    spoken: "Hands tight. Hips first.",
+    improved: { text: "Better: your hands stayed tight to your body.", spoken: "Better. Hands tight." },
+  },
+  {
     id: "overstride",
     basedOn: ["strideLength"],
     severity: (_m, c) => (c.widthRatio ? (c.widthRatio - 1.6) / 0.4 : 0),

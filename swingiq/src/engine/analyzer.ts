@@ -262,7 +262,7 @@ export function analyzeSwing(frames: PoseFrame[], win: SwingWindow, ctx: Analyze
   const feetReason = lb.reason ?? "Your feet weren't visible. Move the phone back so you're in the picture head to toe.";
   const legConf = clamp((lb.feetVisibility - 0.4) / 0.5, 0.2, 1);
   if (!lb.available) {
-    for (const k of ["strideLength", "weightShift", "strideTiming", "timingStyle", "frontLegBlock", "backHeel", "strideDirection", "backKnee"] as const) {
+    for (const k of ["strideLength", "weightShift", "strideTiming", "timingStyle", "frontLegBlock", "backHeel", "strideDirection", "backKnee", "frontFootSlide"] as const) {
       m[k] = unavailable(k, feetReason);
     }
   } else {
@@ -310,6 +310,16 @@ export function analyzeSwing(frames: PoseFrame[], win: SwingWindow, ctx: Analyze
       } else {
         m.strideDirection = unavailable("strideDirection", "No stride to measure.");
       }
+    }
+
+    // Happy feet: did the front foot stay planted between landing and contact?
+    if (lb.footSlideLegs !== null) {
+      const inches = lb.footSlideLegs * legIn;
+      m.frontFootSlide = estimate("frontFootSlide", inches, 0.3 + 0.4 * legConf * fpsFactor, {
+        text: inches < 2 ? "Stayed planted" : inches < 4 ? "Settled a little" : "Kept moving after landing",
+      });
+    } else {
+      m.frontFootSlide = unavailable("frontFootSlide", footPlant === null ? "Needs a foot-down moment." : "Your foot landed right at contact.");
     }
 
     // Front-leg block: change in front-knee angle from foot plant to contact (+ = straightened, firming up).
@@ -362,6 +372,23 @@ export function analyzeSwing(frames: PoseFrame[], win: SwingWindow, ctx: Analyze
         ? `${Math.abs(headFwdIn).toFixed(1)} in ${headFwdIn >= 0 ? "toward the pitcher" : "back"}, ${Math.abs(headDownIn).toFixed(1)} in ${headDownIn >= 0 ? "down" : "up"}`
         : undefined,
   });
+
+  // Bar cast: do the hands push away from the body early in the swing, before the hips have turned? Side view
+  // proxy: grip-to-back-shoulder distance halfway from launch to contact vs. at launch.
+  if (ctx.view === "side" && contact - launch >= 60) {
+    const gripDist = (r: Row) => dist(r.hands, r.rearShoulder) / scalePx;
+    const iMid = at(rows, launch + (contact - launch) / 2);
+    const d0 = gripDist(rows[iLaunch0]);
+    const d1 = gripDist(rows[iMid]);
+    if (d0 > 0.1 && iMid > iLaunch0) {
+      const pct = ((d1 - d0) / d0) * 100;
+      m.handCast = estimate("handCast", pct, 0.2 + 0.25 * fpsFactor * visFactor, {
+        text: pct < 20 ? "Hands stayed tight to the body" : pct < 40 ? "Hands drifted out a little" : "Hands pushed away early (casting)",
+      });
+    }
+  } else if (ctx.view !== "side") {
+    m.handCast = unavailable("handCast", "Casting shows best from the side.");
+  }
 
   // Hand drop: how far the grip sinks RELATIVE TO THE SHOULDERS between stance and launch (image y grows downward).
   // Measured against the shoulders, not the ground, so sinking into the legs during the load isn't called a hand drop.

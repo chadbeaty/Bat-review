@@ -3,32 +3,27 @@ import { useState } from "react";
 import { METRICS, SOURCE_LABEL, confidenceLabel, formatMetric } from "@/engine/catalog";
 import type { Cue, MetricKey, MetricValue } from "@/engine/types";
 
-export const BASIC_KEYS: MetricKey[] = ["swingTime", "headMovement", "handDrop", "balance", "contact"];
-export const ADVANCED_ORDER: MetricKey[] = [
-  "swingTime",
-  "loadTime",
-  "tempoRatio",
-  "strideTiming",
-  "handSpeed",
-  "batSpeed",
-  "exitVelocity",
-  "launchAngle",
-  "attackAngle",
-  "headMovement",
-  "handDrop",
-  "strideLength",
-  "weightShift",
-  "balance",
-  "hipTurn",
-  "shoulderTurn",
-  "separation",
-  "sequence",
-  "contact",
+/** Live result card chips, first available wins per slot. */
+export const BASIC_SLOTS: MetricKey[][] = [["strideTiming", "swingTime"], ["frontLegBlock", "weightShift", "handDrop"], ["headMovement", "balance"]];
+export const BASIC_KEYS: MetricKey[] = ["strideTiming", "frontLegBlock", "headMovement", "swingTime", "balance"];
+
+export const METRIC_GROUPS: { title: string; keys: MetricKey[] }[] = [
+  {
+    title: "Legs and feet",
+    keys: ["timingStyle", "strideTiming", "strideLength", "frontFootSlide", "frontLegBlock", "backKnee", "backHeel", "weightShift", "strideDirection"],
+  },
+  { title: "Timing", keys: ["swingTime", "loadTime", "tempoRatio"] },
+  { title: "Upper body", keys: ["headMovement", "handDrop", "handCast", "balance", "hipLead"] },
+  { title: "Bat and ball", keys: ["handSpeed", "batSpeed", "exitVelocity", "launchAngle", "attackAngle", "contact"] },
 ];
+export const ADVANCED_ORDER: MetricKey[] = METRIC_GROUPS.flatMap((g) => g.keys);
+
+/** Metrics shown as words, not numbers (either they're categories, or one camera only supports a description). */
+export const TEXT_METRICS = new Set<MetricKey>(["sequence", "contact", "timingStyle", "backKnee", "hipLead", "strideDirection"]);
 
 export function displayValue(mv: MetricValue): string {
-  if (mv.key === "sequence") return mv.text ?? "—";
   if (mv.key === "contact") return mv.text ?? (mv.value ? "Contact" : "—");
+  if (TEXT_METRICS.has(mv.key)) return mv.text ?? "—";
   return formatMetric(mv.key, mv.value);
 }
 
@@ -82,7 +77,7 @@ export function MetricRow({ mv, avg }: { mv: MetricValue; avg?: number }) {
         <span className="shrink-0 text-right">
           {na ? (
             <span className="num text-2xl text-chalk-3" aria-hidden="true">—</span>
-          ) : mv.key === "sequence" || mv.key === "contact" ? (
+          ) : TEXT_METRICS.has(mv.key) ? (
             <span className="block max-w-[11rem] text-[15px] font-bold leading-snug text-chalk">{displayValue(mv)}</span>
           ) : (
             <>
@@ -97,7 +92,7 @@ export function MetricRow({ mv, avg }: { mv: MetricValue; avg?: number }) {
           {na ? <p>{mv.reason}</p> : <p>{info.explain}</p>}
           {open && (
             <>
-              {mv.text && mv.key !== "sequence" && mv.key !== "contact" && <p className="text-chalk">{mv.text}</p>}
+              {mv.text && !TEXT_METRICS.has(mv.key) && <p className="text-chalk">{mv.text}</p>}
               {!na && mv.reason && <p className="text-amber">{mv.reason}</p>}
               <p className="text-chalk-3">
                 <span className="text-chalk-2">How it&apos;s measured:</span> {info.method}
@@ -118,6 +113,23 @@ export function MetricList({ metrics, keys, averages }: { metrics: Partial<Recor
         <MetricRow key={mv.key} mv={mv} avg={averages?.[mv.key]} />
       ))}
     </ul>
+  );
+}
+
+/** Metrics in sections: legs and feet first. Sections with nothing to show are skipped. */
+export function GroupedMetrics({ metrics, averages }: { metrics: Partial<Record<MetricKey, MetricValue>>; averages?: Partial<Record<MetricKey, number>> }) {
+  return (
+    <div className="space-y-6">
+      {METRIC_GROUPS.map((g) => {
+        if (!g.keys.some((k) => metrics[k])) return null;
+        return (
+          <section key={g.title} aria-label={g.title}>
+            <h3 className="mb-1 text-sm font-bold text-optic">{g.title}</h3>
+            <MetricList metrics={metrics} keys={g.keys} averages={averages} />
+          </section>
+        );
+      })}
+    </div>
   );
 }
 

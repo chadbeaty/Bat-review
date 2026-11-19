@@ -11,7 +11,7 @@ import { shouldSpeak, voice } from "@/live/voice";
 import { compactPose, db, uid } from "@/lib/store/db";
 import type { Bat, Session, SwingRecord } from "@/lib/store/types";
 import { ClipPlayer } from "../ClipPlayer";
-import { CueLine, MetricList, ADVANCED_ORDER, BASIC_KEYS, displayValue } from "../Metrics";
+import { BASIC_SLOTS, CueLine, GroupedMetrics, displayValue } from "../Metrics";
 import { PlayerForm } from "../PlayerForm";
 import { usePlayers } from "../PlayerProvider";
 import { Softball } from "../Softball";
@@ -69,6 +69,11 @@ export function LiveSession() {
     if (stage !== "live") return;
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
+  }, [stage]);
+
+  // Setup shows the whole camera frame (so the feet are visible above the checklist); batting fills the screen.
+  useEffect(() => {
+    if (engineRef.current) engineRef.current.fit = stage === "setup" ? "contain" : "cover";
   }, [stage]);
 
   // Stop the camera when leaving the page.
@@ -211,6 +216,7 @@ export function LiveSession() {
   // Hands-free start: once every check has passed for two seconds, start the session.
   const checks: SetupCheck[] = tick?.checks ?? [];
   const isReady = readyToBat(checks);
+  const feetOut = (tick?.hasBody ?? false) && checks.find((c) => c.id === "body")?.status !== "ok";
   useEffect(() => {
     if (stage !== "setup" || !isReady) return;
     const id = setTimeout(beginBatting, 2000);
@@ -297,8 +303,28 @@ export function LiveSession() {
   return (
     <div className="relative min-h-dvh bg-night">
       {/* Camera layer: always mounted so the engine has its elements. */}
-      <div className={`fixed inset-0 ${camOn ? "" : "pointer-events-none opacity-0"}`} aria-hidden={!camOn}>
-        <video ref={videoRef} className="h-full w-full object-cover" style={{ transform: facing === "user" ? "scaleX(-1)" : undefined }} muted playsInline />
+      <div
+        className={`fixed inset-x-0 top-0 transition-[height] ${stage === "setup" ? "h-[58dvh]" : "h-dvh"} ${camOn ? "" : "pointer-events-none opacity-0"}`}
+        aria-hidden={!camOn}
+      >
+        <video
+          ref={videoRef}
+          className={`h-full w-full ${stage === "setup" ? "object-contain" : "object-cover"}`}
+          style={{ transform: facing === "user" ? "scaleX(-1)" : undefined }}
+          muted
+          playsInline
+        />
+        {stage === "setup" && (
+          <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+            {/* Framing guide: head under the top line, shoes above the bottom line. */}
+            <div className="absolute inset-x-6 top-[6%] border-t-2 border-dashed border-optic/70">
+              <span className="mt-1 inline-block rounded bg-night/70 px-1.5 py-0.5 text-[11px] font-bold text-optic">Head below here</span>
+            </div>
+            <div className="absolute inset-x-6 bottom-[5%] border-b-2 border-dashed border-optic/70">
+              <span className="mb-1 inline-block -translate-y-full rounded bg-night/70 px-1.5 py-0.5 text-[11px] font-bold text-optic">Shoes above here</span>
+            </div>
+          </div>
+        )}
         <canvas ref={overlayRef} className="pointer-events-none absolute inset-0 h-full w-full" />
         <div className="pointer-events-none absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-night/85 to-transparent" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-72 bg-gradient-to-t from-night/90 to-transparent" />
@@ -482,6 +508,12 @@ export function LiveSession() {
             </div>
           </div>
 
+          {feetOut && !paused && (
+            <p role="status" className="mx-4 mt-3 self-start rounded-xl bg-stitch px-3 py-2 text-[13px] font-bold text-chalk">
+              Feet out of the picture: leg and foot numbers are off until your shoes are back in view.
+            </p>
+          )}
+
           {settings.advancedView && (
             <div className="mx-4 mt-3 grid max-w-sm grid-cols-3 gap-x-4 gap-y-2 self-start rounded-2xl bg-night/75 p-3 text-xs backdrop-blur">
               <Stat label="Avg score" v={stats.avgScore !== null ? Math.round(stats.avgScore) : null} />
@@ -514,11 +546,12 @@ export function LiveSession() {
                 </div>
                 {settings.advancedView ? (
                   <div className="mt-3 max-h-[34dvh] overflow-y-auto pr-1">
-                    <MetricList metrics={last.analysis.metrics} keys={ADVANCED_ORDER} />
+                    <GroupedMetrics metrics={last.analysis.metrics} />
                   </div>
                 ) : (
                   <div className="mt-4 grid grid-cols-3 gap-2">
-                    {BASIC_KEYS.slice(0, 3).map((k) => {
+                    {BASIC_SLOTS.map((slot) => {
+                      const k = slot.find((key) => last.analysis.metrics[key] && last.analysis.metrics[key]!.source !== "unavailable") ?? slot[0];
                       const mv = last.analysis.metrics[k];
                       const na = !mv || mv.source === "unavailable";
                       return (
@@ -561,14 +594,14 @@ export function LiveSession() {
               <h2 className="display text-xl">Swing {review.n}</h2>
               <Button variant="ghost" onClick={closeReview}>Back to batting</Button>
             </div>
-            <ClipPlayer key={review.id} pose={review.pose} frames={reviewFrames} phases={review.analysis.phases} frameSize={review.frameSize} handPath={review.analysis.handPath} />
+            <ClipPlayer key={review.id} pose={review.pose} frames={reviewFrames} phases={review.analysis.phases} frameSize={review.frameSize} handPath={review.analysis.handPath} hand={review.hand} />
             <div className="mt-5 space-y-2">
               {review.analysis.observations.slice(0, 3).map((c) => (
                 <CueLine key={c.id} cue={c} />
               ))}
             </div>
             <div className="mt-4">
-              <MetricList metrics={review.analysis.metrics} keys={ADVANCED_ORDER} />
+              <GroupedMetrics metrics={review.analysis.metrics} />
             </div>
           </div>
         </div>

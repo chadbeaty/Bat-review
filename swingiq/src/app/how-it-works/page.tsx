@@ -9,15 +9,23 @@ export const metadata: Metadata = {
 };
 
 const ROWS: { k: MetricKey; now: string; later: string }[] = [
+  { k: "strideTiming", now: "Yes", later: "Sharper" },
+  { k: "timingStyle", now: "Yes", later: "Yes" },
+  { k: "strideLength", now: "Side view", later: "Yes" },
+  { k: "frontFootSlide", now: "Yes", later: "Yes" },
+  { k: "frontLegBlock", now: "As a change", later: "Better" },
+  { k: "backKnee", now: "Rough", later: "Better" },
+  { k: "backHeel", now: "Side view", later: "Yes" },
+  { k: "weightShift", now: "Side view", later: "Yes" },
+  { k: "strideDirection", now: "Behind view", later: "Yes" },
   { k: "swingTime", now: "Yes", later: "Sharper" },
   { k: "contact", now: "Yes (mic)", later: "Yes" },
   { k: "headMovement", now: "Yes", later: "Yes" },
   { k: "handDrop", now: "Yes", later: "Yes" },
-  { k: "strideLength", now: "Side view", later: "Yes" },
-  { k: "weightShift", now: "Side view", later: "Yes" },
+  { k: "handCast", now: "Rough", later: "Yes" },
   { k: "balance", now: "Yes", later: "Yes" },
-  { k: "separation", now: "Rough", later: "Better" },
-  { k: "sequence", now: "Rough", later: "Yes" },
+  { k: "hipLead", now: "No (needs 60 fps)", later: "Rough" },
+  { k: "hipTurn", now: "No", later: "No (needs 2 cameras)" },
   { k: "handSpeed", now: "Rough", later: "Good" },
   { k: "batSpeed", now: "No", later: "Yes" },
   { k: "attackAngle", now: "No", later: "Yes" },
@@ -57,13 +65,30 @@ export default function HowItWorks() {
             {ROWS.map((r) => (
               <tr key={r.k}>
                 <td className="px-4 py-2.5 text-chalk">{METRICS[r.k].label}</td>
-                <td className={`px-4 py-2.5 ${r.now === "No" ? "text-chalk-3" : r.now === "Rough" ? "text-amber" : "text-chalk"}`}>{r.now}</td>
+                <td className={`px-4 py-2.5 ${r.now.startsWith("No") ? "text-chalk-3" : r.now === "Rough" ? "text-amber" : "text-chalk"}`}>{r.now}</td>
                 <td className="px-4 py-2.5 text-chalk-2">{r.later}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      <h2 className="mt-10 text-lg font-bold">Legs and feet come first</h2>
+      <p className="mt-2 text-[15px] leading-relaxed text-chalk-2">
+        Slow pitch is a timing game on a ball dropping in on a 6–12 ft arc. Skilled slow-pitch hitters start their step near the top of the arc and land the front heel about 0.2 seconds
+        before contact, then firm up the front side and turn against it. So SwingIQ reads your feet first: your timing move (toe tap, stride or leg lift), when your front foot lands,
+        whether it stays planted, how much your front leg firms up, your back leg and back heel, and where your weight is at contact. Foot-plant timing is one of the most reliable things a
+        phone can measure. Knee angles are shown as a change from foot-down to contact, because one camera reads absolute knee angles to within roughly 10°.
+      </p>
+      <p className="mt-3 text-[15px] leading-relaxed text-chalk-2">
+        Your shoes have to be in the picture. Setup won&apos;t start on its own until they are, and during a session you&apos;ll see a warning if they slip out.
+      </p>
+
+      <h2 className="mt-10 text-lg font-bold">Why no hip-turn degrees?</h2>
+      <p className="mt-2 text-[15px] leading-relaxed text-chalk-2">
+        Measuring hip rotation needs depth, and one camera has to guess depth. Even a professional two-phone system filming at 240 frames a second misses hip rotation speed by about
+        150°/s on average. Rather than show you a made-up number, SwingIQ leaves it out.
+      </p>
 
       <h2 className="mt-10 text-lg font-bold">Why no bat speed yet?</h2>
       <p className="mt-2 text-[15px] leading-relaxed text-chalk-2">

@@ -71,7 +71,9 @@ export type MetricKey =
   | "backKnee"
   | "backHeel"
   | "strideDirection"
-  | "hipLead";
+  | "hipLead"
+  | "frontFootSlide"
+  | "handCast";
 
 export type MetricValue = {
   key: MetricKey;

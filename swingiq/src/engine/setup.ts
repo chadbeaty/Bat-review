@@ -99,7 +99,12 @@ export function evaluateSetup(inp: SetupInputs): SetupCheck[] {
     const feetIn = inside(L.leftAnkle) && inside(L.rightAnkle);
     if (upper < 0.6) checks.push({ id: "body", label: "Full body", status: "bad", message: "The camera can't see your upper body clearly. Face the phone and clear the view." });
     else if (feet < 0.5 || !feetIn)
-      checks.push({ id: "body", label: "Full body", status: "warn", message: "Your feet are cut off. Tilt the phone down or move it back. Stride and balance need your feet." });
+      checks.push({
+        id: "body",
+        label: "Full body",
+        status: "bad",
+        message: "Your feet are cut off. Legs and feet are half the swing: tilt the phone down or move it back until your shoes are in the picture.",
+      });
     else checks.push({ id: "body", label: "Full body", status: "ok", message: "Head to toe in view." });
 
     // Distance: share of the frame height the hitter fills (nose to ankles).
