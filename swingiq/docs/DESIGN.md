@@ -63,3 +63,11 @@ form); a new hitter gets a "rookie card".
 ## Icons and sharing
 `src/app/icon.svg`, `apple-icon.tsx`, `icon-192.png` / `icon-512.png` routes (maskable) and the link preview
 (`opengraph-image.tsx` / `twitter-image.tsx` via `src/brand/og.tsx`) are all drawn from the brand geometry.
+
+## The scroll site (`public/site/`)
+
+What a new visitor sees at getgapper.com. A static page on the scroll-craft engine (`scrollcraft.js`/`.css`, copied unedited) plus `site.js`, which draws Gapper's side and runs the signature move. Brief, feeling curve and asset recipe: `docs/site/BRIEF.md`.
+
+- Split stage: **What you see** (left, real footage graded toward navy, narrow upright Mona Sans) against **What Gapper sees** (right, navy, the tracked skeleton, wide italic Mona Sans). The chalk line between them is the only navigation: Gap Mark, both labels, the swing's phase ticks, one "Start swinging".
+- Signature: the heel catch. The scrubbed swing holds on the front heel strike, a lime ring hits the heel on both sides, and your scroll steps frame by frame to contact while the counter counts frames and the divider fills "the gap". The gap stays stamped on the line to the end, where the line runs to the edge and Gapper's side takes the screen.
+- Every number on it is Gapper's real output on the stock test clip and is labelled that way. Frames, not seconds, because the clip's slow-motion factor is unknown.

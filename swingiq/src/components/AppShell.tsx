@@ -96,8 +96,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const active = (href: string) => (href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`));
 
   if (immersive) return <>{children}</>;
-  // getgapper.com before a hitter is set up is the landing page: no app chrome, full width.
-  if (path === "/" && ready && !player) return <main>{children}</main>;
+  // Setup (and "/" before a hitter exists) owns the whole viewport: no app chrome.
+  if (path === "/start" || (path === "/" && ready && !player)) return <main>{children}</main>;
 
   return (
     <div className="mx-auto min-h-dvh max-w-[34rem] pb-[calc(7.5rem+env(safe-area-inset-bottom))] md:max-w-[68rem] md:pb-14 md:pl-60">

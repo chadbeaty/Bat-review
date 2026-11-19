@@ -1,5 +1,6 @@
 "use client";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { setHitterCookie } from "@/lib/hitterCookie";
 import { db } from "@/lib/store/db";
 import { DEFAULT_SETTINGS, type Player, type Settings } from "@/lib/store/types";
 
@@ -79,6 +80,11 @@ export function PlayerProvider({ children }: { children: React.ReactNode }) {
     () => players.find((p) => p.id === settings.activePlayerId) ?? players[0] ?? null,
     [players, settings.activePlayerId],
   );
+
+  // Keep the "has a hitter" cookie in step with the device, so "/" serves the app to hitters and the site to everyone else.
+  useEffect(() => {
+    if (ready && storageOk) setHitterCookie(players.length > 0);
+  }, [ready, storageOk, players.length]);
 
   const value = useMemo(
     () => ({ ready, storageOk, players, player, settings, savePlayer, removePlayer, setActive, updateSettings, refresh }),
