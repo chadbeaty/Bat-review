@@ -253,10 +253,11 @@ export function analyzeSwing(frames: PoseFrame[], win: SwingWindow, ctx: Analyze
     reason: "Counts only movement across the camera's view, so it reads lower than a sensor would.",
   });
 
-  m.batSpeed = unavailable("batSpeed", "Needs bat tracking (high-speed native capture, Phase 2) or a bat sensor.");
-  m.exitVelocity = unavailable("exitVelocity", "Needs ball tracking with high-speed capture (Phase 2) or a radar.");
-  m.launchAngle = unavailable("launchAngle", "Needs ball tracking with high-speed capture (Phase 2) or a launch monitor.");
-  m.attackAngle = unavailable("attackAngle", "Needs bat tracking (Phase 2) or a bat sensor.");
+  // Ball speeds need slo-mo frames; the video analyzer fills these in when it has them.
+  m.batSpeed = unavailable("batSpeed", "Film the swing in slo-mo and upload it on the Record screen to get bat speed.");
+  m.exitVelocity = unavailable("exitVelocity", "Film the swing in slo-mo and upload it on the Record screen to get exit velo.");
+  m.launchAngle = unavailable("launchAngle", "Film the swing in slo-mo and upload it on the Record screen to get launch angle.");
+  m.attackAngle = unavailable("attackAngle", "Needs a bat sensor (one camera can't see the barrel's path at contact).");
 
   // ---------- Legs and feet ----------
   const feetReason = lb.reason ?? "Your feet weren't visible. Move the phone back so you're in the picture head to toe.";

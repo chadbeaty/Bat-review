@@ -8,29 +8,30 @@ export const metadata: Metadata = {
   description: "What a phone camera can and can't measure about a slow-pitch swing, and exactly how each SwingIQ number is made.",
 };
 
-const ROWS: { k: MetricKey; now: string; later: string }[] = [
-  { k: "strideTiming", now: "Yes", later: "Sharper" },
-  { k: "timingStyle", now: "Yes", later: "Yes" },
-  { k: "strideLength", now: "Side view", later: "Yes" },
-  { k: "frontFootSlide", now: "Yes", later: "Yes" },
-  { k: "frontLegBlock", now: "As a change", later: "Better" },
-  { k: "backKnee", now: "Rough", later: "Better" },
-  { k: "backHeel", now: "Side view", later: "Yes" },
-  { k: "weightShift", now: "Side view", later: "Yes" },
-  { k: "strideDirection", now: "Behind view", later: "Yes" },
-  { k: "swingTime", now: "Yes", later: "Sharper" },
-  { k: "contact", now: "Yes (mic)", later: "Yes" },
-  { k: "headMovement", now: "Yes", later: "Yes" },
-  { k: "handDrop", now: "Yes", later: "Yes" },
-  { k: "handCast", now: "Rough", later: "Yes" },
-  { k: "balance", now: "Yes", later: "Yes" },
-  { k: "hipLead", now: "No (needs 60 fps)", later: "Rough" },
-  { k: "hipTurn", now: "No", later: "No (needs 2 cameras)" },
-  { k: "handSpeed", now: "Rough", later: "Good" },
-  { k: "batSpeed", now: "No", later: "Yes" },
-  { k: "attackAngle", now: "No", later: "Yes" },
-  { k: "exitVelocity", now: "No", later: "Estimate" },
-  { k: "launchAngle", now: "No", later: "Yes" },
+const ROWS: { k: MetricKey; now: string; slomo: string }[] = [
+  { k: "strideTiming", now: "Yes", slomo: "Sharper" },
+  { k: "timingStyle", now: "Yes", slomo: "Yes" },
+  { k: "strideLength", now: "Side view", slomo: "Side view" },
+  { k: "frontFootSlide", now: "Yes", slomo: "Yes" },
+  { k: "frontLegBlock", now: "As a change", slomo: "As a change" },
+  { k: "backKnee", now: "Rough", slomo: "Rough" },
+  { k: "backHeel", now: "Side view", slomo: "Side view" },
+  { k: "weightShift", now: "Side view", slomo: "Side view" },
+  { k: "strideDirection", now: "Behind view", slomo: "Behind view" },
+  { k: "swingTime", now: "Yes", slomo: "Sharper" },
+  { k: "contact", now: "Yes (mic)", slomo: "Yes (ball)" },
+  { k: "headMovement", now: "Yes", slomo: "Yes" },
+  { k: "handDrop", now: "Yes", slomo: "Yes" },
+  { k: "handCast", now: "Rough", slomo: "Yes" },
+  { k: "balance", now: "Yes", slomo: "Yes" },
+  { k: "hipLead", now: "No (needs 60 fps)", slomo: "Rough" },
+  { k: "hipTurn", now: "No", slomo: "No (needs 2 cameras)" },
+  { k: "handSpeed", now: "Rough", slomo: "Rough" },
+  { k: "exitVelocity", now: "No", slomo: "Yes, ± a few mph" },
+  { k: "launchAngle", now: "No", slomo: "Yes, ± 1–3°" },
+  { k: "pitchSpeed", now: "No", slomo: "Yes" },
+  { k: "batSpeed", now: "No", slomo: "Estimate, ± about 5 mph" },
+  { k: "attackAngle", now: "No", slomo: "No (sensor)" },
 ];
 
 export default function HowItWorks() {
@@ -51,14 +52,14 @@ export default function HowItWorks() {
       </dl>
 
       <h2 className="mt-10 text-lg font-bold">What a phone can measure</h2>
-      <p className="mt-1 text-[14px] text-chalk-3">Today in your browser (about 30 frames a second) vs. the coming iPhone app (120–240 frames a second).</p>
+      <p className="mt-1 text-[14px] text-chalk-3">Live mode and normal videos (about 30 frames a second) vs. a slo-mo video you upload (120–240 frames a second).</p>
       <div className="mt-4 overflow-x-auto rounded-2xl border border-line">
         <table className="w-full min-w-[22rem] text-left text-[14px]">
           <thead className="bg-night-2 text-chalk-3">
             <tr>
               <th className="px-4 py-2.5 font-normal">Metric</th>
-              <th className="px-4 py-2.5 font-normal">Now</th>
-              <th className="px-4 py-2.5 font-normal">iPhone app</th>
+              <th className="px-4 py-2.5 font-normal">Live / normal video</th>
+              <th className="px-4 py-2.5 font-normal">Slo-mo video</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-line">
@@ -66,7 +67,7 @@ export default function HowItWorks() {
               <tr key={r.k}>
                 <td className="px-4 py-2.5 text-chalk">{METRICS[r.k].label}</td>
                 <td className={`px-4 py-2.5 ${r.now.startsWith("No") ? "text-chalk-3" : r.now === "Rough" ? "text-amber" : "text-chalk"}`}>{r.now}</td>
-                <td className="px-4 py-2.5 text-chalk-2">{r.later}</td>
+                <td className="px-4 py-2.5 text-chalk-2">{r.slomo}</td>
               </tr>
             ))}
           </tbody>
@@ -90,10 +91,29 @@ export default function HowItWorks() {
         150°/s on average. Rather than show you a made-up number, SwingIQ leaves it out.
       </p>
 
-      <h2 className="mt-10 text-lg font-bold">Why no bat speed yet?</h2>
+      <h2 id="speed" className="mt-10 text-lg font-bold">Exit velo and bat speed from slo-mo</h2>
       <p className="mt-2 text-[15px] leading-relaxed text-chalk-2">
-        A slow-pitch barrel moves 60–80 mph. At 30 frames a second it jumps about three feet between frames and smears into a blur, so no honest method can time it. Bat speed, attack angle,
-        exit velocity and launch angle need high-speed capture (the native iPhone app) or a sensor. Until then, enter readings from your own radar or bat sensor on any swing.
+        At 30 frames a second a 90 mph ball crosses the picture in a frame or two, so live mode can&apos;t time it. In slo-mo (120 or 240 frames a second) SwingIQ follows the ball frame
+        by frame. The hard part with one camera is knowing how many pixels make a foot. SwingIQ uses two independent rulers and checks them against each other:
+      </p>
+      <ul className="mt-3 list-disc space-y-2 pl-5 text-[15px] leading-relaxed text-chalk-2">
+        <li>
+          <span className="text-chalk">Gravity.</span> A slow-pitch pitch is in free fall on its arc, and gravity pulls everything down at the same 32 feet per second per second. How fast
+          the pitch speeds up on its way down tells SwingIQ the scale right over the plate, where contact happens. Air drag is accounted for; spin it can&apos;t see goes into the ± range.
+        </li>
+        <li>
+          <span className="text-chalk">The ball itself.</span> A 12&quot; softball is 3.82&quot; across, so its width in pixels is a second ruler. As a hit flies away it shrinks (pulled)
+          or grows (opposite field), which shows how fast it&apos;s moving toward or away from the camera, so those hits aren&apos;t undercounted.
+        </li>
+      </ul>
+      <p className="mt-3 text-[15px] leading-relaxed text-chalk-2">
+        <span className="text-chalk">Exit velo and launch angle</span> come straight from the ball&apos;s first frames off the bat and are shown with a ± range. In testing on rendered
+        hits with known speeds, the typical miss was under 2% and the ± range covered the true speed every time. Real-world accuracy depends on good light, a still phone and a clean view
+        of the ball. <span className="text-chalk">Bat speed</span> can&apos;t be seen directly from one side camera (at contact the barrel points at the lens), so it&apos;s worked out from
+        exit velo and pitch speed using the same bat-ball physics bats are certified with. It assumes a sweet-spot hit, so a mishit reads low. Attack angle still needs a sensor.
+      </p>
+      <p className="mt-3 text-[15px] leading-relaxed text-chalk-2">
+        Got a radar or bat sensor? Enter its reading on any swing and it takes priority. <Link href="/guide#speed" className="text-optic underline">How to film for speed</Link>
       </p>
 
       <h2 className="mt-10 text-lg font-bold">The SwingIQ score</h2>

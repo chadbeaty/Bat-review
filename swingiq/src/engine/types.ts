@@ -77,7 +77,9 @@ export type MetricKey =
   | "handPathAngle"
   | "contactPoint"
   | "finishHeight"
-  | "shoulderDrop";
+  | "shoulderDrop"
+  | "pitchSpeed"
+  | "descentAngle";
 
 export type MetricValue = {
   key: MetricKey;
@@ -92,6 +94,8 @@ export type MetricValue = {
   reason?: string;
   /** A supporting number used by scoring and challenges (e.g. stance-to-plant width ratio for stride). */
   aux?: number;
+  /** ± uncertainty in the same units (about one standard deviation), for measured speeds and angles. */
+  plusMinus?: number;
 };
 
 export type ScoreCategoryKey = "balance" | "timing" | "rotation" | "batPath" | "contact" | "followThrough";

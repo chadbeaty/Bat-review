@@ -91,22 +91,28 @@ State machine (`src/engine/detector.ts`):
 
 **Contact detection** uses the microphone. Bat-on-ball contact is a sharp broadband "crack" that stands far above cage noise for a few milliseconds. We only accept an audio onset that falls inside the swing's launch-to-finish window, so other cages' hits don't count. Only an onset close to peak hand speed counts. The sound itself is timed to a few milliseconds; lining it up with camera frames adds roughly ±20 ms of clock uncertainty, which still beats a 30 fps frame (33 ms). It also tells a swing-and-miss from contact.
 
-## 6. Bat tracking: how it can work
+## 6. Ball and bat speed from slo-mo video (built)
 
-- **Phase 1 (now):** no bat tracking. Bat speed is shown as unavailable with the reason. Hand speed (a real, related measure) is shown as a camera estimate.
-- **Phase 2, native app:** capture at 120 or 240 fps with AVFoundation, run a trained bat-keypoint model (knob and barrel end) on each frame, and fit the bat as a line segment rotating around the hands. Barrel-end speed at the contact frame = **bat speed**. The bat's angle across the contact frames = **attack angle** and **vertical bat angle**. Scale comes from the bat's known length (from "My Bats"), which is far better than guessing from the player's body.
-- **Accuracy target:** within ±3 mph of a bat sensor at 240 fps, side view, good light. Validated against a sensor before we ever show it to customers. Until it's validated, it stays labeled "beta estimate".
-- **Sensors:** a pluggable `ExternalMeasurement` interface (`src/engine/external.ts`) lets bat sensors and radars feed values tagged `sensor`. Phase 1 supports manual entry (type in a number from your Pocket Radar, Blast or Diamond Kinetics). Bluetooth sensor pairing needs the native app (iPhone Safari doesn't support Web Bluetooth).
+Owner's call: no extra hardware, everything in the app. So speeds come from **slo-mo video uploaded on the Record screen** (iPhone Camera app Slo-mo, 120 or 240 fps). Live mode (30 fps) still can't measure them and says so.
 
-## 7. Ball tracking: how it can work
+- **Ball tracking** (`src/engine/motion.ts`): running background with a per-pixel shimmer model (fence wires and poles under compression don't count as motion), moving blobs from pixel runs, ball candidates by size and roundness, width measured straight across the motion blur and corrected for edge spill, frame-to-frame linking that coasts through short occlusions, outlier cleanup. The pitch and the batted ball are the two tracks that meet at contact, leaving in opposite directions.
+- **Scale with one camera** (`src/engine/ballflight.ts`): two independent rulers, blended by their uncertainty. (1) **Gravity**: the slow-pitch arc is free fall, so the pitch's downward acceleration in px/s² ÷ 32.17 ft/s² = pixels per foot over the plate, where contact happens (Bieler et al., ICCV 2019 use gravity as a ruler the same way). Air drag is modeled; unknown spin (±5% of g) is carried in the error band. (2) **The ball's own width** (12" softball = 3.82").
+- **Exit velocity and launch angle**: linear fit of the batted ball's first frames in 3D. Motion toward/away from the camera comes from the ball's change in size, shrunk toward "straight across" in proportion to its uncertainty; drag since contact is added back. Shown with a ± (one standard deviation). Withheld when the ball is clear in fewer than 5 frames or the ± is over 15%.
+- **Pitch speed and descent angle** from the pitch track.
+- **Slow-motion setting check**: with the ball as the ruler, a wrong time base makes gravity come out wrong by the square of the error (8× read as 1× → g/64). The analyzer votes across the clip and the Record screen re-runs once with the corrected factor. Only long, clean arcs can vote.
+- **Bat speed**: from one side camera the barrel points at the lens at contact, so its speed can't be seen directly (an MIT thesis only got single-camera bat speed working on synthetic data). It's computed from measured exit velo and pitch speed with the collision efficiency bats are certified by: EV = eA·pitch + (1 + eA)·bat; eA ≈ 0.12 for USA/ASA (25 + 85 mph lab test → 98 mph limit), ≈ 0.17 USSSA. Labeled as assuming a sweet-spot hit. Attack angle still needs a sensor.
+- **Performance**: ball tracking runs on every frame at ≤ 960 px wide (~5 ms/frame on a laptop CPU); body tracking runs on every Nth frame (~60 per real second). The frame for ball tracking is grabbed before anything slow, because at 240 fps one frame of drift between a picture and its timestamp wrecks a speed. Browsers can't play slower than 1/16 speed, which caps coverage on slow devices.
+- **Accuracy so far**: 40 random rendered hits (55–110 mph, ±30° spray, spin, blur, noise): median error 1.4%, worst 5.1%, every reading inside 2× its ±. Real batter footage at 240 fps with a known-speed ball drawn in, through the browser: 83–88 mph on an 85 mph truth, launch 18° on 18°, pitch 24.5 on 25. **Not yet validated against a radar on real slo-mo footage**: do that once with a borrowed radar gun before advertising a number.
+- **Sensors** still plug in through `src/engine/external.ts`; a typed-in radar or sensor reading takes priority over the video estimate everywhere.
 
-- A slow-pitch ball after contact moves 60–100 mph. At 30 fps it's a blur that crosses the frame in two or three frames. At 240 fps it's 30–60 clean samples.
-- **Phase 2, native, 240 fps, side view:** background subtraction + small ball detector + Kalman filter for the first ~10 ft after contact. Launch angle comes straight from the trajectory. Exit velocity = distance/time, scaled using the bat length or a calibration mark (home plate is 17 in wide).
-- **Can't measure from one phone:** landing spot and true carry distance in a cage (the net stops the ball). The spray chart is built from **manual tagging** (pull / center / oppo × grounder / liner / fly / pop-up), available on every swing now. On a field, a second phone behind the plate could auto-tag direction later.
+## 7. Ball tracking extras not built
+
+- Landing spot and carry distance in a cage (the net stops the ball); the spray chart stays manual-tag driven.
+- Direct bat tracking (knob + barrel keypoint model) for attack angle and an independent bat speed: would need a trained bat model and ideally a second camera angle.
 
 ## 8. What an iPhone can measure
 
-| Metric | Browser, ~30 fps | Native, 120–240 fps | Source tag | Notes |
+| Metric | Browser, ~30 fps | Slo-mo upload, 120–240 fps | Source tag | Notes |
 | --- | --- | --- | --- | --- |
 | Swing detected, swing count | Yes | Yes | measured | |
 | Contact vs. miss, contact time | Yes (mic) | Yes (mic) | measured | Needs mic permission |
@@ -123,11 +129,12 @@ State machine (`src/engine/detector.ts`):
 | Balance at finish | Yes | Yes | cv_estimated | |
 | Hip / shoulder turn in degrees, separation, rotation speeds | **No** | **No** (needs 2+ cameras) | — | Even 2 iPhones at 240 fps miss pelvis speed by ~150°/s; not shown |
 | Hips-before-hands start order | No at 30 fps | Hint at 60+ fps | cv_estimated | Shown only at 60 fps or faster |
-| Hand speed | Rough, in-plane only | Good | cv_estimated | Not bat speed |
-| **Bat speed** | **No** | Phase 2 (bat model) | — | Needs bat tracking or a sensor |
-| **Attack angle, bat angles** | **No** | Phase 2 | — | Needs bat tracking |
-| **Exit velocity** | **No** | Phase 2 (estimate) | — | Needs ball tracking + calibration |
-| **Launch angle** | **No** | Phase 2 | — | Needs ball tracking |
+| Hand speed | Rough, in-plane only | Rough | cv_estimated | Not bat speed |
+| **Exit velocity** | **No** | **Yes, slo-mo upload, ± shown** | cv_estimated | Gravity + ball-size scale (section 6) |
+| **Launch angle** | **No** | **Yes, slo-mo upload** | cv_estimated | |
+| **Pitch speed, descent angle** | **No** | **Yes, slo-mo upload** | cv_estimated | |
+| **Bat speed** | **No** | **Estimate from exit velo + pitch speed** | cv_estimated | Assumes a sweet-spot hit |
+| **Attack angle, bat angles** | **No** | No | — | Needs a sensor |
 | Landing spot, distance | No | No (in a cage) | manual | Manual tags drive the spray chart |
 
 Lower-body research and thresholds: `docs/reports/Slow pitch lower body mechanics.md`.
@@ -183,4 +190,4 @@ Plan: a SwiftUI shell around the same product. The capture layer is AVFoundation
 | 4. Performance platform | Cloud history, progress dashboards, spray charts + heat maps, bat comparisons, share cards | |
 | 5. Commercialization | Stripe plans + trials + usage limits, teams/coach dashboards, admin dashboard, onboarding emails | |
 
-Pricing note: plans only sell features that exist. Until Phase 2 ships, Pro can't promise bat speed or exit velocity.
+Pricing note: plans only sell features that exist. Exit velo and bat speed now exist from slo-mo uploads, labeled with their ± range; don't advertise a specific accuracy until it's been checked against a radar on real footage.

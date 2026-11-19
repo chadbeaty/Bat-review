@@ -26,8 +26,9 @@ make numbers up.
 - Built where the view allows: hand path at contact (a stand-in for swing plane) and contact spot vs the front hip.
   Both come from the side view only. Other views show them as unavailable.
 - Built: every metric carries a source tag (measured, camera estimate, sensor, unavailable) and a confidence.
-- Not yet: rotation in degrees and true bat attack angle. The bat barrel blurs at 30–60 fps, so the barrel can't be
-  tracked yet. That needs Phase 2 high-speed capture (see `ARCHITECTURE.md`).
+- Built (slo-mo uploads): exit velocity, launch angle, pitch speed and descent angle from ball tracking, and bat speed
+  from exit velo + pitch speed. Every one shows a ± range. See `ARCHITECTURE.md` section 6.
+- Not yet: rotation in degrees and attack angle. One camera can't see either reliably.
 
 ## 4. Score breakdown (`src/engine/scoring.ts`)
 - Built: six categories: Balance, Timing, Rotation, Bat path, Contact and Follow-through. Each one shows the checks
@@ -51,7 +52,13 @@ make numbers up.
 - Built: swings, average score, score consistency, timing spread and category averages for each bat.
 - Built: contact rate from the mic and line-drive rate from your tags.
 - Built: bats are compared only after 15+ swings with each. Until then it shows how many more swings you need.
-- Shown only with a bat sensor: bat speed, launch angle and exit velocity. Never from the camera.
+- Exit velo (average and best 3), bat speed and launch angle per bat, from slo-mo videos or typed-in sensor readings.
+
+## Slo-mo speeds (added after the directive, owner's request: no extra hardware)
+- Record or upload a Camera-app Slo-mo clip. Each swing gets a Speed card: exit velo ±, bat speed ±, launch angle,
+  pitch speed and pitch drop. A wrong slow-motion setting is caught from the pitch's fall and re-analyzed.
+- Tested on rendered hits (median 1.4% error) and through the browser on real batter footage with a known-speed ball.
+  Still to do: one real-world check against a radar gun.
 
 ## 8. Real-time mode
 - Built: the live session (`src/components/live/LiveSession.tsx`) is labeled "Live estimate". Swings from video are

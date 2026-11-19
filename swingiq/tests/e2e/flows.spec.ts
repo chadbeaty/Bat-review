@@ -5,6 +5,19 @@ import { expect, test, type Page } from "@playwright/test";
 // The MVP flows end to end: profile details, Bat DNA, recording/uploading a real swing video, the coach, personal best,
 // comparing two swings, and the dashboard. Everything is stored on the device, so each test starts fresh.
 const video = join(__dirname, "..", "fixtures", "video", "swing.webm");
+// The same batter at 240 fps with a softball of known speed drawn in (85 mph, 18° launch, 25 mph pitch).
+// Built by scripts/fetch-test-video.sh; see tests/fixtures/build/speed-video.build.ts.
+const speed240 = join(__dirname, "..", "fixtures", "video", "speed240.webm");
+const speed240x8 = join(__dirname, "..", "fixtures", "video", "speed240x8.webm");
+
+async function speedOnSwingPage(page: Page) {
+  await page.getByRole("link", { name: /Exit velo/ }).first().click();
+  const card = page.getByRole("region", { name: "Speed" });
+  await expect(card.getByText("From slo-mo video")).toBeVisible();
+  const ev = Number((await card.getByTestId("speed-ev").locator(".num").innerText()).trim());
+  const bat = Number((await card.getByTestId("speed-bat").locator(".num").innerText()).trim());
+  return { card, ev, bat };
+}
 
 async function newHitter(page: Page, name = "Tester") {
   await page.goto("/");
@@ -114,6 +127,48 @@ test("compare and Bat DNA explain what's missing when there isn't enough data", 
   await page.goto("/compare");
   await expect(page.getByText("Record two swings to compare")).toBeVisible();
   await page.goto("/record");
-  await expect(page.getByText("Record with camera")).toBeVisible();
-  await expect(page.getByText("Upload a video")).toBeVisible();
+  await expect(page.getByText("Record with camera", { exact: true })).toBeVisible();
+  await expect(page.getByText("Upload a video", { exact: true })).toBeVisible();
+});
+
+test("slo-mo video: exit velo, launch angle, pitch speed and bat speed", async ({ page }) => {
+  test.skip(!existsSync(speed240), "Run scripts/fetch-test-video.sh to build the slo-mo test clip.");
+  test.setTimeout(420_000);
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await newHitter(page, "Slugger");
+  await page.goto("/record");
+  await page.getByRole("radio", { name: /Front/ }).click();
+  // A true 240 fps file: "Normal speed" is right (the file itself runs at 240 frames a second).
+  await page.setInputFiles("#up-input", speed240);
+  await expect(page.getByRole("heading", { name: /1 swing analyzed/ })).toBeVisible({ timeout: 300_000 });
+  await expect(page.getByText(/Exit velo \d+ mph · bat \d+ mph/)).toBeVisible();
+  const { card, ev, bat } = await speedOnSwingPage(page);
+  // Truth is 85 mph; the reading must land within about 10% and show its ± range.
+  expect(ev).toBeGreaterThan(76);
+  expect(ev).toBeLessThan(94);
+  expect(bat).toBeGreaterThan(55);
+  expect(bat).toBeLessThan(85);
+  await expect(card.getByText(/± \d+ mph/).first()).toBeVisible();
+  await expect(card.getByText(/^1[5-9]°|^2[01]°/)).toBeVisible(); // launch angle, truth 18°
+  await expect(card.getByText(/^2[2-8] mph$/)).toBeVisible(); // pitch speed, truth 25 mph
+  // Bat DNA and the dashboard pick it up.
+  await page.goto("/");
+  await expect(page.getByText("Top exit velo")).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
+test("slo-mo video filmed at 8x but uploaded as normal speed gets fixed automatically", async ({ page }) => {
+  test.skip(!existsSync(speed240x8), "Run scripts/fetch-test-video.sh to build the slo-mo test clip.");
+  test.setTimeout(600_000);
+  await newHitter(page, "Wrong Setting");
+  await page.goto("/record");
+  await page.getByRole("radio", { name: /Front/ }).click();
+  // An iPhone Slo-mo share: 30 fps, slowed 8x. Left on "Normal speed" on purpose.
+  await page.setInputFiles("#up-input", speed240x8);
+  await expect(page.getByRole("heading", { name: /1 swing analyzed/ })).toBeVisible({ timeout: 540_000 });
+  await expect(page.getByText(/8× slow motion, so it was re-analyzed/)).toBeVisible();
+  const { ev } = await speedOnSwingPage(page);
+  expect(ev).toBeGreaterThan(76);
+  expect(ev).toBeLessThan(94);
 });

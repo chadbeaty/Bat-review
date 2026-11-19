@@ -552,7 +552,7 @@ export function LiveSession() {
               <Stat label="Max hands" v={stats.maxHand !== null ? stats.maxHand.toFixed(1) : null} unit="mph" />
               <Stat label="Contact" v={stats.contactRate !== null ? Math.round(stats.contactRate * 100) : null} unit="%" />
               <div className="col-span-3 text-[11px] text-chalk-3">
-                {tick ? `${Math.round(tick.poseFps)} fps tracking (${tick.delegate ?? "…"}) · camera ${Math.round(tick.cameraFps)} fps` : ""} · bat speed and launch need Phase 2 hardware
+                {tick ? `${Math.round(tick.poseFps)} fps tracking (${tick.delegate ?? "…"}) · camera ${Math.round(tick.cameraFps)} fps` : ""} · exit velo and bat speed: upload a slo-mo video
               </div>
             </div>
           )}

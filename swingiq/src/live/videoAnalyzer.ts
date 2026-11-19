@@ -1,7 +1,11 @@
 "use client";
 import { analyzeSwing } from "@/engine/analyzer";
+import { SOFTBALL_12, assumedCamera, type Ball } from "@/engine/ballflight";
 import { ContactListener } from "@/engine/contact";
 import { SwingDetector, type SwingWindow } from "@/engine/detector";
+import { NOSE_TO_ANKLE_FRACTION, frameHasBody, median, noseToAnkles } from "@/engine/geometry";
+import { MotionTracker } from "@/engine/motion";
+import { analyzeSpeeds, checkTimeBase } from "@/engine/speeds";
 import type { CameraView, Handedness, MetricKey, MetricValue, PoseFrame, SwingAnalysis } from "@/engine/types";
 import { encodeFrames, FrameBuffer } from "./framebuffer";
 import { loadPose, toLandmarks, toWorld, type ModelQuality } from "./pose";
@@ -29,8 +33,21 @@ export type VideoAnalysisResult = {
   durationS: number;
   heardAudio: boolean;
   truncated: boolean;
+  /**
+   * If the pitch's fall shows the slow-motion setting was wrong: the factor to multiply it by (8 = it was really
+   * 8× slower than chosen). The caller should re-run with the corrected setting.
+   */
+  timeBaseFix: number | null;
   /** Field-tuning readout. */
-  debug: { frames: number; maxSpeed: number; rejected: string[]; delegate: string; playbackRate: number };
+  debug: {
+    frames: number;
+    maxSpeed: number;
+    rejected: string[];
+    delegate: string;
+    playbackRate: number;
+    motionPx?: string;
+    speeds?: unknown[];
+  };
 };
 
 export type VideoAnalysisOptions = {
@@ -46,6 +63,10 @@ export type VideoAnalysisOptions = {
   signal?: AbortSignal;
   /** An on-screen video element to play the recording in (so the player can watch it being analyzed). */
   videoEl?: HTMLVideoElement | null;
+  /** The ball in use (12" or 11"), for turning its size into a ruler. */
+  ball?: Ball;
+  /** The bat's certification, for bat speed from exit velocity. */
+  certification?: string;
 };
 
 export const MAX_VIDEO_SECONDS = 90;
@@ -117,6 +138,24 @@ export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalys
     let triedCpu = false;
     const geom = { width: video.videoWidth, height: video.videoHeight };
     const detector = new SwingDetector(geom);
+    // Ball tracking runs on a smaller copy of each frame: big enough to size the ball, small enough to keep up.
+    const tw = Math.min(960, geom.width);
+    const th = Math.round((geom.height * tw) / geom.width);
+    const motion = new MotionTracker(tw, th, { keepMs: 6000 });
+    const mCanvas = document.createElement("canvas");
+    mCanvas.width = tw;
+    mCanvas.height = th;
+    const mCtx = mCanvas.getContext("2d", { willReadFrequently: true });
+    const ball = o.ball ?? SOFTBALL_12;
+    const cam = assumedCamera(tw, th);
+    const tbVotes = new Map<number, number>();
+    let lastTbCheck = 0;
+    const speedDebug: unknown[] = [];
+    const bodyPxPerIn = (frames: PoseFrame[]) => {
+      const hs = frames.filter((f) => frameHasBody(f)).map((f) => noseToAnkles(f.lm!, geom));
+      const h = median(hs);
+      return h > 0 ? (h / (o.heightIn * NOSE_TO_ANKLE_FRACTION)) * (tw / geom.width) : null;
+    };
     const buffer = new FrameBuffer(4500);
     buffer.configure(geom.width, geom.height);
     const history: PoseFrame[] = [];
@@ -147,38 +186,85 @@ export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalys
         micOn: !!audio,
         previous: [...swings.map((s) => s.analysis.metrics).reverse(), ...o.previous()],
       });
+      // Ball speeds from the same frames (slow motion only; otherwise each says why not).
+      try {
+        const sp = analyzeSpeeds(motion.frames(win.clipStart, win.clipEnd), {
+          bodyPxPerIn: bodyPxPerIn(clipFrames),
+          ball,
+          cam,
+          certification: o.certification,
+          hintT: analysis.phases.contact,
+          fps: fpsReal,
+          frameHeight: th,
+        });
+        Object.assign(analysis.metrics, sp.metrics);
+        if (sp.timeBase !== null) tbVotes.set(sp.timeBase, (tbVotes.get(sp.timeBase) ?? 0) + 2);
+        speedDebug.push({ t: Math.round(win.peak), ...sp.debug, timeBase: sp.timeBase });
+      } catch (e) {
+        speedDebug.push({ error: String(e) });
+      }
       const canvases = buffer.detach(win.clipStart, win.clipEnd);
       const entry: VideoSwing = { window: win, analysis, pose: clipFrames, frameSize: geom, clip: [] };
       swings.push(entry);
       pending.push(encodeFrames(canvases).then((c) => void (entry.clip = c)));
     };
 
+    // Body tracking doesn't need more than ~60 frames per real second; the ball does. On high-frame-rate video the
+    // pose model runs on every Nth frame and the (much cheaper) ball tracker runs on every frame.
+    let poseStride = 1;
+    // Browsers won't play slower than 1/16 speed (Chrome throws below 0.0625).
+    const minRate = () => 0.0625;
+    let procMsTotal = 0;
+    let procCount = 0;
     const processFrame = (mediaTime: number) => {
       if (mediaTime <= lastMedia) return;
       if (lastMedia >= 0) mediaGaps.push((mediaTime - lastMedia) * 1000);
       if (mediaGaps.length > 120) mediaGaps.shift();
       lastMedia = mediaTime;
+      const tStart = performance.now();
       const tReal = (mediaTime * 1000) / o.slowMo;
-      const ts = Math.max(tsBase + mediaTime * 1000, lastTs + 1);
-      lastTs = ts;
-      const t0 = performance.now();
-      const res = landmarker.detectForVideo(video, ts);
-      poseMsTotal += performance.now() - t0;
-      timed++;
-      frames++;
-      const frame: PoseFrame = { t: tReal, lm: toLandmarks(res.landmarks[0]), world: toWorld(res.worldLandmarks?.[0]) };
-      history.push(frame);
-      while (history.length && tReal - history[0].t > 4500) history.shift();
+      // Grab the picture for ball tracking first, before anything slow: the video keeps playing (slowly) while we
+      // work, and at 240 fps even one frame of drift between a picture and its timestamp wrecks a speed.
+      if (mCtx) {
+        mCtx.drawImage(video, 0, 0, tw, th);
+        motion.push(tReal, mCtx.getImageData(0, 0, tw, th).data);
+      }
       // Clip frames: up to ~60 per real second, whatever the recording's frame rate, to keep memory in check.
       if (tReal - lastBufferT >= 1000 / 60 - 0.5) {
         buffer.push(tReal, video);
         lastBufferT = tReal;
       }
-      const tick = detector.push(frame);
-      if (tick.speed > maxSpeed) maxSpeed = tick.speed;
-      if (tick.rejected) rejected.push(`${Math.round(tReal)}:${tick.rejected}`);
-      if (tick.swing) capture(tick.swing);
-      progress(0.05 + 0.9 * Math.min(1, mediaTime / Math.max(0.1, limitS)), "Tracking your body frame by frame…");
+      // Every ~2 s of video, check the slow-motion setting against any clean ball flight (needs no swing).
+      if (mCtx && mediaTime - lastTbCheck > 2) {
+        lastTbCheck = mediaTime;
+        const tb = checkTimeBase(motion.frames(tReal - 4000, tReal), { bodyPxPerIn: bodyPxPerIn(history.slice(-60)), ball, frameHeight: th });
+        if (tb !== null) tbVotes.set(tb, (tbVotes.get(tb) ?? 0) + 1);
+      }
+      // How often to run body tracking: re-checked as the true frame interval becomes clear.
+      if (frames % 30 === 4 && mediaGaps.length >= 3) poseStride = Math.max(1, Math.round(((1000 / srcGap(mediaGaps)) * o.slowMo) / 60));
+      const runPose = frames < 4 || frames % poseStride === 0;
+      frames++;
+      let frame: PoseFrame | null = null;
+      if (runPose) {
+        const ts = Math.max(tsBase + mediaTime * 1000, lastTs + 1);
+        lastTs = ts;
+        const t0 = performance.now();
+        const res = landmarker.detectForVideo(video, ts);
+        poseMsTotal += performance.now() - t0;
+        timed++;
+        frame = { t: tReal, lm: toLandmarks(res.landmarks[0]), world: toWorld(res.worldLandmarks?.[0]) };
+        history.push(frame);
+        while (history.length && tReal - history[0].t > 4500) history.shift();
+      }
+      if (frame) {
+        const tick = detector.push(frame);
+        if (tick.speed > maxSpeed) maxSpeed = tick.speed;
+        if (tick.rejected) rejected.push(`${Math.round(tReal)}:${tick.rejected}`);
+        if (tick.swing) capture(tick.swing);
+      }
+      procMsTotal += performance.now() - tStart;
+      procCount++;
+      progress(0.05 + 0.9 * Math.min(1, mediaTime / Math.max(0.1, limitS)), "Tracking your body and the ball frame by frame…");
     };
 
     const v = video as HTMLVideoElement & {
@@ -232,14 +318,16 @@ export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalys
               return;
             }
             const srcFps = 1000 / srcGap(mediaGaps);
-            video.playbackRate = clamp(((1000 / poseMs) * 0.7) / srcFps, 0.0625, 1);
+            // Cost per frame once body tracking runs on every Nth frame only.
+            const perFrame = Math.max(1, (procMsTotal / Math.max(1, procCount) - poseMs) + poseMs / poseStride);
+            video.playbackRate = clamp(((1000 / perFrame) * 0.7) / srcFps, minRate(), 1);
           }
           // Keep adjusting: slow down whenever frames are being skipped, speed back up when it's comfortably keeping up.
           if (timed > 6 && frames % 15 === 0 && mediaGaps.length > 15) {
             const gap = srcGap(mediaGaps);
             const recent = mediaGaps.slice(-15);
             const missed = recent.filter((g) => g > gap * 1.5).length;
-            if (missed >= 2) video.playbackRate = Math.max(0.0625, video.playbackRate * 0.65);
+            if (missed >= 2) video.playbackRate = Math.max(minRate(), video.playbackRate * 0.65);
             else if (missed === 0 && video.playbackRate < 1) video.playbackRate = Math.min(1, video.playbackRate * 1.1);
           }
           if (meta.mediaTime >= limitS) return finish();
@@ -268,6 +356,9 @@ export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalys
     await Promise.all(pending);
     buffer.clear();
     const expected = lastMedia > 0 && mediaGaps.length ? lastMedia / (srcGap(mediaGaps) / 1000) : frames;
+    // A wrong slow-motion setting needs at least two independent votes (or one from a full swing analysis).
+    let timeBaseFix: number | null = null;
+    for (const [f, votes] of tbVotes) if (votes >= 2 && (timeBaseFix === null || votes > (tbVotes.get(timeBaseFix) ?? 0))) timeBaseFix = f;
     return {
       swings,
       fps: mediaGaps.length ? 1000 / (srcGap(mediaGaps) / o.slowMo) : 30,
@@ -275,7 +366,16 @@ export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalys
       durationS,
       heardAudio: !!audio,
       truncated: durationS > MAX_VIDEO_SECONDS,
-      debug: { frames, maxSpeed: Math.round(maxSpeed * 10) / 10, rejected: rejected.slice(-8), delegate, playbackRate: video.playbackRate },
+      timeBaseFix,
+      debug: {
+        frames,
+        maxSpeed: Math.round(maxSpeed * 10) / 10,
+        rejected: rejected.slice(-8),
+        delegate,
+        playbackRate: video.playbackRate,
+        motionPx: `${tw}x${th} pose every ${poseStride}`,
+        speeds: speedDebug,
+      },
     };
   } finally {
     video.pause();

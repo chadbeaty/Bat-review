@@ -6,6 +6,7 @@ import { ArcScore } from "@/components/ArcScore";
 import { ClipPlayer } from "@/components/ClipPlayer";
 import { CueLine, GroupedMetrics, averageMetrics } from "@/components/Metrics";
 import { CoachCard, CompareLink, ScoreCategories, SourceBadge } from "@/components/ScoreParts";
+import { SpeedCard } from "@/components/SpeedCard";
 import { usePlayers } from "@/components/PlayerProvider";
 import { Button, Panel, Segmented, SectionTitle, fmtDate, fmtTime } from "@/components/ui";
 import { METRICS } from "@/engine/catalog";
@@ -173,6 +174,9 @@ export default function SwingDetail() {
               <CueLine cue={a.cue} />
             </div>
           </Panel>
+          <div className="mt-4">
+            <SpeedCard metrics={a.metrics} source={swing.source} />
+          </div>
           {a.observations.length > 1 && (
             <div className="mt-4 space-y-2.5">
               {a.observations.slice(1, 4).map((c) => (

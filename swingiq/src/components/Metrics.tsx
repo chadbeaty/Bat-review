@@ -14,7 +14,7 @@ export const METRIC_GROUPS: { title: string; keys: MetricKey[] }[] = [
   },
   { title: "Timing", keys: ["swingTime", "loadTime", "tempoRatio"] },
   { title: "Upper body", keys: ["headMovement", "handDrop", "handCast", "balance", "hipLead"] },
-  { title: "Bat and ball", keys: ["handSpeed", "batSpeed", "exitVelocity", "launchAngle", "attackAngle", "contact"] },
+  { title: "Bat and ball", keys: ["exitVelocity", "batSpeed", "launchAngle", "pitchSpeed", "descentAngle", "handSpeed", "attackAngle", "contact"] },
 ];
 export const ADVANCED_ORDER: MetricKey[] = METRIC_GROUPS.flatMap((g) => g.keys);
 
@@ -83,6 +83,12 @@ export function MetricRow({ mv, avg }: { mv: MetricValue; avg?: number }) {
             <>
               <span className="num text-2xl text-chalk">{displayValue(mv)}</span>
               {info.suffix && <span className="ml-1 text-sm text-chalk-3">{info.suffix}</span>}
+              {mv.plusMinus !== undefined && (
+                <span className="block text-[12px] text-chalk-3">
+                  ± {mv.plusMinus.toFixed(info.decimals)}
+                  {info.suffix === "°" ? "°" : ""}
+                </span>
+              )}
             </>
           )}
         </span>
