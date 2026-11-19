@@ -46,4 +46,5 @@ Every site must look one-of-a-kind. Nobody should be able to tell an AI built it
 - Legs and feet come first (owner's priority): see `swingiq/docs/reports/Slow pitch lower body mechanics.md` and `src/engine/lowerbody.ts`. Slow pitch differs from baseball: skilled hitters land the front heel ~0.2 s before contact; don't apply baseball "foot down early" norms. The owner's reference guide: https://www.playisps.com/news_article/show/1351103.
 - Plan, honest measurement limits, costs and roadmap: `swingiq/docs/ARCHITECTURE.md`. Never show a bat speed, exit velocity or launch angle from the camera until the Phase 2 high-speed native capture is built and validated; every metric carries a source tag and confidence.
 - Supabase schema + RLS is in `swingiq/supabase/migrations/` but no project is connected yet (the free org already has two active projects). Accounts switch on when `NEXT_PUBLIC_SUPABASE_URL`/`NEXT_PUBLIC_SUPABASE_ANON_KEY` are set.
-- The live-camera browser test needs `swingiq/scripts/fetch-test-video.sh` (stock clip, not committed).
+- The live-camera and upload browser tests need `swingiq/scripts/fetch-test-video.sh` (stock clip, not committed).
+- MVP directive status (what's built, what's honestly unavailable until Phase 2): `swingiq/docs/MVP-STATUS.md`.

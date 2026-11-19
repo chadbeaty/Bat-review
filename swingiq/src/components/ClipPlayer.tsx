@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { BONES, L } from "@/engine/geometry";
+import { drawSwingFrame, fitCanvas } from "./clipDraw";
 import type { Handedness, PoseFrame, SwingPhases } from "@/engine/types";
 
 type PhaseMark = { key: string; label: string; t: number };
@@ -86,83 +86,8 @@ export function ClipPlayer({
   const draw = useCallback(() => {
     const c = canvasRef.current;
     if (!c || !timeline.length) return;
-    const portrait = frameSize.height > frameSize.width;
-    const cw = c.clientWidth * Math.min(2, window.devicePixelRatio || 1);
-    const ch = cw * (frameSize.height / frameSize.width);
-    if (c.width !== Math.round(cw) || c.height !== Math.round(ch)) {
-      c.width = Math.round(cw);
-      c.height = Math.round(ch);
-    }
-    void portrait;
-    const ctx = c.getContext("2d")!;
-    const t = timeline[idx].t;
-    const bmp = bitmaps?.[idx];
-    if (bmp) ctx.drawImage(bmp, 0, 0, c.width, c.height);
-    else {
-      ctx.fillStyle = "#131614";
-      ctx.fillRect(0, 0, c.width, c.height);
-    }
-    const k = c.width / 400;
-    const k0 = k;
-    // Grip path up to now.
-    const path = handPath.filter((p) => p.t <= t);
-    if (path.length > 1) {
-      ctx.strokeStyle = "rgba(228,245,66,0.9)";
-      ctx.lineWidth = 3 * k;
-      ctx.lineJoin = "round";
-      ctx.beginPath();
-      path.forEach((p, i) => (i ? ctx.lineTo(p.x * c.width, p.y * c.height) : ctx.moveTo(p.x * c.width, p.y * c.height)));
-      ctx.stroke();
-    }
-    if (showSkeleton && pose.length) {
-      const pf = pose[nearest(pose, t)];
-      if (pf.lm && Math.abs(pf.t - t) < 60) {
-        const lm = pf.lm;
-        ctx.strokeStyle = "rgba(242,241,234,0.9)";
-        ctx.lineWidth = 2.5 * k;
-        ctx.lineCap = "round";
-        for (const [a, b] of BONES) {
-          if (lm[a].v < 0.35 || lm[b].v < 0.35) continue;
-          ctx.beginPath();
-          ctx.moveTo(lm[a].x * c.width, lm[a].y * c.height);
-          ctx.lineTo(lm[b].x * c.width, lm[b].y * c.height);
-          ctx.stroke();
-        }
-        // Front leg in ball yellow, with its knee angle, so the block is easy to see frame to frame.
-        const lh = hand === "R" ? L.leftHip : L.rightHip;
-        const lk = hand === "R" ? L.leftKnee : L.rightKnee;
-        const la = hand === "R" ? L.leftAnkle : L.rightAnkle;
-        if (lm[lh].v > 0.4 && lm[lk].v > 0.4 && lm[la].v > 0.4) {
-          const P = (i: number) => ({ x: lm[i].x * c.width, y: lm[i].y * c.height });
-          const [h, k, a] = [P(lh), P(lk), P(la)];
-          ctx.strokeStyle = "rgba(228,245,66,0.95)";
-          ctx.lineWidth = 3.5 * k0;
-          ctx.beginPath();
-          ctx.moveTo(h.x, h.y);
-          ctx.lineTo(k.x, k.y);
-          ctx.lineTo(a.x, a.y);
-          ctx.stroke();
-          const v1 = { x: h.x - k.x, y: h.y - k.y };
-          const v2 = { x: a.x - k.x, y: a.y - k.y };
-          const deg = Math.round((Math.acos(Math.max(-1, Math.min(1, (v1.x * v2.x + v1.y * v2.y) / (Math.hypot(v1.x, v1.y) * Math.hypot(v2.x, v2.y))))) * 180) / Math.PI);
-          const label = `${deg}°`;
-          ctx.font = `700 ${13 * k0}px system-ui, sans-serif`;
-          const tw = ctx.measureText(label).width;
-          const lx = k.x + 10 * k0;
-          const ly = k.y - 8 * k0;
-          ctx.fillStyle = "rgba(11,13,12,0.85)";
-          ctx.fillRect(lx - 4 * k0, ly - 13 * k0, tw + 8 * k0, 18 * k0);
-          ctx.fillStyle = "#E4F542";
-          ctx.fillText(label, lx, ly);
-        }
-        ctx.fillStyle = "#E4F542";
-        const gx = ((lm[L.leftWrist].x + lm[L.rightWrist].x) / 2) * c.width;
-        const gy = ((lm[L.leftWrist].y + lm[L.rightWrist].y) / 2) * c.height;
-        ctx.beginPath();
-        ctx.arc(gx, gy, 5 * k, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
+    fitCanvas(c, frameSize);
+    drawSwingFrame(c, { t: timeline[idx].t, bitmap: bitmaps?.[idx], pose, handPath, hand, showSkeleton });
   }, [bitmaps, idx, timeline, pose, handPath, showSkeleton, frameSize, hand]);
 
   useEffect(() => {

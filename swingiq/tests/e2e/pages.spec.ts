@@ -22,7 +22,8 @@ test("first run: set up a hitter, then home shows the live session button", asyn
   await page.getByLabel("Feet").fill("6");
   await page.getByLabel("Inches").fill("1");
   await page.getByRole("button", { name: "Let's hit" }).click();
-  await expect(page.getByRole("link", { name: /Start live session/ }).first()).toBeVisible();
+  await expect(page.getByRole("link", { name: /Record my swing/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Start live analysis/ })).toBeVisible();
   await expect(page.getByText("Chad · Lefty")).toBeVisible();
   await noSideScroll(page);
   expect(errors).toEqual([]);
@@ -42,13 +43,15 @@ test("profile: add a bat, change settings, add a second hitter", async ({ page }
   await page.getByLabel("Name").fill("Sam");
   await page.getByRole("button", { name: "Let's hit" }).click();
   await page.getByRole("link", { name: "Profile" }).click();
-  await page.getByRole("button", { name: "Add bat" }).click();
+  await page.getByRole("link", { name: /Bat DNA/ }).click();
+  await page.getByRole("button", { name: "Add a bat" }).click();
   await page.getByLabel("Brand").fill("Miken");
   await page.getByRole("textbox", { name: "Model" }).fill("Freak Primo");
   await page.getByLabel("Weight in ounces").fill("27");
   await page.getByRole("button", { name: "Save bat" }).click();
   await expect(page.getByText("Miken Freak Primo")).toBeVisible();
   await expect(page.getByText(/34 in · 27 oz · drop -7/)).toBeVisible();
+  await page.getByRole("link", { name: "Profile" }).click();
 
   await page.getByText("Quiet mode", { exact: true }).click();
   await expect(page.getByRole("switch", { name: /Quiet mode/ })).toBeChecked();
@@ -63,12 +66,13 @@ test("profile: add a bat, change settings, add a second hitter", async ({ page }
   expect(errors).toEqual([]);
 });
 
-for (const path of ["/swings", "/progress", "/guide", "/how-it-works", "/privacy", "/sign-in", "/live"]) {
+for (const path of ["/swings", "/progress", "/guide", "/how-it-works", "/privacy", "/sign-in", "/live", "/record", "/bats", "/compare"]) {
   test(`renders ${path}`, async ({ page }) => {
     const errors = errorsOf(page);
     await page.goto("/");
     await page.getByLabel("Name").fill("Pat");
     await page.getByRole("button", { name: "Let's hit" }).click();
+    await expect(page.getByRole("link", { name: /Record my swing/ })).toBeVisible();
     await page.goto(path);
     await expect(page.locator("h1").first()).toBeVisible();
     await noSideScroll(page);
