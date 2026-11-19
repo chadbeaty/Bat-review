@@ -22,9 +22,9 @@ function Diagram({ view, hand }: { view: CameraView; hand: Handedness }) {
 }
 
 const VIEWS: { value: CameraView; label: string; tip: string; best: string }[] = [
-  { value: "side", label: "Side", tip: "Across the plate, facing your chest", best: "Best overall: stride, head, hands, weight shift, balance" },
-  { value: "behind", label: "Behind", tip: "Behind the plate, in line with the pitch", best: "Hand path and rotation. No stride or weight shift" },
-  { value: "front", label: "Front", tip: "From the pitcher's side (behind a screen)", best: "Head and rotation. No stride or weight shift" },
+  { value: "side", label: "Side", tip: "Across the plate, facing your chest", best: "Best overall: foot-down timing, stride, weight shift, back heel, head and hands" },
+  { value: "behind", label: "Behind", tip: "Behind the plate, in line with the pitch", best: "Best for knees: front-leg block, back leg, stride direction. No stride length" },
+  { value: "front", label: "Front", tip: "From the pitcher's side (behind a screen)", best: "Front-leg block and foot-down timing. No stride length" },
 ];
 
 export function ViewPicker({ value, onChange, hand }: { value: CameraView; onChange: (v: CameraView) => void; hand: Handedness }) {

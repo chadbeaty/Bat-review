@@ -39,9 +39,10 @@ function CageDiagram() {
 }
 
 const tips = [
+  { h: "Feet in the picture", p: "Your shoes have to be in the frame, with a little room below them. Legs and feet are half the swing, and setup won't start on its own until they're in view." },
   { h: "Distance", p: "10–15 feet from you. Your whole body plus the bat at full extension should fit, with a little room at the top and bottom." },
   { h: "Height", p: "Phone at about waist height, level, not tilted up or down. A cheap phone tripod or a clamp on the cage pole works." },
-  { h: "Side view (best start)", p: "Across the plate from you, facing your chest. A righty puts the phone on the first-base side of the plate; a lefty on the third-base side. If you're behind netting, that's fine. Put the lens close to the net so the mesh blurs out." },
+  { h: "Side view (best start)", p: "Best for foot-down timing, stride, weight shift and back heel. Across the plate from you, facing your chest. A righty puts the phone on the first-base side of the plate; a lefty on the third-base side. If you're behind netting, that's fine. Put the lens close to the net so the mesh blurs out." },
   { h: "Light", p: "Bright is better. Fast hands blur in a dim cage. Don't point the phone at the sun or straight at a light." },
   { h: "Background", p: "Keep other people out of the frame if you can. SwingIQ follows one person, the most visible one." },
   { h: "Earbuds", p: "Connect them before you start and turn on voice cues. You'll hear a two-to-five word tip after each swing without walking to the phone." },

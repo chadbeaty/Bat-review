@@ -112,19 +112,25 @@ State machine (`src/engine/detector.ts`):
 | Contact vs. miss, contact time | Yes (mic) | Yes (mic) | measured | Needs mic permission |
 | Swing time (launch → contact) | Estimate ±33 ms | ±5–10 ms | cv_estimated | With mic contact, the end point is much sharper |
 | Load, stride, launch, contact, finish phases | Yes | Yes | cv_estimated | |
-| Stride length, stride timing | Yes (side view, feet visible) | Yes | cv_estimated | Scaled by the player's height |
+| Front-foot events: timing move (toe tap / stride / leg lift), foot down vs. contact | Yes (feet visible) | Sharper | cv_estimated | The most reliable lower-body signal: ~1–2 frames error |
+| Stride length, stance-to-plant width | Yes (side view) | Yes | cv_estimated | Scaled by the player's height |
+| Front foot staying planted ("happy feet") | Yes | Yes | cv_estimated | Heel/ankle only; toe pivot is normal |
+| Front-leg block (knee change plant → contact) | As a change, ±~10° | Better | cv_estimated | Absolute knee angles aren't shown |
+| Back knee, back heel, stride direction | Rough / view-dependent | Better | cv_estimated | Back knee shown as words only |
 | Head movement | Yes | Yes | cv_estimated | |
 | Hands dropping in the load | Yes | Yes | cv_estimated | |
 | Weight shift (hips over front foot) | Yes (side view) | Yes | cv_estimated | |
 | Balance at finish | Yes | Yes | cv_estimated | |
-| Hip / shoulder turn, separation | Rough (3D estimate) | Better | cv_estimated | One-camera depth is the weak spot; shown with lower confidence |
-| Kinematic sequence (hips → shoulders → hands) | Rough | Yes | cv_estimated | Peaks are 10–30 ms apart, so 30 fps can blur the order |
+| Hip / shoulder turn in degrees, separation, rotation speeds | **No** | **No** (needs 2+ cameras) | — | Even 2 iPhones at 240 fps miss pelvis speed by ~150°/s; not shown |
+| Hips-before-hands start order | No at 30 fps | Hint at 60+ fps | cv_estimated | Shown only at 60 fps or faster |
 | Hand speed | Rough, in-plane only | Good | cv_estimated | Not bat speed |
 | **Bat speed** | **No** | Phase 2 (bat model) | — | Needs bat tracking or a sensor |
 | **Attack angle, bat angles** | **No** | Phase 2 | — | Needs bat tracking |
 | **Exit velocity** | **No** | Phase 2 (estimate) | — | Needs ball tracking + calibration |
 | **Launch angle** | **No** | Phase 2 | — | Needs ball tracking |
 | Landing spot, distance | No | No (in a cage) | manual | Manual tags drive the spray chart |
+
+Lower-body research and thresholds: `docs/reports/Slow pitch lower body mechanics.md`.
 
 ## 9. Technical limitations (plain version)
 

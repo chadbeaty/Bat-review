@@ -21,6 +21,9 @@ export type SynthOptions = {
   noSwing?: boolean;
   /** Translate the whole body sideways (walking), inches per second. */
   walkInPerS?: number;
+  /** Front-knee angle (2D, degrees) at foot plant and at contact. Default: 150 → 172 (firming up). */
+  leadKneePlant?: number;
+  leadKneeContact?: number;
   /** Hide the feet (low visibility on ankles/heels/toes). */
   hideFeet?: boolean;
   seed?: number;
@@ -105,6 +108,23 @@ export function synthSwing(o: SynthOptions = {}) {
     }
     const headX = (o.noSwing ? 0 : move(t, -150, fwdEnd * 0.5, 0, headFwd)) + walk;
 
+    // Front knee: bend so the hip–knee–ankle angle follows stance (170°) → plant (kneePlant) → contact (kneeContact).
+    const kPlant = o.leadKneePlant ?? 150;
+    const kContact = o.leadKneeContact ?? 172;
+    const kneeDeg = o.noSwing ? 170 : t < -120 ? move(t, -600, -120, 170, kPlant) : move(t, -120, fwdEnd * 0.5, kPlant, kContact);
+    const hipL: [number, number] = [hipX + 5, 36];
+    const ankL: [number, number] = [leadAnkleX, leadLift];
+    const dx = ankL[0] - hipL[0];
+    const dy = ankL[1] - hipL[1];
+    const d = Math.hypot(dx, dy);
+    const half = (kneeDeg * Math.PI) / 360;
+    const limb = d / (2 * Math.sin(half));
+    const off = Math.sqrt(Math.max(0, limb * limb - (d / 2) ** 2));
+    // Knee pushes toward the pitcher (+x), perpendicular to the hip–ankle line.
+    const nx = -dy / d;
+    const ny = dx / d;
+    const sgn = nx >= 0 ? 1 : -1;
+    const leadKnee: [number, number] = [(hipL[0] + ankL[0]) / 2 + sgn * nx * off, (hipL[1] + ankL[1]) / 2 + sgn * ny * off];
     const pts: Record<number, [number, number]> = {
       0: [headX + 1.5, 61.6],
       7: [headX - 1, 62],
@@ -117,7 +137,7 @@ export function synthSwing(o: SynthOptions = {}) {
       16: [hx - 0.6, hy - 1],
       23: [hipX + 5, 36],
       24: [hipX - 5, 36],
-      25: [(hipX + 5 + leadAnkleX) / 2 + 1, 19 + leadLift / 2],
+      25: leadKnee,
       26: [(hipX - 5 + rearAnkleX) / 2, 19],
       27: [leadAnkleX, leadLift],
       28: [rearAnkleX, 0],

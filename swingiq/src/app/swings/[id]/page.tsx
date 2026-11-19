@@ -4,7 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { ArcScore } from "@/components/ArcScore";
 import { ClipPlayer } from "@/components/ClipPlayer";
-import { ADVANCED_ORDER, CueLine, MetricList, averageMetrics } from "@/components/Metrics";
+import { CueLine, GroupedMetrics, averageMetrics } from "@/components/Metrics";
 import { usePlayers } from "@/components/PlayerProvider";
 import { Button, Panel, Segmented, SectionTitle, fmtDate, fmtTime } from "@/components/ui";
 import { METRICS } from "@/engine/catalog";
@@ -126,7 +126,7 @@ export default function SwingDetail() {
           {clip === undefined ? (
             <div className="rounded-2xl border border-line bg-night-2" style={{ aspectRatio: `${swing.frameSize.width} / ${swing.frameSize.height}`, maxHeight: "68dvh" }} />
           ) : (
-            <ClipPlayer key={`${swing.id}-${clip ? "v" : "p"}`} pose={swing.pose} frames={clip?.frames ?? null} phases={a.phases} frameSize={swing.frameSize} handPath={a.handPath} />
+            <ClipPlayer key={`${swing.id}-${clip ? "v" : "p"}`} pose={swing.pose} frames={clip?.frames ?? null} phases={a.phases} frameSize={swing.frameSize} handPath={a.handPath} hand={swing.hand} />
           )}
         </div>
         <div>
@@ -164,7 +164,7 @@ export default function SwingDetail() {
 
       <SectionTitle>Numbers</SectionTitle>
       <p className="-mt-1 mb-2 text-[13px] text-chalk-3">Tap any row for what it means and exactly how it was measured.</p>
-      <MetricList metrics={metrics} keys={ADVANCED_ORDER} averages={averages} />
+      <GroupedMetrics metrics={metrics} averages={averages} />
 
       <SectionTitle>How did it go?</SectionTitle>
       <p className="-mt-1 mb-3 text-[13px] text-chalk-3">Tag the result. It feeds your spray chart and Swing DNA.</p>

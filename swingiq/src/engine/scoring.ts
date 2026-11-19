@@ -28,25 +28,39 @@ const COMPONENTS: Component[] = [
     score: (v) => (v < 40 ? ramp(v, 0, 40, 55, 100) : v <= 85 ? 100 : ramp(v, 85, 115, 100, 30)),
   },
   {
+    key: "footDown",
+    label: "Foot down on time",
+    metric: "strideTiming",
+    weight: 1,
+    // ms before contact. Elite slow pitch ≈ 200 ms (Wu et al.); under 100 the foot is still landing; long waits stall.
+    score: (v) => (v < 140 ? ramp(v, 40, 140, 35, 100) : v <= 380 ? 100 : ramp(v, 380, 650, 100, 55)),
+  },
+  {
+    key: "frontLeg",
+    label: "Firm front side",
+    metric: "frontLegBlock",
+    weight: 0.8,
+    // Degrees the front knee straightened from plant to contact. Collapsing (negative) is the fault.
+    score: (v) => (v >= 0 ? 100 : ramp(v, -20, 0, 35, 100)),
+  },
+  {
     key: "stride",
     label: "Controlled stride",
     metric: "strideLength",
     weight: 0.5,
-    // Scored as a share of height by the caller (see scoreSwing); kept simple here.
+    // Scored from stance-to-plant width by the caller (see scoreSwing).
     score: (v) => v,
   },
-  {
-    key: "separation",
-    label: "Hips lead shoulders",
-    metric: "separation",
-    weight: 0.7,
-    score: (v) => (v < 20 ? ramp(v, 0, 20, 35, 100) : v <= 50 ? 100 : ramp(v, 50, 75, 100, 70)),
-  },
-  { key: "sequence", label: "Sequence", metric: "sequence", weight: 0.7, score: (v) => (v >= 2 ? 100 : v >= 1 ? 60 : 30) },
 ];
 
-export function scoreSwing(m: Partial<Record<MetricKey, MetricValue>>, view: CameraView, heightIn = 70): ScoreBreakdown {
+export function scoreSwing(
+  m: Partial<Record<MetricKey, MetricValue>>,
+  view: CameraView,
+  heightIn = 70,
+  extras: { widthRatio?: number | null } = {},
+): ScoreBreakdown {
   void view;
+  void heightIn;
   const parts: ScoreBreakdown["components"] = [];
   let sum = 0;
   let wsum = 0;
@@ -55,9 +69,10 @@ export function scoreSwing(m: Partial<Record<MetricKey, MetricValue>>, view: Cam
     if (!mv || mv.source === "unavailable" || mv.value === null) continue;
     let s: number;
     if (c.key === "stride") {
-      const pct = (mv.value / heightIn) * 100;
-      // Minimal strides are fine in slow pitch; long ones move the head and invite lunging.
-      s = pct <= 22 ? 100 : ramp(pct, 22, 36, 100, 45);
+      // Minimal strides are fine in slow pitch; feet ending up much wider than the stance move the head and invite
+      // lunging (coaching guide: flag past ~1.6× the stance width).
+      if (!extras.widthRatio) continue;
+      s = extras.widthRatio <= 1.5 ? 100 : ramp(extras.widthRatio, 1.5, 2.1, 100, 45);
     } else {
       s = c.score(mv.value, mv);
     }

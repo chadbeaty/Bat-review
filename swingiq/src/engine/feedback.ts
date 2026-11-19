@@ -10,6 +10,12 @@ export type CueContext = {
   /** Head movement toward the pitcher (+) and downward (+), inches, from the analyzer. */
   headFwdIn: number;
   headDownIn: number;
+  /** Player's leg length in inches (hip to ankle), for scaling leg rules. */
+  legIn?: number;
+  /** Front foot was still landing when the hands started. */
+  lateFoot?: boolean;
+  /** Ankle-to-ankle width at foot plant ÷ stance width (side view). */
+  widthRatio?: number | null;
 };
 
 const val = (m: Metrics, k: MetricKey, minConf = 0.3): number | null => {
@@ -82,48 +88,82 @@ const RULES: Rule[] = [
     improved: { text: "Better: you held your finish.", spoken: "Better balance." },
   },
   {
-    id: "armsFirst",
-    basedOn: ["sequence"],
-    severity: (m) => {
-      const v = val(m, "sequence", 0.35);
-      return v === 0 ? 0.6 : 0;
+    id: "lateFoot",
+    basedOn: ["strideTiming"],
+    // Elite slow-pitch hitters land the front heel ~0.2 s before contact (Wu et al.); under ~0.1 s the foot is
+    // still landing while the hands go.
+    severity: (m, c) => {
+      const v = val(m, "strideTiming");
+      if (v === null) return 0;
+      return Math.max((100 - v) / 80, c.lateFoot && v < 140 ? 0.3 : 0);
     },
-    text: "Your arms started before your hips. Let your hips start the swing and the hands follow.",
-    spoken: "Hips first.",
-    improved: { text: "Better: your hips led the swing.", spoken: "Better. Hips led." },
+    text: "Your front foot was still landing as you swung. Start your step at the top of the arc so it's down as the ball comes in.",
+    spoken: "Get the foot down sooner.",
+    improved: { text: "Better: your front foot was down in time.", spoken: "Better. Foot down on time." },
+  },
+  {
+    id: "strideWait",
+    basedOn: ["strideTiming"],
+    severity: (m) => {
+      const v = val(m, "strideTiming");
+      return v === null ? 0 : (v - 450) / 250;
+    },
+    text: "You landed early and waited. Start your stride a touch later, as the ball starts down, so foot-down flows right into the swing.",
+    spoken: "Foot down, go.",
+    improved: { text: "Better: foot-down flowed right into your swing.", spoken: "Better rhythm." },
+  },
+  {
+    id: "softFront",
+    basedOn: ["frontLegBlock"],
+    // Coaches split on straight vs. slightly bent at contact, so only a knee that keeps collapsing after plant is a fault.
+    severity: (m) => {
+      const v = val(m, "frontLegBlock", 0.2);
+      return v === null ? 0 : (-8 - v) / 12;
+    },
+    text: "Your front knee kept bending after your foot landed. Plant and firm up the front leg so your hips can turn against it.",
+    spoken: "Firm front side.",
+    improved: { text: "Better: your front leg firmed up into contact.", spoken: "Better. Firm front side." },
+  },
+  {
+    id: "backCollapse",
+    basedOn: ["backKnee"],
+    severity: (m) => {
+      const v = val(m, "backKnee", 0.2);
+      return v === null ? 0 : (100 - v) / 20;
+    },
+    text: "Your back leg collapsed under you. Stay taller on the back side and drive the back knee toward the front knee.",
+    spoken: "Stay tall on the back side.",
+    improved: { text: "Better: you stayed taller on your back side.", spoken: "Better. Stayed tall." },
+  },
+  {
+    id: "happyFeet",
+    basedOn: ["frontFootSlide"],
+    severity: (m) => {
+      const v = val(m, "frontFootSlide");
+      return v === null ? 0 : (v - 4) / 3;
+    },
+    text: "Your front foot kept moving after it landed. Plant it early and turn around it.",
+    spoken: "Plant and turn.",
+    improved: { text: "Better: your front foot stayed planted.", spoken: "Better. Planted." },
+  },
+  {
+    id: "barCast",
+    basedOn: ["handCast"],
+    severity: (m) => {
+      const v = val(m, "handCast", 0.25);
+      return v === null ? 0 : (v - 40) / 25;
+    },
+    text: "Your hands pushed away from your body before your hips turned. Keep them tight until the hips start.",
+    spoken: "Hands tight. Hips first.",
+    improved: { text: "Better: your hands stayed tight to your body.", spoken: "Better. Hands tight." },
   },
   {
     id: "overstride",
     basedOn: ["strideLength"],
-    severity: (m) => {
-      const v = val(m, "strideLength");
-      return v === null ? 0 : (v - 20) / 8;
-    },
-    text: "That was a long stride. Shorten it to keep your head and eyes steady.",
-    spoken: "Shorter stride.",
+    severity: (_m, c) => (c.widthRatio ? (c.widthRatio - 1.6) / 0.4 : 0),
+    text: "Long stride: your feet got much wider than your stance. Take a shorter step with the same timing to keep your head and eyes steady.",
+    spoken: "Shorter step.",
     improved: { text: "Better: shorter, more controlled stride.", spoken: "Better stride." },
-  },
-  {
-    id: "lateFoot",
-    basedOn: ["strideTiming"],
-    severity: (m) => {
-      const v = val(m, "strideTiming");
-      return v === null ? 0 : (-40 - v) / 80;
-    },
-    text: "Your front foot was still moving when you swung. Get it down earlier, as the ball starts down from its peak.",
-    spoken: "Get the foot down early.",
-    improved: { text: "Better: your front foot was down before you swung.", spoken: "Better. Foot down early." },
-  },
-  {
-    id: "noSeparation",
-    basedOn: ["separation"],
-    severity: (m) => {
-      const v = val(m, "separation", 0.35);
-      return v === null ? 0 : (5 - v) / 10;
-    },
-    text: "Your hips and shoulders turned together. Let the hips open a beat before the shoulders.",
-    spoken: "Hips, then shoulders.",
-    improved: { text: "Better: your hips opened ahead of your shoulders.", spoken: "Better separation." },
   },
 ];
 
@@ -145,6 +185,17 @@ export function buildCues(m: Metrics, c: CueContext): Cue[] {
   const praise: Cue[] = [];
   const bal = val(m, "balance");
   const head = val(m, "headMovement");
+  const footDown = val(m, "strideTiming");
+  const block = val(m, "frontLegBlock", 0.2);
+  if (footDown !== null && footDown >= 140 && footDown <= 380 && block !== null && block >= 8) {
+    praise.push({
+      id: "goodLegs",
+      tone: "praise",
+      text: "Good legs: your front foot was down on time and your front side firmed up into contact.",
+      spoken: "Good legs. Firm front side.",
+      basedOn: ["strideTiming", "frontLegBlock"],
+    });
+  }
   if (bal !== null && bal >= 85 && head !== null && head <= 3) {
     praise.push({
       id: "solid",

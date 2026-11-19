@@ -78,6 +78,8 @@ export class LiveEngine {
   micActive = false;
   /** Field-tuning readout (window.__swingiq): what the detector saw and why it rejected candidates. */
   debug = { frames: 0, bodies: 0, maxSpeed: 0, lastRejected: "", swings: 0, delegate: "" };
+  /** How the video is fitted on screen; the overlay follows it. Setup uses "contain" so the whole frame (feet!) shows. */
+  fit: "cover" | "contain" = "cover";
   /** Detection is on (after setup). During setup the camera, overlay and checks run, but swings aren't counted. */
   detecting = false;
 
@@ -340,7 +342,7 @@ export class LiveEngine {
       this.trail = [];
       return;
     }
-    const s = Math.max(cw / v.videoWidth, ch / v.videoHeight);
+    const s = this.fit === "cover" ? Math.max(cw / v.videoWidth, ch / v.videoHeight) : Math.min(cw / v.videoWidth, ch / v.videoHeight);
     const ox = (cw - v.videoWidth * s) / 2;
     const oy = (ch - v.videoHeight * s) / 2;
     const mirror = this.opts.facing === "user";

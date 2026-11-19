@@ -4,8 +4,9 @@ import { expect, test } from "@playwright/test";
 
 const video = join(__dirname, "..", "fixtures", "video", "swing.y4m");
 
-// The real thing: a real batter's swing is fed in as the webcam. The app has to find the body, pass setup, catch the
-// swing on its own, score it, save it with its clip, and play it back frame by frame.
+// The real thing: a real batter, filmed head to toe from the pitcher's side, is fed in as the webcam. The app has to
+// find the body (feet included), pass setup, catch the swing on its own, read the legs and feet, score it, save it with
+// its clip, and play it back frame by frame.
 test("catches a real swing from the camera with no taps", async ({ page }) => {
   test.skip(!existsSync(video), "Run scripts/fetch-test-video.sh to download the test clip.");
   test.setTimeout(150_000);
@@ -15,7 +16,8 @@ test("catches a real swing from the camera with no taps", async ({ page }) => {
   await page.goto("/live");
   await page.getByLabel("Name").fill("Tester");
   await page.getByRole("button", { name: "Save and continue" }).click();
-  // Upper-body clip: use side view and keep the mic on (fake mic gives a beep we must not mistake for contact).
+  // Filmed from the pitcher's side: front view. Keep the mic on (the fake mic beeps; that must not count as contact).
+  await page.getByRole("radio", { name: /Front/ }).click();
   await page.getByRole("button", { name: "Turn on camera" }).click();
 
   // Setup screen with live checks. When every check passes the session starts on its own after two seconds,
@@ -36,6 +38,9 @@ test("catches a real swing from the camera with no taps", async ({ page }) => {
   await expect(page.getByLabel(/Swing frame \d+ of \d+/)).toBeVisible();
   await page.getByRole("button", { name: "Next frame" }).click();
   await expect(page.getByText("Bat speed").first()).toBeVisible();
+  // Legs and feet were read: the section is there and the timing move was recognised.
+  await expect(page.getByRole("dialog").getByRole("region", { name: "Legs and feet" })).toBeVisible();
+  await expect(page.getByRole("dialog").getByText("Timing move")).toBeVisible();
   await page.getByRole("button", { name: "Back to batting" }).click();
 
   await page.getByRole("button", { name: "End session" }).click();
@@ -46,5 +51,6 @@ test("catches a real swing from the camera with no taps", async ({ page }) => {
   // The clip's frames were saved on the device.
   await expect(page.getByText("Video not saved for this swing")).toHaveCount(0);
   await expect(page.getByText(/Not available/).first()).toBeVisible();
+  await expect(page.getByRole("button", { name: "Foot down", exact: true })).toBeVisible();
   expect(errors).toEqual([]);
 });
