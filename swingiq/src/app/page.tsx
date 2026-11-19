@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArcScore } from "@/components/ArcScore";
-import { Wordmark } from "@/components/AppShell";
+import { Lockup, Wordmark } from "@/components/Logo";
 import { PlayerForm } from "@/components/PlayerForm";
 import { usePlayers } from "@/components/PlayerProvider";
 import { Softball } from "@/components/Softball";
@@ -12,19 +12,40 @@ import { db } from "@/lib/store/db";
 import { FOOT_DOWN_WINDOW, categoryAverages, consistency, metricValues, recentVsBefore, speedOf } from "@/lib/insights";
 import type { Session, SwingRecord } from "@/lib/store/types";
 
-function PitchTracer() {
-  // The arc a slow-pitch ball travels, drawn like a broadcast tracer over a chalk field outline.
+/**
+ * The brand idea, drawn from above: three outfielders and their range, and a line drive splitting the gap between
+ * left and center to the wall. No numbers: it's an illustration, not a reading.
+ */
+function GapField() {
+  const home = { x: 180, y: 196 };
+  const fielders = [
+    { x: 92, y: 92 },
+    { x: 180, y: 66 },
+    { x: 268, y: 92 },
+  ];
   return (
-    <svg viewBox="0 0 360 150" className="w-full" aria-hidden="true">
-      <path d="M180 146 L60 40 M180 146 L300 40" stroke="var(--color-line-2)" strokeWidth="1" />
-      <path d="M60 40 Q180 -24 300 40" fill="none" stroke="var(--color-line)" strokeWidth="1" strokeDasharray="2 5" />
-      <path d="M180 146 l22 -22 l-22 -22 l-22 22 z" fill="none" stroke="var(--color-chalk-3)" strokeWidth="1" />
-      <path d="M20 118 Q96 -8 176 132" fill="none" stroke="var(--color-optic)" strokeWidth="1.6" strokeDasharray="1 6" strokeLinecap="round" />
-      <path d="M176 132 L318 30" fill="none" stroke="var(--color-optic)" strokeWidth="2" strokeLinecap="round" opacity="0.9" className="draw" pathLength={1000} style={{ ["--len" as string]: 1000 }} />
-      <circle cx="318" cy="30" r="5" fill="var(--color-optic)" />
+    <svg viewBox="0 0 360 210" className="w-full" aria-hidden="true">
+      <path d={`M${home.x} ${home.y} L22 48 M${home.x} ${home.y} L338 48`} stroke="var(--color-line-2)" strokeWidth="1" />
+      <path d="M22 48 Q180 -30 338 48" fill="none" stroke="var(--color-chalk-3)" strokeOpacity="0.55" strokeWidth="1.4" />
+      <path d="M126 150 Q180 118 234 150" fill="none" stroke="var(--color-line-2)" strokeWidth="1" />
+      {fielders.map((f) => (
+        <g key={f.x}>
+          <circle cx={f.x} cy={f.y} r="30" fill="var(--color-chalk)" fillOpacity="0.035" stroke="var(--color-chalk-3)" strokeOpacity="0.35" strokeDasharray="2 4" />
+          <circle cx={f.x} cy={f.y} r="4" fill="var(--color-chalk-2)" />
+        </g>
+      ))}
+      <path d={`M${home.x} ${home.y - 6} l9 -9 l-9 -9 l-9 9 z`} fill="none" stroke="var(--color-chalk-2)" strokeWidth="1.2" />
+      <path d={`M${home.x} ${home.y - 14} L115 23`} fill="none" stroke="var(--color-optic)" strokeWidth="2.4" strokeLinecap="round" className="draw" pathLength={1000} style={{ ["--len" as string]: 1000 }} />
+      <circle cx="115" cy="23" r="6" fill="var(--color-optic)" className="animate-pop" style={{ animationDelay: "0.9s" }} />
     </svg>
   );
 }
+
+const READS = [
+  { h: "Legs and feet first", p: "Foot-down timing, stride and front-leg block, judged against slow-pitch norms, not baseball's." },
+  { h: "The one thing to fix", p: "Every swing scored across six skill areas, with the single change that matters most and a drill for it." },
+  { h: "Speed from slo-mo", p: "Exit velo, launch angle, pitch speed and bat speed from 120–240 fps video, always with a ± range." },
+];
 
 function CageDiagram() {
   return (
@@ -65,37 +86,70 @@ export default function Home() {
   if (!player) {
     return (
       <div className="animate-rise pb-10">
-        <div className="pt-3">
-          <Wordmark />
-        </div>
-        <div className="mt-8 md:grid md:grid-cols-[1.1fr_1fr] md:items-center md:gap-10">
+        <header className="flex items-center justify-between pt-3">
+          <span className="md:invisible">
+            <Wordmark height={20} />
+          </span>
+          <Link href="/how-it-works" className="text-[14px] text-chalk-2 hover:text-chalk">
+            How it measures
+          </Link>
+        </header>
+        <div className="mt-9 md:grid md:grid-cols-[1.4fr_1fr] md:items-center md:gap-10">
           <div>
-            <h1 className="display text-[2.7rem] leading-[0.98] md:text-[3.4rem]">
-              Know your swing.
-              <br />
-              <span className="text-chalk-2">Own your at‑bat.</span>
+            <h1 className="display text-[3rem] leading-[0.95] md:text-[3.4rem]">
+              <span className="whitespace-nowrap">Own the gap.</span>
+              <span className="mt-3 block text-[1.35rem] font-semibold leading-tight tracking-[-0.01em] text-chalk-2 [font-stretch:108%] md:text-[1.6rem]">Know your swing. Own your game.</span>
             </h1>
             <p className="mt-5 max-w-md text-[17px] leading-relaxed text-chalk-2">
-              A swing lab for slow pitch that lives on your phone. It catches every swing on its own, reads your legs and feet first, and tells you the one thing to fix.
-              Film in slo-mo and it measures exit velo too.
+              Gapper is a hitting lab on your phone. It catches every swing on its own, reads your legs and feet first, and tells you the one thing to fix. Film in slo-mo and it
+              measures exit velo and bat speed too.
             </p>
+            <div className="mt-7 flex flex-wrap items-center gap-3">
+              <a href="#start" className="press inline-flex min-h-12 items-center rounded-xl bg-optic px-5 font-semibold text-optic-ink hover:bg-optic-2">
+                Set up your hitter
+              </a>
+              <Link href="/guide" className="press inline-flex min-h-12 items-center rounded-xl border border-line-2 px-5 text-chalk hover:border-chalk-3">
+                Camera setup
+              </Link>
+            </div>
           </div>
-          <div className="mt-6 md:mt-0">
-            <PitchTracer />
+          <div className="mt-10 md:mt-0">
+            <GapField />
           </div>
         </div>
+
+        <section aria-label="What Gapper reads" className="mt-12">
+          <dl className="surface divide-y divide-line rounded-2xl md:grid md:grid-cols-3 md:divide-x md:divide-y-0">
+            {READS.map((r) => (
+              <div key={r.h} className="p-5">
+                <dt className="head text-[17px]">{r.h}</dt>
+                <dd className="mt-1.5 text-[14px] leading-relaxed text-chalk-3">{r.p}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="mt-3 text-[13px] leading-relaxed text-chalk-3">
+            Estimates from one phone camera: every number shows how sure it is, and what a phone can&apos;t measure is left out.{" "}
+            <Link href="/how-it-works" className="text-chalk-2 underline">
+              Here&apos;s the honest version.
+            </Link>{" "}
+            Built for slow-pitch softball first; baseball is on the way.
+          </p>
+        </section>
+
         {!storageOk && <p className="mt-6 rounded-xl border border-amber/40 bg-amber-wash px-4 py-3 text-sm text-chalk">This browser is blocking storage (private mode?). Swings won&apos;t be saved.</p>}
-        <Panel boxed className="mt-8 p-5 md:max-w-xl">
+        <Panel boxed id="start" className="mt-10 scroll-mt-6 p-5 md:max-w-xl">
           <h2 className="head text-[19px]">Set up your hitter</h2>
           <p className="mb-5 mt-1 text-[14px] text-chalk-3">Stays on this phone. No account, no sign-up.</p>
           <PlayerForm onSave={savePlayer} submitLabel="Let's hit" />
         </Panel>
-        <p className="mt-6 text-[13px] text-chalk-3">
-          Curious what a phone can really measure?{" "}
-          <Link href="/how-it-works" className="text-chalk-2 underline">
-            Here&apos;s the honest version.
-          </Link>
-        </p>
+
+        <footer className="mt-14 flex items-end justify-between border-t border-line pt-6">
+          <Lockup width={132} />
+          <div className="flex gap-4 text-[13px] text-chalk-3">
+            <Link href="/privacy" className="hover:text-chalk-2">Privacy</Link>
+            <Link href="/sign-in" className="hover:text-chalk-2">Sign in</Link>
+          </div>
+        </footer>
       </div>
     );
   }
@@ -156,10 +210,10 @@ export default function Home() {
       ) : all.length > 0 ? (
         <div className="lg:grid lg:grid-cols-[1.1fr_1fr] lg:items-start lg:gap-x-6">
           <div>
-          <Panel boxed as="section" aria-label="Your SwingIQ score" className="mt-5 overflow-hidden p-5">
+          <Panel boxed as="section" aria-label="Your Gapper Score" className="mt-5 overflow-hidden p-5">
             <div className="flex items-center justify-between">
-              <span className="head text-[15px]">Your SwingIQ score</span>
-              <Link href="/progress" className="text-[13px] text-optic">
+              <span className="head text-[15px]">Your Gapper Score</span>
+              <Link href="/progress" className="text-[13px] text-chalk-2 hover:text-chalk">
                 Progress
               </Link>
             </div>
@@ -182,7 +236,7 @@ export default function Home() {
           </Panel>
 
           <div className="mt-3 grid grid-cols-[1.4fr_1fr] gap-3">
-            <Link href="/record" className="press flex min-h-14 items-center gap-3 rounded-xl bg-optic px-4 font-bold text-optic-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.45),0_10px_28px_-14px_rgb(215_180_106/0.7)]">
+            <Link href="/record" className="press flex min-h-14 items-center gap-3 rounded-xl bg-optic px-4 font-bold text-optic-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.45),0_10px_28px_-14px_rgb(183_243_74/0.22)]">
               <svg width="22" height="22" viewBox="0 0 30 30" aria-hidden="true">
                 <rect x="2" y="7" width="19" height="16" rx="3" fill="none" stroke="currentColor" strokeWidth="2.6" />
                 <path d="M21 13l7-4v12l-7-4z" fill="currentColor" />
@@ -222,7 +276,7 @@ export default function Home() {
 
           {last && focus && (
             <>
-              <SectionTitle right={<Link href={`/swings?session=${last.id}`} className="text-[13px] text-optic">Review</Link>}>Work on this next</SectionTitle>
+              <SectionTitle right={<Link href={`/swings?session=${last.id}`} className="text-[13px] text-chalk-2 hover:text-chalk">Review</Link>}>Work on this next</SectionTitle>
               <Panel className="relative overflow-hidden p-4 pl-5">
                 <span className="absolute inset-y-0 left-0 w-1 bg-stitch" aria-hidden="true" />
                 <p className="text-[15px] leading-snug text-chalk">{focus.text}</p>
@@ -234,12 +288,12 @@ export default function Home() {
           )}
           </div>
           <div className="lg:-mt-5">
-          <SectionTitle right={<Link href="/progress" className="text-[13px] text-optic">Details</Link>}>Field Print</SectionTitle>
+          <SectionTitle right={<Link href="/progress" className="text-[13px] text-chalk-2 hover:text-chalk">Details</Link>}>Field Print</SectionTitle>
           <Panel className="p-4">
             <FieldPrint now={categoryAverages(recent)} before={before.length ? categoryAverages(before) : null} caption={before.length ? "Last 20 swings. Silver lines: the 20 before. Tap a wedge." : "Your six skill areas over your recent swings. Tap a wedge."} />
           </Panel>
 
-          <SectionTitle right={<Link href="/swings" className="text-[13px] text-optic">All swings</Link>}>Recent swings</SectionTitle>
+          <SectionTitle right={<Link href="/swings" className="text-[13px] text-chalk-2 hover:text-chalk">All swings</Link>}>Recent swings</SectionTitle>
           <ol className="surface divide-y divide-line overflow-hidden rounded-2xl">
             {all.slice(0, 5).map((s) => {
               const ev = speedOf(s, "exitVelocity");
@@ -312,7 +366,7 @@ export default function Home() {
       )}
 
       <div className="mt-12 flex flex-wrap gap-x-4 gap-y-1 border-t border-line pt-5 text-[13px] text-chalk-3">
-        <Link href="/how-it-works" className="hover:text-chalk-2">How SwingIQ measures</Link>
+        <Link href="/how-it-works" className="hover:text-chalk-2">How Gapper measures</Link>
         <Link href="/bats" className="hover:text-chalk-2">Bat DNA</Link>
         <Link href="/guide" className="hover:text-chalk-2">Camera setup guide</Link>
       </div>

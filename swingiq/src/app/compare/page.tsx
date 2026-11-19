@@ -244,7 +244,7 @@ function CompareInner() {
             if (!playing && rel >= range[1] - 1) setRel(range[0]);
             setPlaying((p) => !p);
           }}
-          className="press grid h-12 w-16 place-items-center rounded-xl bg-optic text-optic-ink shadow-[0_10px_28px_-14px_rgb(215_180_106/0.7)]"
+          className="press grid h-12 w-16 place-items-center rounded-xl bg-optic text-optic-ink shadow-[0_10px_28px_-14px_rgb(183_243_74/0.22)]"
           aria-label={playing ? "Pause" : "Play both"}
         >
           {playing ? (
@@ -291,7 +291,7 @@ function CompareInner() {
           </thead>
           <tbody className="divide-y divide-line">
             <tr>
-              <td className="px-3 py-2 text-chalk">SwingIQ score</td>
+              <td className="px-3 py-2 text-chalk">Gapper Score</td>
               <td className="num px-3 py-2 text-right">{A.analysis.score.overall ?? "—"}</td>
               <td className="num px-3 py-2 text-right">{B.analysis.score.overall ?? "—"}</td>
               <Delta a={A.analysis.score.overall} b={B.analysis.score.overall} better="higher" decimals={0} />

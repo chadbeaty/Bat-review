@@ -1,12 +1,12 @@
-# SwingIQ Live: architecture, feasibility and roadmap
+# Gapper: architecture, feasibility and roadmap
 
-This is the plan behind SwingIQ Live, plus a straight answer on what a phone camera can and can't measure. Read the "What an iPhone can measure" table first. It drives every product decision below.
+This is the plan behind Gapper, plus a straight answer on what a phone camera can and can't measure. Read the "What an iPhone can measure" table first. It drives every product decision below.
 
 ## 1. Existing environment
 
-- Monorepo `chadbeaty/Bat-review`. Sibling apps: Barrel Talk (static, root), slow-pitch marketplace (`web/`), Aged Takes (`agedtakes/`). They all run Next.js 16, React 19, Tailwind 4, Supabase and Vercel. SwingIQ uses the same stack so it can share habits, CI patterns and hosting.
-- SwingIQ lives in `swingiq/` and stands on its own: its own `package.json`, its own Supabase schema, and its own Vercel project.
-- Supabase org is on the free plan with two active projects already (Aged Takes and the marketplace), so a third free project can't be created right now. SwingIQ is built **local-first**. Everything works on the phone with no account. Accounts and cloud backup switch on as soon as a Supabase project is connected (see `README.md`, "Turn on accounts").
+- Monorepo `chadbeaty/Bat-review`. Sibling apps: Barrel Talk (static, root), slow-pitch marketplace (`web/`), Aged Takes (`agedtakes/`). They all run Next.js 16, React 19, Tailwind 4, Supabase and Vercel. Gapper uses the same stack so it can share habits, CI patterns and hosting.
+- Gapper lives in `swingiq/` and stands on its own: its own `package.json`, its own Supabase schema, and its own Vercel project.
+- Supabase org is on the free plan with two active projects already (Aged Takes and the marketplace), so a third free project can't be created right now. Gapper is built **local-first**. Everything works on the phone with no account. Accounts and cloud backup switch on as soon as a Supabase project is connected (see `README.md`, "Turn on accounts").
 - Barrel Talk's bat catalog (`data/bats.json`, 121 bats) is the natural seed for "My Bats" model pickers later.
 
 ## 2. System architecture

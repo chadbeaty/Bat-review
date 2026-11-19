@@ -15,6 +15,7 @@ import { challengeProgress, coachingFor } from "@/engine/coaching";
 import { BASIC_SLOTS, CueLine, GroupedMetrics, displayValue } from "../Metrics";
 import { PlayerForm } from "../PlayerForm";
 import { usePlayers } from "../PlayerProvider";
+import { LogoMark } from "../Logo";
 import { Softball } from "../Softball";
 import { Button, Panel, Toggle, fmtDuration } from "../ui";
 import { SetupChecklist } from "./SetupChecklist";
@@ -344,6 +345,7 @@ export function LiveSession() {
         <div className="relative mx-auto max-w-[34rem] px-4 pb-10 pt-[max(1rem,env(safe-area-inset-top))]">
           <div className="flex items-center justify-between pt-2">
             <Link href="/" className="-ml-2 rounded-lg px-2 py-2 text-[15px] text-chalk-2 hover:text-chalk">← Home</Link>
+            <LogoMark size={26} />
             <Link href="/guide" className="rounded-lg px-2 py-2 text-[15px] text-optic">Setup guide</Link>
           </div>
           <h1 className="display mt-3 text-[2.1rem] leading-[1.05]">Live session</h1>
@@ -729,7 +731,7 @@ export function LiveSession() {
           </div>
           <p className="mt-6 text-xs text-chalk-3">
             Scores grade your mechanics from body tracking. They don&apos;t include bat speed or exit velocity, which need high-speed capture or a sensor. See{" "}
-            <Link href="/how-it-works" className="underline">how SwingIQ measures</Link>.
+            <Link href="/how-it-works" className="underline">how Gapper measures</Link>.
           </p>
         </div>
       )}

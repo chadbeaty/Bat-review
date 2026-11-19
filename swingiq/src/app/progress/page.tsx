@@ -167,7 +167,7 @@ export default function ProgressPage() {
 
           <SectionTitle>Score timeline</SectionTitle>
           <Panel className="p-4">
-            {scorePts.length >= 1 ? <TrendChart title="SwingIQ score by session" points={scorePts} unit="pts" /> : <p className="text-sm text-chalk-3">No scored sessions yet.</p>}
+            {scorePts.length >= 1 ? <TrendChart title="Gapper Score by session" points={scorePts} unit="pts" /> : <p className="text-sm text-chalk-3">No scored sessions yet.</p>}
             {scorePts.length >= 2 && <p className="mt-2 text-[12px] text-chalk-3">Line: session average. Shaded: worst to best swing that day.</p>}
           </Panel>
 

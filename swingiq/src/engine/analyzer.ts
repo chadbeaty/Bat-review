@@ -435,7 +435,7 @@ export function analyzeSwing(frames: PoseFrame[], win: SwingWindow, ctx: Analyze
 
   // Rotation: a single camera can't measure hip or shoulder turn in degrees, or any rotation speed, honestly (even
   // two-phone 240 fps systems miss pelvis speed by ~150°/s). Report only which started first: hips or hands.
-  const rotReason = "One camera can't measure rotation in degrees reliably. SwingIQ only reports whether your hips started before your hands.";
+  const rotReason = "One camera can't measure rotation in degrees reliably. Gapper only reports whether your hips started before your hands.";
   m.hipTurn = unavailable("hipTurn", rotReason);
   m.shoulderTurn = unavailable("shoulderTurn", rotReason);
   m.separation = unavailable("separation", rotReason);

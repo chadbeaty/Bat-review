@@ -40,7 +40,7 @@ export default function ProfilePage() {
     const blob = new Blob([JSON.stringify(out, null, 2)], { type: "application/json" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = `swingiq-export-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `gapper-export-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   }
@@ -198,7 +198,7 @@ export default function ProfilePage() {
 
       <div className="mt-10 space-y-2 text-[13px] text-chalk-3">
         <p>
-          <Link href="/how-it-works" className="underline">How SwingIQ measures</Link> · <Link href="/guide" className="underline">Camera setup guide</Link> · <Link href="/privacy" className="underline">Privacy</Link>
+          <Link href="/how-it-works" className="underline">How Gapper measures</Link> · <Link href="/guide" className="underline">Camera setup guide</Link> · <Link href="/privacy" className="underline">Privacy</Link>
         </p>
       </div>
     </div>

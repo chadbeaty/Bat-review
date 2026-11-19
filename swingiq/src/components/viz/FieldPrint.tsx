@@ -54,7 +54,7 @@ export function FieldPrint({
         <defs>
           <radialGradient id="fp-fill" cx={home.x} cy={home.y} r={R} gradientUnits="userSpaceOnUse">
             <stop offset="0" stopColor="var(--color-optic)" stopOpacity="0.08" />
-            <stop offset="1" stopColor="var(--color-optic)" stopOpacity="0.38" />
+            <stop offset="1" stopColor="var(--color-optic)" stopOpacity="0.26" />
           </radialGradient>
         </defs>
         {/* Infield dirt and diamond */}

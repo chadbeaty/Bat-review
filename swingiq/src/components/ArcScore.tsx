@@ -1,10 +1,10 @@
 import { useId } from "react";
 
 /**
- * The SwingIQ score as a chronograph bezel: a 270° dial with fine ticks, lit in gold up to the score, a gold sweep with a
- * marker at its tip, and a silver index for the previous score. A null score shows an unlit dial.
+ * The Gapper Score dial: a 270° arc open at the bottom, like the G in the logo. Fine ticks light up in lime to the
+ * score, the sweep ends in the ball, and a steel-blue index marks the previous score. A null score shows an unlit dial.
  */
-export function ArcScore({ score, size = 220, label = "SwingIQ score", previous = null }: { score: number | null; size?: number; label?: string; previous?: number | null }) {
+export function ArcScore({ score, size = 220, label = "Gapper Score", previous = null }: { score: number | null; size?: number; label?: string; previous?: number | null }) {
   const id = useId().replace(/:/g, "");
   const c = 100;
   const a0 = 135;
@@ -26,22 +26,17 @@ export function ArcScore({ score, size = 220, label = "SwingIQ score", previous 
     <div style={{ width: size }} className="relative" role="img" aria-label={score === null ? `${label}: not enough data` : `${label}: ${score} out of 100`}>
       <svg viewBox="0 0 200 200" className="block w-full overflow-visible">
         <defs>
-          <linearGradient id={`${id}-g`} x1="20" y1="180" x2="180" y2="20" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stopColor="#a87f3e" />
-            <stop offset="0.55" stopColor="#d7b46a" />
-            <stop offset="1" stopColor="#f6e4ad" />
-          </linearGradient>
           <radialGradient id={`${id}-face`} cx="100" cy="80" r="90" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stopColor="#1a1a1e" />
-            <stop offset="1" stopColor="#0a0a0c" />
+            <stop offset="0" stopColor="#1f2c40" />
+            <stop offset="1" stopColor="#141d2d" />
           </radialGradient>
           <radialGradient id={`${id}-glow`}>
-            <stop offset="0" stopColor="#e6c887" stopOpacity="0.55" />
-            <stop offset="1" stopColor="#e6c887" stopOpacity="0" />
+            <stop offset="0" stopColor="#b7f34a" stopOpacity="0.4" />
+            <stop offset="1" stopColor="#b7f34a" stopOpacity="0" />
           </radialGradient>
         </defs>
         {/* Dial face */}
-        <circle cx={c} cy={c} r="97" fill={`url(#${id}-face)`} stroke="rgb(255 255 255 / 0.07)" />
+        <circle cx={c} cy={c} r="97" fill={`url(#${id}-face)`} stroke="rgb(255 255 255 / 0.06)" />
         {/* Bezel ticks, lit up to the score */}
         {ticks.map((t) => {
           const major = t % 10 === 0;
@@ -49,12 +44,12 @@ export function ArcScore({ score, size = 220, label = "SwingIQ score", previous 
           const o = pt(93, deg);
           const i = pt(major ? 85 : 89, deg);
           const lit = v !== null && t <= v;
-          return <line key={t} x1={o.x} y1={o.y} x2={i.x} y2={i.y} stroke={lit ? `url(#${id}-g)` : major ? "#4a4a52" : "#2c2c32"} strokeWidth={major ? 1.6 : 1} strokeLinecap="round" />;
+          return <line key={t} x1={o.x} y1={o.y} x2={i.x} y2={i.y} stroke={lit ? "var(--color-optic)" : major ? "#46556d" : "#2e3c52"} strokeWidth={major ? 1.6 : 1} strokeLinecap="round" />;
         })}
         {/* Sweep */}
-        <path d={arc(R, a0, a0 + sweep)} fill="none" stroke="#1d1d21" strokeWidth="4" strokeLinecap="round" />
+        <path d={arc(R, a0, a0 + sweep)} fill="none" stroke="#26344a" strokeWidth="4" strokeLinecap="round" />
         {v !== null && v > 0 && (
-          <path d={arc(R, a0, ang(v))} fill="none" stroke={`url(#${id}-g)`} strokeWidth="4" strokeLinecap="round" pathLength={1000} className="draw" style={{ ["--len" as string]: 1000 }} />
+          <path d={arc(R, a0, ang(v))} fill="none" stroke="var(--color-optic)" strokeWidth="4" strokeLinecap="round" pathLength={1000} className="draw" style={{ ["--len" as string]: 1000 }} />
         )}
         {/* Scale numerals: 50 at the crown, 0 and 100 under the two ends of the sweep. */}
         {[
@@ -62,7 +57,7 @@ export function ArcScore({ score, size = 220, label = "SwingIQ score", previous 
           { n: 50, p: pt(65, 270) },
           { n: 100, p: { x: pt(R, a0 + sweep).x, y: pt(R, a0 + sweep).y + 15 } },
         ].map(({ n, p }) => (
-          <text key={n} x={p.x} y={p.y + 3} textAnchor="middle" fontSize="7.5" fill="#6d6a64" style={{ fontFamily: "var(--font-num)" }}>
+          <text key={n} x={p.x} y={p.y + 3} textAnchor="middle" fontSize="7.5" fill="var(--color-chalk-3)" style={{ fontFamily: "var(--font-num)" }}>
             {n}
           </text>
         ))}
@@ -72,7 +67,7 @@ export function ArcScore({ score, size = 220, label = "SwingIQ score", previous 
         {tip && (
           <g>
             <circle cx={tip.x} cy={tip.y} r="14" fill={`url(#${id}-glow)`} />
-            <circle cx={tip.x} cy={tip.y} r="5" fill="#f3dfa6" stroke="#0a0a0c" strokeWidth="2" />
+            <circle cx={tip.x} cy={tip.y} r="5.5" fill="var(--color-optic)" stroke="#141d2d" strokeWidth="2.5" />
           </g>
         )}
       </svg>

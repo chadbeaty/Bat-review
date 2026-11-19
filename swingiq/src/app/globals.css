@@ -1,44 +1,45 @@
 @import "tailwindcss";
 
 /*
-  SwingIQ: "championship night".
-  The prize at a slow-pitch tournament is the ring. SwingIQ borrows its finish: deep onyx, gold for you and right now,
-  silver for before (gold and silver medals), crimson only for the one thing to fix. Numbers are set in a wide
-  watch-face face (Michroma) and read like a chronograph; everything else is Instrument Sans, sharp and quiet. Cards
-  are deep and soft-cornered with a fine metallic edge; the score is a tachymeter bezel.
+  GAPPER. Own the gap.
+  A hitting lab built like serious equipment: midnight navy, deep slate panels, white numbers that read at arm's length,
+  and one electric lime used sparingly for what matters (your key number, the main action, where you are, what got
+  better). Steel gray carries everything secondary. Type is one family, Mona Sans, stretched wide for headings and
+  numbers and set normal width for reading. See docs/DESIGN.md and public/brand/BRAND.md.
+
+  Token names are kept from earlier versions so every screen follows: "optic" is the accent (lime), "clay" the
+  comparison tone (pale steel blue), "stitch" the one thing to fix (red).
 */
 @theme {
-  --color-night: #060607;
-  --color-night-2: #0f0f11;
-  --color-night-3: #17171a;
-  --color-night-4: #222226;
-  --color-line: #232327;
-  --color-line-2: #36363d;
-  --color-chalk: #f5f2ea;
-  --color-chalk-2: #bfbab0;
-  --color-chalk-3: #87837b;
-  /* "optic" is the accent slot: championship gold. */
-  --color-optic: #d7b46a;
-  --color-optic-2: #e6c887;
-  --color-optic-ink: #1a1306;
-  --color-optic-wash: #1e1910;
-  /* "clay" is the comparison slot: silver. */
-  --color-clay: #b4bcc5;
-  --color-clay-wash: #191b1e;
-  --color-stitch: #e5484d;
-  --color-stitch-wash: #2a1213;
-  --color-amber: #e8a33d;
-  --color-amber-wash: #2a2011;
+  --color-night: #101827;
+  --color-night-2: #1a2537;
+  --color-night-3: #202d40;
+  --color-night-4: #2b3a52;
+  --color-line: #253247;
+  --color-line-2: #34445d;
+  --color-chalk: #ffffff;
+  --color-chalk-2: #c3cad5;
+  --color-chalk-3: #8995a6;
+  --color-optic: #b7f34a;
+  --color-optic-2: #cbf779;
+  --color-optic-ink: #101827;
+  --color-optic-wash: #1f3030;
+  --color-clay: #a9bcd6;
+  --color-clay-wash: #1d2a3e;
+  --color-stitch: #f25c5c;
+  --color-stitch-wash: #351d27;
+  --color-amber: #f5b84a;
+  --color-amber-wash: #33291f;
 
   --radius-lg: 0.625rem;
   --radius-xl: 0.875rem;
-  --radius-2xl: 1.25rem;
+  --radius-2xl: 1.125rem;
 
-  --font-display: var(--font-instrument), "Helvetica Neue", Arial, sans-serif;
-  --font-sans: var(--font-instrument), "Helvetica Neue", Arial, sans-serif;
-  --font-num: "NumMarks", var(--font-michroma), "Eurostile", "Arial", sans-serif;
+  --font-display: var(--font-mona), "Helvetica Neue", Arial, sans-serif;
+  --font-sans: var(--font-mona), "Helvetica Neue", Arial, sans-serif;
+  --font-num: var(--font-mona), "Helvetica Neue", Arial, sans-serif;
 
-  --animate-rise: rise 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+--animate-rise: rise 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
   --animate-slide-up: slide-up 0.4s cubic-bezier(0.2, 0.9, 0.2, 1) both;
   --animate-pop: pop 0.6s cubic-bezier(0.2, 0.9, 0.2, 1) both;
   --animate-sheet: sheet 0.36s cubic-bezier(0.2, 0.9, 0.2, 1) both;
@@ -81,8 +82,6 @@
 
 :root {
   color-scheme: dark;
-  --gold: linear-gradient(135deg, #f3dfa6 0%, #d7b46a 46%, #a87f3e 100%);
-  --gold-soft: linear-gradient(135deg, rgb(243 223 166 / 0.9), rgb(168 127 62 / 0.9));
 }
 
 html {
@@ -97,10 +96,10 @@ body {
   min-height: 100dvh;
   -webkit-tap-highlight-color: transparent;
   -webkit-font-smoothing: antialiased;
-  letter-spacing: -0.006em;
+  letter-spacing: -0.004em;
 }
 
-/* One warm pool of light from above and a deep vignette: a stadium at night, nothing busy. */
+/* A faint wash of light from the top of the screen, nothing busy. */
 body::before {
   content: "";
   position: fixed;
@@ -108,77 +107,55 @@ body::before {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(90% 50% at 50% -14%, rgb(215 180 106 / 0.11), transparent 60%),
-    radial-gradient(140% 90% at 50% 120%, rgb(0 0 0 / 0.9), transparent 60%);
+    radial-gradient(120% 60% at 50% -20%, rgb(169 188 214 / 0.09), transparent 62%),
+    radial-gradient(140% 80% at 50% 120%, rgb(5 9 16 / 0.7), transparent 60%);
 }
 
+/* Headings: Mona Sans stretched wide, the athletic voice of the brand. */
 .display {
   font-family: var(--font-display);
-  font-weight: 650;
-  letter-spacing: -0.032em;
+  font-stretch: 118%;
+  font-weight: 760;
+  letter-spacing: -0.022em;
 }
 
 .head {
   font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -0.014em;
+  font-stretch: 108%;
+  font-weight: 650;
+  letter-spacing: -0.012em;
 }
 
-/*
-  Michroma's own % and ° are stylized (they read as "°/o" and a small "o"). These two characters alone come from a plain
-  sans so "33%" and "18°" read at a glance; every digit stays Michroma.
-*/
-@font-face {
-  font-family: "NumMarks";
-  src: local("Helvetica Neue"), local("HelveticaNeue"), local("Arial"), local("Roboto"), local("DejaVu Sans");
-  unicode-range: U+0025, U+00B0;
-}
-
-/* Chronograph numerals. Michroma is wide, so it's set a touch smaller than the size class asks for. */
+/* Numbers: wide, heavy and tabular so columns of stats line up. */
 .num {
   font-family: var(--font-num);
-  font-weight: 400;
+  font-stretch: 112%;
+  font-weight: 680;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.03em;
-  font-size-adjust: 0.5;
+  letter-spacing: -0.015em;
 }
 
-.gold-text {
-  background: var(--gold);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* Deep card with a fine metallic edge: lighter where the light hits the top, fading down. */
+/* Panels: deep slate with a hairline edge that catches the light along the top. */
 .surface {
-  border: 1px solid transparent;
-  background:
-    linear-gradient(180deg, #131316 0%, #0d0d0f 100%) padding-box,
-    linear-gradient(180deg, rgb(255 255 255 / 0.11), rgb(255 255 255 / 0.03) 40%, rgb(255 255 255 / 0.05)) border-box;
+  border: 1px solid rgb(255 255 255 / 0.06);
+  background: linear-gradient(180deg, #1d293c 0%, #1a2537 100%);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.04),
-    0 30px 60px -36px rgb(0 0 0 / 0.95);
+    inset 0 1px 0 rgb(255 255 255 / 0.05),
+    0 24px 48px -32px rgb(3 6 12 / 0.9);
 }
 
-/* Hero card: the metallic edge picks up gold at the corner. */
+/* Key panels (the score, speeds): the edge picks up a little lime at the top-left corner. */
 .boxed {
   position: relative;
   background:
-    radial-gradient(120% 80% at 0% 0%, rgb(215 180 106 / 0.08), transparent 55%) padding-box,
-    linear-gradient(180deg, #141417 0%, #0d0d0f 100%) padding-box,
-    linear-gradient(135deg, rgb(230 200 135 / 0.55), rgb(255 255 255 / 0.06) 38%, rgb(255 255 255 / 0.03) 70%, rgb(215 180 106 / 0.18)) border-box !important;
+    linear-gradient(180deg, #1e2a3e 0%, #1a2537 100%) padding-box,
+    linear-gradient(135deg, rgb(183 243 74 / 0.45), rgb(255 255 255 / 0.07) 30%, rgb(255 255 255 / 0.04) 75%) border-box !important;
   border: 1px solid transparent !important;
-}
-
-/* The accent fill is metallic gold wherever it appears. */
-.bg-optic {
-  background-image: var(--gold);
 }
 
 /* Hatching for "not measured" (never a fake zero). */
 .hatch {
-  background-image: repeating-linear-gradient(135deg, rgb(243 244 239 / 0.08) 0 2px, transparent 2px 7px);
+  background-image: repeating-linear-gradient(135deg, rgb(195 202 213 / 0.1) 0 2px, transparent 2px 7px);
 }
 
 .skel {
@@ -232,9 +209,9 @@ input[type="range"].scrub {
 input[type="range"].scrub::-webkit-slider-runnable-track { height: 4px; background: var(--color-night-4); border-radius: 2px; }
 input[type="range"].scrub::-moz-range-track { height: 4px; background: var(--color-night-4); border-radius: 2px; }
 input[type="range"].scrub::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--gold); margin-top: -8px; border: 3px solid var(--color-night); box-shadow: 0 0 0 1px rgb(215 180 106 / 0.5);
+  -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%; background: var(--color-optic); margin-top: -8px; border: 3px solid var(--color-night); box-shadow: 0 0 0 1px rgb(183 243 74 / 0.4);
 }
-input[type="range"].scrub::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--gold); border: 3px solid var(--color-night); }
+input[type="range"].scrub::-moz-range-thumb { width: 18px; height: 18px; border-radius: 50%; background: var(--color-optic); border: 3px solid var(--color-night); }
 
 /* Native selects in the dark theme. */
 select {

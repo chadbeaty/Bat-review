@@ -1,53 +1,56 @@
-# SwingIQ design system: "championship night"
+# Gapper design system
+
+Brand kit (logo files, colors, rules): `public/brand/BRAND.md`. Logo geometry: `src/brand/geometry.ts`. Name, domain
+and taglines: `src/brand/site.ts` (use these instead of typing the name in copy).
 
 ## Concept
-Slow pitch is played for rings and plaques, under field lights, on a ball that drops in on a 6–12 ft arc. SwingIQ is
-the instrument a serious hitter keeps for that: a dark onyx case, a gold-cased gauge, numbers engraved like a
-chronograph. Gold is the one precious thing on the screen and it marks what's yours (your score, your speeds, the
-primary action). Silver is the comparison metal (before, the other swing, your best on a scale). Crimson, the colour
-of a ball's stitching, is reserved for the one thing to fix.
+A gapper splits two outfielders and runs to the wall. Gapper is the instrument a hitter uses to find that swing:
+midnight navy like a night game, deep slate panels, white numbers that read at arm's length, and one electric lime
+that marks only what matters. The G symbol (an outfield arc with the ball in the gap) recurs in the score dial (a
+270° arc open at the bottom with the ball at the tip) and the landing illustration (three fielders, a line drive
+splitting left-center).
 
-v1 ("lights-out lab": blue-black, optic yellow, Archivo/Atkinson) was replaced because it didn't read as premium.
-
-## Brand
-- Mark (`src/components/Logo.tsx`): a gold ball whose seam runs as one "S" for swing, laced along its length. The
-  lacing is placed by arc length and skipped where the seam bends too tight, so it stays clean at every size.
-  `LogoMark` (React), `Wordmark` (mark + "SWINGIQ" in Michroma, "IQ" in gold), `LOGO_SVG()` (string, for icons).
-- Icons: `src/app/icon.svg` (favicon), `apple-icon.tsx` (180), `icon-192.png` and `icon-512.png` routes (PWA,
-  maskable), all drawn from `LOGO_SVG`. Link preview: `opengraph-image.tsx` / `twitter-image.tsx` (1200×630).
+History: v1 "lights-out lab" (blue-black, optic yellow, Archivo/Atkinson) and v2 "championship night" (onyx and
+gold, Instrument Sans/Michroma, SwingIQ name) were replaced by this rebrand.
 
 ## Tokens (`src/app/globals.css`)
-The token names are kept from v1 so every screen picked up the new palette: `optic` now means gold, `clay` silver,
-`stitch` crimson.
-- Surfaces: `night` #060607 (onyx), `night-2` #0f0f11, `night-3` #17171a, `night-4` #222226.
-- Lines: `line` #232327, `line-2` #36363d.
-- Text: `chalk` #f5f2ea (warm white), `chalk-2` #bfbab0, `chalk-3` #87837b. Sentence case; no small uppercase eyebrows.
-- Gold: `optic` #d7b46a, `optic-2` #e6c887, `optic-ink` #1a1306 (text on gold), `optic-wash`. `--gold` is the
-  metallic gradient used on primary buttons, the score sweep and `.gold-text`.
-- Silver: `clay` #b4bcc5. Crimson: `stitch` #e5484d. Caution: `amber` #e8a33d.
-- Radii: `lg` 10px, `xl` 14px, `2xl` 20px.
-- Type: Instrument Sans for UI and headings (`.display` 650 weight, tight tracking; `.head` 600). Michroma for numbers
-  and the wordmark (`.num`, size-adjusted so it sits with the sans).
+Token names are kept from earlier versions so every screen follows: `optic` = lime accent, `clay` = comparison tone,
+`stitch` = the one fix.
+- Surfaces: `night` #101827 (Midnight Navy), `night-2` #1A2537 (panels), `night-3` #202D40 (Deep Slate: inputs,
+  controls), `night-4` #2B3A52 (tracks).
+- Lines: `line` #253247, `line-2` #34445D.
+- Text: `chalk` #FFFFFF, `chalk-2` #C3CAD5, `chalk-3` #8995A6 (Steel Gray). Sentence case; no small uppercase eyebrows.
+- Lime: `optic` #B7F34A, `optic-2` #CBF779 (hover), `optic-ink` #101827 (text on lime), `optic-wash`.
+  Use it for key metrics, primary buttons, active nav, progress and improvements. Section links and labels stay
+  white/steel.
+- Comparison: `clay` #A9BCD6. Fix: `stitch` #F25C5C. Caution: `amber` #F5B84A.
+- Radii: `lg` 10px, `xl` 14px, `2xl` 18px.
+
+## Type
+Mona Sans only (variable width and weight, loaded with `next/font`):
+- `.display`: 118% width, 760 weight, tight tracking. Page titles and hero lines.
+- `.head`: 108% width, 650 weight. Section and card heads.
+- `.num`: 112% width, 680 weight, tabular numerals. Every metric.
+- Body: normal width, 400–500.
 
 ## Utilities
-- `.surface`: raised panel with a gradient hairline edge (lighter on top, like a lit case).
-- `.boxed`: gold corner on the edge. Only on modules that carry a headline number.
-- `.hatch`: "not measured". Never draw a fake zero.
-- `.skel`, `.press`, `.draw` / `.grow`: loading, press feedback, chart draw-in.
-- Background: warm light from above, vignette below (`body::before`).
+`.surface` (slate panel, hairline edge), `.boxed` (key panels: lime catches the top-left edge), `.hatch` ("not
+measured", never a fake zero), `.skel` (loading shimmer), `.press`, `.draw` / `.grow` (chart draw-in).
 
-## Components (`src/components/ui.tsx`)
-`Button`/`ButtonLink` (primary = gold metal, ghost, quiet, danger), `PageTitle`, `SectionTitle`, `Panel` (`boxed`),
-`Segmented`, `Toggle`, `Stat` (value + unit + ± + source dot), `Meter`, `InfoTip`, `Sheet`, `Chip`, `Skeleton`,
-`Empty`.
+## Components
+Logos: `LogoMark`, `Wordmark`, `Lockup` in `src/components/Logo.tsx`. UI kit in `src/components/ui.tsx`: `Button`
+(primary = lime, ghost, quiet, danger), `PageTitle`, `SectionTitle`, `Panel` (`boxed`), `Segmented`, `Toggle`,
+`Stat`, `Meter`, `InfoTip`, `Sheet`, `Chip`, `Skeleton`, `Empty`.
 
 ## Signature visuals (real data only)
-- Score dial (`ArcScore`): a chronograph bezel, 270°, ticks every 2 points lit gold up to the score, gold sweep with a
-  glowing tip, silver marker for the previous score.
-- Field Print, swing timeline (`PhaseLine`), speed range bars, trend chart with session bands, spark bars, spray chart,
-  bat profile drawn to length.
+Gapper Score dial (`ArcScore`), Field Print, swing timeline (`PhaseLine`), speed range bars, trend chart with
+session bands, spark bars, spray chart, bat profile drawn to length.
 
 ## Navigation
-Phone: a floating pill bar under the thumb; the logo in the middle is the one action and opens a sheet (Record or
-upload / Live cage session). Active tab = gold icon + dot.
-Desktop: onyx left rail with the wordmark, a gold "New swing" button, Home / Swings / Progress / Bat DNA / Profile.
+Phone: floating bar; the lime button in the middle carries the G and opens New swing (Record or upload / Live cage
+session). Active tab = lime icon and dot. Desktop: navy rail with the wordmark, a lime New swing button and the
+sections.
+
+## Icons and sharing
+`src/app/icon.svg`, `apple-icon.tsx`, `icon-192.png` / `icon-512.png` routes (maskable) and the link preview
+(`opengraph-image.tsx` / `twitter-image.tsx` via `src/brand/og.tsx`) are all drawn from the brand geometry.

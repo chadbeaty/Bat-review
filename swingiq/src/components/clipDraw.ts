@@ -26,7 +26,7 @@ export function fitCanvas(c: HTMLCanvasElement, frameSize: { width: number; heig
 
 /**
  * Draws one moment of a swing: the video frame (when saved), the grip's path so far, the skeleton, and the front leg
- * in gold with its knee angle. Shared by the single-swing player and the side-by-side comparison.
+ * in lime with its knee angle. Shared by the single-swing player and the side-by-side comparison.
  */
 export function drawSwingFrame(
   c: HTMLCanvasElement,
@@ -35,13 +35,13 @@ export function drawSwingFrame(
   const ctx = c.getContext("2d")!;
   if (o.bitmap) ctx.drawImage(o.bitmap, 0, 0, c.width, c.height);
   else {
-    ctx.fillStyle = "#101012";
+    ctx.fillStyle = "#141d2d";
     ctx.fillRect(0, 0, c.width, c.height);
   }
   const k = c.width / 400;
   const path = o.handPath.filter((p) => p.t <= o.t);
   if (path.length > 1) {
-    ctx.strokeStyle = "rgba(240,205,120,0.9)";
+    ctx.strokeStyle = "rgba(183,243,74,0.9)";
     ctx.lineWidth = 3 * k;
     ctx.lineJoin = "round";
     ctx.beginPath();
@@ -68,7 +68,7 @@ export function drawSwingFrame(
   if (lm[lh].v > 0.4 && lm[lk].v > 0.4 && lm[la].v > 0.4) {
     const P = (i: number) => ({ x: lm[i].x * c.width, y: lm[i].y * c.height });
     const [h, kn, an] = [P(lh), P(lk), P(la)];
-    ctx.strokeStyle = "rgba(240,205,120,0.95)";
+    ctx.strokeStyle = "rgba(183,243,74,0.95)";
     ctx.lineWidth = 3.5 * k;
     ctx.beginPath();
     ctx.moveTo(h.x, h.y);
@@ -85,10 +85,10 @@ export function drawSwingFrame(
     const ly = kn.y - 8 * k;
     ctx.fillStyle = "rgba(8,8,9,0.85)";
     ctx.fillRect(lx - 4 * k, ly - 13 * k, tw + 8 * k, 18 * k);
-    ctx.fillStyle = "#F0CD78";
+    ctx.fillStyle = "#B7F34A";
     ctx.fillText(label, lx, ly);
   }
-  ctx.fillStyle = "#F0CD78";
+  ctx.fillStyle = "#B7F34A";
   const gx = ((lm[L.leftWrist].x + lm[L.rightWrist].x) / 2) * c.width;
   const gy = ((lm[L.leftWrist].y + lm[L.rightWrist].y) / 2) * c.height;
   ctx.beginPath();

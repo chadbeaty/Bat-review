@@ -175,7 +175,7 @@ No study directly comparing pose-estimator accuracy at 30, 60 and 120 fps for sp
 - Rotation per frame at a peak pelvis velocity of about 389°/s (arithmetic from the cited value): **30 fps → about 13°/frame; 60 fps → about 6.5°/frame; 120 fps → about 3.2°/frame; 240 fps → about 1.6°/frame.** At an adult trunk peak of 857°/s, 30 fps means about 29° per frame. A velocity peak lasting perhaps 100 ms gets only about 3 samples at 30 fps, so the sampled maximum will usually miss and underestimate the true peak. Differentiating noisy angles also amplifies landmark jitter.
 - **Event timing:** at 30 fps one frame is 33 ms, so foot-plant timing is quantised to about ±17 ms before any detection error. Studies at 25 fps already show 20–30 ms MAE. Foot-plant-to-contact intervals in a swing are short (exact slow-pitch values are not in these notes), so 30 fps can blur the ordering of front-foot plant, pelvis start and hands start. 60 fps halves the quantisation, and 120/240 fps makes it negligible next to landmark noise.
 - **Motion blur:** exposure time can't exceed the frame interval, so 120/240 fps capture forces exposures of 1/120 s or shorter, which reduces blur on fast-moving feet and hands. At 30 fps indoors, auto-exposure may choose about 1/30–1/60 s, giving visibly smeared limbs. Shutter speed probably matters as much as frame rate.
-- **Practical trade-off for SwingIQ:** live in-browser inference cannot run at 120–240 fps (see section 8). A workable design is to (a) run live pose at whatever rate the device sustains for setup checks and coarse feedback, and (b) for lower-body metrics, record the swing at the highest camera frame rate available and run pose estimation offline, frame by frame, on the stored clip.
+- **Practical trade-off for Gapper:** live in-browser inference cannot run at 120–240 fps (see section 8). A workable design is to (a) run live pose at whatever rate the device sustains for setup checks and coarse feedback, and (b) for lower-body metrics, record the swing at the highest camera frame rate available and run pose estimation offline, frame by frame, on the stored clip.
 - **Minimum fps for peak pelvis velocity:** no validated threshold exists. Given that both validated baseball systems use 240 fps and still show about 100–150°/s errors, peak pelvis velocity from one phone should stay hidden at any frame rate, which matches the current architecture rule. Timing of the pelvis peak relative to foot plant could become reasonable at 120 fps or higher.
 
 ### Gaps
@@ -307,7 +307,7 @@ Only **Uplift Labs** has a public, quantitative validation for hitting: a two-iP
 
 ### Inferences
 - The commercial field is consistent with the academic evidence. The best-validated phone product uses **two phones at 240 fps plus biomechanical model fitting**, and still reports only coordination-level agreement for pelvis rotation. A single in-browser phone app has no published basis for claiming absolute pelvis, hip-rotation or knee values in a swing.
-- SwingIQ's honest position is to show lower-body items as **events and patterns** (stride start, foot plant, back-heel lift, stride length relative to height, front-knee "bracing" trend, sequence order) with a confidence tag, and to keep absolute rotation and velocity values hidden. That matches the existing ARCHITECTURE.md rule against unvalidated camera-derived speed metrics.
+- Gapper's honest position is to show lower-body items as **events and patterns** (stride start, foot plant, back-heel lift, stride length relative to height, front-knee "bracing" trend, sequence order) with a confidence tag, and to keep absolute rotation and velocity values hidden. That matches the existing ARCHITECTURE.md rule against unvalidated camera-derived speed metrics.
 
 ### Gaps
 - No validation documents were found for **OnForm, Mustard, Rapsodo (hitting), HitTrax, K-Motion, Blast** or other hitting apps in this session. Not searched individually because of the tool budget. HitTrax and Rapsodo are primarily ball- and bat-tracking products, but this was not verified here.
@@ -328,7 +328,7 @@ From one phone, **timing and positional events** (stride start, front-foot plant
 - Pelvis rotation velocity remained inaccurate even in a two-phone, 240 fps commercial system (MAE 153°/s in hitting). — [Driveline–Uplift report](https://static.uplift.ai/validation/Signed_Driveline-Uplift_Kinematic_Model_Comparisons-December_2023.pdf)
 - Off-axis camera views raise knee RMSE to 15–29°, mainly from perspective. — [PMC11819822](https://pmc.ncbi.nlm.nih.gov/articles/PMC11819822/)
 
-### Inferences: trust table for a SwingIQ lower-body module
+### Inferences: trust table for a Gapper lower-body module
 
 | Measurement | Trust from one phone | Best view | How to compute | Show as |
 |---|---|---|---|---|
@@ -356,4 +356,4 @@ Setup requirements implied by the evidence:
 - Validate against the team's own reference before enabling numbers. Options include IMU-labelled or high-speed hand-labelled swings, and force-plate or pressure-mat foot-plant times if accessible.
 
 ### Gaps
-- Every recommendation in the trust table is extrapolated from gait, squat, lunge, pitching and two-camera hitting data. **None has been validated for slow-pitch softball batting from one phone.** An in-house validation (labelled frames from 240 fps clips, ideally with a force plate or IMU on the front foot) is the only way to settle the actual error for SwingIQ.
+- Every recommendation in the trust table is extrapolated from gait, squat, lunge, pitching and two-camera hitting data. **None has been validated for slow-pitch softball batting from one phone.** An in-house validation (labelled frames from 240 fps clips, ideally with a force plate or IMU on the front foot) is the only way to settle the actual error for Gapper.

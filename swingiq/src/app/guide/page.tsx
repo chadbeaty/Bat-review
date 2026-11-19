@@ -44,7 +44,7 @@ const tips = [
   { h: "Height", p: "Phone at about waist height, level, not tilted up or down. A cheap phone tripod or a clamp on the cage pole works." },
   { h: "Side view (best start)", p: "Best for foot-down timing, stride, weight shift and back heel. Across the plate from you, facing your chest. A righty puts the phone on the first-base side of the plate; a lefty on the third-base side. If you're behind netting, that's fine. Put the lens close to the net so the mesh blurs out." },
   { h: "Light", p: "Bright is better. Fast hands blur in a dim cage. Don't point the phone at the sun or straight at a light." },
-  { h: "Background", p: "Keep other people out of the frame if you can. SwingIQ follows one person, the most visible one." },
+  { h: "Background", p: "Keep other people out of the frame if you can. Gapper follows one person, the most visible one." },
   { h: "Earbuds", p: "Connect them before you start and turn on voice cues. You'll hear a two-to-five word tip after each swing without walking to the phone." },
   { h: "Keep it awake", p: "The screen stays on during a session. Plug in for long sessions: the camera and tracker use about 15–25% battery an hour." },
 ];
@@ -74,9 +74,9 @@ export default function GuidePage() {
         <li><span className="text-chalk">Turn on Slo-mo</span> in the iPhone Camera app (swipe to SLO-MO). Settings › Camera › Record Slo-mo: 240 fps is best, 120 works.</li>
         <li><span className="text-chalk">Phone on a stand or fence</span>, not in your hand. The background has to stay still.</li>
         <li><span className="text-chalk">Side view</span>: across the plate facing the hitter&apos;s chest, 10 to 15 feet away, about waist high, level.</li>
-        <li><span className="text-chalk">Frame it wide enough</span> to see the pitch dropping in and 4 to 6 feet in front of the plate. The arc is SwingIQ&apos;s ruler.</li>
+        <li><span className="text-chalk">Frame it wide enough</span> to see the pitch dropping in and 4 to 6 feet in front of the plate. The arc is Gapper&apos;s ruler.</li>
         <li><span className="text-chalk">Bright light.</span> Daylight is best. Dim light blurs the ball and the numbers get a wider ± range or none at all.</li>
-        <li><span className="text-chalk">One or a few swings per clip.</span> On the Record screen tap <span className="text-chalk">Upload a video</span> (the Record button opens a normal-speed camera) and pick the slo-mo speed you filmed at. If you pick wrong, SwingIQ notices and fixes it.</li>
+        <li><span className="text-chalk">One or a few swings per clip.</span> On the Record screen tap <span className="text-chalk">Upload a video</span> (the Record button opens a normal-speed camera) and pick the slo-mo speed you filmed at. If you pick wrong, Gapper notices and fixes it.</li>
       </ol>
       <p className="mt-3 text-[14px] text-chalk-3">
         Every speed shows a ± range. If something&apos;s off (no pitch in the shot, too dark), you&apos;ll see why instead of a number.

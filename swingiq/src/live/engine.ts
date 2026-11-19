@@ -352,7 +352,7 @@ export class LiveEngine {
     const hot = state === "armed" || state === "closing";
     ctx.lineCap = "round";
     ctx.lineWidth = 3 * dpr;
-    ctx.strokeStyle = "rgba(242, 241, 234, 0.85)";
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
     for (const [a, b] of BONES) {
       if (sm[a].v < 0.4 || sm[b].v < 0.4) continue;
       const pa = P(sm[a]);
@@ -362,7 +362,7 @@ export class LiveEngine {
       ctx.lineTo(pb.x, pb.y);
       ctx.stroke();
     }
-    ctx.fillStyle = "rgba(242, 241, 234, 0.95)";
+    ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
     for (const i of [L.nose, L.leftShoulder, L.rightShoulder, L.leftElbow, L.rightElbow, L.leftHip, L.rightHip, L.leftKnee, L.rightKnee, L.leftAnkle, L.rightAnkle]) {
       if (sm[i].v < 0.4) continue;
       const p = P(sm[i]);
@@ -370,16 +370,16 @@ export class LiveEngine {
       ctx.arc(p.x, p.y, 3.5 * dpr, 0, Math.PI * 2);
       ctx.fill();
     }
-    // Grip and its trail: gold marks what the detector is watching.
+    // Grip and its trail: lime marks what the detector is watching.
     const g = P({ x: (lm[L.leftWrist].x + lm[L.rightWrist].x) / 2, y: (lm[L.leftWrist].y + lm[L.rightWrist].y) / 2, z: 0, v: 1 });
     this.trail.push(g);
     if (this.trail.length > (hot ? 24 : 8)) this.trail.shift();
-    ctx.strokeStyle = hot ? "rgba(240, 205, 120, 0.95)" : "rgba(240, 205, 120, 0.45)";
+    ctx.strokeStyle = hot ? "rgba(183, 243, 74, 0.95)" : "rgba(183, 243, 74, 0.45)";
     ctx.lineWidth = (hot ? 5 : 3) * dpr;
     ctx.beginPath();
     this.trail.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
     ctx.stroke();
-    ctx.fillStyle = "#F0CD78";
+    ctx.fillStyle = "#B7F34A";
     ctx.beginPath();
     ctx.arc(g.x, g.y, (hot ? 9 : 6) * dpr, 0, Math.PI * 2);
     ctx.fill();
