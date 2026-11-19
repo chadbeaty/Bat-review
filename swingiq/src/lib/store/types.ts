@@ -122,7 +122,19 @@ export type Settings = {
   /** Live mode: big after-swing readout (gap, score, cue) sized to read from the plate. */
   scoreboard: boolean;
   keepClips: boolean;
+  /** Live mode: the camera the hitter picked for each view. Unset means the default for that view. */
+  cameraFacing: Partial<Record<CameraView, CameraFacing>>;
 };
+
+export type CameraFacing = "environment" | "user";
+
+/**
+ * Side and front views face the hitter, so the front (selfie) camera lets them read the screen
+ * between swings. From behind, the screen faces away either way, so use the sharper back camera.
+ */
+export function defaultFacing(view: CameraView): CameraFacing {
+  return view === "behind" ? "environment" : "user";
+}
 
 export const DEFAULT_SETTINGS: Settings = {
   activePlayerId: null,
@@ -136,4 +148,5 @@ export const DEFAULT_SETTINGS: Settings = {
   advancedView: false,
   scoreboard: true,
   keepClips: true,
+  cameraFacing: {},
 };
