@@ -42,6 +42,8 @@ Every site must look one-of-a-kind. Nobody should be able to tell an AI built it
 
 ## SwingIQ Live (`swingiq/`)
 - Real-time slow-pitch swing analysis. Everything runs on the phone (MediaPipe Pose in the browser); data is stored on the device (IndexedDB) and works with no account.
+- Hosted on Vercel, team "AI Toolbox", project `swingiq-live` (root directory `swingiq`); pushes to `main` deploy to production at https://swingiq-live.vercel.app.
+- Legs and feet come first (owner's priority): see `swingiq/docs/reports/Slow pitch lower body mechanics.md` and `src/engine/lowerbody.ts`. Slow pitch differs from baseball: skilled hitters land the front heel ~0.2 s before contact; don't apply baseball "foot down early" norms. The owner's reference guide: https://www.playisps.com/news_article/show/1351103.
 - Plan, honest measurement limits, costs and roadmap: `swingiq/docs/ARCHITECTURE.md`. Never show a bat speed, exit velocity or launch angle from the camera until the Phase 2 high-speed native capture is built and validated; every metric carries a source tag and confidence.
 - Supabase schema + RLS is in `swingiq/supabase/migrations/` but no project is connected yet (the free org already has two active projects). Accounts switch on when `NEXT_PUBLIC_SUPABASE_URL`/`NEXT_PUBLIC_SUPABASE_ANON_KEY` are set.
 - The live-camera browser test needs `swingiq/scripts/fetch-test-video.sh` (stock clip, not committed).
