@@ -65,7 +65,13 @@ export type MetricKey =
   | "shoulderTurn"
   | "separation"
   | "sequence"
-  | "contact";
+  | "contact"
+  | "timingStyle"
+  | "frontLegBlock"
+  | "backKnee"
+  | "backHeel"
+  | "strideDirection"
+  | "hipLead";
 
 export type MetricValue = {
   key: MetricKey;

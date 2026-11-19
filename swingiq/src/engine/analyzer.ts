@@ -21,6 +21,7 @@ import {
   type P2,
 } from "./geometry";
 import { buildCues } from "./feedback";
+import { analyzeLowerBody } from "./lowerbody";
 import { scoreSwing } from "./scoring";
 import type {
   CameraView,
@@ -75,6 +76,13 @@ function estimate(key: MetricKey, value: number, confidence: number, extra: Part
 }
 
 /** Index of the row whose time is closest to t. */
+function jointAngle(a: P2, b: P2, c: P2): number {
+  const v1 = { x: a.x - b.x, y: a.y - b.y };
+  const v2 = { x: c.x - b.x, y: c.y - b.y };
+  const d = Math.hypot(v1.x, v1.y) * Math.hypot(v2.x, v2.y);
+  return d ? (Math.acos(clamp((v1.x * v2.x + v1.y * v2.y) / d, -1, 1)) * 180) / Math.PI : NaN;
+}
+
 function at(rows: Row[], t: number): number {
   let best = 0;
   for (let i = 1; i < rows.length; i++) if (Math.abs(rows[i].t - t) < Math.abs(rows[best].t - t)) best = i;
@@ -162,6 +170,8 @@ export function analyzeSwing(frames: PoseFrame[], win: SwingWindow, ctx: Analyze
   // Side view: the lead shoulder is on the pitcher's side. Cross-check with where the hands go from launch to peak.
   const shoulderSign = Math.sign(median(stance.map((r) => r.leadShoulder.x - r.rearShoulder.x)));
   const iLaunch0 = at(rows, win.launch);
+  void yawDeg;
+  void unwrap;
   const iPeak0 = at(rows, win.peak);
   const handSign = Math.sign(hx[iPeak0] - hx[iLaunch0]);
   const fwd = ctx.view === "side" ? shoulderSign || handSign || 1 : handSign || 1;
@@ -194,36 +204,6 @@ export function analyzeSwing(frames: PoseFrame[], win: SwingWindow, ctx: Analyze
     }
   }
 
-  // Stride: the front foot moves toward the pitcher (side view) or lifts (any view), then plants.
-  let strideStart: number | null = null;
-  let footPlant: number | null = null;
-  let strideIn: number | null = null;
-  if (feetVisible) {
-    const pre = rows.filter((r) => r.t <= contact + 80);
-    const fwdMove = pre.map((r) => (ctx.view === "side" ? ((r.leadAnkle.x - base.leadAnkle.x) * fwd) / scalePx : 0));
-    const lift = pre.map((r) => (base.leadAnkle.y - r.leadAnkle.y) / scalePx);
-    const moved = pre.map((_, i) => Math.max(fwdMove[i], lift[i]));
-    const iStart = moved.findIndex((m) => m > 0.04);
-    if (iStart >= 0) {
-      strideStart = pre[iStart].t;
-      // Plant: after the move starts, the ankle stops (speed under ~0.4 torso/s) and stays down.
-      for (let i = Math.max(iStart + 1, 1); i < pre.length; i++) {
-        const dt = (pre[i].t - pre[i - 1].t) / 1000;
-        const v = dt > 0 ? dist(pre[i].leadAnkle, pre[i - 1].leadAnkle) / scalePx / dt : 99;
-        if (v < 0.4 && lift[i] < 0.05 && pre[i].t > strideStart + 60) {
-          footPlant = pre[i].t;
-          break;
-        }
-      }
-      if (ctx.view === "side") {
-        const plantIdx = footPlant !== null ? at(pre, footPlant) : pre.length - 1;
-        strideIn = Math.max(0, fwdMove[plantIdx]) * scalePx * inPerPx;
-      }
-    } else if (ctx.view === "side") {
-      strideIn = 0;
-    }
-  }
-
   // Finish: hands slow right down after contact, or the end of the clip.
   let finish = rows[rows.length - 1].t;
   const quietPx = 1.0 * scalePx;
@@ -233,6 +213,15 @@ export function analyzeSwing(frames: PoseFrame[], win: SwingWindow, ctx: Analyze
       break;
     }
   }
+
+  // Legs and feet: front-foot events, stride, front-knee block, back heel, hip start (see lowerbody.ts).
+  const lb = analyzeLowerBody(
+    rows.map((r) => ({ t: r.t, lm: r.lm, world: r.world })),
+    { geom: g, hand: ctx.hand, view: ctx.view, launch, contact, loadedT, finish, fwd },
+  );
+  const strideStart = lb.available ? lb.strideStart : null;
+  const footPlant = lb.available ? lb.footPlant : null;
+  const legIn = lb.legLenPx * inPerPx;
 
   const phases: SwingPhases = {
     stanceStart: rows[0].t,
@@ -269,31 +258,97 @@ export function analyzeSwing(frames: PoseFrame[], win: SwingWindow, ctx: Analyze
   m.launchAngle = unavailable("launchAngle", "Needs ball tracking with high-speed capture (Phase 2) or a launch monitor.");
   m.attackAngle = unavailable("attackAngle", "Needs bat tracking (Phase 2) or a bat sensor.");
 
-  if (ctx.view !== "side") {
-    m.strideLength = unavailable("strideLength", "Stride goes toward or away from the camera in this view. Use side view.");
-    m.weightShift = unavailable("weightShift", "Weight shift goes toward or away from the camera in this view. Use side view.");
-  } else if (!feetVisible) {
-    m.strideLength = unavailable("strideLength", "Your feet weren't visible. Move the phone back so your whole body fits.");
-    m.weightShift = unavailable("weightShift", "Your feet weren't visible. Move the phone back so your whole body fits.");
-  } else {
-    m.strideLength = estimate("strideLength", strideIn ?? 0, 0.35 + 0.45 * visFactor * scaleConfidence);
-    // Hip center between the rear (0%) and lead (100%) ankle at contact.
-    const r = rows[iContact];
-    const span = (r.leadAnkle.x - r.rearAnkle.x) * fwd;
-    if (Math.abs(span) / scalePx > 0.15) {
-      const pct = (((r.hip.x - r.rearAnkle.x) * fwd) / span) * 100;
-      m.weightShift = estimate("weightShift", pct, 0.3 + 0.45 * visFactor);
-    } else {
-      m.weightShift = unavailable("weightShift", "Your feet were too close together in the picture to tell.");
+  // ---------- Legs and feet ----------
+  const feetReason = lb.reason ?? "Your feet weren't visible. Move the phone back so you're in the picture head to toe.";
+  const legConf = clamp((lb.feetVisibility - 0.4) / 0.5, 0.2, 1);
+  if (!lb.available) {
+    for (const k of ["strideLength", "weightShift", "strideTiming", "timingStyle", "frontLegBlock", "backHeel", "strideDirection", "backKnee"] as const) {
+      m[k] = unavailable(k, feetReason);
     }
-  }
-
-  if (feetVisible && footPlant !== null) {
-    m.strideTiming = estimate("strideTiming", launch - footPlant, 0.25 + 0.45 * fpsFactor * visFactor);
-  } else if (feetVisible && strideStart === null) {
-    m.strideTiming = unavailable("strideTiming", "No stride or toe tap detected, so there's no foot-down moment.");
   } else {
-    m.strideTiming = unavailable("strideTiming", feetVisible ? "Couldn't find when your front foot landed." : "Your feet weren't visible.");
+    m.timingStyle = estimate("timingStyle", lb.episodes.filter((e) => e.start < launch).length, 0.4 + 0.4 * legConf * fpsFactor, {
+      text: lb.timingStyle,
+    });
+
+    // Foot down: how long before contact the front foot landed. Elite slow-pitch hitters: about 0.2 s (Wu et al.).
+    if (footPlant !== null) {
+      m.strideTiming = estimate("strideTiming", contact - footPlant, 0.35 + 0.45 * fpsFactor * legConf, {
+        text: lb.lateFoot ? "Still landing when the hands started" : undefined,
+      });
+    } else if (lb.strideStart === null) {
+      m.strideTiming = unavailable("strideTiming", "No stride or toe tap, so there's no foot-down moment to time.");
+    } else {
+      m.strideTiming = unavailable("strideTiming", "Couldn't find when your front foot landed.");
+    }
+
+    if (ctx.view === "side") {
+      m.strideLength = estimate("strideLength", (lb.strideLegs ?? 0) * legIn, 0.35 + 0.45 * legConf * scaleConfidence, {
+        text:
+          lb.stanceWidthLegs && lb.plantWidthLegs
+            ? `Feet went from ${Math.round(lb.stanceWidthLegs * legIn)} in apart to ${Math.round(lb.plantWidthLegs * legIn)} in at foot down (${(lb.plantWidthLegs / lb.stanceWidthLegs).toFixed(2)}× your stance)`
+            : undefined,
+      });
+      // Hip center between the rear (0%) and lead (100%) ankle at contact.
+      const r = rows[iContact];
+      const span = (r.leadAnkle.x - r.rearAnkle.x) * fwd;
+      if (Math.abs(span) / scalePx > 0.15) {
+        const pct = (((r.hip.x - r.rearAnkle.x) * fwd) / span) * 100;
+        const headPct = (((r.nose.x - r.rearAnkle.x) * fwd) / span) * 100;
+        m.weightShift = estimate("weightShift", pct, 0.3 + 0.45 * legConf, { text: `Head ${Math.round(headPct)}% of the way to your front foot` });
+      } else {
+        m.weightShift = unavailable("weightShift", "Your feet were too close together in the picture to tell.");
+      }
+      m.strideDirection = unavailable("strideDirection", "Stride direction shows from behind the plate. Use behind view.");
+    } else {
+      m.strideLength = unavailable("strideLength", "Stride goes toward or away from the camera in this view. Use side view.");
+      m.weightShift = unavailable("weightShift", "Weight shift goes toward or away from the camera in this view. Use side view.");
+      if (lb.strideOffsetLegs !== null) {
+        const inches = lb.strideOffsetLegs * legIn;
+        m.strideDirection = estimate("strideDirection", inches, 0.25 + 0.3 * legConf, {
+          text: Math.abs(inches) < 3 ? "Straight at the pitcher" : inches > 0 ? "Closed (toward the plate)" : "Open (away from the plate)",
+        });
+      } else {
+        m.strideDirection = unavailable("strideDirection", "No stride to measure.");
+      }
+    }
+
+    // Front-leg block: change in front-knee angle from foot plant to contact (+ = straightened, firming up).
+    if (lb.leadKneePlant !== null && lb.leadKneeContact !== null) {
+      const near = ctx.view === "front"; // from the pitcher's side the front leg is the near leg
+      const base = lb.kneeMethod === "3d" ? 0.25 : near ? 0.5 : 0.35;
+      m.frontLegBlock = estimate("frontLegBlock", lb.leadKneeContact - lb.leadKneePlant, base * (0.5 + 0.5 * legConf * fpsFactor), {
+        text: `Front knee ${Math.round(lb.leadKneePlant)}° at foot down → ${Math.round(lb.leadKneeContact)}° at contact`,
+        reason: lb.kneeMethod === "3d" ? "Facing your chest, the knee bends toward the lens, so this uses a rougher 3D estimate. Behind or front view reads knees better." : undefined,
+      });
+    } else {
+      m.frontLegBlock = unavailable("frontLegBlock", footPlant === null ? "Needs a foot-down moment to compare against." : "Couldn't see your front knee clearly.");
+    }
+
+    // Back knee at contact: only from behind or in front, where the knee bends across the picture. Qualitative.
+    if (ctx.view !== "side") {
+      const rk = rows[iContact].lm;
+      const rearKnee = ctx.hand === "R" ? L.rightKnee : L.leftKnee;
+      if (rk[s.rearHip].v > 0.5 && rk[rearKnee].v > 0.5 && rk[s.rearAnkle].v > 0.5) {
+        const a = jointAngle(px(rk[s.rearHip], g), px(rk[rearKnee], g), px(rk[s.rearAnkle], g));
+        const near = ctx.view === "behind";
+        m.backKnee = estimate("backKnee", a, (near ? 0.4 : 0.25) * legConf, {
+          text: a < 100 ? "Sank deep (sitting down)" : a < 125 ? "Bent and athletic" : "Tall",
+        });
+      } else m.backKnee = unavailable("backKnee", "Couldn't see your back leg clearly.");
+    } else {
+      m.backKnee = unavailable("backKnee", "Back-knee bend shows best from behind the plate.");
+    }
+
+    if (ctx.view === "side" && lb.rearHeelVisible) {
+      m.backHeel = lb.rearHeelUpRel !== null
+        ? estimate("backHeel", lb.rearHeelUpRel, 0.3 + 0.3 * legConf * fpsFactor, {
+            text: lb.rearHeelUpRel <= 0 ? `Came up ${Math.abs(lb.rearHeelUpRel)} ms before contact` : `Came up ${lb.rearHeelUpRel} ms after contact`,
+          })
+        : estimate("backHeel", 9999, 0.3, { text: "Stayed down through the swing" });
+      if (lb.rearHeelUpRel === null) m.backHeel.value = null;
+    } else {
+      m.backHeel = unavailable("backHeel", ctx.view === "side" ? "Couldn't see your back heel clearly." : "The back heel shows best from the side.");
+    }
   }
 
   // Head movement from stance to contact. In side view, keep the forward part too (drifting toward the pitcher).
@@ -308,11 +363,14 @@ export function analyzeSwing(frames: PoseFrame[], win: SwingWindow, ctx: Analyze
         : undefined,
   });
 
-  // Hand drop: lowest grip point between stance and launch vs. stance height (image y grows downward).
+  // Hand drop: how far the grip sinks RELATIVE TO THE SHOULDERS between stance and launch (image y grows downward).
+  // Measured against the shoulders, not the ground, so sinking into the legs during the load isn't called a hand drop.
+  const handRel = (r: Row) => r.hands.y - (r.leadShoulder.y + r.rearShoulder.y) / 2;
+  const baseHandRel = median(stance.map(handRel));
   const loadWin = rows.filter((r) => r.t >= (loadStart ?? rows[0].t) && r.t <= launch + 20);
   if (loadWin.length) {
-    const lowest = Math.max(...loadWin.map((r) => r.hands.y));
-    m.handDrop = estimate("handDrop", Math.max(0, (lowest - base.hands.y) * inPerPx), 0.4 + 0.45 * visFactor * scaleConfidence);
+    const lowest = Math.max(...loadWin.map(handRel));
+    m.handDrop = estimate("handDrop", Math.max(0, (lowest - baseHandRel) * inPerPx), 0.4 + 0.45 * visFactor * scaleConfidence);
   }
 
   // Balance after contact.
@@ -346,59 +404,22 @@ export function analyzeSwing(frames: PoseFrame[], win: SwingWindow, ctx: Analyze
     m.balance = unavailable("balance", "The clip ended before the finish.");
   }
 
-  // Rotation from 3D world points.
-  const worldRows = rows.filter((r) => r.world && r.world.length >= 25);
-  if (worldRows.length >= 6) {
-    const hipYaw = unwrap(worldRows.map((r) => yawDeg(r.world![s.rearHip], r.world![s.leadHip])));
-    const shYaw = unwrap(worldRows.map((r) => yawDeg(r.world![s.rearShoulder], r.world![s.leadShoulder])));
-    const hipS = smoothSeries(hipYaw, 1);
-    const shS = smoothSeries(shYaw, 1);
-    const wi = (t: number) => at(worldRows, t);
-    const iLoaded = wi(loadedT);
-    const iC = wi(contact);
-    const iF = wi(finish);
-    const dir = Math.sign(hipS[iF] - hipS[iLoaded]) || 1;
-    const hipTurn = (hipS[iC] - hipS[iLoaded]) * dir;
-    const shTurn = (shS[iC] - shS[iLoaded]) * dir;
-    const rotConf = 0.25 + 0.25 * fpsFactor * visFactor;
-    m.hipTurn = estimate("hipTurn", hipTurn, rotConf);
-    m.shoulderTurn = estimate("shoulderTurn", shTurn, rotConf);
-    const baseSep = (hipS[0] - shS[0]) * dir;
-    let sep = 0;
-    for (let i = Math.max(0, wi(strideStart ?? loadedT)); i <= iC; i++) sep = Math.max(sep, (hipS[i] - shS[i]) * dir - baseSep);
-    m.separation = estimate("separation", sep, rotConf * 0.9);
-
-    // Kinematic sequence: when did each segment hit its top speed?
-    const angVel = (ys: number[]) =>
-      ys.map((y, i) => (i === 0 ? 0 : ((y - ys[i - 1]) * dir) / Math.max(1e-3, (worldRows[i].t - worldRows[i - 1].t) / 1000)));
-    const inWin = (i: number) => worldRows[i].t >= loadedT && worldRows[i].t <= contact + 150;
-    const peakT = (v: number[]) => {
-      let best = -1;
-      for (let i = 0; i < v.length; i++) if (inWin(i) && (best < 0 || v[i] > v[best])) best = i;
-      return best < 0 ? NaN : worldRows[best].t;
-    };
-    const tHip = peakT(angVel(hipS));
-    const tSh = peakT(angVel(shS));
-    const tHands = rows[iPeak].t;
-    const frameMs = 1000 / Math.max(poseFps, 1);
-    if (!Number.isNaN(tHip) && !Number.isNaN(tSh)) {
-      const order = [
-        { k: "Hips", t: tHip },
-        { k: "Shoulders", t: tSh },
-        { k: "Hands", t: tHands },
-      ].sort((a, b) => a.t - b.t);
-      const ideal = order[0].k === "Hips" && order[1].k === "Shoulders";
-      const handsFirst = order[0].k === "Hands";
-      const tooClose = order[1].t - order[0].t < frameMs * 0.9 || order[2].t - order[1].t < frameMs * 0.9;
-      m.sequence = estimate("sequence", ideal ? 2 : handsFirst ? 0 : 1, rotConf * (tooClose ? 0.6 : 1), {
-        text: order.map((o) => o.k).join(" → "),
-        reason: tooClose ? "Two peaks landed within one frame of each other, so the order is uncertain." : undefined,
-      });
-    }
+  // Rotation: a single camera can't measure hip or shoulder turn in degrees, or any rotation speed, honestly (even
+  // two-phone 240 fps systems miss pelvis speed by ~150°/s). Report only which started first: hips or hands.
+  const rotReason = "One camera can't measure rotation in degrees reliably. SwingIQ only reports whether your hips started before your hands.";
+  m.hipTurn = unavailable("hipTurn", rotReason);
+  m.shoulderTurn = unavailable("shoulderTurn", rotReason);
+  m.separation = unavailable("separation", rotReason);
+  if (poseFps < 50) {
+    m.hipLead = unavailable("hipLead", "Needs 60 fps or faster tracking: at 30 fps the hips turn too far between frames to tell which started first.");
+  } else if (lb.available && lb.hipOnsetRel !== null) {
+    const r = lb.hipOnsetRel;
+    m.hipLead = estimate("hipLead", -r, 0.2 + 0.15 * fpsFactor, {
+      text: Math.abs(r) <= 20 ? "Hips and hands started together" : r < 0 ? `Hips started ${Math.abs(r)} ms before the hands` : `Hands started ${r} ms before the hips`,
+      reason: "Based on the model's depth estimate, which is rough from one camera. Treat it as a hint.",
+    });
   } else {
-    for (const k of ["hipTurn", "shoulderTurn", "separation", "sequence"] as const) {
-      m[k] = unavailable(k, "3D body points weren't available for this swing.");
-    }
+    m.hipLead = unavailable("hipLead", "Couldn't tell when your hips started turning.");
   }
 
   if (ctx.micOn) {
@@ -407,8 +428,9 @@ export function analyzeSwing(frames: PoseFrame[], win: SwingWindow, ctx: Analyze
     m.contact = unavailable("contact", "Mic is off. Turn on “Listen for contact” in the session settings.");
   }
 
-  const score = scoreSwing(m, ctx.view, ctx.heightIn);
-  const observations = buildCues(m, { view: ctx.view, micOn: ctx.micOn, previous: ctx.previous?.[0], headFwdIn, headDownIn });
+  const score = scoreSwing(m, ctx.view, ctx.heightIn, { widthRatio: lb.stanceWidthLegs && lb.plantWidthLegs ? lb.plantWidthLegs / lb.stanceWidthLegs : null });
+  const observations = buildCues(m, { view: ctx.view, micOn: ctx.micOn, previous: ctx.previous?.[0], headFwdIn, headDownIn, legIn, lateFoot: lb.lateFoot,
+    widthRatio: lb.stanceWidthLegs && lb.plantWidthLegs ? lb.plantWidthLegs / lb.stanceWidthLegs : null });
   const handPath = rows
     .filter((r) => r.t >= (loadStart ?? launch - 400) && r.t <= finish)
     .map((r) => ({ t: r.t, x: r.hands.x / g.width, y: r.hands.y / g.height }));
