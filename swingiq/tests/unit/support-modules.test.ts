@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { ContactListener } from "@/engine/contact";
 import { applyExternal, validExternal } from "@/engine/external";
+import { challengeProgress, coachingFor } from "@/engine/coaching";
 import { scoreSwing } from "@/engine/scoring";
 import { evaluateSetup, luminance, readyToBat } from "@/engine/setup";
 import type { Landmark, MetricValue } from "@/engine/types";
@@ -66,9 +67,21 @@ describe("setup checks", () => {
 describe("scoring", () => {
   const mv = (key: MetricValue["key"], value: number, confidence = 0.8): MetricValue => ({ key, value, confidence, source: "cv_estimated" });
 
-  it("needs at least two supported checks", () => {
+  it("needs at least two categories and three checks", () => {
     expect(scoreSwing({ balance: mv("balance", 90) }, "side").overall).toBeNull();
-    expect(scoreSwing({ balance: mv("balance", 90), headMovement: mv("headMovement", 1) }, "side").overall).toBeGreaterThan(85);
+    expect(scoreSwing({ balance: mv("balance", 90), headMovement: mv("headMovement", 1) }, "side").overall).toBeNull();
+    const s = scoreSwing({ balance: mv("balance", 90), headMovement: mv("headMovement", 1), strideTiming: mv("strideTiming", 220) }, "side");
+    expect(s.overall).toBeGreaterThan(85);
+  });
+
+  it("breaks the score into six categories and marks unmeasured ones", () => {
+    const s = scoreSwing({ balance: mv("balance", 80), headMovement: mv("headMovement", 2), strideTiming: mv("strideTiming", 60) }, "side");
+    const byKey = Object.fromEntries((s.categories ?? []).map((c) => [c.key, c]));
+    expect(Object.keys(byKey).sort()).toEqual(["balance", "batPath", "contact", "followThrough", "rotation", "timing"]);
+    expect(byKey.timing.score).toBeLessThan(60);
+    expect(byKey.rotation.score).toBeNull();
+    expect(byKey.rotation.reason).toBeTruthy();
+    expect(byKey.balance.inputs).toContain("Quiet head");
   });
 
   it("skips unavailable metrics", () => {
@@ -80,8 +93,9 @@ describe("scoring", () => {
   });
 
   it("punishes drifting past the front foot", () => {
-    const ok = scoreSwing({ balance: mv("balance", 80), weightShift: mv("weightShift", 60) }, "side").overall!;
-    const drift = scoreSwing({ balance: mv("balance", 80), weightShift: mv("weightShift", 120) }, "side").overall!;
+    const base = { balance: mv("balance", 80), strideTiming: mv("strideTiming", 220) };
+    const ok = scoreSwing({ ...base, weightShift: mv("weightShift", 60) }, "side").overall!;
+    const drift = scoreSwing({ ...base, weightShift: mv("weightShift", 120) }, "side").overall!;
     expect(drift).toBeLessThan(ok);
   });
 });
@@ -134,5 +148,33 @@ describe("cloud sync mapping", () => {
     expect(bat.value).toBeNull();
     expect(rows.events.find((e) => e.event === "contact")!.t_ms).toBe(0);
     expect(rows.events.find((e) => e.event === "launch")!.t_ms).toBeLessThan(0);
+  });
+});
+
+describe("coach", () => {
+  const mv = (key: MetricValue["key"], value: number): MetricValue => ({ key, value, confidence: 0.7, source: "cv_estimated" });
+
+  it("turns the biggest issue into why, fix, drill and a 10-swing challenge", () => {
+    const c = coachingFor({ id: "lateFoot", tone: "fix", text: "Get the foot down sooner.", spoken: "", basedOn: ["strideTiming"] }, {}, 60);
+    expect(c.title).toMatch(/late/i);
+    expect(c.why.length).toBeGreaterThan(40);
+    expect(c.drill.name).toBeTruthy();
+    expect(c.challenge.metric).toBe("strideTiming");
+    expect(c.challenge.test({ strideTiming: mv("strideTiming", 220) })).toBe(true);
+    expect(c.challenge.test({ strideTiming: mv("strideTiming", 40) })).toBe(false);
+    // Swings where the metric wasn't measured don't count either way.
+    expect(c.challenge.test({})).toBeNull();
+  });
+
+  it("counts challenge progress only on measured swings", () => {
+    const c = coachingFor({ id: "head", tone: "fix", text: "", spoken: "", basedOn: [] }, {}, null).challenge;
+    const run = [{ headMovement: mv("headMovement", 2) }, { headMovement: mv("headMovement", 6) }, {}, { headMovement: mv("headMovement", 3) }];
+    expect(challengeProgress(c, run)).toEqual({ counted: 3, passed: 2 });
+  });
+
+  it("asks for a repeatable swing when nothing needs fixing", () => {
+    const c = coachingFor({ id: "solid", tone: "praise", text: "Solid swing.", spoken: "", basedOn: [] }, {}, 82);
+    expect(c.issueId).toBe("repeat");
+    expect(c.challenge.goal).toContain("77");
   });
 });
