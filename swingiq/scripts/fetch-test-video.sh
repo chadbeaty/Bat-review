@@ -12,7 +12,7 @@ cd "$(dirname "$0")/.."
 OUT=tests/fixtures/video
 mkdir -p "$OUT"
 if [ ! -f "$OUT/source.mp4" ]; then
-  curl -fsSL -A "Mozilla/5.0" -o "$OUT/source.mp4" https://videos.pexels.com/video-files/5182770/5182770-hd_1280_720_25fps.mp4
+  curl -fsSL --retry 4 --retry-delay 5 -A "Mozilla/5.0" -o "$OUT/source.mp4" https://videos.pexels.com/video-files/5182770/5182770-hd_1280_720_25fps.mp4
 fi
 if [ ! -f "$OUT/swing.y4m" ]; then
   ffmpeg -v error -y -t 7.2 -i "$OUT/source.mp4" \
