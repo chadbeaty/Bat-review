@@ -2,12 +2,46 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArcScore } from "@/components/ArcScore";
+import { Wordmark } from "@/components/AppShell";
 import { PlayerForm } from "@/components/PlayerForm";
 import { usePlayers } from "@/components/PlayerProvider";
 import { Softball } from "@/components/Softball";
-import { Panel, SectionTitle, fmtDate } from "@/components/ui";
+import { Chip, InfoTip, Meter, PageSkeleton, Panel, SectionTitle, Skeleton, Stat, fmtDate } from "@/components/ui";
+import { FieldPrint } from "@/components/viz/FieldPrint";
 import { db } from "@/lib/store/db";
+import { FOOT_DOWN_WINDOW, categoryAverages, consistency, metricValues, recentVsBefore, speedOf } from "@/lib/insights";
 import type { Session, SwingRecord } from "@/lib/store/types";
+
+function PitchTracer() {
+  // The arc a slow-pitch ball travels, drawn like a broadcast tracer over a chalk field outline.
+  return (
+    <svg viewBox="0 0 360 150" className="w-full" aria-hidden="true">
+      <path d="M180 146 L60 40 M180 146 L300 40" stroke="var(--color-line-2)" strokeWidth="1" />
+      <path d="M60 40 Q180 -24 300 40" fill="none" stroke="var(--color-line)" strokeWidth="1" strokeDasharray="2 5" />
+      <path d="M180 146 l22 -22 l-22 -22 l-22 22 z" fill="none" stroke="var(--color-chalk-3)" strokeWidth="1" />
+      <path d="M20 118 Q96 -8 176 132" fill="none" stroke="var(--color-optic)" strokeWidth="1.6" strokeDasharray="1 6" strokeLinecap="round" />
+      <path d="M176 132 L318 30" fill="none" stroke="var(--color-optic)" strokeWidth="2" strokeLinecap="round" opacity="0.9" className="draw" pathLength={1000} style={{ ["--len" as string]: 1000 }} />
+      <circle cx="318" cy="30" r="5" fill="var(--color-optic)" />
+    </svg>
+  );
+}
+
+function CageDiagram() {
+  return (
+    <svg viewBox="0 0 300 150" className="w-full" role="img" aria-label="Phone position: across the plate, 10 to 15 feet away, facing the hitter's chest, at waist height.">
+      <rect x="6" y="6" width="288" height="138" rx="6" fill="none" stroke="var(--color-line-2)" strokeDasharray="3 5" />
+      <path d="M70 66 h18 v8 l-9 7 l-9 -7 z" fill="var(--color-chalk-2)" />
+      <circle cx="58" cy="70" r="9" fill="none" stroke="var(--color-chalk)" strokeWidth="1.6" />
+      <path d="M78 22 Q120 10 150 20" fill="none" stroke="var(--color-optic)" strokeWidth="1.4" strokeDasharray="1 5" strokeLinecap="round" />
+      <text x="96" y="16" fontSize="10" fill="var(--color-chalk-3)">pitch</text>
+      <rect x="226" y="60" width="13" height="22" rx="3" fill="var(--color-optic)" />
+      <path d="M226 71 L92 71" stroke="var(--color-optic)" strokeOpacity="0.35" strokeDasharray="2 4" />
+      <text x="140" y="64" fontSize="10.5" fill="var(--color-chalk-2)">10–15 ft</text>
+      <text x="206" y="100" fontSize="10.5" fill="var(--color-optic)">phone, waist high</text>
+      <text x="30" y="100" fontSize="10.5" fill="var(--color-chalk-2)">you</text>
+    </svg>
+  );
+}
 
 export default function Home() {
   const { ready, player, savePlayer, storageOk } = usePlayers();
@@ -20,38 +54,47 @@ export default function Home() {
     if (!player) return;
     (async () => {
       const ss = (await db.sessions(player.id)).filter((s) => s.swingCount > 0);
-      setSessions(ss);
       if (ss[0]) setLastSwings(await db.swingsInSession(ss[0].id));
       setAll(await db.swingsForPlayer(player.id));
+      setSessions(ss);
     })().catch(() => setSessions([]));
   }, [player]);
 
-  if (!ready) return <div className="min-h-[60dvh]" />;
+  if (!ready) return <PageSkeleton />;
 
   if (!player) {
     return (
-      <div className="animate-rise pb-8">
-        <p className="mt-4 flex items-center gap-2 text-sm font-bold text-optic">
-          <Softball size={18} /> SwingIQ Live
-        </p>
-        <h1 className="display mt-4 text-[2.6rem] leading-[1.02]">
-          Know your swing.
-          <br />
-          Own your at‑bat.
-        </h1>
-        <p className="mt-4 max-w-md text-[17px] leading-relaxed text-chalk-2">
-          Prop your phone next to the cage and hit. SwingIQ spots every swing on its own, scores your mechanics and tells you the one thing to fix, out loud if you want.
-        </p>
-        {!storageOk && (
-          <p className="mt-4 rounded-xl bg-amber-wash px-4 py-3 text-sm text-chalk">This browser is blocking storage (private mode?). Swings won&apos;t be saved.</p>
-        )}
-        <Panel className="mt-8 p-5">
-          <h2 className="mb-1 text-lg font-bold">Set up your hitter</h2>
-          <p className="mb-5 text-[14px] text-chalk-3">Stays on this phone. No account needed.</p>
+      <div className="animate-rise pb-10">
+        <div className="pt-3">
+          <Wordmark />
+        </div>
+        <div className="mt-8 md:grid md:grid-cols-[1.1fr_1fr] md:items-center md:gap-10">
+          <div>
+            <h1 className="display text-[2.7rem] leading-[0.98] md:text-[3.4rem]">
+              Know your swing.
+              <br />
+              <span className="text-chalk-2">Own your at‑bat.</span>
+            </h1>
+            <p className="mt-5 max-w-md text-[17px] leading-relaxed text-chalk-2">
+              A swing lab for slow pitch that lives on your phone. It catches every swing on its own, reads your legs and feet first, and tells you the one thing to fix.
+              Film in slo-mo and it measures exit velo too.
+            </p>
+          </div>
+          <div className="mt-6 md:mt-0">
+            <PitchTracer />
+          </div>
+        </div>
+        {!storageOk && <p className="mt-6 rounded-xl border border-amber/40 bg-amber-wash px-4 py-3 text-sm text-chalk">This browser is blocking storage (private mode?). Swings won&apos;t be saved.</p>}
+        <Panel boxed className="mt-8 p-5 md:max-w-xl">
+          <h2 className="head text-[19px]">Set up your hitter</h2>
+          <p className="mb-5 mt-1 text-[14px] text-chalk-3">Stays on this phone. No account, no sign-up.</p>
           <PlayerForm onSave={savePlayer} submitLabel="Let's hit" />
         </Panel>
         <p className="mt-6 text-[13px] text-chalk-3">
-          Curious what a phone can really measure? <Link href="/how-it-works" className="text-chalk-2 underline">Here&apos;s the honest version.</Link>
+          Curious what a phone can really measure?{" "}
+          <Link href="/how-it-works" className="text-chalk-2 underline">
+            Here&apos;s the honest version.
+          </Link>
         </p>
       </div>
     );
@@ -64,26 +107,26 @@ export default function Home() {
     const v = xs.map((s) => s.analysis.score.overall).filter((x): x is number => x !== null);
     return v.length ? Math.round(v.reduce((a, b) => a + b, 0) / v.length) : null;
   };
-  const overall = scoreOf(all.slice(0, 20));
+  const { recent, before } = recentVsBefore(all, 20);
+  const overall = scoreOf(recent);
+  const prevOverall = scoreOf(before);
   const thisWeek = all.filter((s) => s.at >= weekAgo);
   const lastWeek = all.filter((s) => s.at >= twoWeeksAgo && s.at < weekAgo);
   const trend = scoreOf(thisWeek) !== null && scoreOf(lastWeek) !== null ? scoreOf(thisWeek)! - scoreOf(lastWeek)! : null;
   const best = all.reduce<SwingRecord | null>((b, s) => ((s.analysis.score.overall ?? -1) > (b?.analysis.score.overall ?? -1) ? s : b), null);
   const pb = all.find((s) => s.pb) ?? null;
-  // Fastest swing/ball: a radar or sensor reading the player entered wins over the slo-mo measurement.
-  const speedOf = (s: SwingRecord, k: "exitVelocity" | "batSpeed") => {
-    const ext = (s.external ?? []).filter((e) => e.key === k).map((e) => e.value);
-    if (ext.length) return Math.max(...ext);
-    const m = s.analysis.metrics[k];
-    return m && m.source !== "unavailable" && m.value !== null ? m.value : null;
-  };
-  const topSpeed = (k: "exitVelocity" | "batSpeed") =>
-    all.reduce<{ id: string; v: number } | null>((b, s) => {
+  const top = (k: "exitVelocity" | "batSpeed") =>
+    all.reduce<{ id: string; v: number; source: "sensor" | "slomo" } | null>((b, s) => {
       const v = speedOf(s, k);
-      return v !== null && (!b || v > b.v) ? { id: s.id, v } : b;
+      return v && (!b || v.v > b.v) ? { id: s.id, v: v.v, source: v.source } : b;
     }, null);
-  const footVals = all.map((s) => s.analysis.metrics.strideTiming).filter((m) => m && m.source !== "unavailable" && m.value !== null).map((m) => m!.value!);
-  const onTime = footVals.length ? Math.round((footVals.filter((v) => v >= 140 && v <= 380).length / footVals.length) * 100) : null;
+  const topEv = top("exitVelocity");
+  const topBat = top("batSpeed");
+  const evs = all.map((s) => speedOf(s, "exitVelocity")?.v).filter((x): x is number => x !== undefined);
+  const evAvg = evs.length >= 2 ? evs.slice(0, 10).reduce((a, b) => a + b, 0) / Math.min(10, evs.length) : null;
+  const footVals = metricValues(all, "strideTiming");
+  const onTime = footVals.length ? Math.round((footVals.filter((v) => v >= FOOT_DOWN_WINDOW.lo && v <= FOOT_DOWN_WINDOW.hi).length / footVals.length) * 100) : null;
+  const steady = consistency(recent.map((s) => s.analysis.score.overall).filter((x): x is number => x !== null));
   const lastFix = lastSwings.filter((s) => s.analysis.cue.tone === "fix");
   const focusCounts = new Map<string, { n: number; text: string }>();
   for (const s of lastFix) {
@@ -92,160 +135,186 @@ export default function Home() {
     focusCounts.set(s.analysis.cue.id, e);
   }
   const focus = [...focusCounts.values()].sort((a, b) => b.n - a.n)[0];
-  const lastCats = (() => {
-    const acc: Record<string, { label: string; sum: number; n: number }> = {};
-    for (const s of lastSwings) for (const c of s.analysis.score.categories ?? []) if (c.score !== null) {
-      const e = (acc[c.key] ??= { label: c.label, sum: 0, n: 0 });
-      e.sum += c.score;
-      e.n++;
-    }
-    return Object.entries(acc).map(([k, e]) => ({ key: k, label: e.label, score: Math.round(e.sum / e.n) }));
-  })();
 
   return (
     <div className="animate-rise pb-6">
-      <div className="flex items-center justify-between pt-2">
-        <p className="flex items-center gap-2 text-sm font-bold text-optic">
-          <Softball size={18} /> SwingIQ Live
-        </p>
-        <Link href="/profile" className="rounded-lg border border-line px-3 py-1.5 text-sm text-chalk-2">
+      <div className="flex items-center justify-between pt-3">
+        <span className="md:invisible">
+          <Wordmark />
+        </span>
+        <Link href="/profile" className="press rounded-lg border border-line-2 px-3 py-1.5 text-[13px] text-chalk-2 hover:text-chalk">
           {player.name} · {player.hand === "R" ? "Righty" : "Lefty"}
         </Link>
       </div>
 
-      <Link href="/record" className="group mt-6 flex items-center justify-between gap-4 rounded-3xl bg-optic p-6 text-optic-ink transition active:scale-[0.99]">
-        <span>
-          <span className="display block text-[1.9rem] leading-[1.02]">Record my swing</span>
-          <span className="mt-2 block text-[15px] font-semibold opacity-75">Film it or upload it. Every frame analyzed.</span>
-        </span>
-        <span className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-optic-ink transition group-hover:scale-105">
-          <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
-            <circle cx="13" cy="13" r="8" fill="#e5483a" />
-          </svg>
-        </span>
-      </Link>
-      <Link href="/live" className="mt-3 flex min-h-16 items-center justify-between gap-4 rounded-2xl border border-line bg-night-2 px-5 py-4 transition hover:border-chalk-3 active:scale-[0.99]">
-        <span>
-          <span className="display block text-xl leading-tight">Start live analysis</span>
-          <span className="block text-[13px] text-chalk-3">Phone on a tripod in the cage. Feedback after every swing.</span>
-        </span>
-        <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M7 4l11 7-11 7z" fill="currentColor" /></svg>
-      </Link>
-
-      {sessions === null ? null : all.length > 0 ? (
-        <>
-          <SectionTitle right={<Link href="/progress" className="text-sm text-optic">Progress</Link>}>Your SwingIQ score</SectionTitle>
-          <Panel className="flex items-center gap-5 p-5">
-            <ArcScore score={overall} size={170} label="Last 20 swings" />
-            <div className="min-w-0 flex-1 space-y-2 text-[15px]">
-              {trend !== null ? (
-                <p className={trend >= 0 ? "text-optic" : "text-amber"}>
-                  <span className="num text-2xl">{trend >= 0 ? "+" : "−"}{Math.abs(trend)}</span> <span className="text-chalk-2">vs last week</span>
-                </p>
-              ) : (
-                <p className="text-chalk-3">Trend shows after two weeks of swings.</p>
-              )}
-              {onTime !== null && (
-                <p className="text-chalk-2">
-                  Foot down on time <span className="num text-lg text-chalk">{onTime}%</span>
-                </p>
-              )}
+      {sessions === null ? (
+        <div className="mt-6 space-y-4">
+          <Skeleton className="h-56 w-full rounded-2xl" />
+          <Skeleton className="h-14 w-full rounded-xl" />
+          <Skeleton className="h-40 w-full rounded-2xl" />
+        </div>
+      ) : all.length > 0 ? (
+        <div className="lg:grid lg:grid-cols-[1.1fr_1fr] lg:items-start lg:gap-x-6">
+          <div>
+          <Panel boxed as="section" aria-label="Your SwingIQ score" className="mt-5 overflow-hidden p-5">
+            <div className="flex items-center justify-between">
+              <span className="head text-[15px]">Your SwingIQ score</span>
+              <Link href="/progress" className="text-[13px] text-optic">
+                Progress
+              </Link>
             </div>
+            <div className="mt-2 grid grid-cols-[auto_1fr] items-center gap-5">
+              <ArcScore score={overall} size={176} label={`Last ${Math.min(20, recent.length)} swings`} previous={prevOverall} />
+              <div className="space-y-4">
+                {trend !== null ? (
+                  <Stat label="vs last week" value={`${trend >= 0 ? "+" : "−"}${Math.abs(trend)}`} tone={trend >= 0 ? "optic" : "chalk"} size="sm" />
+                ) : (
+                  <Stat label="Swings logged" value={all.length} size="sm" note={`${sessions.length} ${sessions.length === 1 ? "session" : "sessions"}`} />
+                )}
+                <div>
+                  <Stat label="Foot down on time" value={onTime === null ? "—" : `${onTime}%`} size="sm" />
+                  {onTime !== null && <div className="mt-1.5"><Meter value={onTime} label="Foot down on time" /></div>}
+                </div>
+                <Stat label="Consistency" value={steady ?? "—"} size="sm" note={steady === null ? "After 3 swings" : undefined} />
+              </div>
+            </div>
+            {prevOverall !== null && <p className="mt-3 text-[12px] text-chalk-3"><span className="text-clay">○</span> the 20 swings before: {prevOverall}</p>}
           </Panel>
 
-          <SectionTitle right={<Link href="/swings" className="text-sm text-optic">All swings</Link>}>Recent swings</SectionTitle>
-          <ol className="divide-y divide-line overflow-hidden rounded-2xl border border-line bg-night-2">
-            {all.slice(0, 5).map((s) => (
-              <li key={s.id}>
-                <Link href={`/swings/${s.id}`} className="flex items-center gap-4 px-4 py-3 hover:bg-night-3">
-                  <span className="num w-10 text-2xl text-chalk">{s.analysis.score.overall ?? "—"}</span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-[14px] text-chalk-2">{s.analysis.cue.spoken}</span>
-                    <span className="block text-[11px] text-chalk-3">
-                      {fmtDate(s.at)} · {s.source === "video" ? "from video" : "live"}
-                      {s.pb ? " · ★ best" : ""}
+          <div className="mt-3 grid grid-cols-[1.4fr_1fr] gap-3">
+            <Link href="/record" className="press flex min-h-14 items-center gap-3 rounded-xl bg-optic px-4 font-bold text-optic-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.45),0_10px_28px_-14px_rgb(228_245_66/0.7)]">
+              <svg width="22" height="22" viewBox="0 0 30 30" aria-hidden="true">
+                <rect x="2" y="7" width="19" height="16" rx="3" fill="none" stroke="currentColor" strokeWidth="2.6" />
+                <path d="M21 13l7-4v12l-7-4z" fill="currentColor" />
+              </svg>
+              <span className="leading-tight">Record my swing</span>
+            </Link>
+            <Link href="/live" className="press flex min-h-14 items-center gap-2.5 rounded-xl border border-line-2 bg-night-2 px-3.5 text-[15px] hover:border-chalk-3">
+              <Softball size={20} />
+              <span className="leading-tight">Start live analysis</span>
+            </Link>
+          </div>
+
+          {(topEv || topBat) && (
+            <>
+              <SectionTitle right={<InfoTip label="these speeds">Measured from slo-mo video by tracking the ball (or typed in from your radar or sensor). Bat speed is worked out from exit velo and pitch speed, assuming a sweet-spot hit.</InfoTip>}>Speed lab</SectionTitle>
+              <Panel className="grid grid-cols-3 divide-x divide-line">
+                {topEv ? (
+                  <Link href={`/swings/${topEv.id}`} className="press p-4 hover:bg-night-3">
+                    <Stat align label="Top exit velo" value={Math.round(topEv.v)} unit="mph" source={topEv.source} size="md" />
+                  </Link>
+                ) : (
+                  <div className="p-4"><Stat align label="Exit velo" value="—" tone="muted" /></div>
+                )}
+                <div className="p-4">
+                  <Stat align label="Avg exit velo" value={evAvg === null ? "—" : Math.round(evAvg)} unit={evAvg === null ? undefined : "mph"} tone={evAvg === null ? "muted" : "chalk"} size="md" note={evAvg === null ? "After 2 slo-mo swings" : `last ${Math.min(10, evs.length)}`} />
+                </div>
+                {topBat ? (
+                  <Link href={`/swings/${topBat.id}`} className="press p-4 hover:bg-night-3">
+                    <Stat align label="Top bat speed" value={Math.round(topBat.v)} unit="mph" source={topBat.source} size="md" note="estimate" />
+                  </Link>
+                ) : (
+                  <div className="p-4"><Stat align label="Bat speed" value="—" tone="muted" /></div>
+                )}
+              </Panel>
+            </>
+          )}
+
+          {last && focus && (
+            <>
+              <SectionTitle right={<Link href={`/swings?session=${last.id}`} className="text-[13px] text-optic">Review</Link>}>Work on this next</SectionTitle>
+              <Panel className="relative overflow-hidden p-4 pl-5">
+                <span className="absolute inset-y-0 left-0 w-1 bg-stitch" aria-hidden="true" />
+                <p className="text-[15px] leading-snug text-chalk">{focus.text}</p>
+                <p className="mt-2 text-[12px] text-chalk-3">
+                  Came up on {focus.n} of {lastSwings.length} swings · {fmtDate(last.startedAt)}
+                </p>
+              </Panel>
+            </>
+          )}
+          </div>
+          <div className="lg:-mt-5">
+          <SectionTitle right={<Link href="/progress" className="text-[13px] text-optic">Details</Link>}>Field Print</SectionTitle>
+          <Panel className="p-4">
+            <FieldPrint now={categoryAverages(recent)} before={before.length ? categoryAverages(before) : null} caption={before.length ? "Last 20 swings. Clay lines: the 20 before. Tap a wedge." : "Your six skill areas over your recent swings. Tap a wedge."} />
+          </Panel>
+
+          <SectionTitle right={<Link href="/swings" className="text-[13px] text-optic">All swings</Link>}>Recent swings</SectionTitle>
+          <ol className="surface divide-y divide-line overflow-hidden rounded-2xl">
+            {all.slice(0, 5).map((s) => {
+              const ev = speedOf(s, "exitVelocity");
+              const score = s.analysis.score.overall;
+              return (
+                <li key={s.id}>
+                  <Link href={`/swings/${s.id}`} className="press flex items-center gap-4 px-4 py-3.5 hover:bg-night-3">
+                    <span className="w-11 shrink-0">
+                      <span className={`num block text-[1.6rem] leading-none ${score === best?.analysis.score.overall ? "text-optic" : "text-chalk"}`}>{score ?? "—"}</span>
+                      <span className="mt-1.5 block h-1 overflow-hidden rounded-full bg-night-4">
+                        <span className="block h-full bg-chalk-3" style={{ width: `${score ?? 0}%` }} />
+                      </span>
                     </span>
-                  </span>
-                  <span className="text-chalk-3" aria-hidden="true">›</span>
-                </Link>
-              </li>
-            ))}
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-[14px] text-chalk">{s.analysis.cue.spoken}</span>
+                      <span className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[11px] text-chalk-3">
+                        {fmtDate(s.at)} · {s.source === "video" ? "from video" : "live"}
+                        {s.pb && <Chip tone="optic">★ best</Chip>}
+                        {ev && <Chip tone="optic">{Math.round(ev.v)} mph</Chip>}
+                      </span>
+                    </span>
+                    <span className="text-chalk-3" aria-hidden="true">›</span>
+                  </Link>
+                </li>
+              );
+            })}
           </ol>
 
           <SectionTitle>Personal records</SectionTitle>
-          <Panel>
-            <ul className="divide-y divide-line">
-              <li>
-                <Link href={best ? `/swings/${best.id}` : "/swings"} className="flex items-center justify-between px-4 py-3.5 hover:bg-night-3">
-                  <span className="text-[15px]">Top score</span>
-                  <span className="num text-2xl">{best?.analysis.score.overall ?? "—"}</span>
-                </Link>
-              </li>
-              {topSpeed("exitVelocity") && (
-                <li>
-                  <Link href={`/swings/${topSpeed("exitVelocity")!.id}`} className="flex items-center justify-between px-4 py-3.5 hover:bg-night-3">
-                    <span className="text-[15px]">Top exit velo<span className="block text-[12px] text-chalk-3">From slo-mo video or your radar</span></span>
-                    <span className="num text-2xl">{Math.round(topSpeed("exitVelocity")!.v)}<span className="ml-1 text-sm text-chalk-3">mph</span></span>
-                  </Link>
-                </li>
-              )}
-              {topSpeed("batSpeed") && (
-                <li>
-                  <Link href={`/swings/${topSpeed("batSpeed")!.id}`} className="flex items-center justify-between px-4 py-3.5 hover:bg-night-3">
-                    <span className="text-[15px]">Top bat speed</span>
-                    <span className="num text-2xl">{Math.round(topSpeed("batSpeed")!.v)}<span className="ml-1 text-sm text-chalk-3">mph</span></span>
-                  </Link>
-                </li>
-              )}
-              <li>
-                {pb ? (
-                  <Link href={`/compare?a=${all[0].id}&b=${pb.id}`} className="flex items-center justify-between px-4 py-3.5 hover:bg-night-3">
-                    <span className="text-[15px]">Personal best swing<span className="block text-[12px] text-chalk-3">Compare your latest swing with it</span></span>
-                    <span className="num text-2xl">{pb.analysis.score.overall ?? "★"}</span>
-                  </Link>
-                ) : (
-                  <p className="px-4 py-3.5 text-[14px] text-chalk-3">Mark a swing as your personal best on its page to compare against it.</p>
-                )}
-              </li>
-            </ul>
+          <Panel className="divide-y divide-line">
+            <Link href={best ? `/swings/${best.id}` : "/swings"} className="press flex items-center justify-between px-4 py-3.5 hover:bg-night-3">
+              <span className="text-[15px]">Top score</span>
+              <span className="num text-2xl">{best?.analysis.score.overall ?? "—"}</span>
+            </Link>
+            {pb ? (
+              <Link href={`/compare?a=${all[0].id}&b=${pb.id}`} className="press flex items-center justify-between px-4 py-3.5 hover:bg-night-3">
+                <span className="text-[15px]">
+                  Personal best swing<span className="block text-[12px] text-chalk-3">Line your latest swing up against it</span>
+                </span>
+                <span className="num text-2xl text-optic">{pb.analysis.score.overall ?? "★"}</span>
+              </Link>
+            ) : (
+              <p className="px-4 py-3.5 text-[14px] text-chalk-3">Mark a swing as your personal best on its page to compare against it.</p>
+            )}
           </Panel>
-
-          {last && (focus || lastCats.length > 0) && (
-            <>
-              <SectionTitle right={<Link href={`/swings?session=${last.id}`} className="text-sm text-optic">Review</Link>}>Last session · {fmtDate(last.startedAt)}</SectionTitle>
-              {focus && (
-                <Panel className="border-l-4 border-l-stitch p-4">
-                  <p className="text-xs text-chalk-3">Work on this next · came up on {focus.n} of {lastSwings.length} swings</p>
-                  <p className="mt-1 text-[15px] leading-snug">{focus.text}</p>
-                </Panel>
-              )}
-              {lastCats.length > 0 && (
-                <ul className="mt-3 grid grid-cols-2 gap-x-6 gap-y-2 px-1 text-[14px] sm:grid-cols-3">
-                  {lastCats.map((c) => (
-                    <li key={c.key} className="flex items-center justify-between gap-2">
-                      <span className="text-chalk-2">{c.label}</span>
-                      <span className={`num ${c.score >= 75 ? "text-optic" : c.score >= 50 ? "text-amber" : "text-stitch"}`}>{c.score}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </>
-          )}
-        </>
+          </div>
+        </div>
       ) : (
         <>
-          <SectionTitle>Before your first swing</SectionTitle>
-          <ul className="space-y-3 text-[15px] leading-snug text-chalk-2">
-            <li className="flex gap-3"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-optic" />Phone 10–15 ft away, across the plate, facing your chest, at waist height.</li>
-            <li className="flex gap-3"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-optic" />Whole body in the picture, head to shoes, with room for the bat.</li>
-            <li className="flex gap-3"><span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-optic" />Record one swing to see your breakdown, or go live in the cage.</li>
-          </ul>
-          <Link href="/guide" className="mt-4 inline-block text-[15px] text-optic">Full setup guide →</Link>
+          <Panel boxed className="mt-5 p-5">
+            <h2 className="head text-[19px]">Your first swing</h2>
+            <p className="mt-1 text-[14px] text-chalk-2">Set the phone up like this, whole body in the picture, shoes included.</p>
+            <div className="mt-4">
+              <CageDiagram />
+            </div>
+          </Panel>
+          <div className="mt-3 grid grid-cols-[1.4fr_1fr] gap-3">
+            <Link href="/record" className="press flex min-h-14 items-center gap-3 rounded-xl bg-optic px-4 font-bold text-optic-ink">
+              Record my swing
+            </Link>
+            <Link href="/live" className="press flex min-h-14 items-center gap-2.5 rounded-xl border border-line-2 bg-night-2 px-3.5 text-[15px]">
+              <Softball size={20} />
+              Start live analysis
+            </Link>
+          </div>
+          <Link href="/guide" className="mt-4 inline-block text-[15px] text-optic">
+            Full camera setup guide →
+          </Link>
         </>
       )}
 
-      <div className="mt-10 border-t border-line pt-5 text-[13px] text-chalk-3">
-        <Link href="/how-it-works" className="underline">How SwingIQ measures</Link> · <Link href="/bats" className="underline">Bat DNA</Link> · Bat speed, exit velocity and launch angle arrive with high-speed capture.
+      <div className="mt-12 flex flex-wrap gap-x-4 gap-y-1 border-t border-line pt-5 text-[13px] text-chalk-3">
+        <Link href="/how-it-works" className="hover:text-chalk-2">How SwingIQ measures</Link>
+        <Link href="/bats" className="hover:text-chalk-2">Bat DNA</Link>
+        <Link href="/guide" className="hover:text-chalk-2">Camera setup guide</Link>
       </div>
     </div>
   );

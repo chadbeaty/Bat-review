@@ -351,7 +351,7 @@ export function LiveSession() {
 
           {!player ? (
             <Panel className="mt-6 p-5">
-              <h2 className="mb-4 text-lg font-bold">First, who&apos;s hitting?</h2>
+              <h2 className="mb-4 head text-lg">First, who&apos;s hitting?</h2>
               <PlayerForm onSave={savePlayer} submitLabel="Save and continue" />
             </Panel>
           ) : (
@@ -461,7 +461,7 @@ export function LiveSession() {
             </span>
           </div>
           <div className="mx-auto w-full max-w-[34rem] px-4 pb-[max(1.25rem,env(safe-area-inset-bottom))]">
-            <Panel className="bg-night/90 p-5 backdrop-blur">
+            <Panel className="bg-night/90 p-5">
               <h2 className="display text-xl">{isReady ? "Looking good. Get set…" : "Line up the shot"}</h2>
               <p className="mb-4 mt-1 text-[13px] text-chalk-3">
                 {isReady ? "Starting on its own in a moment. Take your stance." : "Fix anything red or amber, or start anyway."}
@@ -524,7 +524,7 @@ export function LiveSession() {
             const prog = challengeProgress(c, run.map((s) => s.analysis.metrics), run.map((s) => s.analysis.score.overall), challenge.target);
             const done = prog.counted >= 10;
             return (
-              <div role="status" className="mx-4 mt-3 flex max-w-sm items-center gap-3 self-start rounded-xl bg-night/85 px-3 py-2 text-[13px] backdrop-blur">
+              <div role="status" className="mx-4 mt-3 flex max-w-sm items-center gap-3 self-start rounded-xl bg-night/92 px-3 py-2 text-[13px]">
                 <span className="min-w-0 flex-1">
                   <span className="block font-bold text-optic">{done ? "Challenge done" : "10-swing challenge"}</span>
                   <span className="block text-chalk-2">{c.goal}</span>
@@ -544,7 +544,7 @@ export function LiveSession() {
           )}
 
           {settings.advancedView && (
-            <div className="mx-4 mt-3 grid max-w-sm grid-cols-3 gap-x-4 gap-y-2 self-start rounded-2xl bg-night/75 p-3 text-xs backdrop-blur">
+            <div className="mx-4 mt-3 grid max-w-sm grid-cols-3 gap-x-4 gap-y-2 self-start rounded-2xl bg-night/90 p-3 text-xs">
               <Stat label="Avg score" v={stats.avgScore !== null ? Math.round(stats.avgScore) : null} />
               <Stat label="Best" v={stats.bestScore} />
               <Stat label="Avg swing" v={stats.avgSwingTime !== null ? Math.round(stats.avgSwingTime) : null} unit="ms" />
@@ -563,7 +563,7 @@ export function LiveSession() {
           <div className="mx-auto w-full max-w-[34rem] px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
             {error && <p className="mb-2 rounded-xl bg-stitch-wash px-3 py-2 text-[13px] text-chalk">{error}</p>}
             {last && cardOpen && (
-              <div key={last.id} className="mb-3 animate-slide-up rounded-2xl border border-line bg-night/92 p-4 backdrop-blur">
+              <div key={last.id} className="mb-3 animate-slide-up rounded-2xl border border-line bg-night/92 p-4">
                 <div className="flex items-start gap-4">
                   <div className="text-center">
                     <div className="num text-5xl leading-none text-chalk">{last.analysis.score.overall ?? "—"}</div>
@@ -633,7 +633,7 @@ export function LiveSession() {
               </div>
             )}
             {last && !cardOpen && (
-              <button type="button" onClick={() => setCardOpen(true)} className="mb-3 flex w-full items-center gap-3 rounded-2xl bg-night/85 px-4 py-3 text-left backdrop-blur">
+              <button type="button" onClick={() => setCardOpen(true)} className="mb-3 flex w-full items-center gap-3 rounded-2xl bg-night/92 px-4 py-3 text-left">
                 <span className="num text-2xl text-chalk">{last.analysis.score.overall ?? "—"}</span>
                 <span className="min-w-0 flex-1 truncate text-[14px] text-chalk-2">{last.analysis.cue.spoken}</span>
                 <span className="text-xs text-chalk-3">Swing {last.n}</span>

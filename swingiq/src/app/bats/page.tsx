@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePlayers } from "@/components/PlayerProvider";
-import { Button, Empty, PageTitle, Panel, SectionTitle } from "@/components/ui";
+import { Button, Empty, Meter, PageSkeleton, PageTitle, Panel, SectionTitle, Stat } from "@/components/ui";
 import { CATEGORY_LABEL } from "@/engine/scoring";
 import type { ScoreCategoryKey } from "@/engine/types";
 import { MIN_SWINGS_TO_COMPARE, batStats, type BatStats } from "@/lib/batdna";
@@ -67,7 +67,7 @@ export default function BatsPage() {
     await load();
   }
 
-  if (!ready) return null;
+  if (!ready) return <PageSkeleton />;
   if (!player)
     return (
       <>
@@ -76,7 +76,7 @@ export default function BatsPage() {
       </>
     );
 
-  const input = "min-h-11 w-full rounded-xl border border-line bg-night-3 px-3 text-[16px] placeholder:text-chalk-3";
+  const input = "min-h-11 w-full rounded-xl border border-line-2 bg-night-3 px-3 text-[16px] placeholder:text-chalk-3";
   const ready2 = bats.filter((b) => stats[b.id]?.enough);
 
   return (
@@ -92,11 +92,11 @@ export default function BatsPage() {
           <form onSubmit={add} className="grid grid-cols-2 gap-3">
             <input aria-label="Brand" placeholder="Brand (Miken, Easton…)" className={`${input} col-span-2`} value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} />
             <input aria-label="Model" placeholder="Model" className={`${input} col-span-2`} value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value })} />
-            <label className="flex items-center gap-2 rounded-xl border border-line bg-night-3 px-3">
+            <label className="flex items-center gap-2 rounded-xl border border-line-2 bg-night-3 px-3">
               <input aria-label="Length in inches" inputMode="numeric" className="min-h-11 w-full bg-transparent text-[16px] focus:outline-none" value={form.lengthIn} onChange={(e) => setForm({ ...form, lengthIn: e.target.value })} />
               <span className="text-sm text-chalk-3">in</span>
             </label>
-            <label className="flex items-center gap-2 rounded-xl border border-line bg-night-3 px-3">
+            <label className="flex items-center gap-2 rounded-xl border border-line-2 bg-night-3 px-3">
               <input aria-label="Weight in ounces" inputMode="decimal" placeholder="Weight" className="min-h-11 w-full bg-transparent text-[16px] placeholder:text-chalk-3 focus:outline-none" value={form.weightOz} onChange={(e) => setForm({ ...form, weightOz: e.target.value })} />
               <span className="text-sm text-chalk-3">oz</span>
             </label>
@@ -164,9 +164,9 @@ export default function BatsPage() {
           )}
         </>
       )}
-      <p className="mt-8 text-xs text-chalk-3">
-        Bat speed, exit velocity and launch angle appear here only from readings you enter from a sensor or radar on a swing&apos;s page. The camera can&apos;t measure them yet.{" "}
-        <Link href="/how-it-works" className="underline">How SwingIQ measures</Link>
+      <p className="mt-8 text-xs leading-relaxed text-chalk-3">
+        Exit velo, bat speed and launch angle come from slo-mo videos you upload, or from a sensor or radar reading you type in on a swing&apos;s page (that wins when both exist).{" "}
+        <Link href="/how-it-works#speed" className="underline">How SwingIQ measures</Link>
       </p>
     </div>
   );
@@ -184,37 +184,91 @@ function Row({ label, value, note }: { label: string; value: string; note?: stri
   );
 }
 
+/** The bat drawn to its real proportions, with a marker where its balance sits (end-loaded bats balance further out). */
+function BatProfile({ bat }: { bat: Bat }) {
+  const len = bat.lengthIn ?? 34;
+  const w = 320;
+  const L = (len / 36) * (w - 12);
+  const bal = bat.balance === "end-loaded" ? 0.71 : bat.balance === "half-end" ? 0.65 : bat.balance === "balanced" ? 0.59 : null;
+  const r = bat.balance === "end-loaded" ? 12 : 11;
+  const cy = 22;
+  const x0 = 6;
+  const hx = x0 + 18;
+  const path = [
+    `M${x0},${cy - 5.5}`,
+    `Q${x0 - 2},${cy} ${x0},${cy + 5.5}`,
+    `L${x0 + 6},${cy + 5.5} L${x0 + 6},${cy + 3.6} L${hx},${cy + 3.4}`,
+    `L${x0 + L * 0.42},${cy + 3.8}`,
+    `C${x0 + L * 0.52},${cy + 4.5} ${x0 + L * 0.56},${cy + r} ${x0 + L * 0.62},${cy + r}`,
+    `L${x0 + L - 4},${cy + r} Q${x0 + L},${cy + r} ${x0 + L},${cy} Q${x0 + L},${cy - r} ${x0 + L - 4},${cy - r}`,
+    `L${x0 + L * 0.62},${cy - r}`,
+    `C${x0 + L * 0.56},${cy - r} ${x0 + L * 0.52},${cy - 4.5} ${x0 + L * 0.42},${cy - 3.8}`,
+    `L${hx},${cy - 3.4} L${x0 + 6},${cy - 3.6} L${x0 + 6},${cy - 5.5} Z`,
+  ].join(" ");
+  return (
+    <svg viewBox={`0 0 ${w} 52`} className="mt-3 w-full" aria-hidden="true">
+      <defs>
+        <linearGradient id={`bat-${bat.id}`} x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" stopColor="#3a4654" />
+          <stop offset="0.35" stopColor="#252e38" />
+          <stop offset="1" stopColor="#11161c" />
+        </linearGradient>
+      </defs>
+      <path d={path} fill={`url(#bat-${bat.id})`} stroke="var(--color-line-2)" strokeWidth="1" />
+      <rect x={x0 + L * 0.66} y={cy - 1} width={L * 0.26} height="2" rx="1" fill="var(--color-optic)" opacity="0.55" />
+      <text x={x0 + L * 0.79} y={cy - r - 4} textAnchor="middle" fontSize="8.5" fill="var(--color-chalk-3)">sweet spot</text>
+      {bal !== null && (
+        <g>
+          <path d={`M${x0 + L * bal},${cy + r + 3} l-4.5,7 h9 z`} fill="var(--color-clay)" />
+          <text x={x0 + L * bal} y="51" textAnchor="middle" fontSize="8.5" fill="var(--color-clay)">balance</text>
+        </g>
+      )}
+    </svg>
+  );
+}
+
 function BatCard({ bat, s, onRemove }: { bat: Bat; s: BatStats | undefined; onRemove: () => void }) {
   const drop = bat.lengthIn && bat.weightOz ? bat.weightOz - bat.lengthIn : null;
   return (
     <Panel className="p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="display truncate text-xl">{bat.brand} {bat.model}</h2>
-          <p className="text-[13px] text-chalk-3">
+          <h2 className="display truncate text-[1.35rem]">{bat.brand} {bat.model}</h2>
+          <p className="mt-0.5 text-[13px] text-chalk-3">
             {[bat.lengthIn && `${bat.lengthIn} in`, bat.weightOz && `${bat.weightOz} oz`, drop !== null && `drop ${drop}`, bat.balance && bat.balance !== "unknown" && BALANCE_LABEL[bat.balance], bat.certification]
               .filter(Boolean)
               .join(" · ")}
           </p>
         </div>
-        <button type="button" onClick={onRemove} className="min-h-10 rounded-lg border border-line px-3 text-sm text-chalk-3" aria-label={`Remove ${bat.brand} ${bat.model}`}>
+        <button type="button" onClick={onRemove} className="press min-h-10 rounded-lg border border-line-2 px-3 text-sm text-chalk-3 hover:text-chalk" aria-label={`Remove ${bat.brand} ${bat.model}`}>
           Remove
         </button>
       </div>
+      <BatProfile bat={bat} />
       {!s || s.swings === 0 ? (
         <p className="mt-3 text-[14px] text-chalk-2">No swings with this bat yet. Pick it when you record or start a live session.</p>
       ) : (
-        <div className="mt-2 divide-y divide-line">
-          <Row label="Swings recorded" value={String(s.swings)} note={s.enough ? undefined : `${s.needMore} more to compare with other bats`} />
-          <Row label="Average SwingIQ score" value={s.avgScore !== null ? String(s.avgScore) : "—"} />
-          <Row label="Score consistency" value={s.scoreConsistency !== null ? `${s.scoreConsistency}` : "—"} note="100 = every swing scored the same" />
-          <Row label="Timing spread" value={s.timingSpreadMs !== null ? `±${s.timingSpreadMs} ms` : "—"} note="How much foot-down timing varies" />
-          <Row label="Contact heard" value={s.contactRate ? `${Math.round(s.contactRate.rate * 100)}%` : "—"} note={s.contactRate ? `of ${s.contactRate.n} mic-checked swings` : "Turn on Listen for contact"} />
-          <Row label="Line drives" value={s.linerRate ? `${Math.round(s.linerRate.rate * 100)}%` : "—"} note={s.linerRate ? `of ${s.linerRate.n} tagged balls in play` : "Tag hits on a swing's page"} />
-          <Row label="Exit velo" value={s.exitVelocity ? `${s.exitVelocity.avg.toFixed(1)} mph` : "—"} note={s.exitVelocity ? `best ${s.exitVelocity.best.toFixed(0)} · ${speedNote(s.exitVelocity)}` : "Film in slo-mo to measure it"} />
-          <Row label="Bat speed" value={s.batSpeed ? `${s.batSpeed.avg.toFixed(1)} mph` : "—"} note={s.batSpeed ? `best ${s.batSpeed.best.toFixed(0)} · ${speedNote(s.batSpeed)}` : "Film in slo-mo to measure it"} />
-          <Row label="Launch angle" value={s.launchAngle ? `${Math.round(s.launchAngle.avg)}°` : "—"} note={s.launchAngle ? speedNote(s.launchAngle) : "Film in slo-mo to measure it"} />
-        </div>
+        <>
+          <div className="mt-4 grid grid-cols-3 gap-3 border-t border-line pt-4">
+            <Stat label="Swings" value={s.swings} size="sm" note={s.enough ? "enough to compare" : `${s.needMore} more to compare with other bats`} />
+            <Stat label="Avg score" value={s.avgScore ?? "—"} size="sm" />
+            <Stat label="Exit velo" value={s.exitVelocity ? Math.round(s.exitVelocity.avg) : "—"} unit={s.exitVelocity ? "mph" : undefined} size="sm" source={s.exitVelocity ? (s.exitVelocity.sensor ? "sensor" : "slomo") : undefined} note={s.exitVelocity ? `best ${Math.round(s.exitVelocity.best)}` : undefined} />
+          </div>
+          <div className="mt-4">
+            <div className="flex items-baseline justify-between text-[13px]">
+              <span className="text-chalk-2">Score consistency</span>
+              <span className="num text-chalk">{s.scoreConsistency ?? "—"}</span>
+            </div>
+            <div className="mt-1.5"><Meter value={s.scoreConsistency} label="Score consistency" /></div>
+          </div>
+          <div className="mt-3 divide-y divide-line">
+            <Row label="Timing spread" value={s.timingSpreadMs !== null ? `±${s.timingSpreadMs} ms` : "—"} note="How much foot-down timing varies" />
+            <Row label="Contact heard" value={s.contactRate ? `${Math.round(s.contactRate.rate * 100)}%` : "—"} note={s.contactRate ? `of ${s.contactRate.n} mic-checked swings` : "Turn on Listen for contact"} />
+            <Row label="Line drives" value={s.linerRate ? `${Math.round(s.linerRate.rate * 100)}%` : "—"} note={s.linerRate ? `of ${s.linerRate.n} tagged balls in play` : "Tag hits on a swing's page"} />
+            <Row label="Bat speed" value={s.batSpeed ? `${s.batSpeed.avg.toFixed(1)} mph` : "—"} note={s.batSpeed ? `best ${s.batSpeed.best.toFixed(0)} · ${speedNote(s.batSpeed)}` : "Film in slo-mo to measure it"} />
+            <Row label="Launch angle" value={s.launchAngle ? `${Math.round(s.launchAngle.avg)}°` : "—"} note={s.launchAngle ? speedNote(s.launchAngle) : "Film in slo-mo to measure it"} />
+          </div>
+        </>
       )}
     </Panel>
   );
@@ -243,7 +297,7 @@ function BatCompare({ a, b }: { a: BatStats; b: BatStats }) {
     { label: "Bat speed (avg)", va: a.batSpeed ? Math.round(a.batSpeed.avg * 10) / 10 : null, vb: b.batSpeed ? Math.round(b.batSpeed.avg * 10) / 10 : null, higherBetter: true, fmt: (x) => `${x} mph` },
   ];
   return (
-    <div className="mt-3 overflow-x-auto rounded-2xl border border-line">
+    <div className="surface mt-3 overflow-x-auto rounded-2xl">
       <table className="w-full min-w-[20rem] text-[14px]">
         <tbody className="divide-y divide-line">
           {rows.map((r) => {

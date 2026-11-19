@@ -43,7 +43,7 @@ test("profile: add a bat, change settings, add a second hitter", async ({ page }
   await page.getByLabel("Name").fill("Sam");
   await page.getByRole("button", { name: "Let's hit" }).click();
   await page.getByRole("link", { name: "Profile" }).click();
-  await page.getByRole("link", { name: /Bat DNA/ }).click();
+  await page.getByRole("main").getByRole("link", { name: /Bat DNA/ }).click();
   await page.getByRole("button", { name: "Add a bat" }).click();
   await page.getByLabel("Brand").fill("Miken");
   await page.getByRole("textbox", { name: "Model" }).fill("Freak Primo");

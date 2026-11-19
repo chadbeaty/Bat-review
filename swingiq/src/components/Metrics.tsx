@@ -130,7 +130,7 @@ export function GroupedMetrics({ metrics, averages }: { metrics: Partial<Record<
         if (!g.keys.some((k) => metrics[k])) return null;
         return (
           <section key={g.title} aria-label={g.title}>
-            <h3 className="mb-1 text-sm font-bold text-optic">{g.title}</h3>
+            <h3 className="head mb-1 flex items-center gap-2 text-[14px] text-chalk"><span className="h-3 w-0.5 rounded-full bg-optic" aria-hidden="true" />{g.title}</h3>
             <MetricList metrics={metrics} keys={g.keys} averages={averages} />
           </section>
         );

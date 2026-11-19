@@ -5,7 +5,7 @@ export const metadata: Metadata = { title: "Privacy" };
 export default function Privacy() {
   return (
     <div className="animate-rise max-w-2xl pb-12">
-      <h1 className="display mt-2 text-[2rem] leading-[1.05]">Privacy</h1>
+      <h1 className="display mt-3 text-[2.15rem] leading-[1.02] md:text-[2.6rem]">Privacy</h1>
       <div className="mt-5 space-y-5 text-[15px] leading-relaxed text-chalk-2">
         <p><span className="font-bold text-chalk">Video stays on your phone.</span> Camera frames are analyzed on your device. Swing clips are saved in your browser&apos;s storage on this phone and are never uploaded unless you choose to back them up.</p>
         <p><span className="font-bold text-chalk">The mic only listens for contact.</span> When &ldquo;Listen for contact&rdquo; is on, the app measures loudness in real time to hear bat-on-ball. Audio is never recorded, stored or sent.</p>

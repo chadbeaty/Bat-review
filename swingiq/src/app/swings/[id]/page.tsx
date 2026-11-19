@@ -7,8 +7,10 @@ import { ClipPlayer } from "@/components/ClipPlayer";
 import { CueLine, GroupedMetrics, averageMetrics } from "@/components/Metrics";
 import { CoachCard, CompareLink, ScoreCategories, SourceBadge } from "@/components/ScoreParts";
 import { SpeedCard } from "@/components/SpeedCard";
+import { PhaseLine } from "@/components/viz/PhaseLine";
+import { speedOf } from "@/lib/insights";
 import { usePlayers } from "@/components/PlayerProvider";
-import { Button, Panel, Segmented, SectionTitle, fmtDate, fmtTime } from "@/components/ui";
+import { Button, InfoTip, PageSkeleton, Panel, Segmented, SectionTitle, fmtDate, fmtTime } from "@/components/ui";
 import { METRICS } from "@/engine/catalog";
 import { coachingFor } from "@/engine/coaching";
 import { EXTERNAL_LIMITS, applyExternal, validExternal, type ExternalKey } from "@/engine/external";
@@ -45,6 +47,7 @@ export default function SwingDetail() {
   const [bats, setBats] = useState<Bat[]>([]);
   const [prevId, setPrevId] = useState<string | null>(null);
   const [pbId, setPbId] = useState<string | null>(null);
+  const [hist, setHist] = useState<{ ev: number[]; bat: number[] }>({ ev: [], bat: [] });
 
   useEffect(() => {
     (async () => {
@@ -59,6 +62,10 @@ export default function SwingDetail() {
       const i = all.findIndex((x) => x.id === s.id);
       setPrevId(i >= 0 && i + 1 < all.length ? all[i + 1].id : null);
       setPbId(all.find((x) => x.pb)?.id ?? null);
+      setHist({
+        ev: all.map((x) => speedOf(x, "exitVelocity")?.v).filter((v): v is number => v !== undefined),
+        bat: all.map((x) => speedOf(x, "batSpeed")?.v).filter((v): v is number => v !== undefined),
+      });
       setBats(await db.bats(s.playerId));
       if (s.batId === undefined) {
         const sess = await db.session(s.sessionId);
@@ -126,11 +133,11 @@ export default function SwingDetail() {
     await update({ clipFrames: 0 });
   }
 
-  if (swing === undefined) return null;
+  if (swing === undefined) return <PageSkeleton />;
   if (swing === null)
     return (
       <div className="pt-10 text-center">
-        <p className="text-lg font-bold">Swing not found</p>
+        <p className="head text-lg">Swing not found</p>
         <Link href="/swings" className="mt-3 inline-block text-optic">Back to My Swings</Link>
       </div>
     );
@@ -138,55 +145,74 @@ export default function SwingDetail() {
   const a = swing.analysis;
   return (
     <div className="animate-rise pb-10">
-      <div className="flex items-center justify-between pt-2">
-        <Link href={`/swings?session=${swing.sessionId}`} className="-ml-2 rounded-lg px-2 py-2 text-[15px] text-chalk-2 hover:text-chalk">← Session</Link>
-        <span className="text-[13px] text-chalk-3">{fmtDate(swing.at)} · {fmtTime(swing.at)}</span>
+      <div className="flex items-center justify-between pt-3">
+        <Link href={`/swings?session=${swing.sessionId}`} className="press -ml-2 rounded-lg px-2 py-2 text-[14px] text-chalk-2 hover:text-chalk">
+          ← Session
+        </Link>
+        <span className="text-[13px] text-chalk-3">
+          {fmtDate(swing.at)} · {fmtTime(swing.at)}
+        </span>
       </div>
       <div className="mt-2 flex flex-wrap items-end justify-between gap-3">
-        <h1 className="display text-[2rem] leading-none">Swing {swing.n}</h1>
+        <div>
+          <p className="text-[13px] text-chalk-3">Swing report</p>
+          <h1 className="display text-[2.2rem] leading-none">Swing {swing.n}</h1>
+        </div>
         <button
           type="button"
           onClick={togglePb}
           aria-pressed={!!swing.pb}
-          className={`min-h-10 rounded-xl border px-3 text-sm ${swing.pb ? "border-optic bg-optic font-bold text-optic-ink" : "border-line text-chalk-2 hover:text-chalk"}`}
+          className={`press min-h-10 rounded-xl border px-3 text-sm ${swing.pb ? "border-optic bg-optic font-bold text-optic-ink" : "border-line-2 text-chalk-2 hover:text-chalk"}`}
         >
           {swing.pb ? "★ Personal best" : "☆ Mark as personal best"}
         </button>
       </div>
-      <div className="mt-2 flex flex-wrap items-center gap-2">
+      <div className="mt-3 flex flex-wrap items-center gap-2">
         <SourceBadge source={swing.source} />
         {swing.source === "video" && swing.slowMo && swing.slowMo > 1 && <span className="text-[11px] text-chalk-3">slow motion corrected {swing.slowMo}×</span>}
+        <span className="text-[11px] text-chalk-3">{swing.view === "side" ? "Side view" : swing.view === "behind" ? "Behind view" : "Front view"}</span>
         {player && swing.playerId !== player.id && <span className="text-xs text-chalk-3">Another hitter&apos;s swing</span>}
       </div>
 
-      <div className="mt-5 md:grid md:grid-cols-[1.2fr_1fr] md:gap-8">
-        <div>
+      <div className="mt-5 md:grid md:grid-cols-[1.1fr_1fr] md:items-start md:gap-8">
+        <div className="md:sticky md:top-6">
           {clip === undefined ? (
-            <div className="rounded-2xl border border-line bg-night-2" style={{ aspectRatio: `${swing.frameSize.width} / ${swing.frameSize.height}`, maxHeight: "68dvh" }} />
+            <div className="skel rounded-2xl" style={{ aspectRatio: `${swing.frameSize.width} / ${swing.frameSize.height}`, maxHeight: "68dvh" }} />
           ) : (
             <ClipPlayer key={`${swing.id}-${clip ? "v" : "p"}`} pose={swing.pose} frames={clip?.frames ?? null} phases={a.phases} frameSize={swing.frameSize} handPath={a.handPath} hand={swing.hand} />
           )}
         </div>
         <div>
-          <Panel className="mt-6 flex items-center gap-4 p-4 md:mt-0">
-            <ArcScore score={a.score.overall} size={150} />
-            <div className="min-w-0 flex-1">
-              <CueLine cue={a.cue} />
+          <Panel boxed className="mt-6 p-4 md:mt-0">
+            <div className="flex items-center gap-4">
+              <ArcScore score={a.score.overall} size={150} />
+              <div className="min-w-0 flex-1">
+                <CueLine cue={a.cue} />
+              </div>
             </div>
+            {a.observations.length > 1 && (
+              <div className="mt-4 space-y-2.5 border-t border-line pt-4">
+                {a.observations.slice(1, 4).map((c) => (
+                  <CueLine key={c.id} cue={c} />
+                ))}
+              </div>
+            )}
           </Panel>
           <div className="mt-4">
-            <SpeedCard metrics={a.metrics} source={swing.source} />
+            <SpeedCard metrics={a.metrics} source={swing.source} history={hist} />
           </div>
-          {a.observations.length > 1 && (
-            <div className="mt-4 space-y-2.5">
-              {a.observations.slice(1, 4).map((c) => (
-                <CueLine key={c.id} cue={c} />
-              ))}
+          <Panel className="mt-4 p-4">
+            <div className="mb-1 flex items-center justify-between">
+              <h2 className="head text-[15px]">Swing timeline</h2>
+              <InfoTip label="the swing timeline">
+                Each move in time, with contact at the right. Slow-pitch hitters who time the arc well land the front foot about 0.14 to 0.38 seconds before contact (the shaded window).
+              </InfoTip>
             </div>
-          )}
-          <div className="mt-5">
+            <PhaseLine phases={a.phases} />
+          </Panel>
+          <Panel className="mt-4 p-4">
             <ScoreCategories analysis={a} view={swing.view} />
-          </div>
+          </Panel>
         </div>
       </div>
 
@@ -196,7 +222,7 @@ export default function SwingDetail() {
           action={
             <Link
               href={`/live?challenge=${encodeURIComponent(coachingFor(a.cue, a.metrics, a.score.overall).issueId)}${a.score.overall !== null ? `&target=${Math.max(0, a.score.overall - 5)}` : ""}`}
-              className="inline-flex min-h-11 items-center rounded-xl bg-optic px-4 text-[15px] font-bold text-optic-ink"
+              className="press inline-flex min-h-11 items-center rounded-xl bg-optic px-4 text-[15px] font-bold text-optic-ink"
             >
               Take the challenge live
             </Link>
@@ -216,7 +242,7 @@ export default function SwingDetail() {
             id="sbat"
             value={swing.batId ?? ""}
             onChange={(e) => update({ batId: e.target.value || null })}
-            className="min-h-12 w-full max-w-sm rounded-xl border border-line bg-night-2 px-3 text-[16px] text-chalk"
+            className="min-h-12 w-full max-w-sm rounded-xl border border-line-2 bg-night-2 px-3 text-[16px] text-chalk"
           >
             <option value="">No bat recorded</option>
             {bats.map((b) => (
@@ -231,7 +257,7 @@ export default function SwingDetail() {
       <GroupedMetrics metrics={metrics} averages={averages} />
 
       <SectionTitle>How did it go?</SectionTitle>
-      <p className="-mt-1 mb-3 text-[13px] text-chalk-3">Tag the result. It feeds your spray chart and Swing DNA.</p>
+      <p className="-mt-1 mb-3 text-[13px] text-chalk-3">Tag the result. It feeds your spray chart.</p>
       <div className="space-y-3">
         <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Result">
           {TYPES.map((t) => (
@@ -241,7 +267,7 @@ export default function SwingDetail() {
               role="radio"
               aria-checked={swing.tag?.type === t.value}
               onClick={() => update({ tag: { ...swing.tag, type: swing.tag?.type === t.value ? undefined : t.value } })}
-              className={`min-h-10 rounded-xl border px-3 text-sm ${swing.tag?.type === t.value ? "border-optic bg-night-3 text-chalk" : "border-line text-chalk-2"}`}
+              className={`press min-h-10 rounded-xl border px-3 text-sm ${swing.tag?.type === t.value ? "border-optic bg-optic-wash text-chalk" : "border-line-2 text-chalk-2 hover:text-chalk"}`}
             >
               {t.label}
             </button>

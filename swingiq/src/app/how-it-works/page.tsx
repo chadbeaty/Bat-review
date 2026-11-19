@@ -37,13 +37,13 @@ const ROWS: { k: MetricKey; now: string; slomo: string }[] = [
 export default function HowItWorks() {
   return (
     <div className="animate-rise pb-12">
-      <h1 className="display mt-2 text-[2rem] leading-[1.05]">How SwingIQ measures</h1>
+      <h1 className="display mt-3 text-[2.15rem] leading-[1.02] md:text-[2.6rem]">How SwingIQ measures</h1>
       <p className="mt-3 text-[16px] leading-relaxed text-chalk-2">
         SwingIQ tracks 33 points on your body in every camera frame, right on your phone. From how those points move, it finds your swing, splits it into phases and measures your mechanics.
         We never make up a number. If the footage can&apos;t support a measurement, you&apos;ll see why instead of a guess.
       </p>
 
-      <h2 className="mt-10 text-lg font-bold">Every number is labeled</h2>
+      <h2 className="mt-10 head text-lg">Every number is labeled</h2>
       <dl className="mt-3 space-y-3 text-[15px]">
         <div><dt className="inline font-bold text-chalk">Measured</dt> <dd className="inline text-chalk-2">counted or timed directly, like your swing count or the moment the mic heard contact.</dd></div>
         <div><dt className="inline font-bold text-chalk">Camera estimate</dt> <dd className="inline text-chalk-2">worked out from body tracking, shown with a High, Medium or Low confidence.</dd></div>
@@ -51,7 +51,7 @@ export default function HowItWorks() {
         <div><dt className="inline font-bold text-chalk">Not available</dt> <dd className="inline text-chalk-2">the footage can&apos;t support it, with the reason.</dd></div>
       </dl>
 
-      <h2 className="mt-10 text-lg font-bold">What a phone can measure</h2>
+      <h2 className="mt-10 head text-lg">What a phone can measure</h2>
       <p className="mt-1 text-[14px] text-chalk-3">Live mode and normal videos (about 30 frames a second) vs. a slo-mo video you upload (120–240 frames a second).</p>
       <div className="mt-4 overflow-x-auto rounded-2xl border border-line">
         <table className="w-full min-w-[22rem] text-left text-[14px]">
@@ -74,7 +74,7 @@ export default function HowItWorks() {
         </table>
       </div>
 
-      <h2 className="mt-10 text-lg font-bold">Legs and feet come first</h2>
+      <h2 className="mt-10 head text-lg">Legs and feet come first</h2>
       <p className="mt-2 text-[15px] leading-relaxed text-chalk-2">
         Slow pitch is a timing game on a ball dropping in on a 6–12 ft arc. Skilled slow-pitch hitters start their step near the top of the arc and land the front heel about 0.2 seconds
         before contact, then firm up the front side and turn against it. So SwingIQ reads your feet first: your timing move (toe tap, stride or leg lift), when your front foot lands,
@@ -85,13 +85,13 @@ export default function HowItWorks() {
         Your shoes have to be in the picture. Setup won&apos;t start on its own until they are, and during a session you&apos;ll see a warning if they slip out.
       </p>
 
-      <h2 className="mt-10 text-lg font-bold">Why no hip-turn degrees?</h2>
+      <h2 className="mt-10 head text-lg">Why no hip-turn degrees?</h2>
       <p className="mt-2 text-[15px] leading-relaxed text-chalk-2">
         Measuring hip rotation needs depth, and one camera has to guess depth. Even a professional two-phone system filming at 240 frames a second misses hip rotation speed by about
         150°/s on average. Rather than show you a made-up number, SwingIQ leaves it out.
       </p>
 
-      <h2 id="speed" className="mt-10 text-lg font-bold">Exit velo and bat speed from slo-mo</h2>
+      <h2 id="speed" className="mt-10 head text-lg">Exit velo and bat speed from slo-mo</h2>
       <p className="mt-2 text-[15px] leading-relaxed text-chalk-2">
         At 30 frames a second a 90 mph ball crosses the picture in a frame or two, so live mode can&apos;t time it. In slo-mo (120 or 240 frames a second) SwingIQ follows the ball frame
         by frame. The hard part with one camera is knowing how many pixels make a foot. SwingIQ uses two independent rulers and checks them against each other:
@@ -116,13 +116,13 @@ export default function HowItWorks() {
         Got a radar or bat sensor? Enter its reading on any swing and it takes priority. <Link href="/guide#speed" className="text-optic underline">How to film for speed</Link>
       </p>
 
-      <h2 className="mt-10 text-lg font-bold">The SwingIQ score</h2>
+      <h2 className="mt-10 head text-lg">The SwingIQ score</h2>
       <p className="mt-2 text-[15px] leading-relaxed text-chalk-2">
         A 0–100 grade of your mechanics, not a prediction of how hard you hit it. It blends the checks your footage supports: quiet head, hands that stay up, staying back, a balanced finish,
         a controlled stride, hips leading shoulders, and sequence. Each check counts more when we trust it more. Every swing page shows exactly what went into its score.
       </p>
 
-      <h2 className="mt-10 text-lg font-bold">Every metric, explained</h2>
+      <h2 className="mt-10 head text-lg">Every metric, explained</h2>
       <dl className="mt-3 divide-y divide-line">
         {(Object.keys(METRICS) as MetricKey[]).map((k) => (
           <div key={k} className="py-4">

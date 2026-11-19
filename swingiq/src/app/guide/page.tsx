@@ -53,7 +53,7 @@ export default function GuidePage() {
   return (
     <div className="animate-rise pb-10">
       <Link href="/live" className="-ml-2 inline-block rounded-lg px-2 py-2 text-[15px] text-chalk-2 hover:text-chalk">← Live session</Link>
-      <h1 className="display mt-2 text-[2rem] leading-[1.05]">Camera setup</h1>
+      <h1 className="display mt-3 text-[2.15rem] leading-[1.02] md:text-[2.6rem]">Camera setup</h1>
       <p className="mt-2 text-[15px] text-chalk-2">Two minutes of setup makes every number better. The app checks all of this live and tells you what to fix.</p>
       <div className="mt-6 rounded-2xl border border-line bg-night-2 p-4">
         <CageDiagram />
@@ -66,7 +66,7 @@ export default function GuidePage() {
           </div>
         ))}
       </dl>
-      <h2 id="speed" className="mt-8 text-lg font-bold">Filming for exit velo and bat speed</h2>
+      <h2 id="speed" className="mt-8 head text-lg">Filming for exit velo and bat speed</h2>
       <p className="mt-2 text-[15px] leading-relaxed text-chalk-2">
         Speeds come from a slo-mo video you record or upload on the <Link href="/record" className="text-optic underline">Record</Link> screen. No extra gear.
       </p>
@@ -82,7 +82,7 @@ export default function GuidePage() {
         Every speed shows a ± range. If something&apos;s off (no pitch in the shot, too dark), you&apos;ll see why instead of a number.
       </p>
 
-      <h2 className="mt-8 text-lg font-bold">What the live checks mean</h2>
+      <h2 className="mt-8 head text-lg">What the live checks mean</h2>
       <ul className="mt-3 space-y-2 text-[15px] text-chalk-2">
         <li><span className="text-chalk">Lighting</span>: average brightness of the picture, and glare.</li>
         <li><span className="text-chalk">Full body</span>: the tracker can see your head, hands, hips and feet.</li>
