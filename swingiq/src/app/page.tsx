@@ -29,6 +29,31 @@ function CageDiagram() {
   );
 }
 
+/** The two ways to hit, named by what you do, each with the one line that tells them apart. */
+function SwingActions() {
+  return (
+    <div className="mt-3 grid gap-3 sm:grid-cols-2">
+      <Link href="/live" className="cut cut-sm press flex min-h-[4.5rem] items-center gap-3 rounded-xl bg-optic px-4 py-3 text-optic-ink hover:bg-optic-2">
+        <Softball size={24} />
+        <span className="min-w-0">
+          <span className="block font-bold leading-tight">Hit live</span>
+          <span className="block text-[13px] font-semibold leading-snug opacity-75">Prop up your phone. Feedback after every swing.</span>
+        </span>
+      </Link>
+      <Link href="/record" className="press flex min-h-[4.5rem] items-center gap-3 rounded-xl border border-line-2 bg-night-2 px-4 py-3 hover:border-chalk-3">
+        <svg width="24" height="24" viewBox="0 0 30 30" aria-hidden="true" className="shrink-0 text-chalk">
+          <path d="M15 20V5M9 11l6-6 6 6" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M4 19v5a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-5" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" />
+        </svg>
+        <span className="min-w-0">
+          <span className="block font-bold leading-tight text-chalk">Upload a video</span>
+          <span className="block text-[13px] leading-snug text-chalk-3">Or film one now. Slo-mo clips get exit velo and bat speed.</span>
+        </span>
+      </Link>
+    </div>
+  );
+}
+
 /** Recent form: the last dozen swing scores as bars, oldest to newest; the latest is lit. Real scores only. */
 function RecentForm({ swings }: { swings: SwingRecord[] }) {
   const xs = swings
@@ -163,19 +188,7 @@ export default function Home() {
             {prevOverall !== null && <p className="relative mt-3 text-[12px] text-chalk-3"><span className="text-clay">▲</span> the 20 swings before: {prevOverall}</p>}
           </section>
 
-          <div className="mt-3 grid grid-cols-[1.4fr_1fr] gap-3">
-            <Link href="/record" className="cut cut-sm press flex min-h-14 items-center gap-3 rounded-xl bg-optic px-4 font-bold text-optic-ink hover:bg-optic-2">
-              <svg width="22" height="22" viewBox="0 0 30 30" aria-hidden="true">
-                <rect x="2" y="7" width="19" height="16" rx="3" fill="none" stroke="currentColor" strokeWidth="2.6" />
-                <path d="M21 13l7-4v12l-7-4z" fill="currentColor" />
-              </svg>
-              <span className="leading-tight">Record my swing</span>
-            </Link>
-            <Link href="/live" className="press flex min-h-14 items-center gap-2.5 rounded-xl border border-line-2 bg-night-2 px-3.5 text-[15px] hover:border-chalk-3">
-              <Softball size={20} />
-              <span className="leading-tight">Start live analysis</span>
-            </Link>
-          </div>
+          <SwingActions />
 
           {(topEv || topBat) && (
             <>
@@ -286,15 +299,7 @@ export default function Home() {
               <CageDiagram />
             </div>
           </Panel>
-          <div className="mt-3 grid grid-cols-[1.4fr_1fr] gap-3">
-            <Link href="/record" className="cut cut-sm press flex min-h-14 items-center gap-3 rounded-xl bg-optic px-4 font-bold text-optic-ink hover:bg-optic-2">
-              Record my swing
-            </Link>
-            <Link href="/live" className="press flex min-h-14 items-center gap-2.5 rounded-xl border border-line-2 bg-night-2 px-3.5 text-[15px]">
-              <Softball size={20} />
-              Start live analysis
-            </Link>
-          </div>
+          <SwingActions />
           <Link href="/guide" className="mt-4 inline-block text-[15px] text-optic">
             Full camera setup guide →
           </Link>

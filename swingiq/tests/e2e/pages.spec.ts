@@ -26,13 +26,13 @@ test("first run: the scroll site, then setup, then home shows the live session b
   await page.getByLabel("Feet").fill("6");
   await page.getByLabel("Inches").fill("1");
   await page.getByRole("button", { name: "Let's hit" }).click();
-  await expect(page.getByRole("link", { name: /Record my swing/ })).toBeVisible();
-  await expect(page.getByRole("link", { name: /Start live analysis/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Upload a video/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Hit live/ })).toBeVisible();
   await expect(page.getByText("Chad · Lefty")).toBeVisible();
   await noSideScroll(page);
   // Once a hitter exists, "/" is the app on every visit.
   await page.goto("/");
-  await expect(page.getByRole("link", { name: /Record my swing/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Upload a video/ })).toBeVisible();
   expect(errors).toEqual([]);
 });
 
@@ -60,10 +60,10 @@ test("a returning hitter without the cookie is sent from the site to the app", a
   await page.goto("/start");
   await page.getByLabel("Name").fill("Returning");
   await page.getByRole("button", { name: "Let's hit" }).click();
-  await expect(page.getByRole("link", { name: /Record my swing/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Upload a video/ })).toBeVisible();
   await context.clearCookies();
   await page.goto("/");
-  await expect(page.getByRole("link", { name: /Record my swing/ })).toBeVisible();
+  await expect(page.getByRole("link", { name: /Upload a video/ })).toBeVisible();
 });
 
 test("validates the hitter form", async ({ page }) => {
@@ -109,7 +109,7 @@ for (const path of ["/swings", "/progress", "/guide", "/how-it-works", "/privacy
     await page.goto("/start");
     await page.getByLabel("Name").fill("Pat");
     await page.getByRole("button", { name: "Let's hit" }).click();
-    await expect(page.getByRole("link", { name: /Record my swing/ })).toBeVisible();
+    await expect(page.getByRole("link", { name: /Upload a video/ })).toBeVisible();
     await page.goto(path);
     await expect(page.locator("h1").first()).toBeVisible();
     await noSideScroll(page);
