@@ -26,6 +26,8 @@ export type SynthOptions = {
   leadKneeContact?: number;
   /** Hide the feet (low visibility on ankles/heels/toes). */
   hideFeet?: boolean;
+  /** Seated (a chair or the couch): hips at seat height, knees forward, shins straight down, legs still. Arms swing as usual. */
+  sitting?: boolean;
   seed?: number;
 };
 
@@ -125,7 +127,7 @@ export function synthSwing(o: SynthOptions = {}) {
     const ny = dx / d;
     const sgn = nx >= 0 ? 1 : -1;
     const leadKnee: [number, number] = [(hipL[0] + ankL[0]) / 2 + sgn * nx * off, (hipL[1] + ankL[1]) / 2 + sgn * ny * off];
-    const pts: Record<number, [number, number]> = {
+    let pts: Record<number, [number, number]> = {
       0: [headX + 1.5, 61.6],
       7: [headX - 1, 62],
       8: [headX - 1, 62],
@@ -146,6 +148,25 @@ export function synthSwing(o: SynthOptions = {}) {
       31: [leadAnkleX + 4, leadLift - 0.8],
       32: [rearAnkleX + 4, -0.8],
     };
+    if (o.sitting) {
+      // Seat 18 in high: everything from the hips up drops 18 in; thighs run forward to the knees, shins hang down.
+      const drop = 18;
+      const up = Object.fromEntries(Object.entries(pts).map(([k, [x, y]]) => [k, [x, y - drop] as [number, number]]));
+      const hx0 = hipStance;
+      pts = {
+        ...up,
+        23: [hx0 + 5, 36 - drop],
+        24: [hx0 - 5, 36 - drop],
+        25: [hx0 + 21, 20],
+        26: [hx0 + 11, 20],
+        27: [hx0 + 21, 0],
+        28: [hx0 + 11, 0],
+        29: [hx0 + 19.5, -0.5],
+        30: [hx0 + 9.5, -0.5],
+        31: [hx0 + 25, -0.8],
+        32: [hx0 + 15, -0.8],
+      };
+    }
     const lm: Landmark[] = Array.from({ length: 33 }, (_, i) => {
       const p = pts[i] ?? pts[0];
       const q = toPx(p[0], p[1]);
