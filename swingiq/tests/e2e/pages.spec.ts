@@ -101,8 +101,12 @@ test("profile: add a bat, change settings, add a second hitter", async ({ page }
   await page.getByLabel("Brand").fill("Miken");
   await page.getByRole("textbox", { name: "Model" }).fill("Freak Primo");
   await page.getByLabel("Weight in ounces").fill("27");
+  // A photo of the bat, from the camera or camera roll, shrunk and kept on the phone.
+  await page.getByLabel("Add a photo of your bat").setInputFiles({ name: "bat.png", mimeType: "image/png", buffer: Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAEAAAAAgCAIAAAAt/+nTAAAARElEQVR4nO3PQQ3AIADAQEAX/sMbRRPB47Kkp6Cd5+7xZ0sHvGpAa0BrQGtAa0BrQGtAa0BrQGtAa0BrQGtAa0BrQPsAZoECFgzhXjwAAAAASUVORK5CYII=", "base64") });
+  await expect(page.getByRole("img", { name: "Your bat" })).toBeVisible();
   await page.getByRole("button", { name: "Save bat" }).click();
-  await expect(page.getByText("Miken Freak Primo")).toBeVisible();
+  await expect(page.getByText("Miken Freak Primo").first()).toBeVisible();
+  await expect(page.getByRole("img", { name: "Miken Freak Primo" })).toBeVisible();
   await expect(page.getByText(/34 in · 27 oz · drop -7/)).toBeVisible();
   await page.getByRole("link", { name: "Profile" }).click();
 

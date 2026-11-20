@@ -6,6 +6,7 @@ import { Button, Empty, Meter, PageSkeleton, PageTitle, Panel, SectionTitle, Sta
 import { CATEGORY_LABEL } from "@/engine/scoring";
 import type { ScoreCategoryKey } from "@/engine/types";
 import { MIN_SWINGS_TO_COMPARE, batStats, type BatStats } from "@/lib/batdna";
+import { shrinkPhoto } from "@/lib/photo";
 import { db, uid } from "@/lib/store/db";
 import { BALANCE_LABEL, type Bat, type BatBalance, type Session, type SwingRecord } from "@/lib/store/types";
 
@@ -19,6 +20,7 @@ export default function BatsPage() {
   const [adding, setAdding] = useState(false);
   const [form, setForm] = useState({ brand: "", model: "", lengthIn: "34", weightOz: "", certification: "USSSA", balance: "unknown" as BatBalance });
   const [err, setErr] = useState<string | null>(null);
+  const [photo, setPhoto] = useState<Blob | null>(null);
   const [cmp, setCmp] = useState<[string, string] | null>(null);
 
   const load = useCallback(async () => {
@@ -54,9 +56,11 @@ export default function BatsPage() {
       weightOz: wt,
       certification: form.certification,
       balance: form.balance,
+      photo,
       createdAt: Date.now(),
     });
     setForm({ brand: "", model: "", lengthIn: "34", weightOz: "", certification: "USSSA", balance: "unknown" });
+    setPhoto(null);
     setAdding(false);
     await load();
   }
@@ -111,6 +115,20 @@ export default function BatsPage() {
                 <option key={c}>{c}</option>
               ))}
             </select>
+            <div className="col-span-2">
+              <PhotoInput
+                photo={photo}
+                onPick={async (f) => {
+                  try {
+                    setPhoto(await shrinkPhoto(f));
+                    setErr(null);
+                  } catch (e) {
+                    setErr((e as Error).message);
+                  }
+                }}
+                onClear={() => setPhoto(null)}
+              />
+            </div>
             {err && <p role="alert" className="col-span-2 text-sm text-stitch">{err}</p>}
             <Button type="submit" className="col-span-2">Save bat</Button>
           </form>
@@ -126,7 +144,7 @@ export default function BatsPage() {
 
       <div className="space-y-4">
         {bats.map((b) => (
-          <BatCard key={b.id} bat={b} s={stats[b.id]} onRemove={() => remove(b)} />
+          <BatCard key={b.id} bat={b} s={stats[b.id]} onRemove={() => remove(b)} onPhoto={async (blob) => { await db.saveBat({ ...b, photo: blob }); await load(); }} />
         ))}
       </div>
 
@@ -228,10 +246,12 @@ function BatProfile({ bat }: { bat: Bat }) {
   );
 }
 
-function BatCard({ bat, s, onRemove }: { bat: Bat; s: BatStats | undefined; onRemove: () => void }) {
+function BatCard({ bat, s, onRemove, onPhoto }: { bat: Bat; s: BatStats | undefined; onRemove: () => void; onPhoto: (b: Blob | null) => Promise<void> }) {
   const drop = bat.lengthIn && bat.weightOz ? bat.weightOz - bat.lengthIn : null;
+  const [photoErr, setPhotoErr] = useState<string | null>(null);
   return (
-    <Panel className="p-4">
+    <Panel className="overflow-hidden p-4">
+      {bat.photo && <BatPhoto blob={bat.photo} alt={`${bat.brand} ${bat.model}`} />}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h2 className="display truncate text-[1.35rem]">{bat.brand} {bat.model}</h2>
@@ -246,6 +266,20 @@ function BatCard({ bat, s, onRemove }: { bat: Bat; s: BatStats | undefined; onRe
         </button>
       </div>
       <BatProfile bat={bat} />
+      <div className="mt-2 flex flex-wrap items-center gap-3 text-[13px]">
+        <PhotoButton label={bat.photo ? "Change photo" : "Add a photo of this bat"} onPick={async (f) => {
+          try {
+            await onPhoto(await shrinkPhoto(f));
+            setPhotoErr(null);
+          } catch (e) {
+            setPhotoErr((e as Error).message);
+          }
+        }} />
+        {bat.photo && (
+          <button type="button" onClick={() => onPhoto(null)} className="text-chalk-3 hover:text-chalk">Remove photo</button>
+        )}
+        {photoErr && <span role="alert" className="text-stitch">{photoErr}</span>}
+      </div>
       {!s || s.swings === 0 ? (
         <p className="mt-3 text-[14px] text-chalk-2">No swings with this bat yet. Pick it when you record or start a live session.</p>
       ) : (
@@ -313,6 +347,65 @@ function BatCompare({ a, b }: { a: BatStats; b: BatStats }) {
           })}
         </tbody>
       </table>
+    </div>
+  );
+}
+
+/** Shows a stored photo blob (object URL made and freed with the component). */
+function BatPhoto({ blob, alt, className = "" }: { blob: Blob; alt: string; className?: string }) {
+  const [url, setUrl] = useState<string | null>(null);
+  useEffect(() => {
+    const u = URL.createObjectURL(blob);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setUrl(u);
+    return () => URL.revokeObjectURL(u);
+  }, [blob]);
+  if (!url) return null;
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={url} alt={alt} className={`-mx-4 -mt-4 mb-4 block aspect-[16/9] w-[calc(100%+2rem)] max-w-none object-cover ${className}`} />
+  );
+}
+
+/** A text button that opens the camera or camera roll (the phone asks which). */
+function PhotoButton({ label, onPick }: { label: string; onPick: (f: File) => void }) {
+  return (
+    <label className="cursor-pointer font-semibold text-optic hover:text-optic-2">
+      {label}
+      <input
+        type="file"
+        accept="image/*"
+        className="sr-only"
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          e.target.value = "";
+          if (f) onPick(f);
+        }}
+      />
+    </label>
+  );
+}
+
+/** Photo field on the add-bat form: a preview once picked. */
+function PhotoInput({ photo, onPick, onClear }: { photo: Blob | null; onPick: (f: File) => void; onClear: () => void }) {
+  return (
+    <div className="rounded-xl border border-dashed border-line-2 bg-night-3 p-3">
+      {photo ? (
+        <div className="flex items-center gap-3">
+          <div className="h-16 w-24 shrink-0 overflow-hidden rounded-lg">
+            <BatPhoto blob={photo} alt="Your bat" className="!m-0 !h-16 !w-24 aspect-auto" />
+          </div>
+          <div className="flex flex-col gap-1 text-[13px]">
+            <PhotoButton label="Change photo" onPick={onPick} />
+            <button type="button" onClick={onClear} className="text-left text-chalk-3 hover:text-chalk">Remove</button>
+          </div>
+        </div>
+      ) : (
+        <div className="text-[13px]">
+          <PhotoButton label="Add a photo of your bat" onPick={onPick} />
+          <p className="mt-1 text-chalk-3">Optional. Take one now or pick from your camera roll. It stays on this phone.</p>
+        </div>
+      )}
     </div>
   );
 }
