@@ -42,7 +42,7 @@ function SwingsInner() {
   if (!player)
     return (
       <>
-        <PageTitle title="My Swings" />
+        <PageTitle title="My Swings" pillar="analyze" />
         <Empty title="No hitter yet">Set one up on the Home screen first.</Empty>
       </>
     );
@@ -51,6 +51,7 @@ function SwingsInner() {
     <div className="animate-rise">
       <PageTitle
         title="My Swings"
+        pillar="analyze"
         sub={sessions ? `${swings.length} swings · ${sessions.length} sessions` : " "}
         right={
           sessionFilter ? (

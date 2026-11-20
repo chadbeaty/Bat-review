@@ -379,7 +379,7 @@ export class LiveEngine {
     ctx.beginPath();
     this.trail.forEach((p, i) => (i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)));
     ctx.stroke();
-    ctx.fillStyle = "#B7F34A";
+    ctx.fillStyle = "#C4F135";
     ctx.beginPath();
     ctx.arc(g.x, g.y, (hot ? 9 : 6) * dpr, 0, Math.PI * 2);
     ctx.fill();

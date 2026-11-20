@@ -119,6 +119,15 @@ test("record a swing from a video: analyzed, coached, saved, comparable", async 
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "Recent swings" })).toBeVisible();
   await expect(page.getByText("Personal best swing")).toBeVisible();
+
+  // My Hitting Profile sums it up and draws a shareable player report.
+  await page.goto("/profile");
+  await expect(page.getByRole("heading", { level: 1, name: /My Hitting Profile/i })).toBeVisible();
+  await expect(page.getByText("Season line")).toBeVisible();
+  await page.getByRole("button", { name: "Share player report" }).click();
+  const sheet = page.getByRole("dialog");
+  await expect(sheet.getByRole("img", { name: /player report/ })).toBeVisible();
+  await expect(sheet.getByRole("button", { name: "Save image" })).toBeVisible();
   expect(errors).toEqual([]);
 });
 

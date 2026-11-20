@@ -13,13 +13,19 @@ async function noSideScroll(page: import("@playwright/test").Page) {
   expect(overflow).toBeLessThanOrEqual(1);
 }
 
-test("first run: the scroll site, then setup, then home shows the live session button", async ({ page }) => {
+test("first run: the landing page, then setup, then home shows the live session button", async ({ page }) => {
   const errors = errorsOf(page);
-  // A new visitor gets the scroll site at "/" (public/site), not the app.
+  // A new visitor gets the landing page at "/" (public/site), not the app.
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1, name: "You see a swing." })).toBeVisible();
-  await expect(page.locator("main section[data-sc-act]")).toHaveCount(6);
-  await page.getByRole("link", { name: "Start swinging" }).first().click();
+  await expect(page.getByRole("heading", { level: 1, name: /Stop guessing\.\s*Start hitting/i })).toBeVisible();
+  // Slow pitch is obvious up top ("Built for slowpitch." always in the lime), the platform line is there, and the
+  // page is built around record, analyze, improve.
+  const tagline = page.locator(".hero-sub");
+  await expect(tagline).toHaveText("Built for slowpitch.");
+  await expect(tagline).toHaveCSS("color", "rgb(196, 241, 53)");
+  await expect(page.getByText(/performance analytics platform for the slow-pitch community/i).first()).toBeVisible();
+  await expect(page.locator("#how .pillar")).toHaveCount(3);
+  await page.getByRole("link", { name: "Analyze your swing" }).first().click();
   await expect(page).toHaveURL(/\/start$/);
   await page.getByLabel("Name").fill("Chad");
   await page.getByRole("radio", { name: "Left-handed" }).click();
@@ -36,23 +42,33 @@ test("first run: the scroll site, then setup, then home shows the live session b
   expect(errors).toEqual([]);
 });
 
-test("scroll site: the swing scrubs, the heel catch counts frames, and the page ends on the button", async ({ page }) => {
+test("landing page: see how it works, the tracked swing draws, the sample is labelled, and it ends on the button", async ({ page }) => {
   const errors = errorsOf(page);
   await page.goto("/");
   await noSideScroll(page);
-  const gap = page.locator("#gap");
-  await gap.scrollIntoViewIfNeeded();
-  // Scroll to the end of the gap (contact): the counter shows the six frames from heel down to contact.
-  await page.evaluate(() => {
-    const el = document.getElementById("gap")!;
-    const top = el.getBoundingClientRect().top + scrollY;
-    scrollTo(0, top + (el.offsetHeight - innerHeight) * 0.82);
-  });
+  await page.getByRole("link", { name: /See how it works/ }).click();
+  await expect(page.locator("#how")).toBeInViewport();
+  // The sample read is Gapper's real output on a stock clip, and says so.
+  await expect(page.getByText("Sample read")).toBeVisible();
+  await expect(page.getByText(/A stock clip of a real hitter, run through Gapper/)).toBeVisible();
   await expect(page.locator("[data-frames]")).toHaveText("6");
-  await expect(page.locator("#rail")).toHaveClass(/is-stamped|is-peak/);
+  // The tracked skeleton actually draws on the canvas.
+  const read = page.locator('canvas[data-swing="read"]');
+  await read.scrollIntoViewIfNeeded();
+  await expect
+    .poll(() => read.evaluate((c: HTMLCanvasElement) => {
+      const d = c.getContext("2d")!.getImageData(0, 0, c.width, c.height).data;
+      let lit = 0;
+      for (let i = 3; i < d.length; i += 4) if (d[i] > 0) lit++;
+      return lit;
+    }))
+    .toBeGreaterThan(200);
+  // Every measurement on the page carries a measured / estimated label.
+  await expect(page.getByRole("row", { name: /Bat speed/ })).toContainText("Estimate");
+  await expect(page.getByRole("row", { name: /Exit velocity/ })).toContainText("Slo-mo");
   await page.evaluate(() => scrollTo(0, document.documentElement.scrollHeight));
-  await expect(page.locator("#start .cta")).toBeVisible();
-  await expect(page.locator("#start .cta")).toHaveAttribute("href", "/start");
+  await expect(page.locator(".close .cta")).toBeVisible();
+  await expect(page.locator(".close .cta")).toHaveAttribute("href", "/start");
   expect(errors).toEqual([]);
 });
 

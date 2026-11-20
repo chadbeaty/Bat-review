@@ -50,7 +50,7 @@ export function Crawl({ items }: { items: string[] }) {
     </div>
   );
   return (
-    <div className="overflow-hidden border-y border-white/[0.07] bg-[#0c1320] py-3.5" role="marquee" aria-label={items.join(", ")}>
+    <div className="overflow-hidden border-y border-white/[0.07] bg-[#0e0f11] py-3.5" role="marquee" aria-label={items.join(", ")}>
       <div className="crawl motion-reduce:animate-none">
         {row(false)}
         {row(true)}
@@ -154,14 +154,14 @@ export function SportTag({ className = "" }: { className?: string }) {
   // A "hidden …:inline-flex" from the caller decides when it shows; otherwise it's always inline-flex.
   const display = /(^|\s)hidden(\s|$)/.test(className) ? "" : "inline-flex";
   return (
-    <span className={`${display} items-center gap-1.5 rounded-full border border-line-2 bg-night-2/80 py-1 pl-1 pr-2.5 text-[12px] font-semibold leading-none text-chalk-2 ${className}`}>
+    <span className={`${display} items-center gap-1.5 rounded-full border border-optic/30 bg-night-2/80 py-1 pl-1 pr-2.5 text-[12px] font-bold italic uppercase leading-none tracking-[0.04em] text-optic ${className}`}>
       <Softball size={16} />
-      Slow-pitch softball
+      Built for slowpitch
     </span>
   );
 }
 
-/** The selling point: "Built for slow pitch." in the lime so it stands out, then "Not baseball. Not fastpitch." */
+/** The selling point: "Built for slowpitch." in the lime so it stands out, then "Not baseball. Not fastpitch." */
 export function Positioning() {
   return (
     <>

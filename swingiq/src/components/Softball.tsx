@@ -1,6 +1,6 @@
 /**
  * A slow-pitch softball: optic yellow with red stitched seams, the ball slow-pitch players actually hit (USA, USSSA
- * and NSA game balls). Not a white baseball. The navy keyline keeps it readable on the lime buttons too.
+ * and NSA game balls). Not a white baseball. The carbon keyline keeps it readable on the lime buttons too.
  */
 export function Softball({ size = 48, className = "", spin = false }: { size?: number; className?: string; spin?: boolean }) {
   // Stitch ticks across each seam: short strokes at right angles to the curve.

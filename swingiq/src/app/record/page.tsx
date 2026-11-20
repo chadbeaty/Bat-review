@@ -167,7 +167,7 @@ export default function RecordPage() {
   if (!player) {
     return (
       <div className="animate-rise pb-8">
-        <PageTitle title="Record a swing" />
+        <PageTitle title="Record a swing" pillar="record" />
         <Panel className="p-5">
           <h2 className="head mb-4 text-lg">First, who&apos;s hitting?</h2>
           <PlayerForm onSave={savePlayer} submitLabel="Save and continue" />
@@ -178,12 +178,12 @@ export default function RecordPage() {
 
   return (
     <div className="animate-rise pb-8">
-      <PageTitle title="Record a swing" sub="Film it or upload it. Gapper goes through every frame for the most accurate read." />
+      <PageTitle title="Record a swing" pillar="record" sub="Film it or upload it. Gapper goes through every frame for the most accurate read." />
 
       {stage === "choose" && (
         <>
           <div className="grid gap-3 sm:grid-cols-2">
-            <label htmlFor="up-input" className="cut press flex min-h-[5.5rem] cursor-pointer items-center gap-4 rounded-2xl bg-optic px-5 py-4 text-optic-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.45),0_14px_34px_-18px_rgb(183_243_74/0.22)]">
+            <label htmlFor="up-input" className="press flex min-h-[5.5rem] cursor-pointer items-center gap-4 rounded-2xl bg-optic px-5 py-4 text-optic-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.45),0_14px_34px_-18px_rgb(196_241_53/0.22)]">
               <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
                 <path d="M15 20V5M9 11l6-6 6 6" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
                 <path d="M4 19v5a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-5" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" />

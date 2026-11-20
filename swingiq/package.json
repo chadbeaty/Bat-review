@@ -2,7 +2,7 @@
   "name": "gapper",
   "version": "0.1.0",
   "private": true,
-  "description": "SwingIQ Live: real-time slow-pitch softball swing analysis from a phone camera.",
+  "description": "Gapper: swing analytics built for adult slow-pitch softball, from a phone camera.",
   "engines": { "node": ">=20" },
   "scripts": {
     "postinstall": "node scripts/copy-vision-assets.mjs",

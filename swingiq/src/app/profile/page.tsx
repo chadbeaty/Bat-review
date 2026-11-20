@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AccountPanel } from "@/components/AccountPanel";
+import { HittingProfile } from "@/components/HittingProfile";
 import { PlayerForm } from "@/components/PlayerForm";
 import { usePlayers } from "@/components/PlayerProvider";
 import { Button, PageTitle, Panel, Segmented, SectionTitle, Toggle } from "@/components/ui";
@@ -54,8 +55,11 @@ export default function ProfilePage() {
 
   return (
     <div className="animate-rise pb-8">
-      <PageTitle title="Profile" />
+      <PageTitle title="My Hitting Profile" pillar="improve" />
 
+      {player && <HittingProfile key={player.id} player={player} />}
+
+      <h2 className="display mb-1 mt-14 text-[1.7rem] text-chalk md:text-[2rem]">Settings</h2>
       <SectionTitle right={<button type="button" onClick={() => setEditing("new")} className="text-sm text-optic">Add hitter</button>}>Hitters</SectionTitle>
       <p className="-mt-1 mb-3 text-[13px] text-chalk-3">Coaches and parents can keep several hitters on one phone.</p>
       {editing === "new" && (

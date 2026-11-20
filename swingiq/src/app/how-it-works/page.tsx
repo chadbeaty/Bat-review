@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Positioning } from "@/components/brand";
+import { PillarStrip } from "@/components/ui";
 import { METRICS } from "@/engine/catalog";
 import type { MetricKey } from "@/engine/types";
 
@@ -38,7 +39,8 @@ const ROWS: { k: MetricKey; now: string; slomo: string }[] = [
 export default function HowItWorks() {
   return (
     <div className="animate-rise pb-12">
-      <h1 className="display mt-3 text-[2.15rem] leading-[1.02] md:text-[2.6rem]">How Gapper measures</h1>
+      <PillarStrip active="analyze" className="mb-3 mt-3" />
+      <h1 className="display text-[2.15rem] md:text-[2.75rem]">How Gapper measures</h1>
       <p className="mt-3 text-[16px] leading-relaxed text-chalk-2">
         Gapper tracks 33 points on your body in every camera frame, right on your phone. From how those points move, it finds your swing, splits it into phases and measures your mechanics.
         We never make up a number. If the footage can&apos;t support a measurement, you&apos;ll see why instead of a guess.
@@ -48,21 +50,22 @@ export default function HowItWorks() {
         <Positioning />
       </h2>
       <p className="mt-2 text-[15px] leading-relaxed text-chalk-2">
-        Most hitting apps are baseball apps with a softball setting, and their softball usually means fastpitch. Slow pitch is its own swing. Gapper is built for it and nothing else:
+        General swing apps are built for every hitter, and their softball usually means fastpitch. Slow pitch is its own swing. Gapper is the performance analytics platform for the slow-pitch community, built for that swing and nothing else:
       </p>
       <ul className="mt-3 space-y-2.5 text-[15px] leading-relaxed text-chalk-2">
         <li><span className="text-chalk">Timed to the arc.</span> The pitch drops in on a 6–12 ft arc, so timing is about the drop, not a fastball. Your front foot is graded against the slow-pitch window (down about 0.14–0.38 s before contact), not baseball&apos;s &ldquo;get your foot down early.&rdquo;</li>
         <li><span className="text-chalk">Slow-pitch faults.</span> The fixes are the ones that cost slow-pitch hitters: drifting out front and rolling over into pull-side grounders, dropping the hands, pulling the head off the ball.</li>
         <li><span className="text-chalk">Slow-pitch speeds.</span> Exit velo is read off a 12&quot; or 11&quot; softball, using the arc&apos;s own fall as the ruler, and bat speed uses the collision physics softball bats are certified by.</li>
+        <li><span className="text-chalk">Four outfielders, three gaps.</span> Ten fielders means line drives into the gaps win. Tag your hits (line drive, grounder, fly ball; pull side, middle, opposite field) and your Hitting Profile shows your line-drive rate and tendencies. A cage net stops the ball, so Gapper never pretends to see where it landed.</li>
         <li><span className="text-chalk">Slow-pitch gear and teams.</span> Bat DNA knows end-loaded and half-ounce balance and USSSA, USA/ASA, NSA, ISA and senior stamps. Positions include Rover and EH; levels run from rec to C/D to A/B and up.</li>
       </ul>
 
       <h2 className="mt-10 head text-lg">Every number is labeled</h2>
       <dl className="mt-3 space-y-3 text-[15px]">
-        <div><dt className="inline font-bold text-chalk">Measured</dt> <dd className="inline text-chalk-2">counted or timed directly, like your swing count or the moment the mic heard contact.</dd></div>
-        <div><dt className="inline font-bold text-chalk">Camera estimate</dt> <dd className="inline text-chalk-2">worked out from body tracking, shown with a High, Medium or Low confidence.</dd></div>
-        <div><dt className="inline font-bold text-chalk">Sensor</dt> <dd className="inline text-chalk-2">from a radar or bat sensor, including a reading you typed in from your own device.</dd></div>
-        <div><dt className="inline font-bold text-chalk">Not available</dt> <dd className="inline text-chalk-2">the footage can&apos;t support it, with the reason.</dd></div>
+        <div><dt className="inline font-bold text-chalk"><span className="mr-1.5 inline-block h-2 w-2 rounded-full bg-chalk align-middle" aria-hidden="true" />Measured</dt> <dd className="inline text-chalk-2">counted or timed directly, like your swing count or the moment the mic heard contact.</dd></div>
+        <div><dt className="inline font-bold text-chalk"><span className="mr-1.5 inline-block h-2 w-2 rounded-full border border-chalk-2 align-middle" aria-hidden="true" />Camera estimate</dt> <dd className="inline text-chalk-2">worked out from body tracking, shown with a High, Medium or Low confidence.</dd></div>
+        <div><dt className="inline font-bold text-chalk"><span className="mr-1.5 inline-block h-2 w-2 rounded-full bg-clay align-middle" aria-hidden="true" />Sensor</dt> <dd className="inline text-chalk-2">from a radar or bat sensor, including a reading you typed in from your own device.</dd></div>
+        <div><dt className="inline font-bold text-chalk"><span className="mr-1.5 inline-block h-2 w-2 rounded-full border border-dashed border-line-2 align-middle" aria-hidden="true" />Not available</dt> <dd className="inline text-chalk-2">the footage can&apos;t support it, with the reason.</dd></div>
       </dl>
 
       <h2 className="mt-10 head text-lg">What a phone can measure</h2>
