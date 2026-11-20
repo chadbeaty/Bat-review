@@ -15,15 +15,20 @@ Charcoal and near-black, electric lime, crisp white, graphite, subtle metallic. 
 cartoon baseballs, no stock baseball photos, no youth or fastpitch, no AI gradients or template SaaS layout.
 Technically honest: measured vs estimated always clear; never invent bat speed or exit velo.
 
+Follow-up the same day: position Gapper as the performance analytics platform for the slow-pitch softball
+community (broad swing apps already compete for general hitters), and keep "Built for slowpitch" in lime so it
+stands out.
+
 ## Page, top to bottom
 1. **Hero** (carbon): the sport chip with the softball, the headline in black italic capitals, BUILT FOR SLOWPITCH.
-   in brushed alloy, the copy, the two CTAs, "Not baseball. Not fastpitch. No account needed." Beside it (below on a
+   in lime, the copy, the two CTAs, "Not baseball. Not fastpitch. No account needed." Beside it (below on a
    phone): Gapper's tracked view of a real swing (33 body points per frame from the analyzer, `assets/pose.json`),
    front leg in lime, the heel ring at foot-down, over the four-block outfield; the pitch drops in on a high arc and
    the ball leaves through the left-center gap. The arc and flight are illustration and the caption says so.
 2. **Who it's for** strip: USSSA, USA Softball, independent leagues, rec leagues, tournament teams (names only, no
    logos, no implied endorsement).
-3. **Slow pitch is its own swing**: a ledger of three slow-pitch facts: the 6–12 ft arc, the front heel down about
+3. **Built for one game**: general swing apps are built for every hitter; Gapper is the performance analytics
+   platform for the slow-pitch community. Then a ledger of three slow-pitch facts: the 6–12 ft arc, the front heel down about
    0.2 s before contact (Wu et al., in `docs/reports/Slow pitch lower body mechanics.md`), four outfielders and three
    gaps.
 4. **Record. Analyze. Improve.** (`#how`, the SEE HOW IT WORKS target): Record (phone setup, live/upload/slo-mo, the

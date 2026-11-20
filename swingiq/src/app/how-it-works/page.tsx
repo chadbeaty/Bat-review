@@ -50,7 +50,7 @@ export default function HowItWorks() {
         <Positioning />
       </h2>
       <p className="mt-2 text-[15px] leading-relaxed text-chalk-2">
-        Most hitting apps are baseball apps with a softball setting, and their softball usually means fastpitch. Slow pitch is its own swing. Gapper is built for it and nothing else:
+        General swing apps are built for every hitter, and their softball usually means fastpitch. Slow pitch is its own swing. Gapper is the performance analytics platform for the slow-pitch community, built for that swing and nothing else:
       </p>
       <ul className="mt-3 space-y-2.5 text-[15px] leading-relaxed text-chalk-2">
         <li><span className="text-chalk">Timed to the arc.</span> The pitch drops in on a 6–12 ft arc, so timing is about the drop, not a fastball. Your front foot is graded against the slow-pitch window (down about 0.14–0.38 s before contact), not baseball&apos;s &ldquo;get your foot down early.&rdquo;</li>

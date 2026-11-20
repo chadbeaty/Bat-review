@@ -312,7 +312,8 @@ export default function Home() {
         </>
       )}
 
-      <div className="mt-12 flex flex-wrap gap-x-4 gap-y-1 border-t border-line pt-5 text-[13px] text-chalk-3">
+      <div className="mt-12 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-line pt-5 text-[13px] text-chalk-3">
+        <span className="brandline text-[12px] tracking-[0.04em] text-optic">Built for slowpitch</span>
         <Link href="/how-it-works" className="hover:text-chalk-2">How Gapper measures</Link>
         <Link href="/bats" className="hover:text-chalk-2">Bat DNA</Link>
         <Link href="/guide" className="hover:text-chalk-2">Camera setup guide</Link>

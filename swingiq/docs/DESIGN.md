@@ -11,6 +11,10 @@ baked into shapes by `scripts/bake-brand-type.py` → `src/brand/type.ts`). Name
   button; Analyze is your swings; Improve is progress, Bat DNA and your Hitting Profile).
 - For adult slow-pitch softball only: USSSA, USA Softball, independent and rec leagues, tournament teams. Never
   baseball, never fastpitch, no youth styling.
+- Position: **the performance analytics platform for the slow-pitch softball community** (`SITE.platform`). Broad
+  swing apps compete for every hitter; Gapper is the name slow-pitch players should think of.
+- **"Built for slowpitch" is always lime** wherever it appears as text: the landing hero, close and footer, the
+  desktop rail, the sport tag, the home footer, `Positioning`, the link preview. Logo art keeps it white.
 - Personality: competitive, modern, confident, athletic, premium, technology-driven, community-minded. A sports
   performance company, not an AI startup.
 

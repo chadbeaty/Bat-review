@@ -26,7 +26,7 @@ export function Setup({ onSave, storageOk }: { onSave: (p: Player) => Promise<vo
             Step in<span className="text-optic">.</span>
           </h1>
           <p className="mt-4 max-w-sm text-[16px] leading-relaxed text-chalk-2">
-            Set up your hitter and record your first slow-pitch swing. Takes a minute. Everything stays on this phone; no account, no sign-up.
+            Gapper is the performance analytics platform for the slow-pitch softball community. Set up your hitter and record your first swing. Takes a minute. Everything stays on this phone; no account, no sign-up.
           </p>
           <p className="mt-6 max-w-sm text-[15px] font-semibold leading-snug text-chalk">
             <Positioning />

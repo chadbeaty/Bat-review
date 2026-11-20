@@ -44,7 +44,7 @@ export function ogImage() {
             </div>
             <div style={{ marginTop: 28, fontFamily: "Chivo Black", fontStyle: "italic", fontWeight: 900, fontSize: 40, letterSpacing: 1, color: BRAND.lime, transform: "skewX(-9deg)", transformOrigin: "left bottom" }}>BUILT FOR SLOWPITCH.</div>
             <div style={{ marginTop: 16, fontFamily: "Chivo", fontSize: 26, lineHeight: 1.4, color: "#c6cace", maxWidth: 620 }}>
-              Swing analytics for adult slow-pitch softball. Record. Analyze. Improve.
+              The performance analytics platform for slow-pitch softball. Record. Analyze. Improve.
             </div>
           </div>
         </div>

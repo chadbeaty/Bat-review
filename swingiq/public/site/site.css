@@ -84,6 +84,8 @@ h1, h2, h3, p { margin: 0; }
 .dot-alloy { background: var(--alloy); }
 .dot-ring { border: 1.5px solid var(--text-2); }
 .muted { color: var(--steel); }
+/* "Built for slowpitch." is always lime so it stands out. */
+.lime { color: var(--lime); }
 .h2 { font-weight: 900; font-style: italic; text-transform: uppercase; letter-spacing: -0.01em; line-height: 0.98; font-size: clamp(2rem, 1.2rem + 3.4vw, 3.6rem); max-width: 18ch; }
 .lede { margin-top: 18px; max-width: 60ch; color: var(--text-2); font-size: 17px; }
 
@@ -124,7 +126,8 @@ h1, h2, h3, p { margin: 0; }
 .hero-p { margin-top: 16px; max-width: 46ch; color: var(--text-2); font-size: 17px; }
 .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
 @media (max-width: 520px) { .ctas .btn { flex: 1 1 100%; } }
-.not { margin-top: 18px; font-size: 13px; color: var(--steel); }
+.not { margin-top: 18px; font-size: 13px; color: var(--steel); max-width: 52ch; }
+.not b { color: var(--text-2); font-weight: 700; }
 
 .stage {
   position: relative; margin: 0; aspect-ratio: 400 / 440; width: 100%; max-height: 78vh;
@@ -243,6 +246,7 @@ h1, h2, h3, p { margin: 0; }
 .tag-img { width: 180px; height: auto; transform: rotate(-6deg); filter: drop-shadow(0 30px 40px rgb(0 0 0 / 0.6)); }
 @media (min-width: 820px) { .tag-img { width: 230px; } }
 .close-h { font-weight: 900; font-style: italic; text-transform: uppercase; font-size: clamp(3rem, 1.4rem + 6.6vw, 7rem); line-height: 0.88; letter-spacing: -0.03em; }
+.close-sub { margin-top: 14px; font-weight: 900; font-style: italic; text-transform: uppercase; font-size: clamp(1.3rem, 1rem + 1.4vw, 2rem); line-height: 1; }
 .close-p { margin-top: 18px; color: var(--text-2); font-size: 17px; max-width: 46ch; }
 .foot { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; padding-top: 32px; padding-bottom: calc(32px + env(safe-area-inset-bottom)); color: var(--steel); font-size: 13px; }
 .foot img { height: 26px; width: auto; }

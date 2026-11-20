@@ -166,7 +166,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <Link href="/" className="mb-2 px-2" aria-label="Gapper home">
           <LockupH height={30} />
         </Link>
-        <span className="mb-8 px-2 text-[11px] font-extrabold uppercase italic tracking-[0.08em] text-chalk-3">Built for slowpitch</span>
+        <span className="mb-8 px-2 text-[11px] font-extrabold uppercase italic tracking-[0.08em] text-optic">Built for slowpitch</span>
         <button type="button" onClick={() => setSheet(true)} aria-haspopup="dialog" className="btn-label press mb-8 flex items-center justify-center gap-2.5 rounded-lg bg-optic px-3 py-3 text-[14px] text-optic-ink hover:bg-optic-2">
           <RecordIcon size={18} />
           Record a swing

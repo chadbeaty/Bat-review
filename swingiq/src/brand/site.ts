@@ -34,13 +34,19 @@ export const SITE = {
    */
   sport: "slow-pitch softball",
   /** Page titles and link previews: what it is, in a few words. */
-  what: "Slow-pitch swing analytics",
-  /** The selling point, said plainly. */
+  what: "Slow-pitch performance analytics",
+  /**
+   * The position we want to own. Broad swing-analysis products compete for general hitters; Gapper is the name
+   * slow-pitch players associate with understanding and improving their swing.
+   */
+  platform: "The performance analytics platform for the slow-pitch softball community.",
+  platformShort: "The performance analytics platform for slow-pitch softball.",
+  /** The selling point, said plainly. "Built for slowpitch." is always set in lime wherever it appears as text. */
   positioning: "Built for slowpitch. Not baseball. Not fastpitch.",
   positioningLead: "Built for slowpitch.",
   positioningRest: "Not baseball. Not fastpitch.",
   /** Who's swinging: the players the brand talks to. */
   audience: ["USSSA", "USA Softball", "Independent leagues", "Rec league", "Tournament teams"],
   description:
-    "Gapper is swing analytics built for adult slow-pitch softball. Record a swing on your phone, see your load-to-contact timing, front-foot landing, bat path and rotation, get the one fix and the drill for it, and track your progress. Exit velo and bat speed come only from slo-mo video, always with a ± range.",
+    "Gapper is the performance analytics platform for the slow-pitch softball community. Record a swing on your phone, see your load-to-contact timing, front-foot landing, bat path and rotation, get the one fix and the drill for it, and track your progress. Exit velo and bat speed come only from slo-mo video, always with a ± range.",
 } as const;

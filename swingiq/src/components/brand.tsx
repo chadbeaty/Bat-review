@@ -154,7 +154,7 @@ export function SportTag({ className = "" }: { className?: string }) {
   // A "hidden …:inline-flex" from the caller decides when it shows; otherwise it's always inline-flex.
   const display = /(^|\s)hidden(\s|$)/.test(className) ? "" : "inline-flex";
   return (
-    <span className={`${display} items-center gap-1.5 rounded-full border border-line-2 bg-night-2/80 py-1 pl-1 pr-2.5 text-[12px] font-bold italic uppercase leading-none tracking-[0.04em] text-chalk-2 ${className}`}>
+    <span className={`${display} items-center gap-1.5 rounded-full border border-optic/30 bg-night-2/80 py-1 pl-1 pr-2.5 text-[12px] font-bold italic uppercase leading-none tracking-[0.04em] text-optic ${className}`}>
       <Softball size={16} />
       Built for slowpitch
     </span>

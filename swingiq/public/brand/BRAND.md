@@ -46,6 +46,8 @@ the badge).
   `-white` over a dark area.
 - Embroidery: use the one-color bag tag or patch; keep the smallest letters at least 0.25 in tall.
 - In sentences the name is "Gapper". All caps is for the logo, taglines and headlines.
+- **"Built for slowpitch" is always set in lime** wherever it appears as text (site, app, link preview), so it stands
+  out. Inside the logo art (bag tag, patch) it stays white like the other letters.
 
 ## Color
 | Name | Hex | Use |
@@ -77,6 +79,12 @@ league and tournament fields. No baseball uniforms or white baseballs, no cartoo
 fastpitch pitching, no generic stock baseball photos. The best source is the players themselves: photos from Gapper
 users' own leagues and tournaments (with permission). Until there are some, the site uses Gapper's tracked skeleton
 and drawn graphics instead of photos.
+
+## Position
+Broad swing-analysis products already compete for general hitters. Gapper's job is to be the name slow-pitch players
+associate with understanding and improving their swing: **the performance analytics platform for the slow-pitch
+softball community** (`SITE.platform` in `src/brand/site.ts`). Lead with the sport and the community, not with
+generic AI or "every hitter" claims. Don't claim users, rankings or league endorsements that don't exist.
 
 ## Who it's for
 Adult slow-pitch softball, and only slow pitch: USSSA, USA Softball and independent league players, rec league

@@ -18,8 +18,12 @@ test("first run: the landing page, then setup, then home shows the live session 
   // A new visitor gets the landing page at "/" (public/site), not the app.
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1, name: /Stop guessing\.\s*Start hitting/i })).toBeVisible();
-  // Slow pitch is obvious up top, and the page is built around record, analyze, improve.
-  await expect(page.getByText("Built for slowpitch.").first()).toBeVisible();
+  // Slow pitch is obvious up top ("Built for slowpitch." always in the lime), the platform line is there, and the
+  // page is built around record, analyze, improve.
+  const tagline = page.locator(".hero-sub");
+  await expect(tagline).toHaveText("Built for slowpitch.");
+  await expect(tagline).toHaveCSS("color", "rgb(196, 241, 53)");
+  await expect(page.getByText(/performance analytics platform for the slow-pitch community/i).first()).toBeVisible();
   await expect(page.locator("#how .pillar")).toHaveCount(3);
   await page.getByRole("link", { name: "Analyze your swing" }).first().click();
   await expect(page).toHaveURL(/\/start$/);
