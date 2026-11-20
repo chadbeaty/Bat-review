@@ -1,8 +1,10 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { analyzeSwing, type AnalyzeContext } from "@/engine/analyzer";
 import { LEG_METRICS } from "@/engine/catalog";
 import { detectSwings } from "@/engine/detector";
-import { checkHand, inferHandedness } from "@/engine/handedness";
+import { checkHand, inferHandedness, sideFromReads } from "@/engine/handedness";
 import { pickOneFix } from "@/engine/oneFix";
 import type { Cue, Landmark, PoseFrame, SwingAnalysis } from "@/engine/types";
 import { GUEST_DEFAULTS, answerQuestion, appMode, isEstimated, newGuest, nextQuestion, parseHeight } from "@/lib/guest";
@@ -87,12 +89,12 @@ describe("Just Hit: default profile", () => {
 // ---------- guest mode ----------
 
 describe("Just Hit: guest mode and the progressive profile", () => {
-  it("asks one thing at a time: height, then side, then name, then nothing", () => {
+  it("asks one thing at a time: side (one tap, decides the front leg), then height, then name, then nothing", () => {
     let p: Player = newGuest("g");
-    expect(nextQuestion(p)).toBe("heightIn");
-    p = answerQuestion(p, { field: "heightIn", value: 73 });
     expect(nextQuestion(p)).toBe("hand");
     p = answerQuestion(p, { field: "hand", value: "L" });
+    expect(nextQuestion(p)).toBe("heightIn");
+    p = answerQuestion(p, { field: "heightIn", value: 73 });
     expect(nextQuestion(p)).toBe("name");
     p = answerQuestion(p, { field: "name", value: "  Chad  " });
     expect(nextQuestion(p)).toBeNull();
@@ -101,14 +103,15 @@ describe("Just Hit: guest mode and the progressive profile", () => {
 
   it("the first answer upgrades the guest to a normal hitter with the same id (their swings stay theirs)", () => {
     const g = newGuest("keep-me", 5);
-    const p = answerQuestion(g, { field: "heightIn", value: 70 });
+    const p = answerQuestion(g, { field: "hand", value: "L" });
     expect(p.id).toBe("keep-me");
     expect(p.createdAt).toBe(5);
     expect(p.guest).toBe(false);
-    // Side is still a default, so results stay labelled as estimates until it's answered.
-    expect(p.assumed).toEqual(["hand"]);
+    expect(p.hand).toBe("L");
+    // Height is still a default, so results stay labelled as estimates until it's answered.
+    expect(p.assumed).toEqual(["heightIn"]);
     expect(isEstimated(p)).toBe(true);
-    expect(isEstimated(answerQuestion(p, { field: "hand", value: "R" }))).toBe(false);
+    expect(isEstimated(answerQuestion(p, { field: "heightIn", value: 70 }))).toBe(false);
   });
 
   it("never asks a hitter who did the full setup", () => {
@@ -166,6 +169,7 @@ describe("Just Hit: batting side read from a side-view swing", () => {
     const asDefault = analyzeSwing(clip, w, ctx({ hand: "R" }));
     const checked = checkHand(clip, w, ctx({ hand: "R" }), asDefault);
     expect(checked.hand).toBe("L");
+    expect(checked.trusted).toBe(true);
     expect(checked.analysis).not.toBe(asDefault);
     // Read as a lefty, the mirrored swing matches the original righty's legs numbers.
     const original = swingOf(righty);
@@ -180,6 +184,42 @@ describe("Just Hit: batting side read from a side-view swing", () => {
     expect(checkHand(clip, w, ctx(), a)).toMatchObject({ hand: "R", analysis: a });
     const front = analyzeSwing(clip, w, ctx({ view: "front" }));
     expect(checkHand(clip, w, ctx({ view: "front" }), front)).toMatchObject({ hand: "R", analysis: front, guess: null });
+  });
+
+  // Real batters (all righties) run through MediaPipe Pose, and the same swings mirrored: a lefty's body.
+  for (const name of ["pose-batter-upper-30fps", "pose-fullbody-front-30fps", "pose-fullbody-handheld-30fps"]) {
+    it(`real footage (${name}): a righty reads right, the mirror image reads left`, () => {
+      const fx = JSON.parse(readFileSync(join(__dirname, "..", "fixtures", `${name}.json`), "utf8")) as { width: number; height: number; frames: PoseFrame[] };
+      const geom = { width: fx.width, height: fx.height };
+      for (const [frames, hand] of [[fx.frames, "R"], [mirrorBody(fx.frames, true), "L"]] as const) {
+        const [w] = detectSwings(frames, geom).swings;
+        const guess = inferHandedness(frames.filter((f) => f.t >= w.clipStart && f.t <= w.clipEnd), w, geom);
+        expect(guess).toMatchObject({ hand });
+        expect(guess!.confidence).toBeGreaterThanOrEqual(0.6);
+      }
+    });
+  }
+
+  it("doesn't trust a read from a swing where the feet weren't tracked", () => {
+    // On real footage, the swings that read the wrong side were exactly these.
+    const { w, clip } = swingOf(mirrorBody(synthSwing({ fps: 60, hideFeet: true }).frames, true));
+    const asDefault = analyzeSwing(clip, w, ctx({ hand: "R" }));
+    const checked = checkHand(clip, w, ctx({ hand: "R" }), asDefault);
+    // The shoulders and hands still say lefty...
+    expect(checked.guess).toMatchObject({ hand: "L" });
+    // ...but with no legs to check it against, it isn't used.
+    expect(checked.trusted).toBe(false);
+    expect(checked).toMatchObject({ hand: "R", analysis: asDefault });
+  });
+
+  it("the saved side only changes once most swings agree", () => {
+    // The current side starts with one vote: one lefty read is a tie, two win.
+    expect(sideFromReads("R", { R: 0, L: 1 })).toBe("R");
+    expect(sideFromReads("R", { R: 0, L: 2 })).toBe("L");
+    expect(sideFromReads("R", { R: 1, L: 2 })).toBe("R");
+    expect(sideFromReads("R", { R: 1, L: 3 })).toBe("L");
+    // And once it's a lefty, one odd righty read doesn't flip it back.
+    expect(sideFromReads("L", { R: 1, L: 2 })).toBe("L");
   });
 
   it("says nothing when there's too little to go on", () => {

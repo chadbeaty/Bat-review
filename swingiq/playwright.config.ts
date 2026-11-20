@@ -4,6 +4,14 @@ import { join } from "node:path";
 
 const port = Number(process.env.E2E_PORT ?? 3100);
 const video = join(__dirname, "tests/fixtures/video/swing.y4m");
+const lefty = join(__dirname, "tests/fixtures/video/swing-lefty.y4m");
+const cameraArgs = (clip: string) => [
+  "--use-fake-ui-for-media-stream",
+  "--use-fake-device-for-media-stream",
+  ...(existsSync(clip) ? [`--use-file-for-fake-video-capture=${clip}`] : []),
+  "--autoplay-policy=no-user-gesture-required",
+  "--enable-unsafe-swiftshader",
+];
 
 // End-to-end tests run against a production build (`npm run build` first).
 // The live-camera test feeds a real batter clip to Chromium as a fake webcam (see scripts/fetch-test-video.sh).
@@ -37,15 +45,18 @@ export default defineConfig({
         ...devices["Desktop Chrome"],
         viewport: { width: 430, height: 860 },
         permissions: ["camera", "microphone"],
-        launchOptions: {
-          args: [
-            "--use-fake-ui-for-media-stream",
-            "--use-fake-device-for-media-stream",
-            ...(existsSync(video) ? [`--use-file-for-fake-video-capture=${video}`] : []),
-            "--autoplay-policy=no-user-gesture-required",
-            "--enable-unsafe-swiftshader",
-          ],
-        },
+        launchOptions: { args: cameraArgs(video) },
+      },
+    },
+    {
+      // The same real swing mirrored, so the camera sees a left-handed batter.
+      name: "live-camera-lefty",
+      testMatch: /justhit-lefty\.spec\.ts/,
+      use: {
+        ...devices["Desktop Chrome"],
+        viewport: { width: 430, height: 860 },
+        permissions: ["camera", "microphone"],
+        launchOptions: { args: cameraArgs(lefty) },
       },
     },
   ],

@@ -1,3 +1,4 @@
+import { analyzeSwing, type AnalyzeContext } from "@/engine/analyzer";
 import type { CameraView, Handedness } from "@/engine/types";
 import type { CapturedSwing } from "@/live/engine";
 import { compactPose, db, uid } from "./db";
@@ -55,4 +56,15 @@ export async function saveCapture(
     await db.saveSwing(rec);
   }
   return frames;
+}
+
+/**
+ * Re-reads a stored swing from its frames with corrected hitter details (Just Hit: the hitter just told us their side
+ * or height). Updates the record in place, because a clip save that may still be running writes this same object.
+ */
+export function rereadSwing(rec: SwingRecord, cap: Pick<CapturedSwing, "pose" | "window">, ctx: AnalyzeContext, estimated: boolean) {
+  rec.analysis = analyzeSwing(cap.pose, cap.window, ctx);
+  rec.hand = ctx.hand;
+  if (estimated) rec.estimated = true;
+  else delete rec.estimated;
 }

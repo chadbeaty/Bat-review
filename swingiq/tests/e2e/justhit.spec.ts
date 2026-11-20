@@ -34,11 +34,9 @@ test("Just Hit: two taps to a recording camera, then a grade, one fix, one quest
   await expect(fix.locator("p.head")).not.toBeEmpty();
   await page.screenshot({ path: test.info().outputPath("justhit-result.png") });
 
-  // One small question: height first. Saving it upgrades the guest without losing the swing.
-  await expect(page.getByText("Add your height for sharper numbers.")).toBeVisible();
-  await page.getByLabel("Feet").fill("6");
-  await page.getByLabel("Inches").fill("1");
-  await page.getByRole("button", { name: "Save" }).click();
+  // One small question: batting side first (one tap). Saving it upgrades the guest without losing the swing.
+  await expect(page.getByText("Which side do you hit from?")).toBeVisible();
+  await page.getByRole("button", { name: /^Right/ }).click();
   await expect(page.getByText("Saved. Your next swings use it.")).toBeVisible();
 
   // Again: straight back to the camera, already listening.

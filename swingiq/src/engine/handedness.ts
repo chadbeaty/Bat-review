@@ -39,23 +39,43 @@ export function inferHandedness(frames: PoseFrame[], win: Pick<SwingWindow, "lau
   return byStance === bySwing ? { hand: bySwing, confidence: 0.85 } : { hand: bySwing, confidence: 0.3 };
 }
 
-/** Trust a guess enough to re-read the swing with it. */
-export const HAND_GUESS_MIN = 0.6;
+/** Both signs have to agree before a swing's read is used. */
+export const HAND_GUESS_MIN = 0.85;
+
+export type HandReads = Record<Handedness, number>;
+
+const legsMeasured = (a: SwingAnalysis) => {
+  const m = a.metrics.strideTiming;
+  return !!m && m.source !== "unavailable" && m.value !== null;
+};
 
 /**
- * For a hitter whose batting side is only a default: check it against the swing, and when the swing clearly says
- * otherwise, read the same frames again as the other side (the legs-and-feet numbers depend on which leg is in front).
- * Returns the side to use from now on and the analysis to keep.
+ * For a hitter whose batting side is only a default: check it against the swing, and when the swing clearly says the
+ * other side, read the same frames again that way (the legs-and-feet numbers depend on which leg is in front).
+ * A read only counts ("trusted") when both signs agree AND the legs were actually tracked through the swing: on real
+ * footage, the swings that read the wrong side were the ones where the feet weren't tracked at all.
  */
 export function checkHand(
   frames: PoseFrame[],
   win: SwingWindow,
   ctx: AnalyzeContext,
   analysis: SwingAnalysis,
-): { hand: Handedness; analysis: SwingAnalysis; guess: HandGuess | null } {
-  if (ctx.view !== "side") return { hand: ctx.hand, analysis, guess: null };
+): { hand: Handedness; analysis: SwingAnalysis; guess: HandGuess | null; trusted: boolean } {
+  const keep = (guess: HandGuess | null) => ({ hand: ctx.hand, analysis, guess, trusted: false });
+  if (ctx.view !== "side") return keep(null);
   const guess = inferHandedness(frames, win, ctx.geom);
-  if (!guess || guess.confidence < HAND_GUESS_MIN || guess.hand === ctx.hand) return { hand: ctx.hand, analysis, guess };
+  if (!guess || guess.confidence < HAND_GUESS_MIN) return keep(guess);
+  if (guess.hand === ctx.hand) return { hand: ctx.hand, analysis, guess, trusted: legsMeasured(analysis) };
   const audioContactT = analysis.phases.contactSource === "audio" ? analysis.phases.contact : ctx.audioContactT;
-  return { hand: guess.hand, analysis: analyzeSwing(frames, win, { ...ctx, hand: guess.hand, audioContactT }), guess };
+  const other = analyzeSwing(frames, win, { ...ctx, hand: guess.hand, audioContactT });
+  return legsMeasured(other) ? { hand: guess.hand, analysis: other, guess, trusted: true } : keep(guess);
+}
+
+/**
+ * The hitter's side from their trusted swing reads so far. The current side starts with one vote, so a single odd
+ * swing can't flip it; ties keep the current side.
+ */
+export function sideFromReads(current: Handedness, reads: HandReads): Handedness {
+  const other: Handedness = current === "R" ? "L" : "R";
+  return reads[other] > reads[current] + 1 ? other : current;
 }

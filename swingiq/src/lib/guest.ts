@@ -31,12 +31,15 @@ export function isEstimated(p: Pick<Player, "assumed">): boolean {
   return (p.assumed?.length ?? 0) > 0;
 }
 
-/** One question at a time, most useful first: height sharpens every inch and mph number; then side; then a name. */
+/**
+ * One question at a time, most useful first. Side first: it's one tap, and it decides which leg is the front leg, so a
+ * lefty on the righty default gets the wrong legs-and-feet fix. Then height (inch and mph numbers, ~6% per 4"), then a name.
+ */
 export type ProfileQuestion = "heightIn" | "hand" | "name";
 
 export function nextQuestion(p: Player): ProfileQuestion | null {
-  if (p.assumed?.includes("heightIn")) return "heightIn";
   if (p.assumed?.includes("hand")) return "hand";
+  if (p.assumed?.includes("heightIn")) return "heightIn";
   if (p.name === GUEST_DEFAULTS.name && (p.guest || p.assumed !== undefined)) return "name";
   return null;
 }
@@ -54,11 +57,6 @@ export function answerQuestion(p: Player, a: Answer): Player {
   if (a.field === "hand") next.hand = a.value;
   if (a.field === "name") next.name = a.value.trim().slice(0, 40) || p.name;
   return next;
-}
-
-/** A side read from the guest's own swing: use it, but keep it on the list to confirm. */
-export function withInferredHand(p: Player, hand: Handedness): Player {
-  return p.hand === hand ? p : { ...p, hand };
 }
 
 /**

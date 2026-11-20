@@ -1,12 +1,13 @@
 "use client";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { checkHand } from "@/engine/handedness";
+import type { AnalyzeContext } from "@/engine/analyzer";
+import { checkHand, sideFromReads, type HandReads } from "@/engine/handedness";
 import { pickOneFix } from "@/engine/oneFix";
 import { LiveEngine, type CapturedSwing } from "@/live/engine";
-import { isEstimated, newGuest, nextQuestion, withInferredHand, type ProfileQuestion } from "@/lib/guest";
-import { recordFromCapture, rollUpSession, saveCapture } from "@/lib/store/capture";
-import { uid } from "@/lib/store/db";
+import { isEstimated, newGuest, nextQuestion, type ProfileQuestion } from "@/lib/guest";
+import { recordFromCapture, rereadSwing, rollUpSession, saveCapture } from "@/lib/store/capture";
+import { db, uid } from "@/lib/store/db";
 import { defaultFacing, type Player, type Session, type SwingRecord } from "@/lib/store/types";
 import { ArcScore } from "../ArcScore";
 import { LockupH } from "../Logo";
@@ -33,13 +34,17 @@ const markAsked = () => {
   }
 };
 
-/** A batter in stance, side on, to line up with. Drawn to the frame Gapper needs: head to shoes, a little room around. */
-function BatterOutline({ found }: { found: boolean }) {
+/**
+ * A batter in stance, side on, to line up with. Drawn to the frame Gapper needs: head to shoes, a little room around.
+ * Drawn facing left: how a righty looks on the mirrored front-camera preview. A lefty, or the unmirrored back camera,
+ * flips it so the outline matches what the hitter sees.
+ */
+function BatterOutline({ found, flip }: { found: boolean; flip: boolean }) {
   return (
     <div className="pointer-events-none absolute inset-0 grid place-items-center" aria-hidden="true">
       <div className={`flex h-[62dvh] max-h-[34rem] aspect-[9/16] items-center justify-center rounded-[1.6rem] border-2 border-dashed transition-colors duration-500 ${found ? "border-optic/25" : "border-optic/60"}`}>
         {/* Once a body is tracked, the figure steps aside so the hitter sees themselves; the frame stays as a guide. */}
-        <svg viewBox="0 0 150 340" className={`h-[86%] w-auto transition-opacity duration-500 ${found ? "opacity-0" : "opacity-100"}`} fill="none" stroke="rgb(255 255 255 / 0.6)" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
+        <svg viewBox="0 0 150 340" data-facing={flip ? "right" : "left"} className={`h-[86%] w-auto transition-opacity duration-500 ${found ? "opacity-0" : "opacity-100"} ${flip ? "-scale-x-100" : ""}`} fill="none" stroke="rgb(255 255 255 / 0.6)" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="76" cy="38" r="20" />
           <path d="M74 58 L70 168" />
           <path d="M72 82 L100 98 L112 64" />
@@ -70,6 +75,10 @@ export function JustHitSession() {
   const sessionRef = useRef<Session | null>(null);
   const swingsRef = useRef<SwingRecord[]>([]);
   const playerRef = useRef<Player | null>(null);
+  /** Trusted batting-side reads from this visit's swings (engine/handedness.ts). */
+  const readsRef = useRef<HandReads>({ R: 0, L: 0 });
+  /** The last swing's frames and how it was read, so an answer to the profile question can re-read it. */
+  const lastCapRef = useRef<{ cap: CapturedSwing; ctx: AnalyzeContext; recId: string } | null>(null);
   const armedRef = useRef(false);
   const askedRef = useRef(false);
   const startedRef = useRef(false);
@@ -94,34 +103,31 @@ export function JustHitSession() {
     engine.setPaused(true);
     armedRef.current = false;
 
-    // A guest's batting side is only a default: let the swing confirm it (and re-read it as a lefty if need be).
+    const ctx: AnalyzeContext = {
+      geom: cap.frameSize,
+      hand: p.hand,
+      view: "side",
+      heightIn: p.heightIn,
+      cameraFps: engine.cameraFps,
+      audioContactT: cap.analysis.phases.contactSource === "audio" ? cap.analysis.phases.contact : null,
+      micOn: engine.micActive,
+      previous: swingsRef.current.slice(-5).reverse().map((s) => s.analysis.metrics),
+    };
+    // A guest's batting side is only a default: let the swing check it, and read a clear lefty swing as a lefty's.
     let analysis = cap.analysis;
     let hand = p.hand;
     if (p.assumed?.includes("hand")) {
-      const checked = checkHand(
-        cap.pose,
-        cap.window,
-        {
-          geom: cap.frameSize,
-          hand: p.hand,
-          view: "side",
-          heightIn: p.heightIn,
-          cameraFps: engine.cameraFps,
-          audioContactT: null,
-          micOn: engine.micActive,
-          previous: swingsRef.current.slice(-5).reverse().map((s) => s.analysis.metrics),
-        },
-        cap.analysis,
-      );
+      const checked = checkHand(cap.pose, cap.window, ctx, cap.analysis);
       analysis = checked.analysis;
-      if (checked.hand !== p.hand) {
-        hand = checked.hand;
-        engine.setHitter({ hand, heightIn: p.heightIn });
-        setHandNote(`Looks like you hit ${hand === "L" ? "left" : "right"}-handed, so this swing was read that way.`);
-        await savePlayer(withInferredHand(p, hand)).catch(() => {});
+      hand = checked.hand;
+      if (hand !== p.hand) setHandNote(`Read as a ${hand === "L" ? "left" : "right"}-handed swing.`);
+      if (checked.trusted && checked.guess) {
+        readsRef.current = { ...readsRef.current, [checked.guess.hand]: readsRef.current[checked.guess.hand] + 1 };
+        // The saved side only follows once most swings agree; one odd swing can't flip it.
+        const side = sideFromReads(p.hand, readsRef.current);
+        if (side !== p.hand) await savePlayer({ ...p, hand: side }).catch(() => {});
       }
     }
-
     const now = Date.now();
     const sess: Session = sessionRef.current ?? {
       id: uid(),
@@ -141,6 +147,7 @@ export function JustHitSession() {
     sessionRef.current = sess;
     const rec = recordFromCapture({ ...cap, analysis }, { sessionId: sess.id, playerId: p.id, n: swingsRef.current.length + 1, view: "side", hand, batId: null, estimated: isEstimated(p) });
     swingsRef.current = [...swingsRef.current, rec];
+    lastCapRef.current = { cap, ctx: { ...ctx, hand }, recId: rec.id };
     rollUpSession(sess, swingsRef.current);
     sess.endedAt = now;
     setLast(rec);
@@ -173,8 +180,9 @@ export function JustHitSession() {
         view: "side",
         hand: player.hand,
         heightIn: player.heightIn,
-        // No mic in Just Hit: one permission prompt, not two. Contact is timed from peak hand speed instead.
-        micOn: false,
+        // The bat-ball sound pins contact far better than a phone camera's frame rate can (Profile › Listen for contact).
+        // Browsers ask for camera and mic in one prompt; if the mic is refused, it carries on with the camera alone.
+        micOn: s.micOn,
         quality: s.modelQuality,
         facing: s.cameraFacing?.side ?? defaultFacing("side"),
         previous: () => swingsRef.current.slice(-5).reverse().map((sw) => sw.analysis.metrics),
@@ -252,6 +260,25 @@ export function JustHitSession() {
     askedRef.current = true;
     markAsked();
     await savePlayer(p);
+    // They've told us now: no need to say how the swing guessed.
+    setHandNote(null);
+    // Re-read the swing on screen with what they just told us, so its fix is right too (a lefty's legs, their height).
+    const lc = lastCapRef.current;
+    // The stored record itself (not a copy): the clip save that may still be running writes this same object.
+    const rec = lc && swingsRef.current.find((s) => s.id === lc.recId);
+    const sess = sessionRef.current;
+    if (!lc || !rec || !sess || (p.hand === rec.hand && p.heightIn === lc.ctx.heightIn)) return;
+    const ctx = { ...lc.ctx, hand: p.hand, heightIn: p.heightIn };
+    lastCapRef.current = { ...lc, ctx };
+    rereadSwing(rec, lc.cap, ctx, isEstimated(p));
+    rollUpSession(sess, swingsRef.current);
+    setLast({ ...rec });
+    try {
+      await db.saveSwing(rec);
+      await db.saveSession({ ...sess });
+    } catch {
+      setError("Couldn't save that change on this device.");
+    }
   }
 
   if (blocked) {
@@ -278,7 +305,7 @@ export function JustHitSession() {
           playsInline
         />
         <canvas ref={overlayRef} className="pointer-events-none absolute inset-0 h-full w-full" />
-        <BatterOutline found={hasBody} />
+        <BatterOutline found={hasBody} flip={(player?.hand === "L") !== ((settings.cameraFacing?.side ?? defaultFacing("side")) === "environment")} />
         <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-night/85 to-transparent" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-night/90 to-transparent" />
       </div>
