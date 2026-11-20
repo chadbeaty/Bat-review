@@ -1,12 +1,15 @@
 "use client";
 import { analyzeSwing } from "@/engine/analyzer";
-import { SOFTBALL_12, assumedCamera, type Ball } from "@/engine/ballflight";
+import { SOFTBALL_12, assumedCamera, type Ball, type Camera } from "@/engine/ballflight";
+import { analyzeBatSpeed, type BatSpeedResult } from "@/engine/batspeed";
+import { BatTracker, type BatHints } from "@/engine/battrack";
 import { ContactListener } from "@/engine/contact";
 import { SwingDetector, type SwingWindow } from "@/engine/detector";
-import { NOSE_TO_ANKLE_FRACTION, frameHasBody, median, noseToAnkles } from "@/engine/geometry";
+import { L, NOSE_TO_ANKLE_FRACTION, frameHasBody, median, noseToAnkles } from "@/engine/geometry";
 import { MotionTracker } from "@/engine/motion";
-import { analyzeSpeeds, checkTimeBase } from "@/engine/speeds";
+import { analyzeSpeeds, checkTimeBase, mergeBatSpeed } from "@/engine/speeds";
 import type { CameraView, Handedness, MetricKey, MetricValue, PoseFrame, SwingAnalysis } from "@/engine/types";
+import { captureQuality, frameTimeSnapper, type NativeCaptureMeta } from "@/native/capture";
 import { encodeFrames, FrameBuffer } from "./framebuffer";
 import { loadPose, toLandmarks, toWorld, type ModelQuality } from "./pose";
 
@@ -67,6 +70,13 @@ export type VideoAnalysisOptions = {
   ball?: Ball;
   /** The bat's certification, for bat speed from exit velocity. */
   certification?: string;
+  /** The bat's length in inches (the bat-speed engine's ruler). Unknown = 34", the slow-pitch standard, with a wider ±. */
+  batLengthIn?: number | null;
+  /**
+   * Sidecar from the native iOS capture engine. When present the video is real speed (no slow-motion factor), every
+   * frame's time comes from the camera's own clock, and the lens intrinsics replace the assumed field of view.
+   */
+  capture?: NativeCaptureMeta | null;
 };
 
 export const MAX_VIDEO_SECONDS = 90;
@@ -107,6 +117,13 @@ async function contactFromAudio(file: File, slowMo: number): Promise<ContactList
 
 export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalysisResult> {
   const progress = o.onProgress ?? (() => {});
+  // Native recordings are real speed with true timestamps; uploads use the slow-motion setting.
+  const slowMo = o.capture ? 1 : o.slowMo;
+  const snap = o.capture?.frameTimes.length ? frameTimeSnapper(o.capture) : null;
+  const realMs = (mediaS: number) => {
+    const s = snap?.(mediaS);
+    return s !== null && s !== undefined ? s * 1000 : (mediaS * 1000) / slowMo;
+  };
   progress(0, "Opening your video…");
   const url = URL.createObjectURL(o.file);
   // Browsers only hand out frames for videos that are on the page, so a hidden helper is attached when none is given.
@@ -132,7 +149,7 @@ export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalys
     const limitS = Math.min(durationS || MAX_VIDEO_SECONDS, MAX_VIDEO_SECONDS);
 
     progress(0.02, "Loading body tracking…");
-    const [pose, audio] = await Promise.all([loadPose(o.quality), contactFromAudio(o.file, o.slowMo)]);
+    const [pose, audio] = await Promise.all([loadPose(o.quality), contactFromAudio(o.file, slowMo)]);
     let landmarker = pose.landmarker;
     let delegate = pose.delegate;
     let triedCpu = false;
@@ -147,7 +164,7 @@ export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalys
     mCanvas.height = th;
     const mCtx = mCanvas.getContext("2d", { willReadFrequently: true });
     const ball = o.ball ?? SOFTBALL_12;
-    const cam = assumedCamera(tw, th);
+    const cam: Camera = cameraFor(o.capture ?? null, tw, th);
     const tbVotes = new Map<number, number>();
     let lastTbCheck = 0;
     const speedDebug: unknown[] = [];
@@ -177,7 +194,7 @@ export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalys
     const capture = (win: SwingWindow) => {
       const clipFrames = history.filter((f) => f.t >= win.clipStart && f.t <= win.clipEnd);
       const audioT = audio?.contactIn(win.launch + 50, win.peak + 150) ?? null;
-      const fpsReal = mediaGaps.length ? 1000 / (srcGap(mediaGaps) / o.slowMo) : 30;
+      const fpsReal = o.capture?.measuredFps ?? (mediaGaps.length ? 1000 / (srcGap(mediaGaps) / slowMo) : 30);
       const analysis = analyzeSwing(clipFrames, win, {
         geom,
         hand: o.hand,
@@ -212,6 +229,39 @@ export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalys
       pending.push(encodeFrames(canvases).then((c) => void (entry.clip = c)));
     };
 
+    /** Bat speed for one swing from its tracked bat frames (the bat-speed engine), merged into its metrics. */
+    const runBat = (entry: VideoSwing, bt: BatTracker, contactT: number | null) => {
+      let res: BatSpeedResult | null = null;
+      try {
+        const bodyScale = bodyPxPerIn(entry.pose);
+        res = analyzeBatSpeed({
+          obs: bt.obs,
+          cam,
+          pxPerIn: bodyScale,
+          pxPerInRel: 0.06,
+          batLengthIn: o.batLengthIn ?? 34,
+          contactT,
+          gravity: o.capture?.gravity ?? null,
+        });
+      } catch (e) {
+        speedDebug.push({ bat: "error", error: String(e) });
+        return;
+      }
+      mergeBatSpeed(entry.analysis.metrics, res, !!o.batLengthIn);
+      if (res.ok) {
+        entry.analysis.batPath = res.path.map((p) => ({
+          t: p.t,
+          hx: p.hx / tw,
+          hy: p.hy / th,
+          tx: p.tx / tw,
+          ty: p.ty / th,
+          sx: p.sx / tw,
+          sy: p.sy / th,
+        }));
+      }
+      speedDebug.push(res.ok ? { bat: Math.round(res.peakMph * 10) / 10, pm: Math.round(res.pm * 10) / 10, n: res.n, res: Math.round(res.residualPx * 10) / 10, view: Math.round(res.planeViewDeg) } : { bat: res.code, obs: bt.obs.length });
+    };
+
     // Body tracking doesn't need more than ~60 frames per real second; the ball does. On high-frame-rate video the
     // pose model runs on every Nth frame and the (much cheaper) ball tracker runs on every frame.
     let poseStride = 1;
@@ -225,7 +275,7 @@ export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalys
       if (mediaGaps.length > 120) mediaGaps.shift();
       lastMedia = mediaTime;
       const tStart = performance.now();
-      const tReal = (mediaTime * 1000) / o.slowMo;
+      const tReal = realMs(mediaTime);
       // Grab the picture for ball tracking first, before anything slow: the video keeps playing (slowly) while we
       // work, and at 240 fps even one frame of drift between a picture and its timestamp wrecks a speed.
       if (mCtx) {
@@ -244,7 +294,7 @@ export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalys
         if (tb !== null) tbVotes.set(tb, (tbVotes.get(tb) ?? 0) + 1);
       }
       // How often to run body tracking: re-checked as the true frame interval becomes clear.
-      if (frames % 30 === 4 && mediaGaps.length >= 3) poseStride = Math.max(1, Math.round(((1000 / srcGap(mediaGaps)) * o.slowMo) / 60));
+      if (frames % 30 === 4 && mediaGaps.length >= 3) poseStride = Math.max(1, Math.round(((1000 / srcGap(mediaGaps)) * slowMo) / 60));
       const runPose = frames < 4 || frames % poseStride === 0;
       frames++;
       let frame: PoseFrame | null = null;
@@ -352,7 +402,7 @@ export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalys
     }
 
     // Release a swing that ended right at the end of the video.
-    const tail = detector.push({ t: (lastMedia * 1000) / o.slowMo + detector.config.postRollMs + 50, lm: null });
+    const tail = detector.push({ t: realMs(lastMedia) + detector.config.postRollMs + 50, lm: null });
     if (tail.swing) capture(tail.swing);
 
     // Ball speeds, second pass. The first pass also runs body tracking, and even at the slowest playback a browser
@@ -362,16 +412,19 @@ export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalys
     // every frame, and take its speeds when it really did see (nearly) every frame.
     if (mCtx && v.requestVideoFrameCallback && mediaGaps.length > 3) {
       const gapS = srcGap(mediaGaps) / 1000;
-      const fpsRealAll = 1 / (gapS / o.slowMo);
+      const fpsRealAll = o.capture?.measuredFps ?? 1 / (gapS / slowMo);
       const jobs = speedJobs.filter((j) => j.hintT !== null);
       if (fpsRealAll >= 100 && jobs.length) {
         progress(0.95, "Measuring ball speed frame by frame…");
         for (const job of jobs) {
           const hint = job.hintT as number;
-          const m0 = Math.max(0, ((hint - 1750) * o.slowMo) / 1000);
-          const m1 = Math.min(limitS, ((hint + 600) * o.slowMo) / 1000);
+          const m0 = Math.max(0, ((hint - 1750) * slowMo) / 1000);
+          const m1 = Math.min(limitS, ((hint + 600) * slowMo) / 1000);
           if (m1 - m0 < gapS * 20) continue;
           const tracker = new MotionTracker(tw, th, { keepMs: 6000 });
+          // The bat-speed engine's pixel tracker rides along on the same frames (separate detector, separate physics).
+          const batTracker = new BatTracker(tw, th);
+          const batHints = batHintsFor(job.entry.pose, tw, th, job.bodyPxPerIn, o.batLengthIn ?? 34);
           let last = -1;
           let got = 0;
           video.pause();
@@ -401,7 +454,11 @@ export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalys
               if (mt > last && mt >= m0 - gapS / 2) {
                 last = mt;
                 mCtx.drawImage(video, 0, 0, tw, th);
-                tracker.push((mt * 1000) / o.slowMo, mCtx.getImageData(0, 0, tw, th).data);
+                const tt = realMs(mt);
+                const px = mCtx.getImageData(0, 0, tw, th).data;
+                tracker.push(tt, px);
+                // Background warm-up from 0.7 s before contact; bat search only around the swing itself.
+                if (tt >= hint - 700 && tt <= hint + 80) batTracker.push(tt, px, tt >= hint - 320 ? batHints(tt) : { hands: null });
                 got++;
               }
               if (mt >= m1) return end();
@@ -413,8 +470,10 @@ export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalys
           });
           const expectedFrames = (Math.min(m1, Math.max(last, m0)) - m0) / gapS + 1;
           const cov = expectedFrames > 0 ? Math.min(1, got / expectedFrames) : 0;
+          let contactForBat: number | null = hint;
           if (cov < 0.9) {
             speedDebug.push({ t: Math.round(job.win.peak), refine: "skipped", cov: Math.round(cov * 100) / 100 });
+            if (cov >= 0.75) runBat(job.entry, batTracker, contactForBat);
             continue;
           }
           try {
@@ -427,6 +486,7 @@ export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalys
               fps: fpsRealAll,
               frameHeight: th,
             });
+            if (sp.contactT !== null) contactForBat = sp.contactT;
             // Use the full-coverage reading whenever it found the batted ball; otherwise keep the first pass.
             if (sp.debug.battedN >= 5) {
               for (const k of ["exitVelocity", "launchAngle", "batSpeed", "pitchSpeed", "descentAngle"] as const) delete job.entry.analysis.metrics[k];
@@ -436,6 +496,21 @@ export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalys
           } catch (e) {
             speedDebug.push({ refine: "error", error: String(e) });
           }
+          runBat(job.entry, batTracker, contactForBat);
+        }
+      }
+    }
+
+    // A native recording that can't support a trustworthy speed (too few real frames, phone moved) says so.
+    if (o.capture) {
+      const q = captureQuality(o.capture);
+      if (!q.speedsOk) {
+        const why = q.problems[0] ?? "This recording can't support a speed reading.";
+        for (const sw of swings) {
+          for (const k of ["exitVelocity", "launchAngle", "batSpeed", "attackAngle", "pitchSpeed", "descentAngle"] as const) {
+            sw.analysis.metrics[k] = { key: k, source: "unavailable", value: null, confidence: 0, reason: why };
+          }
+          delete sw.analysis.batPath;
         }
       }
     }
@@ -449,7 +524,7 @@ export async function analyzeVideo(o: VideoAnalysisOptions): Promise<VideoAnalys
     for (const [f, votes] of tbVotes) if (votes >= 2 && (timeBaseFix === null || votes > (tbVotes.get(timeBaseFix) ?? 0))) timeBaseFix = f;
     return {
       swings,
-      fps: mediaGaps.length ? 1000 / (srcGap(mediaGaps) / o.slowMo) : 30,
+      fps: o.capture?.measuredFps ?? (mediaGaps.length ? 1000 / (srcGap(mediaGaps) / slowMo) : 30),
       coverage: expected ? Math.min(1, frames / expected) : 1,
       durationS,
       heardAudio: !!audio,
@@ -481,4 +556,50 @@ function srcGap(xs: number[]) {
 }
 function clamp(x: number, lo: number, hi: number) {
   return Math.min(hi, Math.max(lo, x));
+}
+
+/** Camera model for the tracker frame: the lens's real intrinsics from the native app, or an assumed field of view. */
+function cameraFor(capture: NativeCaptureMeta | null, tw: number, th: number): Camera {
+  const k = capture?.intrinsics;
+  if (!k || !(k.fx > 0) || !(k.width > 0)) return assumedCamera(tw, th);
+  const sx = tw / k.width;
+  const sy = th / k.height;
+  return { cx: k.cx * sx, cy: k.cy * sy, fPx: ((k.fx * sx + k.fy * sy) / 2), fRel: k.source === "per-frame" ? 0.02 : 0.05 };
+}
+
+/**
+ * Per-frame hints for the bat tracker from body tracking: the hands (interpolated to any time, since body tracking
+ * runs at ~60 fps and the bat tracker at the full frame rate), the shoulders and elbows (the arms are not the bat), and
+ * the bat's expected length in pixels.
+ */
+function batHintsFor(pose: PoseFrame[], tw: number, th: number, pxPerIn: number | null, batLengthIn: number) {
+  const pts = pose
+    .filter((f) => f.lm && f.lm[L.leftWrist].v > 0.3 && f.lm[L.rightWrist].v > 0.3)
+    .map((f) => {
+      const lm = f.lm!;
+      const P = (i: number) => ({ x: lm[i].x * tw, y: lm[i].y * th });
+      const hx = ((lm[L.leftWrist].x + lm[L.rightWrist].x) / 2) * tw;
+      const hy = ((lm[L.leftWrist].y + lm[L.rightWrist].y) / 2) * th;
+      return { t: f.t, hx, hy, avoid: [P(L.leftShoulder), P(L.rightShoulder), P(L.leftElbow), P(L.rightElbow)] };
+    });
+  const expectLenPx = pxPerIn ? pxPerIn * (batLengthIn - 4.5) : null;
+  return (t: number): BatHints => {
+    if (pts.length < 2 || t < pts[0].t || t > pts[pts.length - 1].t) return { hands: null };
+    let i = 1;
+    while (i < pts.length - 1 && pts[i].t < t) i++;
+    const a = pts[Math.max(0, i - 2)];
+    const b = pts[i - 1];
+    const c = pts[i];
+    const d = pts[Math.min(pts.length - 1, i + 1)];
+    if (c.t - b.t > 60) return { hands: null }; // a gap in body tracking: don't guess the hands
+    const u = (t - b.t) / Math.max(1e-3, c.t - b.t);
+    // Catmull-Rom between b and c.
+    const cr = (p0: number, p1: number, p2: number, p3: number) =>
+      0.5 * (2 * p1 + (-p0 + p2) * u + (2 * p0 - 5 * p1 + 4 * p2 - p3) * u * u + (-p0 + 3 * p1 - 3 * p2 + p3) * u * u * u);
+    return {
+      hands: { x: cr(a.hx, b.hx, c.hx, d.hx), y: cr(a.hy, b.hy, c.hy, d.hy) },
+      avoid: u < 0.5 ? b.avoid : c.avoid,
+      expectLenPx,
+    };
+  };
 }

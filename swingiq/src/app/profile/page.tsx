@@ -9,6 +9,7 @@ import { usePlayers } from "@/components/PlayerProvider";
 import { Button, PageTitle, Panel, Segmented, SectionTitle, Toggle } from "@/components/ui";
 import { voice, type VoiceFrequency } from "@/live/voice";
 import { db } from "@/lib/store/db";
+import { toCsv, validationRows } from "@/lib/validation";
 import type { Player } from "@/lib/store/types";
 
 export default function ProfilePage() {
@@ -42,6 +43,20 @@ export default function ProfilePage() {
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
     a.download = `gapper-export-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }
+
+  /** Gapper's readings next to typed-in radar / sensor readings, for accuracy testing (scripts/validation-report.mjs). */
+  async function exportValidation() {
+    const rows = [];
+    for (const p of players) {
+      rows.push(...validationRows(await db.swingsForPlayer(p.id), await db.sessions(p.id), await db.bats(p.id)));
+    }
+    const blob = new Blob([toCsv(rows)], { type: "text/csv" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `gapper-accuracy-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   }
@@ -196,6 +211,7 @@ export default function ProfilePage() {
         </p>
         <div className="flex flex-wrap gap-3">
           <Button variant="ghost" onClick={exportData} disabled={players.length === 0}>Export my data</Button>
+          <Button variant="ghost" onClick={exportValidation} disabled={players.length === 0}>Export for accuracy testing (CSV)</Button>
           <Button variant="danger" onClick={wipe}>Delete everything on this phone</Button>
         </div>
       </Panel>

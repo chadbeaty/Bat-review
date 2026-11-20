@@ -32,8 +32,8 @@ const ROWS: { k: MetricKey; now: string; slomo: string }[] = [
   { k: "exitVelocity", now: "No", slomo: "Yes, ± a few mph" },
   { k: "launchAngle", now: "No", slomo: "Yes, ± 1–3°" },
   { k: "pitchSpeed", now: "No", slomo: "Yes" },
-  { k: "batSpeed", now: "No", slomo: "Estimate, ± about 5 mph" },
-  { k: "attackAngle", now: "No", slomo: "No (sensor)" },
+  { k: "batSpeed", now: "No", slomo: "Estimate tracked from the bat, ± range" },
+  { k: "attackAngle", now: "No", slomo: "Gapper's 240 fps camera only (needs the phone's level)" },
 ];
 
 export default function HowItWorks() {
@@ -134,8 +134,11 @@ export default function HowItWorks() {
       <p className="mt-3 text-[15px] leading-relaxed text-chalk-2">
         <span className="text-chalk">Exit velo and launch angle</span> come straight from the ball&apos;s first frames off the bat and are shown with a ± range. In testing on rendered
         hits with known speeds, the typical miss was under 2% and the ± range covered the true speed every time. Real-world accuracy depends on good light, a still phone and a clean view
-        of the ball. <span className="text-chalk">Bat speed</span> can&apos;t be seen directly from one side camera (at contact the barrel points at the lens), so it&apos;s worked out from
-        exit velo and pitch speed using the same bat-ball physics bats are certified with. It assumes a sweet-spot hit, so a mishit reads low. Attack angle still needs a sensor.
+        of the ball. <span className="text-chalk">Bat speed</span> is its own measurement: Gapper finds the bat in every frame and fits one rigid swing to all of them, using
+        your bat&apos;s real length as the ruler, then reports the peak speed of the sweet spot (6 inches from the end of the barrel, the same point bat sensors use). From the side the
+        barrel points at the camera at contact, which is why it takes the whole swing, not one frame. When the bat isn&apos;t clear enough, bat speed falls back to a number worked
+        out from exit velo and pitch speed, and says so. Attack angle needs Gapper&apos;s own 240 fps camera in the iPhone app, which knows which way is level. Bat speed hasn&apos;t
+        been checked against a bat sensor on real swings yet, so treat it as an estimate with its ± range.
       </p>
       <p className="mt-3 text-[15px] leading-relaxed text-chalk-2">
         Got a radar or bat sensor? Enter its reading on any swing and it takes priority. <Link href="/guide#speed" className="text-optic underline">How to film for speed</Link>

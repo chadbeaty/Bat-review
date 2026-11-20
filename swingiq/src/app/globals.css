@@ -330,3 +330,12 @@ select {
   transform-origin: center bottom;
   animation: grow-y 0.7s cubic-bezier(0.3, 0.7, 0.2, 1) both;
 }
+
+/* Native camera open (iOS app): the page turns see-through so the camera behind it shows. */
+html.native-camera,
+html.native-camera body {
+  background: transparent !important;
+}
+html.native-camera body > *:not(.native-camera-overlay) {
+  visibility: hidden;
+}

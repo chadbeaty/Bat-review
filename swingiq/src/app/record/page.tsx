@@ -6,13 +6,15 @@ import { PlayerForm } from "@/components/PlayerForm";
 import { usePlayers } from "@/components/PlayerProvider";
 import { Button, PageTitle, Panel, SectionTitle, Segmented } from "@/components/ui";
 import { ViewPicker, viewNote } from "@/components/live/ViewPicker";
+import { NativeCapture } from "@/components/NativeCapture";
 import { SOFTBALL_11, SOFTBALL_12 } from "@/engine/ballflight";
 import type { CameraView } from "@/engine/types";
 import { analyzeVideo, MAX_VIDEO_SECONDS, VideoFormatError, type VideoAnalysisResult } from "@/live/videoAnalyzer";
+import { nativeCapture, type GapperCapturePlugin, type NativeRecording } from "@/native/capture";
 import { compactPose, db, uid } from "@/lib/store/db";
 import type { Bat, Session, SwingRecord } from "@/lib/store/types";
 
-type Stage = "choose" | "processing" | "done" | "error";
+type Stage = "choose" | "camera" | "processing" | "done" | "error";
 const SLOWMO: { value: "1" | "4" | "8"; label: string }[] = [
   { value: "1", label: "Normal" },
   { value: "4", label: "120 fps · 4×" },
@@ -46,6 +48,9 @@ export default function RecordPage() {
   const [saved, setSaved] = useState<{ result: VideoAnalysisResult; swings: SwingRecord[] } | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+  // Gapper's own 240 fps camera, when running inside the iOS app.
+  // (The page renders nothing until the player store is ready, so server and first client render still match.)
+  const [cam] = useState<GapperCapturePlugin | null>(() => nativeCapture());
 
   useEffect(() => {
     if (!player) return;
@@ -54,7 +59,7 @@ export default function RecordPage() {
 
   useEffect(() => () => abortRef.current?.abort(), []);
 
-  async function run(f: File, factor: number, retried = false) {
+  async function run(f: File, factor: number, retried = false, native: NativeRecording | null = null) {
     if (!player) return;
     setFile(f);
     setError(null);
@@ -80,6 +85,8 @@ export default function RecordPage() {
         videoEl: videoRef.current,
         ball: ballSize === "11" ? SOFTBALL_11 : SOFTBALL_12,
         certification: bats.find((b) => b.id === batId)?.certification,
+        batLengthIn: bats.find((b) => b.id === batId)?.lengthIn ?? null,
+        capture: native?.meta ?? null,
       });
       (window as unknown as { __swingiqVideo?: unknown }).__swingiqVideo = {
         ...result.debug,
@@ -88,13 +95,13 @@ export default function RecordPage() {
         timeBaseFix: result.timeBaseFix,
       };
       // The pitch's fall says the slow-motion setting was wrong: fix it and go again (once).
-      if (result.timeBaseFix && !retried) {
+      if (result.timeBaseFix && !retried && !native) {
         const nf = factor * result.timeBaseFix;
         if ([1, 2, 4, 8, 16].includes(nf)) {
           if (nf === 1 || nf === 4 || nf === 8) setSlowMo(String(nf) as "1" | "4" | "8");
           setNote(nf === 1 ? "That video was normal speed, so it was re-analyzed as normal speed." : `That video was ${nf}× slow motion, so it was re-analyzed at ${nf}×.`);
           abortRef.current = null;
-          return run(f, nf, true);
+          return run(f, nf, true, null);
         }
       }
       const records: SwingRecord[] = [];
@@ -113,7 +120,7 @@ export default function RecordPage() {
           cameraFps: Math.round(result.fps),
           poseFps: Math.round(result.fps * result.coverage),
           batId: batId || null,
-          notes: f.name ? `Video: ${f.name.slice(0, 80)}` : "",
+          notes: native ? `Gapper camera · ${native.meta.format.fps} fps` : f.name ? `Video: ${f.name.slice(0, 80)}` : "",
         };
         await db.saveSession(sess);
         for (const [i, s] of result.swings.entries()) {
@@ -131,7 +138,7 @@ export default function RecordPage() {
             clipFrames: settings.keepClips ? s.clip.length : 0,
             batId: batId || null,
             source: "video",
-            slowMo: factor,
+            slowMo: native ? 1 : factor,
           };
           await db.saveSwing(rec);
           if (settings.keepClips && s.clip.length) await db.saveClip({ swingId: rec.id, frames: s.clip });
@@ -153,6 +160,20 @@ export default function RecordPage() {
       setStage("error");
     } finally {
       abortRef.current = null;
+    }
+  }
+
+  async function onNativeDone(r: NativeRecording) {
+    setStage("processing");
+    setProgress({ f: 0, stage: "Opening your recording…" });
+    try {
+      const blob = await (await fetch(r.url)).blob();
+      const f = new File([blob], `gapper-${Date.now()}.mov`, { type: blob.type || "video/quicktime" });
+      setSlowMo("1");
+      await run(f, 1, false, r);
+    } catch {
+      setError("Couldn't open the recording from the camera.");
+      setStage("error");
     }
   }
 
@@ -180,8 +201,26 @@ export default function RecordPage() {
     <div className="animate-rise pb-8">
       <PageTitle title="Record a swing" pillar="record" sub="Film it or upload it. Gapper goes through every frame for the most accurate read." />
 
+      {stage === "camera" && cam && <NativeCapture plugin={cam} onDone={onNativeDone} onCancel={() => setStage("choose")} />}
+
       {stage === "choose" && (
         <>
+          {cam && (
+            <button
+              type="button"
+              onClick={() => setStage("camera")}
+              className="press mb-3 flex min-h-[5.5rem] w-full items-center gap-4 rounded-2xl bg-optic px-5 py-4 text-left text-optic-ink"
+            >
+              <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+                <circle cx="15" cy="15" r="11" fill="none" stroke="currentColor" strokeWidth="2.6" />
+                <circle cx="15" cy="15" r="5" fill="currentColor" />
+              </svg>
+              <span>
+                <span className="display block text-[1.35rem] leading-tight">Record at 240 fps</span>
+                <span className="block text-[13px] font-semibold opacity-75">Gapper&apos;s high-speed camera · exit velo and bat speed, real speed, no slo-mo setting</span>
+              </span>
+            </button>
+          )}
           <div className="grid gap-3 sm:grid-cols-2">
             <label htmlFor="up-input" className="press flex min-h-[5.5rem] cursor-pointer items-center gap-4 rounded-2xl bg-optic px-5 py-4 text-optic-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.45),0_14px_34px_-18px_rgb(196_241_53/0.22)]">
               <svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">

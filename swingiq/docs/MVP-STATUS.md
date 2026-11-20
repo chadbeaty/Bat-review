@@ -60,6 +60,17 @@ make numbers up.
 - Tested on rendered hits (median 1.4% error) and through the browser on real batter footage with a known-speed ball.
   Still to do: one real-world check against a radar gun.
 
+## Camera-only speed engine (2026-11-20, owner's brief)
+- Built: Gapper's own 240 fps camera in the iOS app (`native-ios/`), with a setup assistant (frame rate, light and
+  shutter, level, steadiness, framing, room for the ball). Records real speed with every frame's true time.
+- Built: bat speed measured from the bat itself (barrel tracking), separate from exit velo (ball tracking). The old
+  formula stays as a labeled fallback. Attack angle from barrel tracking on native recordings.
+- Built: the replay draws the tracked bat and the sweet spot's path.
+- Built: dataset schema and model pipeline (`ml/`), accuracy export + report (`docs/speed/VALIDATION.md`), CI accuracy
+  regression gate on rendered clips.
+- Not yet: first Xcode build on a Mac, a labeled slow-pitch dataset, a trained model, and a radar/sensor session. No
+  accuracy claims until that session is done.
+
 ## 8. Real-time mode
 - Built: the live session (`src/components/live/LiveSession.tsx`) is labeled "Live estimate". Swings from video are
   labeled "Processed from video · every frame". Both labels show on every swing page.

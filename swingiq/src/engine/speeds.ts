@@ -18,6 +18,7 @@ import {
   type TrackPoint,
 } from "./ballflight";
 import { buildTracks, findHit, longestSmoothTrack, type BallObs, type MotionFrame } from "./motion";
+import type { BatSpeedResult } from "./batspeed";
 import type { MetricKey, MetricValue } from "./types";
 
 export type SpeedContext = {
@@ -189,7 +190,8 @@ export function analyzeSpeeds(frames: MotionFrame[], ctx: SpeedContext): SpeedRe
     value: round1(ev.mph),
     confidence: confFrom(ev.pm, ev.mph, evCap),
     plusMinus: round1(Math.max(1, ev.pm)),
-    reason: `Slo-mo ball tracking over ${ev.n} frames. Scale from ${scale.source === "gravity + ball size" ? "the pitch's fall and the ball's size" : scale.source}.`,
+    method: "ball tracking",
+    reason: `Ball speed right off the bat, from ball tracking over ${ev.n} frames. Scale from ${scale.source === "gravity + ball size" ? "the pitch's fall and the ball's size" : scale.source}.`,
   };
   m.launchAngle = {
     key: "launchAngle",
@@ -197,6 +199,7 @@ export function analyzeSpeeds(frames: MotionFrame[], ctx: SpeedContext): SpeedRe
     value: Math.round(ev.launchDeg),
     confidence: Math.min(evCap, ev.launchPm < 3 ? 0.85 : 0.6),
     plusMinus: Math.round(Math.max(1, ev.launchPm)),
+    method: "ball tracking",
     reason: "Angle of the ball off the bat, from the same frames.",
   };
   const e = collisionEfficiency(ctx.certification);
@@ -210,6 +213,7 @@ export function analyzeSpeeds(frames: MotionFrame[], ctx: SpeedContext): SpeedRe
     value: round1(bat.mph),
     confidence: Math.min(0.6, confFrom(batPm, bat.mph, 0.6)),
     plusMinus: round1(Math.max(1.5, batPm)),
+    method: "from exit velo",
     reason: "Worked out from exit velo and pitch speed, assuming you hit it on the sweet spot. Reads low on a mishit.",
   };
   return result();
@@ -230,6 +234,46 @@ export function checkTimeBase(frames: MotionFrame[], ctx: Pick<SpeedContext, "bo
   if (!b) return null;
   const tb = timeBaseCorrection(p, b);
   return tb !== null && tb !== 1 ? tb : null;
+}
+
+/**
+ * Puts the bat-speed engine's result (barrel tracking) into the metrics. Barrel tracking measures the bat itself, so it
+ * replaces the exit-velo formula whenever it worked; the formula stays as a cross-check in the explanation. When
+ * barrel tracking couldn't measure, the formula's number (if any) stays, and its explanation says why.
+ */
+export function mergeBatSpeed(metrics: Partial<Record<MetricKey, MetricValue>>, bat: BatSpeedResult | null, batLengthKnown: boolean): void {
+  if (!bat) return;
+  const derived = metrics.batSpeed && metrics.batSpeed.source !== "unavailable" && metrics.batSpeed.value !== null ? metrics.batSpeed : null;
+  if (bat.ok) {
+    const cross = derived ? ` Cross-check from exit velo: ${Math.round(derived.value!)} mph.` : "";
+    const lenNote = batLengthKnown ? "" : " Assumed a 34-inch bat: add your bat on the Bats page for a sharper number.";
+    metrics.batSpeed = {
+      key: "batSpeed",
+      source: "cv_estimated",
+      value: round1(bat.peakMph),
+      confidence: batLengthKnown ? bat.confidence : Math.min(0.5, bat.confidence),
+      plusMinus: round1(Math.max(1.5, batLengthKnown ? bat.pm : Math.hypot(bat.pm, bat.peakMph * 0.03))),
+      method: "barrel tracking",
+      reason: `Peak speed of the sweet spot (6 inches from the end of the barrel), tracked from the bat itself over ${bat.n} frames.${cross}${lenNote}`,
+    };
+    if (bat.attackDeg !== null) {
+      metrics.attackAngle = {
+        key: "attackAngle",
+        source: "cv_estimated",
+        value: Math.round(bat.attackDeg),
+        confidence: Math.min(0.6, bat.confidence),
+        plusMinus: 5,
+        method: "barrel tracking",
+        reason: "Direction the barrel was traveling at contact, up or down, from barrel tracking and the phone's level.",
+      };
+    }
+    return;
+  }
+  if (derived) {
+    metrics.batSpeed = { ...derived, reason: `${derived.reason} Barrel tracking didn't work on this one: ${bat.reason}` };
+  } else if (!metrics.batSpeed || metrics.batSpeed.source === "unavailable") {
+    metrics.batSpeed = { key: "batSpeed", source: "unavailable", value: null, confidence: 0, reason: bat.reason };
+  }
 }
 
 function round1(x: number) {

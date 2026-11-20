@@ -13,7 +13,7 @@ const speed240x8 = join(__dirname, "..", "fixtures", "video", "speed240x8.webm")
 async function speedOnSwingPage(page: Page) {
   await page.getByRole("link", { name: /Exit velo/ }).first().click();
   const card = page.getByRole("region", { name: "Speed" });
-  await expect(card.getByText("From slo-mo video")).toBeVisible();
+  await expect(card.getByText("From high-speed video")).toBeVisible();
   const ev = Number((await card.getByTestId("speed-ev").locator(".num").innerText()).trim());
   const bat = Number((await card.getByTestId("speed-bat").locator(".num").innerText()).trim());
   return { card, ev, bat };

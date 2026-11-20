@@ -96,6 +96,11 @@ export type MetricValue = {
   aux?: number;
   /** ± uncertainty in the same units (about one standard deviation), for measured speeds and angles. */
   plusMinus?: number;
+  /**
+   * How the number was produced, for speeds and angles: e.g. "ball tracking" for exit velo, "barrel tracking" for a
+   * bat speed measured from the bat itself, "from exit velo" for the collision-formula fallback.
+   */
+  method?: "ball tracking" | "barrel tracking" | "from exit velo";
 };
 
 export type ScoreCategoryKey = "balance" | "timing" | "rotation" | "batPath" | "contact" | "followThrough";
@@ -145,6 +150,8 @@ export type SwingAnalysis = {
   quality: QualityReport;
   /** Hand path in image coordinates, for overlays. */
   handPath: { t: number; x: number; y: number }[];
+  /** Tracked bat per frame (0–1 image coordinates): hands, barrel end and sweet spot. High-frame-rate videos only. */
+  batPath?: { t: number; hx: number; hy: number; tx: number; ty: number; sx: number; sy: number }[];
 };
 
 export type HitDirection = "pull" | "center" | "oppo";

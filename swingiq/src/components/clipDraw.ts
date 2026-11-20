@@ -30,7 +30,16 @@ export function fitCanvas(c: HTMLCanvasElement, frameSize: { width: number; heig
  */
 export function drawSwingFrame(
   c: HTMLCanvasElement,
-  o: { t: number; bitmap: ImageBitmap | null | undefined; pose: PoseFrame[]; handPath: { t: number; x: number; y: number }[]; hand: Handedness; showSkeleton: boolean },
+  o: {
+    t: number;
+    bitmap: ImageBitmap | null | undefined;
+    pose: PoseFrame[];
+    handPath: { t: number; x: number; y: number }[];
+    hand: Handedness;
+    showSkeleton: boolean;
+    /** Tracked bat (barrel tracking), when the swing was filmed at high speed. */
+    batPath?: { t: number; hx: number; hy: number; tx: number; ty: number; sx: number; sy: number }[];
+  },
 ) {
   const ctx = c.getContext("2d")!;
   if (o.bitmap) ctx.drawImage(o.bitmap, 0, 0, c.width, c.height);
@@ -48,6 +57,7 @@ export function drawSwingFrame(
     path.forEach((p, i) => (i ? ctx.lineTo(p.x * c.width, p.y * c.height) : ctx.moveTo(p.x * c.width, p.y * c.height)));
     ctx.stroke();
   }
+  if (o.batPath && o.batPath.length > 1) drawBat(ctx, c, o.batPath, o.t, k);
   if (!o.showSkeleton || !o.pose.length) return;
   const pf = o.pose[nearestIndex(o.pose, o.t)];
   if (!pf.lm || Math.abs(pf.t - o.t) >= 60) return;
@@ -93,5 +103,34 @@ export function drawSwingFrame(
   const gy = ((lm[L.leftWrist].y + lm[L.rightWrist].y) / 2) * c.height;
   ctx.beginPath();
   ctx.arc(gx, gy, 5 * k, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+/** The sweet spot's trail so far (alloy) and the bat at this moment, with the sweet spot marked in lime. */
+function drawBat(ctx: CanvasRenderingContext2D, c: HTMLCanvasElement, path: NonNullable<Parameters<typeof drawSwingFrame>[1]["batPath"]>, t: number, k: number) {
+  const W = c.width;
+  const H = c.height;
+  const past = path.filter((p) => p.t <= t);
+  if (past.length > 1) {
+    ctx.strokeStyle = "rgba(185,191,197,0.85)";
+    ctx.lineWidth = 2 * k;
+    ctx.setLineDash([4 * k, 3 * k]);
+    ctx.beginPath();
+    past.forEach((p, i) => (i ? ctx.lineTo(p.sx * W, p.sy * H) : ctx.moveTo(p.sx * W, p.sy * H)));
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  const p = path[nearestIndex(path, t)];
+  if (Math.abs(p.t - t) > 12) return;
+  ctx.strokeStyle = "rgba(245,242,234,0.95)";
+  ctx.lineWidth = 3 * k;
+  ctx.lineCap = "round";
+  ctx.beginPath();
+  ctx.moveTo(p.hx * W, p.hy * H);
+  ctx.lineTo(p.tx * W, p.ty * H);
+  ctx.stroke();
+  ctx.fillStyle = "#C4F135";
+  ctx.beginPath();
+  ctx.arc(p.sx * W, p.sy * H, 4 * k, 0, Math.PI * 2);
   ctx.fill();
 }

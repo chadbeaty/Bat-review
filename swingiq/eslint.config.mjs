@@ -14,6 +14,9 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Generated MediaPipe runtime copied at install time.
     "public/vision/**",
+    // The iOS shell (its own npm project) and the Python model pipeline.
+    "native-ios/**",
+    "ml/**",
   ]),
 ]);
 
