@@ -48,6 +48,8 @@ export type Bat = {
   certification: string;
   /** Balance class: where the weight sits. */
   balance?: BatBalance;
+  /** The player's own photo of this bat (shrunk JPEG), kept on the device only. */
+  photo?: Blob | null;
   createdAt: number;
 };
 

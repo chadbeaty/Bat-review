@@ -35,7 +35,7 @@ export default function ProfilePage() {
     for (const p of players) {
       const sessions = await db.sessions(p.id);
       const swings = (await db.swingsForPlayer(p.id)).map((s) => ({ ...s, pose: undefined }));
-      const bats = await db.bats(p.id);
+      const bats = (await db.bats(p.id)).map((b) => ({ ...b, photo: undefined }));
       (out.players as unknown[]).push({ player: p, bats, sessions, swings });
     }
     const blob = new Blob([JSON.stringify(out, null, 2)], { type: "application/json" });
