@@ -9,6 +9,7 @@ import { ViewPicker, viewNote } from "@/components/live/ViewPicker";
 import { SOFTBALL_11, SOFTBALL_12 } from "@/engine/ballflight";
 import type { CameraView } from "@/engine/types";
 import { analyzeVideo, MAX_VIDEO_SECONDS, VideoFormatError, type VideoAnalysisResult } from "@/live/videoAnalyzer";
+import { isEstimated } from "@/lib/guest";
 import { compactPose, db, uid } from "@/lib/store/db";
 import type { Bat, Session, SwingRecord } from "@/lib/store/types";
 
@@ -132,6 +133,7 @@ export default function RecordPage() {
             batId: batId || null,
             source: "video",
             slowMo: factor,
+            ...(isEstimated(player) ? { estimated: true } : {}),
           };
           await db.saveSwing(rec);
           if (settings.keepClips && s.clip.length) await db.saveClip({ swingId: rec.id, frames: s.clip });

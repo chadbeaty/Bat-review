@@ -13,7 +13,7 @@ async function noSideScroll(page: import("@playwright/test").Page) {
   expect(overflow).toBeLessThanOrEqual(1);
 }
 
-test("first run: the scroll site, then setup, then home shows the live session button", async ({ page }) => {
+test("first run: the scroll site, then the Just Hit home, then the full setup, then home shows the live session button", async ({ page }) => {
   const errors = errorsOf(page);
   // A new visitor gets the scroll site at "/" (public/site), not the app.
   await page.goto("/");
@@ -21,6 +21,10 @@ test("first run: the scroll site, then setup, then home shows the live session b
   await expect(page.locator("main section[data-sc-act]")).toHaveCount(6);
   await page.getByRole("link", { name: "Start swinging" }).first().click();
   await expect(page).toHaveURL(/\/start$/);
+  // The Just Hit home: one big button to the camera, a small one to the full setup.
+  await expect(page.getByRole("link", { name: /Just Hit/ })).toHaveAttribute("href", "/hit");
+  await page.getByRole("link", { name: "Full setup" }).click();
+  await expect(page).toHaveURL(/\/start\?setup=full$/);
   await page.getByLabel("Name").fill("Chad");
   await page.getByRole("radio", { name: "Left-handed" }).click();
   await page.getByLabel("Feet").fill("6");
@@ -57,7 +61,7 @@ test("scroll site: the swing scrubs, the heel catch counts frames, and the page 
 });
 
 test("a returning hitter without the cookie is sent from the site to the app", async ({ page, context }) => {
-  await page.goto("/start");
+  await page.goto("/start?setup=full");
   await page.getByLabel("Name").fill("Returning");
   await page.getByRole("button", { name: "Let's hit" }).click();
   await expect(page.getByRole("link", { name: /Upload a video/ })).toBeVisible();
@@ -67,7 +71,7 @@ test("a returning hitter without the cookie is sent from the site to the app", a
 });
 
 test("validates the hitter form", async ({ page }) => {
-  await page.goto("/start");
+  await page.goto("/start?setup=full");
   await page.getByLabel("Feet").fill("9");
   await page.getByLabel("Name").fill("X");
   await page.getByRole("button", { name: "Let's hit" }).click();
@@ -76,7 +80,7 @@ test("validates the hitter form", async ({ page }) => {
 
 test("profile: add a bat, change settings, add a second hitter", async ({ page }) => {
   const errors = errorsOf(page);
-  await page.goto("/start");
+  await page.goto("/start?setup=full");
   await page.getByLabel("Name").fill("Sam");
   await page.getByRole("button", { name: "Let's hit" }).click();
   await page.getByRole("link", { name: "Profile" }).click();
@@ -106,7 +110,7 @@ test("profile: add a bat, change settings, add a second hitter", async ({ page }
 for (const path of ["/swings", "/progress", "/guide", "/how-it-works", "/privacy", "/sign-in", "/live", "/record", "/bats", "/compare"]) {
   test(`renders ${path}`, async ({ page }) => {
     const errors = errorsOf(page);
-    await page.goto("/start");
+    await page.goto("/start?setup=full");
     await page.getByLabel("Name").fill("Pat");
     await page.getByRole("button", { name: "Let's hit" }).click();
     await expect(page.getByRole("link", { name: /Upload a video/ })).toBeVisible();

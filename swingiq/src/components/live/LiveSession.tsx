@@ -8,7 +8,9 @@ import { readyToBat } from "@/engine/setup";
 import type { CameraView, MetricKey, MetricValue } from "@/engine/types";
 import { LiveEngine, type CapturedSwing, type LiveTick } from "@/live/engine";
 import { shouldSpeak, voice } from "@/live/voice";
-import { compactPose, db, uid } from "@/lib/store/db";
+import { recordFromCapture, rollUpSession, saveCapture } from "@/lib/store/capture";
+import { db, uid } from "@/lib/store/db";
+import { isEstimated } from "@/lib/guest";
 import { defaultFacing, type Bat, type CameraFacing, type Session, type SwingRecord } from "@/lib/store/types";
 import { ClipPlayer } from "../ClipPlayer";
 import { challengeProgress, coachingFor } from "@/engine/coaching";
@@ -108,21 +110,7 @@ export function LiveSession() {
       const sess = sessionRef.current;
       if (!sess || !player) return;
       const n = swingsRef.current.length + 1;
-      const rec: SwingRecord = {
-        id: uid(),
-        sessionId: sess.id,
-        playerId: player.id,
-        n,
-        at: Date.now(),
-        view,
-        hand: player.hand,
-        analysis: cap.analysis,
-        pose: compactPose(cap.pose),
-        frameSize: cap.frameSize,
-        clipFrames: 0,
-        batId: sess.batId,
-        source: "live",
-      };
+      const rec = recordFromCapture(cap, { sessionId: sess.id, playerId: player.id, n, view, hand: player.hand, batId: sess.batId, estimated: isEstimated(player) });
       swingsRef.current = [...swingsRef.current, rec];
       setSwings(swingsRef.current);
       setFlash(cap.analysis.metrics.contact?.value === 1 ? "contact" : "swing");
@@ -140,21 +128,9 @@ export function LiveSession() {
           : cap.analysis.cue.spoken;
       speak(spoken, cap.analysis.cue.tone === "fix", n);
 
-      const scores = swingsRef.current.map((s) => s.analysis.score.overall).filter((x): x is number => x !== null);
-      sess.swingCount = n;
-      sess.bestScore = scores.length ? Math.max(...scores) : null;
-      sess.avgScore = scores.length ? Math.round(avg(scores)!) : null;
-      sess.poseFps = Math.round(avg(swingsRef.current.map((s) => s.analysis.quality.poseFps)) ?? 0);
+      rollUpSession(sess, swingsRef.current);
       try {
-        await db.saveSwing(rec);
-        await db.saveSession({ ...sess });
-        const frames = await cap.clip;
-        clipsRef.current.set(rec.id, frames);
-        if (settingsRef.current.keepClips && frames.length) {
-          await db.saveClip({ swingId: rec.id, frames });
-          rec.clipFrames = frames.length;
-          await db.saveSwing(rec);
-        }
+        await saveCapture(rec, sess, cap.clip, settingsRef.current.keepClips, (frames) => clipsRef.current.set(rec.id, frames));
       } catch {
         setError("Couldn't save that swing on this device. Storage may be full. Free up space in Profile.");
       }

@@ -3,6 +3,7 @@
 # this repo) and turns it into test media:
 #  - swing.y4m: a 30 fps "camera feed" for the live-camera test (Chromium uses it as a fake webcam)
 #  - swing.webm: the same swing as a video file, for the record/upload test
+#  - swing-lefty.y4m: the camera feed mirrored (a left-handed batter), for the Just Hit lefty test
 #  - speed240.webm / speed240x8.webm: the swing at 240 fps with a softball of known speed drawn in, for the slo-mo
 #    exit-velocity test (true 240 fps, and as an 8x slowed 30 fps export)
 # The slow-motion original is sped back up to real time (4×) and padded with stance frames. The batter takes a toe
@@ -18,6 +19,10 @@ if [ ! -f "$OUT/swing.y4m" ]; then
   ffmpeg -v error -y -t 7.2 -i "$OUT/source.mp4" \
     -vf "setpts=PTS/4,fps=30,scale=640:360,tpad=start_duration=2.5:start_mode=clone:stop_duration=1.5:stop_mode=clone" \
     -pix_fmt yuv420p "$OUT/swing.y4m"
+fi
+# The same swing mirrored: a left-handed batter, for the Just Hit lefty test.
+if [ ! -f "$OUT/swing-lefty.y4m" ]; then
+  ffmpeg -v error -y -i "$OUT/swing.y4m" -vf hflip -pix_fmt yuv420p "$OUT/swing-lefty.y4m"
 fi
 if [ ! -f "$OUT/swing.webm" ]; then
   ffmpeg -v error -y -i "$OUT/swing.y4m" -c:v libvpx-vp9 -b:v 1M -deadline realtime -cpu-used 8 "$OUT/swing.webm"
