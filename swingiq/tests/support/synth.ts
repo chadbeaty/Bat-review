@@ -236,7 +236,7 @@ export function renderHit(o: SynthOpts): SynthClip {
   };
 }
 
-function fillRect(img: Uint8ClampedArray, w: number, h: number, x0: number, y0: number, rw: number, rh: number, c: number[]) {
+export function fillRect(img: Uint8ClampedArray, w: number, h: number, x0: number, y0: number, rw: number, rh: number, c: number[]) {
   for (let y = Math.max(0, y0); y < Math.min(h, y0 + rh); y++) {
     for (let x = Math.max(0, x0); x < Math.min(w, x0 + rw); x++) {
       const i = (y * w + x) * 4;
@@ -250,7 +250,7 @@ function fillRect(img: Uint8ClampedArray, w: number, h: number, x0: number, y0: 
 type Shape = { kind: "disk" | "bar"; x0: number; y0: number; x1: number; y1: number; r: number };
 
 /** Averages a shape's coverage over sub-exposure samples (motion blur) and blends its color in. */
-function drawBlurred(img: Uint8ClampedArray, w: number, h: number, samples: number, at: (s: number) => Shape, color: number[]) {
+export function drawBlurred(img: Uint8ClampedArray, w: number, h: number, samples: number, at: (s: number) => Shape, color: number[]) {
   const shapes = Array.from({ length: samples }, (_, i) => at((i + 0.5) / samples));
   let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
   for (const s of shapes) {

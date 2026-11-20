@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://getgapper.com/schemas/slowpitch-annotation-v1.json",
+  "title": "Gapper slow-pitch frame annotation (v1)",
+  "description": "One labeled frame from a Gapper recording. Coordinates are pixels in the frame as the video plays (rotation applied). Every field that wasn't visible is omitted, never guessed.",
+  "type": "object",
+  "required": ["clip_id", "frame_index", "t", "width", "height", "objects", "conditions"],
+  "properties": {
+    "clip_id": { "type": "string", "description": "Recording id (file stem). Clips from one session share session_id." },
+    "session_id": { "type": "string" },
+    "player_id": { "type": "string", "description": "Pseudonymous id. Splits are made by player so the test set has hitters the model never saw." },
+    "frame_index": { "type": "integer", "minimum": 0 },
+    "t": { "type": "number", "description": "Capture time from the sidecar (seconds from the first frame)." },
+    "width": { "type": "integer" },
+    "height": { "type": "integer" },
+    "event": { "enum": ["stance", "load", "swing", "contact", "post_contact", "follow_through", "none"], "description": "Swing phase this frame belongs to." },
+    "objects": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": ["cls", "bbox"],
+            "properties": {
+              "cls": { "const": "ball" },
+              "bbox": { "$ref": "#/$defs/bbox" },
+              "center": { "$ref": "#/$defs/pt", "description": "Ball center; for a blurred ball, the middle of the streak." },
+              "state": { "enum": ["pitch", "batted", "dead", "other_ball"] },
+              "blur": { "type": "boolean" },
+              "occluded": { "type": "boolean" }
+            }
+          },
+          {
+            "type": "object",
+            "required": ["cls", "bbox"],
+            "properties": {
+              "cls": { "const": "bat" },
+              "bbox": { "$ref": "#/$defs/bbox" },
+              "knob": { "$ref": "#/$defs/pt" },
+              "barrel_end": { "$ref": "#/$defs/pt" },
+              "sweet_spot": { "$ref": "#/$defs/pt", "description": "6 inches in from the barrel end (Gapper's bat-speed point)." },
+              "polygon": { "type": "array", "items": { "$ref": "#/$defs/pt" }, "description": "Outline incl. motion blur, optional." },
+              "blur": { "type": "boolean" },
+              "occluded": { "type": "boolean" }
+            }
+          },
+          {
+            "type": "object",
+            "required": ["cls", "bbox"],
+            "properties": {
+              "cls": { "const": "hitter" },
+              "bbox": { "$ref": "#/$defs/bbox" },
+              "hands": { "$ref": "#/$defs/pt" }
+            }
+          },
+          {
+            "type": "object",
+            "required": ["cls", "bbox"],
+            "properties": { "cls": { "const": "plate" }, "bbox": { "$ref": "#/$defs/bbox" } }
+          }
+        ]
+      }
+    },
+    "contact": { "type": "boolean", "description": "True only on the first frame where ball and bat touch." },
+    "conditions": {
+      "type": "object",
+      "required": ["setting", "drill"],
+      "properties": {
+        "setting": { "enum": ["indoor_cage", "outdoor_cage", "field_day", "field_night"] },
+        "drill": { "enum": ["tee", "front_toss", "live_slowpitch", "machine"] },
+        "outcome": { "enum": ["miss", "foul", "grounder", "liner", "fly", "popup", "unknown"] },
+        "ball": { "enum": ["12in_yellow", "12in_white", "11in_yellow", "other"] },
+        "bat_barrel_color": { "type": "string" },
+        "bat_length_in": { "type": "number" },
+        "lighting": { "enum": ["bright", "normal", "dim", "backlit", "mixed"] },
+        "view": { "enum": ["side", "side_45", "behind", "front"] },
+        "device": { "type": "string" },
+        "fps": { "type": "number" }
+      }
+    },
+    "reference": {
+      "type": "object",
+      "description": "Reference-device readings for this swing (validation only).",
+      "properties": {
+        "device": { "type": "string" },
+        "exit_velocity_mph": { "type": "number" },
+        "launch_angle_deg": { "type": "number" },
+        "bat_speed_mph": { "type": "number" },
+        "attack_angle_deg": { "type": "number" }
+      }
+    }
+  },
+  "$defs": {
+    "pt": { "type": "array", "items": { "type": "number" }, "minItems": 2, "maxItems": 2 },
+    "bbox": { "type": "array", "items": { "type": "number" }, "minItems": 4, "maxItems": 4, "description": "[x, y, w, h] in pixels." }
+  }
+}

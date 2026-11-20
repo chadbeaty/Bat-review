@@ -196,7 +196,7 @@ export default function Home() {
 
           {(topEv || topBat) && (
             <>
-              <SectionTitle right={<InfoTip label="these speeds">Measured from slo-mo video by tracking the ball (or typed in from your radar or sensor). Bat speed is worked out from exit velo and pitch speed, assuming a sweet-spot hit.</InfoTip>}>Power</SectionTitle>
+              <SectionTitle right={<InfoTip label="these speeds">Exit velo from tracking the ball, bat speed from tracking the bat, both from high-speed video (or typed in from your radar or sensor).</InfoTip>}>Power</SectionTitle>
               <Panel className="grid grid-cols-3 divide-x divide-line">
                 {topEv ? (
                   <Link href={`/swings/${topEv.id}`} className="press p-4 hover:bg-night-3">
@@ -210,7 +210,7 @@ export default function Home() {
                 </div>
                 {topBat ? (
                   <Link href={`/swings/${topBat.id}`} className="press p-4 hover:bg-night-3">
-                    <Stat align label="Top bat speed" value={Math.round(topBat.v)} unit="mph" source={topBat.source === "sensor" ? "sensor" : "estimate"} size="md" note="estimate, sweet-spot hit" />
+                    <Stat align label="Top bat speed" value={Math.round(topBat.v)} unit="mph" source={topBat.source === "sensor" ? "sensor" : "estimate"} size="md" note={topBat.source === "sensor" ? "from your sensor" : "estimate, ± range"} />
                   </Link>
                 ) : (
                   <div className="p-4"><Stat align label="Bat speed" value="—" tone="muted" /></div>

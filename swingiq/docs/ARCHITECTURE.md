@@ -103,7 +103,8 @@ Owner's call: no extra hardware, everything in the app. So speeds come from **sl
 - **Exit velocity and launch angle**: linear fit of the batted ball's first frames in 3D. Motion toward/away from the camera comes from the ball's change in size, shrunk toward "straight across" in proportion to its uncertainty; drag since contact is added back. Shown with a ± (one standard deviation). Withheld when the ball is clear in fewer than 5 frames or the ± is over 15%.
 - **Pitch speed and descent angle** from the pitch track.
 - **Slow-motion setting check**: with the ball as the ruler, a wrong time base makes gravity come out wrong by the square of the error (8× read as 1× → g/64). The analyzer votes across the clip and the Record screen re-runs once with the corrected factor. Only long, clean arcs can vote.
-- **Bat speed**: from one side camera the barrel points at the lens at contact, so its speed can't be seen directly (an MIT thesis only got single-camera bat speed working on synthetic data). It's computed from measured exit velo and pitch speed with the collision efficiency bats are certified by: EV = eA·pitch + (1 + eA)·bat; eA ≈ 0.12 for USA/ASA (25 + 85 mph lab test → 98 mph limit), ≈ 0.17 USSSA. Labeled as assuming a sweet-spot hit. Attack angle still needs a sensor.
+- **Bat speed (barrel tracking, its own engine)**: `src/engine/battrack.ts` finds the bat in every frame (moving-now mask, rays from the hands, smooth-path selection) and `src/engine/batspeed.ts` fits a rigid swing-plane model with the bat's known length, then `v = v_hands + ω × r` at the sweet spot (6" from the end, the same point bat sensors use). Full write-up: `docs/speed/ARCHITECTURE.md`. Rendered swings: mean error 1.6 mph, worst 3.8 mph. A plane seen edge-on is refused with a setup fix. When barrel tracking can't measure, the old collision formula is the labeled fallback: EV = eA·pitch + (1 + eA)·bat; eA ≈ 0.12 for USA/ASA, ≈ 0.17 USSSA, assuming a sweet-spot hit. Attack angle comes from barrel tracking plus the phone's gravity sensor, so native recordings only.
+- **Native 240 fps capture** (`native-ios/`, `src/native/capture.ts`): the iOS app records with AVFoundation (stabilization off, 1/1000 s target shutter, HEVC) and hands the analyzer the video plus a sidecar with every frame's true time, dropped frames, lens intrinsics and gravity. The analyzer snaps frame times to the camera clock and uses the real focal length; no slow-motion setting to choose. Bridge contract: `docs/speed/NATIVE-BRIDGE.md`.
 - **Performance**: ball tracking runs on every frame at ≤ 960 px wide (~5 ms/frame on a laptop CPU); body tracking runs on every Nth frame (~60 per real second). The frame for ball tracking is grabbed before anything slow, because at 240 fps one frame of drift between a picture and its timestamp wrecks a speed. Browsers can't play slower than 1/16 speed, so with body tracking running the first pass sees only about two thirds of a 240 fps clip's frames on a laptop (fewer on a slow phone or a busy CI runner), and the batted ball can end up with a handful of points that change run to run (one CI run read 99 mph on the 85 mph test clip). So each swing gets a **second, ball-only pass** over contact −1.75 s to +0.6 s, played at ~24 frames a second on screen with only the ball tracker running; it sees ~95% of frames, and its speeds replace the first pass's when it covered ≥ 90% and found the batted ball. Three back-to-back runs on the test clip: 83, 84, 84 mph (first pass alone: 80, 86, 80).
 - **Accuracy so far**: 40 random rendered hits (55–110 mph, ±30° spray, spin, blur, noise): median error 1.4%, worst 5.1%, every reading inside 2× its ±. Real batter footage at 240 fps with a known-speed ball drawn in, through the browser: 83–88 mph on an 85 mph truth, launch 18° on 18°, pitch 24.5 on 25. **Not yet validated against a radar on real slo-mo footage**: do that once with a borrowed radar gun before advertising a number.
 - **Sensors** still plug in through `src/engine/external.ts`; a typed-in radar or sensor reading takes priority over the video estimate everywhere.
@@ -111,7 +112,7 @@ Owner's call: no extra hardware, everything in the app. So speeds come from **sl
 ## 7. Ball tracking extras not built
 
 - Landing spot and carry distance in a cage (the net stops the ball); the spray chart stays manual-tag driven.
-- Direct bat tracking (knob + barrel keypoint model) for attack angle and an independent bat speed: would need a trained bat model and ideally a second camera angle.
+- A trained slow-pitch detector (ball, bat keypoints) to feed the trackers better candidates: pipeline ready in `ml/`, waiting on labeled footage.
 
 ## 8. What an iPhone can measure
 
@@ -136,8 +137,8 @@ Owner's call: no extra hardware, everything in the app. So speeds come from **sl
 | **Exit velocity** | **No** | **Yes, slo-mo upload, ± shown** | cv_estimated | Gravity + ball-size scale (section 6) |
 | **Launch angle** | **No** | **Yes, slo-mo upload** | cv_estimated | |
 | **Pitch speed, descent angle** | **No** | **Yes, slo-mo upload** | cv_estimated | |
-| **Bat speed** | **No** | **Estimate from exit velo + pitch speed** | cv_estimated | Assumes a sweet-spot hit |
-| **Attack angle, bat angles** | **No** | No | — | Needs a sensor |
+| **Bat speed** | **No** | **Yes: barrel tracking (fallback: from exit velo)** | cv_estimated | Not yet radar/sensor-checked |
+| **Attack angle** | **No** | **Gapper's 240 fps camera only** | cv_estimated | Needs the phone's gravity sensor |
 | Landing spot, distance | No | No (in a cage) | manual | Manual tags drive the spray chart |
 
 Lower-body research and thresholds: `docs/reports/Slow pitch lower body mechanics.md`.
@@ -176,8 +177,8 @@ On-device processing is what keeps this cheap. A cloud-video design (upload ever
 | Pose, swing detection, body metrics | ✅ | ✅ |
 | Voice cues, mic contact detection | ✅ | ✅ |
 | 60 fps capture | Some devices | ✅ |
-| 120 / 240 fps capture | ❌ | ✅ (AVFoundation) |
-| Bat speed, attack angle, exit velo, launch angle | ❌ | ✅ (Phase 2) |
+| 120 / 240 fps capture | ❌ | ✅ (AVFoundation, built: `native-ios/`) |
+| Bat speed, attack angle, exit velo, launch angle | Slo-mo uploads (no attack angle) | ✅ real speed, true timestamps |
 | Bluetooth bat sensors / radars | ❌ (no Web Bluetooth on iOS) | ✅ (CoreBluetooth) |
 | App Store distribution, in-app purchase | ❌ | ✅ |
 
@@ -188,7 +189,7 @@ Plan: a SwiftUI shell around the same product. The capture layer is AVFoundation
 | Phase | What ships | Status |
 | --- | --- | --- |
 | **1. Prove live capture** | App foundation, player profiles, camera setup guide + live checks, pose overlay, automatic swing detection, mic contact detection, clip capture, frame-by-frame review with phases, body metrics with provenance, one cue per swing, voice cues, manual hit tags, local history, progress basics, Supabase schema + RLS + auth (switches on when connected) | **Built in this pass** |
-| 2. Performance analytics | Native iOS capture app (120/240 fps), bat keypoint model + bat speed, attack angle, ball tracker + launch angle / exit velo estimates, validation study vs. sensors, Bluetooth sensors | Next |
+| 2. Performance analytics | Native iOS capture (built, first Mac build pending), barrel-tracking bat speed + attack angle (built), ball tracker + launch angle / exit velo (built), dataset + model pipeline (built, no data yet), validation tooling (built), validation study vs. radar/sensor (to do), Bluetooth sensors | In progress |
 | 3. AI coaching | LLM coach over measured data (strengths, weaknesses, drills, routine), swing comparison (synced side-by-side + overlay), Swing DNA (per-player correlations, minimum sample sizes) | |
 | 4. Performance platform | Cloud history, progress dashboards, spray charts + heat maps, bat comparisons, share cards | |
 | 5. Commercialization | Stripe plans + trials + usage limits, teams/coach dashboards, admin dashboard, onboarding emails | |

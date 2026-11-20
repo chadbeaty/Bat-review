@@ -1,0 +1,4 @@
+swing_id,date,device,fps,source,view,setting,drill,lighting,distance_ft,bat,bat_length_in,ref_device,ref_ev_mph,ref_bat_mph,ref_launch_deg,gapper_ev_mph,gapper_ev_pm,gapper_ev_conf,gapper_bat_mph,gapper_bat_pm,gapper_bat_conf,gapper_bat_method,gapper_launch_deg,gapper_launch_pm,why_missing
+EXAMPLE-1,2026-11-20T18:00:00Z,gapper-native,240,video,side,indoor_cage,front_toss,normal,12,Example bat,34,Radar (EXAMPLE),78,,15,76.5,2.1,0.8,66.2,3.4,0.7,barrel tracking,17,2,
+EXAMPLE-2,2026-11-20T18:01:00Z,gapper-native,240,video,side,indoor_cage,front_toss,dim,12,Example bat,34,Radar (EXAMPLE),71,,8,,,,,,,,,,The ball off the bat was only clear in 3 frames
+EXAMPLE-3,2026-11-20T18:02:00Z,gapper-native,240,video,side,indoor_cage,front_toss,normal,12,Example bat,34,none,,,,,,,,,,,,,

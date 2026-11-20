@@ -1,0 +1,17 @@
+{
+  "name": "gapper-ios",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Gapper iOS shell: the getgapper.com web app plus Gapper's native 240 fps capture engine.",
+  "scripts": {
+    "sync": "cap sync ios",
+    "open": "cap open ios"
+  },
+  "dependencies": {
+    "@capacitor/core": "8.6.2",
+    "@capacitor/ios": "8.6.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.6.2"
+  }
+}

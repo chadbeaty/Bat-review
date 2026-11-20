@@ -1,0 +1,9 @@
+# Training runs on a rented GPU or a Mac with Apple silicon, never on the phone and never per swing.
+# Licenses checked 2026-11-20: rfdetr (Apache-2.0 for the N/S/M/L models we use; NOT the XL/2XL "Plus" models,
+# which are under a different license), torch (BSD-3), coremltools (BSD-3), pycocotools (BSD-2).
+# Deliberately NOT used: ultralytics (AGPL-3.0: a commercial app would have to open-source or buy a license) and
+# BaseballCV weights (AGPL-3.0 now, and trained on baseball broadcast footage).
+rfdetr>=1.7,<2
+torch>=2.5
+coremltools>=8.1
+pycocotools>=2.0.8

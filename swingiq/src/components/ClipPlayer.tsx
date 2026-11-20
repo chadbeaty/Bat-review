@@ -40,6 +40,7 @@ export function ClipPlayer({
   phases,
   frameSize,
   handPath,
+  batPath,
   hand = "R",
 }: {
   pose: PoseFrame[];
@@ -47,6 +48,7 @@ export function ClipPlayer({
   phases: SwingPhases;
   frameSize: { width: number; height: number };
   handPath: { t: number; x: number; y: number }[];
+  batPath?: { t: number; hx: number; hy: number; tx: number; ty: number; sx: number; sy: number }[];
   hand?: Handedness;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -87,8 +89,8 @@ export function ClipPlayer({
     const c = canvasRef.current;
     if (!c || !timeline.length) return;
     fitCanvas(c, frameSize);
-    drawSwingFrame(c, { t: timeline[idx].t, bitmap: bitmaps?.[idx], pose, handPath, hand, showSkeleton });
-  }, [bitmaps, idx, timeline, pose, handPath, showSkeleton, frameSize, hand]);
+    drawSwingFrame(c, { t: timeline[idx].t, bitmap: bitmaps?.[idx], pose, handPath, hand, showSkeleton, batPath });
+  }, [bitmaps, idx, timeline, pose, handPath, showSkeleton, frameSize, hand, batPath]);
 
   useEffect(() => {
     draw();

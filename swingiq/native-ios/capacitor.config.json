@@ -1,0 +1,14 @@
+{
+  "appId": "com.getgapper.app",
+  "appName": "Gapper",
+  "webDir": "www",
+  "server": {
+    "url": "https://getgapper.com/start",
+    "allowNavigation": ["getgapper.com", "www.getgapper.com"]
+  },
+  "ios": {
+    "contentInset": "never",
+    "backgroundColor": "#0B0C0E",
+    "limitsNavigationsToAppBoundDomains": false
+  }
+}

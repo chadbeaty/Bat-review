@@ -21,6 +21,7 @@ export function SpeedCard({
   const la = metrics.launchAngle;
   const pitch = metrics.pitchSpeed;
   const descent = metrics.descentAngle;
+  const attack = metrics.attackAngle;
   const has = (m?: MetricValue): m is MetricValue & { value: number } => !!m && m.source !== "unavailable" && m.value !== null;
   if (!has(ev) && !has(pitch)) {
     const why = ev?.source === "unavailable" && ev.reason && !/Needs ball tracking|Phase 2/.test(ev.reason) ? ev.reason : null;
@@ -66,11 +67,11 @@ export function SpeedCard({
     <section aria-label="Speed" className="surface boxed rounded-2xl p-4">
       <div className="flex items-center justify-between gap-2">
         <h2 className="head text-[15px]">Speed</h2>
-        <span className="rounded-md border border-optic/40 bg-optic-wash px-1.5 py-0.5 text-[11px] text-optic">From slo-mo video</span>
+        <span className="rounded-md border border-optic/40 bg-optic-wash px-1.5 py-0.5 text-[11px] text-optic">From high-speed video</span>
       </div>
       <div className="mt-3 flex gap-4">
         {big("Exit velo", ev, "mph", "speed-ev")}
-        {big("Bat speed", bat, "mph", "speed-bat", has(bat) ? "estimate" : undefined)}
+        {big("Bat speed", bat, "mph", "speed-bat", has(bat) ? (bat.method === "barrel tracking" ? "tracked from the bat" : "worked out from exit velo") : undefined)}
       </div>
       {has(ev) && (
         <div className="mt-4">
@@ -90,8 +91,27 @@ export function SpeedCard({
           <dt className="text-chalk-3">Pitch drop</dt>
           <dd className="num text-[17px] text-chalk">{has(descent) ? `${descent.value}°` : "—"}</dd>
         </div>
+        {has(attack) && (
+          <div className="col-span-3 bg-night-2 px-3 py-2">
+            <dt className="text-chalk-3">Attack angle</dt>
+            <dd className="num text-[17px] text-chalk">
+              {attack.value > 0 ? "+" : ""}
+              {attack.value}°<span className="ml-2 text-[12px] text-chalk-3">± {Math.round(attack.plusMinus ?? 5)}° · barrel tracking</span>
+            </dd>
+          </div>
+        )}
       </dl>
-      {has(bat) && <p className="mt-3 text-[12px] leading-relaxed text-chalk-3">Bat speed is worked out from exit velo and pitch speed, assuming a sweet-spot hit, so a mishit reads low.</p>}
+      {has(bat) && bat.method === "barrel tracking" && (
+        <p className="mt-3 text-[12px] leading-relaxed text-chalk-3">
+          Bat speed is the sweet spot&apos;s peak speed (6 inches from the end of the barrel), tracked frame by frame from the bat itself.
+          Exit velo comes from tracking the ball. Two separate measurements.
+        </p>
+      )}
+      {has(bat) && bat.method !== "barrel tracking" && (
+        <p className="mt-3 text-[12px] leading-relaxed text-chalk-3">
+          The bat wasn&apos;t clear enough to track, so bat speed is worked out from exit velo and pitch speed, assuming a sweet-spot hit. A mishit reads low.
+        </p>
+      )}
       {!has(ev) && ev?.reason && <p className="mt-3 text-[13px] text-amber">{ev.reason}</p>}
     </section>
   );

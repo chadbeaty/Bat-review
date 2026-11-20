@@ -1,0 +1,15 @@
+{
+  "note": "Rendered-clip benchmark, mph. Not a real-world accuracy figure.",
+  "ev": {
+    "n": 6,
+    "ok": 6,
+    "mae": 0.7166666666666662,
+    "maxAbs": 1.7999999999999972
+  },
+  "bat": {
+    "n": 5,
+    "ok": 5,
+    "mae": 1.6383336717310741,
+    "maxAbs": 3.78338305538486
+  }
+}
