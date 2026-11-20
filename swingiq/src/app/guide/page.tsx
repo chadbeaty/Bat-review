@@ -54,7 +54,7 @@ export default function GuidePage() {
     <div className="animate-rise pb-10">
       <Link href="/live" className="-ml-2 inline-block rounded-lg px-2 py-2 text-[15px] text-chalk-2 hover:text-chalk">← Live session</Link>
       <h1 className="display mt-3 text-[2.15rem] leading-[1.02] md:text-[2.6rem]">Camera setup</h1>
-      <p className="mt-2 text-[15px] text-chalk-2">Two minutes of setup makes every number better. The app checks all of this live and tells you what to fix.</p>
+      <p className="mt-2 text-[15px] text-chalk-2">For the cage or the field with a slow-pitch toss or an arc machine. Two minutes of setup makes every number better. The app checks all of this live and tells you what to fix.</p>
       <div className="mt-6 rounded-2xl border border-line bg-night-2 p-4">
         <CageDiagram />
       </div>

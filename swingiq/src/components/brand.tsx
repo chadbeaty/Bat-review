@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
+import { SITE } from "@/brand/site";
+import { Softball } from "./Softball";
 
 /*
   Shared Gapper brand pieces used across screens: the count-up for jumbotron numbers, the broadcast crawl, the gap
@@ -141,5 +143,29 @@ export function FlightDiagram({ className = "" }: { className?: string }) {
       <text x="74" y="160" fill="var(--color-chalk-2)" fontSize="12">launch angle</text>
       <text x="200" y="168" fill="var(--color-chalk-2)" fontSize="12">bat speed</text>
     </svg>
+  );
+}
+
+/**
+ * The league patch: who Gapper is for, worn next to the logo. Slow-pitch softball only (see SITE.sport); it reads
+ * like the sport patch on a jersey sleeve, not a marketing label.
+ */
+export function SportTag({ className = "" }: { className?: string }) {
+  // A "hidden …:inline-flex" from the caller decides when it shows; otherwise it's always inline-flex.
+  const display = /(^|\s)hidden(\s|$)/.test(className) ? "" : "inline-flex";
+  return (
+    <span className={`${display} items-center gap-1.5 rounded-full border border-line-2 bg-night-2/80 py-1 pl-1 pr-2.5 text-[12px] font-semibold leading-none text-chalk-2 ${className}`}>
+      <Softball size={16} />
+      Slow-pitch softball
+    </span>
+  );
+}
+
+/** The selling point: "Built for slow pitch." in the lime so it stands out, then "Not baseball. Not fastpitch." */
+export function Positioning() {
+  return (
+    <>
+      <span className="text-optic">{SITE.positioningLead}</span> {SITE.positioningRest}
+    </>
   );
 }

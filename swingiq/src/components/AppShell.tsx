@@ -137,6 +137,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <nav aria-label="Main" className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-white/[0.06] bg-[#0d1421] px-4 py-7 md:flex">
         <Link href="/" className="mb-9 px-2" aria-label="Gapper home">
           <LockupH height={30} />
+          <span className="mt-2.5 block text-[12px] font-semibold text-chalk-3">Slow-pitch softball</span>
         </Link>
         <button type="button" onClick={() => setSheet(true)} aria-haspopup="dialog" className="cut cut-sm press mb-7 flex items-center justify-center gap-2.5 rounded-xl bg-optic px-3 py-3 font-semibold text-optic-ink hover:bg-optic-2">
           <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v12M2 8h12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>

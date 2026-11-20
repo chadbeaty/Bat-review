@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Positioning } from "@/components/brand";
 import { METRICS } from "@/engine/catalog";
 import type { MetricKey } from "@/engine/types";
 
@@ -42,6 +43,19 @@ export default function HowItWorks() {
         Gapper tracks 33 points on your body in every camera frame, right on your phone. From how those points move, it finds your swing, splits it into phases and measures your mechanics.
         We never make up a number. If the footage can&apos;t support a measurement, you&apos;ll see why instead of a guess.
       </p>
+
+      <h2 className="mt-10 head text-lg">
+        <Positioning />
+      </h2>
+      <p className="mt-2 text-[15px] leading-relaxed text-chalk-2">
+        Most hitting apps are baseball apps with a softball setting, and their softball usually means fastpitch. Slow pitch is its own swing. Gapper is built for it and nothing else:
+      </p>
+      <ul className="mt-3 space-y-2.5 text-[15px] leading-relaxed text-chalk-2">
+        <li><span className="text-chalk">Timed to the arc.</span> The pitch drops in on a 6–12 ft arc, so timing is about the drop, not a fastball. Your front foot is graded against the slow-pitch window (down about 0.14–0.38 s before contact), not baseball&apos;s &ldquo;get your foot down early.&rdquo;</li>
+        <li><span className="text-chalk">Slow-pitch faults.</span> The fixes are the ones that cost slow-pitch hitters: drifting out front and rolling over into pull-side grounders, dropping the hands, pulling the head off the ball.</li>
+        <li><span className="text-chalk">Slow-pitch speeds.</span> Exit velo is read off a 12&quot; or 11&quot; softball, using the arc&apos;s own fall as the ruler, and bat speed uses the collision physics softball bats are certified by.</li>
+        <li><span className="text-chalk">Slow-pitch gear and teams.</span> Bat DNA knows end-loaded and half-ounce balance and USSSA, USA/ASA, NSA, ISA and senior stamps. Positions include Rover and EH; levels run from rec to C/D to A/B and up.</li>
+      </ul>
 
       <h2 className="mt-10 head text-lg">Every number is labeled</h2>
       <dl className="mt-3 space-y-3 text-[15px]">
