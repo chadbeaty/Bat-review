@@ -26,7 +26,7 @@ const carbon = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630
 /** Chivo instances (SIL OFL, see fonts/OFL.txt) so the card is set in the brand face. */
 const font = (f: string) => readFileSync(join(process.cwd(), "src/brand/fonts", f));
 
-/** The card shown when a Gapper link is texted or posted. */
+/** The card shown when a Gapper link is texted or posted. The headline block leans like the wordmark. */
 export function ogImage() {
   const tagW = 300;
   return new ImageResponse(
@@ -38,11 +38,11 @@ export function ogImage() {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={dataUri(TAG)} width={tagW} height={Math.round((tagW * th) / tw)} alt="" />
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ display: "flex", fontFamily: "Chivo Black", fontStyle: "italic", fontWeight: 900, fontSize: 112, letterSpacing: -2, lineHeight: 0.9 }}>OWN THE</div>
-            <div style={{ display: "flex", fontFamily: "Chivo Black", fontStyle: "italic", fontWeight: 900, fontSize: 112, letterSpacing: -2, lineHeight: 0.9 }}>
+            <div style={{ display: "flex", fontFamily: "Chivo Black", fontStyle: "italic", fontWeight: 900, fontSize: 112, letterSpacing: -2, lineHeight: 0.9, transform: "skewX(-9deg)", transformOrigin: "left bottom" }}>OWN THE</div>
+            <div style={{ display: "flex", fontFamily: "Chivo Black", fontStyle: "italic", fontWeight: 900, fontSize: 112, letterSpacing: -2, lineHeight: 0.9, transform: "skewX(-9deg)", transformOrigin: "left bottom" }}>
               GAPS<span style={{ color: BRAND.lime }}>.</span>
             </div>
-            <div style={{ marginTop: 28, fontFamily: "Chivo Black", fontStyle: "italic", fontWeight: 900, fontSize: 40, letterSpacing: 1, color: BRAND.lime }}>BUILT FOR SLOWPITCH.</div>
+            <div style={{ marginTop: 28, fontFamily: "Chivo Black", fontStyle: "italic", fontWeight: 900, fontSize: 40, letterSpacing: 1, color: BRAND.lime, transform: "skewX(-9deg)", transformOrigin: "left bottom" }}>BUILT FOR SLOWPITCH.</div>
             <div style={{ marginTop: 16, fontFamily: "Chivo", fontSize: 26, lineHeight: 1.4, color: "#c6cace", maxWidth: 620 }}>
               Swing analytics for adult slow-pitch softball. Record. Analyze. Improve.
             </div>
