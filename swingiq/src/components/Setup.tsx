@@ -1,8 +1,7 @@
 "use client";
 import Link from "next/link";
 import type { Player } from "@/lib/store/types";
-import { SITE } from "@/brand/site";
-import { SportTag } from "./brand";
+import { Positioning, SportTag } from "./brand";
 import { LockupH } from "./Logo";
 import { PlayerForm } from "./PlayerForm";
 
@@ -27,7 +26,9 @@ export function Setup({ onSave, storageOk }: { onSave: (p: Player) => Promise<vo
           <p className="mt-4 max-w-sm text-[16px] leading-relaxed text-chalk-2">
             Set up your hitter and record your first slow-pitch swing. Takes a minute. Everything stays on this phone; no account, no sign-up.
           </p>
-          <p className="mt-6 max-w-sm text-[15px] font-semibold leading-snug text-chalk">{SITE.positioning}</p>
+          <p className="mt-6 max-w-sm text-[15px] font-semibold leading-snug text-chalk">
+            <Positioning />
+          </p>
           <p className="mt-2 max-w-sm text-[13px] leading-relaxed text-chalk-3">
             Timed to the arc, coached for the slow-pitch swing: land the front foot about 0.2 s before contact, stay back, let it travel. Camera estimates show how sure they are.{" "}
             <Link href="/how-it-works" className="text-chalk-2 underline">

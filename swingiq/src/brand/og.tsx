@@ -38,7 +38,7 @@ export function ogImage() {
             <div style={{ display: "flex", fontFamily: "Mona Expanded", fontSize: 104, letterSpacing: -3, lineHeight: 0.9, transform: "skewX(-8deg)" }}>
               THE GAP<span style={{ color: BRAND.lime }}>.</span>
             </div>
-            <div style={{ marginTop: 30, fontFamily: "Mona Semi", fontSize: 36 }}>Built for slow-pitch softball.</div>
+            <div style={{ marginTop: 30, fontFamily: "Mona Semi", fontSize: 36, color: BRAND.lime }}>Built for slow-pitch softball.</div>
             <div style={{ marginTop: 14, fontFamily: "Mona", fontSize: 25, lineHeight: 1.35, color: "#c3cad5", maxWidth: 600 }}>
               Not baseball. Not fastpitch. Every swing scored legs and feet first, timed to the arc. Exit velo and bat speed from slo-mo.
             </div>

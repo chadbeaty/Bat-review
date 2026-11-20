@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { SITE } from "@/brand/site";
 import { Softball } from "./Softball";
 
 /*
@@ -157,5 +158,14 @@ export function SportTag({ className = "" }: { className?: string }) {
       <Softball size={16} />
       Slow-pitch softball
     </span>
+  );
+}
+
+/** The selling point: "Built for slow pitch." in the lime so it stands out, then "Not baseball. Not fastpitch." */
+export function Positioning() {
+  return (
+    <>
+      <span className="text-optic">{SITE.positioningLead}</span> {SITE.positioningRest}
+    </>
   );
 }

@@ -23,8 +23,10 @@ export const SITE = {
   sport: "slow-pitch softball",
   /** Page titles and link previews: what it is, in a few words. */
   what: "Slow-pitch swing analysis",
-  /** The selling point, said plainly. */
+  /** The selling point, said plainly. The lead is set in the lime wherever it's shown (see <Positioning>). */
   positioning: "Built for slow pitch. Not baseball. Not fastpitch.",
+  positioningLead: "Built for slow pitch.",
+  positioningRest: "Not baseball. Not fastpitch.",
   lines: ["Know your swing.", "Own your game.", "Every swing has a story.", "Turn data into distance."],
   description:
     "Gapper is the swing app built for slow-pitch softball, not a baseball app with a softball setting. It catches every swing, times your front foot to the arc, scores your mechanics legs and feet first, tells you the one thing to fix, and measures exit velo and bat speed from slo-mo video.",

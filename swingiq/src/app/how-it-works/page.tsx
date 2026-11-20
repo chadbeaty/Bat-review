@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { SITE } from "@/brand/site";
+import { Positioning } from "@/components/brand";
 import { METRICS } from "@/engine/catalog";
 import type { MetricKey } from "@/engine/types";
 
@@ -44,7 +44,9 @@ export default function HowItWorks() {
         We never make up a number. If the footage can&apos;t support a measurement, you&apos;ll see why instead of a guess.
       </p>
 
-      <h2 className="mt-10 head text-lg">{SITE.positioning}</h2>
+      <h2 className="mt-10 head text-lg">
+        <Positioning />
+      </h2>
       <p className="mt-2 text-[15px] leading-relaxed text-chalk-2">
         Most hitting apps are baseball apps with a softball setting, and their softball usually means fastpitch. Slow pitch is its own swing. Gapper is built for it and nothing else:
       </p>
