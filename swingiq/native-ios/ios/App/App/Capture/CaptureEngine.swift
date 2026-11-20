@@ -369,7 +369,9 @@ final class CaptureEngine: NSObject, AVCaptureVideoDataOutputSampleBufferDelegat
         guard w.status == .writing else { return }
         if intrinsics == nil, let att = CMGetAttachment(sampleBuffer, key: kCMSampleBufferAttachmentKey_CameraIntrinsicMatrix, attachmentModeOut: nil) as? Data,
            att.count >= MemoryLayout<matrix_float3x3>.size, let pb = CMSampleBufferGetImageBuffer(sampleBuffer) {
-            let m = att.withUnsafeBytes { $0.load(as: matrix_float3x3.self) }
+            // Copy rather than load in place: the attachment's bytes aren't guaranteed to be aligned for a matrix.
+            var m = matrix_float3x3()
+            _ = withUnsafeMutableBytes(of: &m) { att.copyBytes(to: $0) }
             intrinsics = Intrinsics(fx: Double(m.columns.0.x), fy: Double(m.columns.1.y), cx: Double(m.columns.2.x), cy: Double(m.columns.2.y),
                                     width: Double(CVPixelBufferGetWidth(pb)), height: Double(CVPixelBufferGetHeight(pb)), source: "per-frame")
         }
