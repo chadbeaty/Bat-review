@@ -5,7 +5,7 @@ import { LockupH } from "./Logo";
 import { PlayerForm } from "./PlayerForm";
 
 /** First-run setup: the only screen between the scroll site and the app. No app chrome; it owns the viewport. */
-export function Setup({ onSave, storageOk }: { onSave: (p: Player) => Promise<void> | void; storageOk: boolean }) {
+export function Setup({ onSave, storageOk, initial }: { onSave: (p: Player) => Promise<void> | void; storageOk: boolean; initial?: Player | null }) {
   return (
     <div className="turf min-h-dvh overflow-x-clip">
       <div className="mx-auto flex w-full max-w-[64rem] items-center justify-between px-5 pt-[max(1rem,env(safe-area-inset-top))] md:px-10">
@@ -39,7 +39,7 @@ export function Setup({ onSave, storageOk }: { onSave: (p: Player) => Promise<vo
           )}
           <h2 className="head text-[19px]">Set up your hitter</h2>
           <p className="mb-5 mt-1 text-[14px] text-chalk-3">Name, which side you hit from, and your height (it turns pixels into inches).</p>
-          <PlayerForm onSave={onSave} submitLabel="Let's hit" />
+          <PlayerForm initial={initial} onSave={onSave} submitLabel="Let's hit" />
         </div>
       </div>
     </div>

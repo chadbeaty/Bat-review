@@ -32,7 +32,7 @@ export default defineConfig({
     },
     {
       name: "live-camera",
-      testMatch: /live\.spec\.ts/,
+      testMatch: /(live|justhit)\.spec\.ts/,
       use: {
         ...devices["Desktop Chrome"],
         viewport: { width: 430, height: 860 },

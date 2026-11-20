@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { METRICS, SOURCE_LABEL, confidenceLabel, formatMetric } from "@/engine/catalog";
+import { LEG_METRICS, METRICS, SOURCE_LABEL, confidenceLabel, formatMetric } from "@/engine/catalog";
 import type { Cue, MetricKey, MetricValue } from "@/engine/types";
 
 /** Live result card chips, first available wins per slot. */
@@ -8,10 +8,7 @@ export const BASIC_SLOTS: MetricKey[][] = [["strideTiming", "swingTime"], ["fron
 export const BASIC_KEYS: MetricKey[] = ["strideTiming", "frontLegBlock", "headMovement", "swingTime", "balance"];
 
 export const METRIC_GROUPS: { title: string; keys: MetricKey[] }[] = [
-  {
-    title: "Legs and feet",
-    keys: ["timingStyle", "strideTiming", "strideLength", "frontFootSlide", "frontLegBlock", "backKnee", "backHeel", "weightShift", "strideDirection"],
-  },
+  { title: "Legs and feet", keys: LEG_METRICS },
   { title: "Timing", keys: ["swingTime", "loadTime", "tempoRatio"] },
   { title: "Upper body", keys: ["headMovement", "handDrop", "handCast", "balance", "hipLead"] },
   { title: "Bat and ball", keys: ["exitVelocity", "batSpeed", "launchAngle", "pitchSpeed", "descentAngle", "handSpeed", "attackAngle", "contact"] },

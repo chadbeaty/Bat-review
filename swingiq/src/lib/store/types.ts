@@ -36,7 +36,13 @@ export type Player = {
   goals?: HittingGoal[];
   /** Supabase player_profiles.id once synced. */
   remoteId?: string | null;
+  /** Made by Just Hit with no questions asked. Cleared once they answer one (same id, so their swings stay theirs). */
+  guest?: boolean;
+  /** Profile fields still on Just Hit's defaults (see lib/guest.ts). Swings analyzed while any is set are "Estimated". */
+  assumed?: AssumedField[];
 };
+
+export type AssumedField = "heightIn" | "hand";
 
 export type Bat = {
   id: string;
@@ -102,6 +108,8 @@ export type SwingRecord = {
   tag?: ManualHitTag;
   note?: string;
   external?: ExternalMeasurement[];
+  /** Analyzed with default profile values (a Just Hit guest), so inch and mph numbers are estimates. */
+  estimated?: boolean;
   syncedAt?: number | null;
 };
 
@@ -124,7 +132,11 @@ export type Settings = {
   keepClips: boolean;
   /** Live mode: the camera the hitter picked for each view. Unset means the default for that view. */
   cameraFacing: Partial<Record<CameraView, CameraFacing>>;
+  /** Home screen: "simple" is Just Hit (one button, one fix), "full" is the dashboard. Unset: see lib/guest.ts appMode(). */
+  appMode?: AppMode;
 };
+
+export type AppMode = "simple" | "full";
 
 export type CameraFacing = "environment" | "user";
 

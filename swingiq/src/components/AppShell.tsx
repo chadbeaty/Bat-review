@@ -5,6 +5,7 @@ import { useCallback, useState } from "react";
 import { GapMark, LockupH, Wordmark } from "./Logo";
 import { Softball } from "./Softball";
 import { usePlayers } from "./PlayerProvider";
+import { appMode } from "@/lib/guest";
 import { Sheet } from "./ui";
 
 export { Wordmark };
@@ -91,13 +92,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   const [sheet, setSheet] = useState(false);
   const close = useCallback(() => setSheet(false), []);
-  const { ready, player } = usePlayers();
-  const immersive = path === "/live";
+  const { ready, player, settings } = usePlayers();
+  const immersive = path === "/live" || path === "/hit";
   const active = (href: string) => (href === "/" ? path === "/" : path === href || path.startsWith(`${href}/`));
 
   if (immersive) return <>{children}</>;
-  // Setup (and "/" before a hitter exists) owns the whole viewport: no app chrome.
-  if (path === "/start" || (path === "/" && ready && !player)) return <main>{children}</main>;
+  // Setup and the Just Hit home ("/" before a hitter exists, or in Simple mode) own the whole viewport: no app chrome.
+  if (path === "/start" || (path === "/" && ready && (!player || appMode(settings, player) === "simple"))) return <main>{children}</main>;
 
   return (
     <div className="mx-auto min-h-dvh max-w-[34rem] pb-[calc(7.5rem+env(safe-area-inset-bottom))] md:max-w-[68rem] md:pb-14 md:pl-60">

@@ -14,6 +14,9 @@ export type MetricInfo = {
   group: "timing" | "power" | "body" | "contact";
 };
 
+/** Legs and feet: the owner's first priority. Shown first in every breakdown and coached first in Just Hit. */
+export const LEG_METRICS: MetricKey[] = ["timingStyle", "strideTiming", "strideLength", "frontFootSlide", "frontLegBlock", "backKnee", "backHeel", "weightShift", "strideDirection"];
+
 export const METRICS: Record<MetricKey, MetricInfo> = {
   swingTime: {
     label: "Swing time",

@@ -155,6 +155,12 @@ export class LiveEngine {
     if (p) this.detector?.reset();
   }
 
+  /** Just Hit: the guest's batting side or height changed (their swing showed it, or they told us). Applies from the next swing. */
+  setHitter(h: { hand: Handedness; heightIn: number }) {
+    this.opts.hand = h.hand;
+    this.opts.heightIn = h.heightIn;
+  }
+
   setDetecting(on: boolean) {
     this.detecting = on;
     if (!on) this.detector?.reset();

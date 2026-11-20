@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { ArcScore } from "@/components/ArcScore";
 import { GapMark, LockupH } from "@/components/Logo";
 import { usePlayers } from "@/components/PlayerProvider";
-import { Setup } from "@/components/Setup";
+import { JustHitHome } from "@/components/justhit/JustHitHome";
 import { Softball } from "@/components/Softball";
 import { Chip, InfoTip, Meter, PageSkeleton, Panel, SectionTitle, Skeleton, Stat, fmtDate } from "@/components/ui";
 import { FieldPrint } from "@/components/viz/FieldPrint";
+import { appMode } from "@/lib/guest";
 import { db } from "@/lib/store/db";
 import { FOOT_DOWN_WINDOW, categoryAverages, consistency, metricValues, recentVsBefore, speedOf } from "@/lib/insights";
 import { LEVEL_LABEL, type Session, type SwingRecord } from "@/lib/store/types";
@@ -78,7 +79,7 @@ function RecentForm({ swings }: { swings: SwingRecord[] }) {
 }
 
 export default function Home() {
-  const { ready, player, savePlayer, storageOk } = usePlayers();
+  const { ready, player, settings } = usePlayers();
   const [sessions, setSessions] = useState<Session[] | null>(null);
   const [lastSwings, setLastSwings] = useState<SwingRecord[]>([]);
   const [all, setAll] = useState<SwingRecord[]>([]);
@@ -97,8 +98,8 @@ export default function Home() {
   if (!ready) return <PageSkeleton />;
 
   // New visitors get the scroll site at "/" (public/site, via the rewrite in next.config.ts). Anyone who reaches the
-  // app here without a hitter (storage cleared, say) gets setup.
-  if (!player) return <Setup onSave={savePlayer} storageOk={storageOk} />;
+  // app here without a hitter (storage cleared, say), guests, and anyone in Simple mode get the Just Hit home.
+  if (!player || appMode(settings, player) === "simple") return <JustHitHome secondary={!player || player.guest ? "setup" : "full-app"} />;
 
   const last = sessions?.[0] ?? null;
   const weekAgo = now - 7 * 864e5;

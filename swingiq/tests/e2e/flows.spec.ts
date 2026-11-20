@@ -20,7 +20,7 @@ async function speedOnSwingPage(page: Page) {
 }
 
 async function newHitter(page: Page, name = "Tester") {
-  await page.goto("/start");
+  await page.goto("/start?setup=full");
   await page.getByLabel("Name").fill(name);
   await page.getByRole("button", { name: "Let's hit" }).click();
   await expect(page.getByRole("link", { name: /Upload a video/ })).toBeVisible();

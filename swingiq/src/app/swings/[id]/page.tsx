@@ -169,6 +169,11 @@ export default function SwingDetail() {
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <SourceBadge source={swing.source} />
+        {swing.estimated && (
+          <span title="Worked out with default height and batting side (Just Hit guest). Add yours in Profile for sharper numbers." className="rounded-full border border-line-2 px-2 py-0.5 text-[11px] text-chalk-2">
+            Estimated
+          </span>
+        )}
         {swing.source === "video" && swing.slowMo && swing.slowMo > 1 && <span className="text-[11px] text-chalk-3">slow motion corrected {swing.slowMo}×</span>}
         <span className="text-[11px] text-chalk-3">{swing.view === "side" ? "Side view" : swing.view === "behind" ? "Behind view" : "Front view"}</span>
         {player && swing.playerId !== player.id && <span className="text-xs text-chalk-3">Another hitter&apos;s swing</span>}

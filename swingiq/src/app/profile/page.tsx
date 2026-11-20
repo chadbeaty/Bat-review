@@ -7,6 +7,7 @@ import { PlayerForm } from "@/components/PlayerForm";
 import { usePlayers } from "@/components/PlayerProvider";
 import { Button, PageTitle, Panel, Segmented, SectionTitle, Toggle } from "@/components/ui";
 import { voice, type VoiceFrequency } from "@/live/voice";
+import { ASSUMED_LABEL, appMode } from "@/lib/guest";
 import { db } from "@/lib/store/db";
 import type { Player } from "@/lib/store/types";
 
@@ -91,6 +92,7 @@ export default function ProfilePage() {
                     </span>
                     <span className="block text-[13px] text-chalk-3">
                       {p.hand === "R" ? "Right-handed" : "Left-handed"} · {Math.floor(p.heightIn / 12)}&apos;{Math.round(p.heightIn % 12)}&quot;
+                      {p.assumed?.length ? ` · ${p.assumed.map((f) => ASSUMED_LABEL[f]).join(" and ")} not set yet` : ""}
                     </span>
                   </button>
                   <div className="flex gap-2">
@@ -165,6 +167,13 @@ export default function ProfilePage() {
 
       <SectionTitle>Session settings</SectionTitle>
       <Panel className="divide-y divide-line px-4">
+        <Toggle
+          id="simple"
+          checked={appMode(settings, player) === "simple"}
+          onChange={(v) => updateSettings({ appMode: v ? "simple" : "full" })}
+          label="Simple mode"
+          hint="Home is one big Just Hit button: camera, one grade, one fix. Off shows the full dashboard. Everything else stays the same."
+        />
         <Toggle id="mic" checked={settings.micOn} onChange={(v) => updateSettings({ micOn: v })} label="Listen for contact" hint="Hears bat-on-ball through the mic. Audio is never saved or sent." />
         <Toggle id="clips" checked={settings.keepClips} onChange={(v) => updateSettings({ keepClips: v })} label="Save swing video" hint="Off saves space: you keep the tracking and numbers, not the frames." />
         <div className="py-3">
