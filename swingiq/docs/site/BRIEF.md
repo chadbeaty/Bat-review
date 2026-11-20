@@ -22,9 +22,13 @@ stands out.
 ## Page, top to bottom
 1. **Hero** (carbon): the sport chip with the softball, the headline in black italic capitals, BUILT FOR SLOWPITCH.
    in lime, the copy, the two CTAs, "Not baseball. Not fastpitch. No account needed." Beside it (below on a
-   phone): Gapper's tracked view of a real swing (33 body points per frame from the analyzer, `assets/pose.json`),
-   front leg in lime, the heel ring at foot-down, over the four-block outfield; the pitch drops in on a high arc and
-   the ball leaves through the left-center gap. The arc and flight are illustration and the caption says so.
+   phone): an illustrated slow-pitch hitter in Gapper's tracked style (bones and joints, front leg in lime, batting
+   helmet, a composite bat) seen from the side, over the four-block outfield. Timing is the real slow-pitch swing:
+   the pitch is in the air about 1.5 s on a high arc from the pitcher's side, the hitter steps as it peaks, plants the
+   front heel about 0.25 s before contact (lime ring), meets it out in front of the front hip, and the line drive
+   goes back out through the left-center gap. Keyframes live in `site.js` (`KEYS`). The caption says it's an
+   illustration; the real tracked swing is in the sample read. (The first version played the real front-view
+   skeleton here with no bat; Chad said it read like a golfer.)
 2. **Who it's for** strip: USSSA, USA Softball, independent leagues, rec leagues, tournament teams (names only, no
    logos, no implied endorsement).
 3. **Built for one game**: general swing apps are built for every hitter; Gapper is the performance analytics

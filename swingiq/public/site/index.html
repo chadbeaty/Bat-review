@@ -51,7 +51,8 @@
         <p class="not"><b>The performance analytics platform for the slow-pitch community.</b> Not baseball. Not fastpitch. No account needed. Your swings stay on your phone.</p>
       </div>
 
-      <figure class="stage" aria-label="Gapper's tracked view of a real swing: the hitter's body as tracked points, the front leg in lime, the pitch dropping in on a high arc.">
+      <figure class="stage" aria-label="Illustration of a slow-pitch swing the way Gapper sees it: the pitch drops in on a high arc, the hitter plants the front heel, meets the ball out front and drives a line drive through the left-center gap. Body drawn as tracked points, front leg in lime.">
+        <div class="stage-art">
         <svg class="field" viewBox="0 0 400 230" aria-hidden="true">
           <defs>
             <linearGradient id="blk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2e33"/><stop offset="1" stop-color="#16181b"/></linearGradient>
@@ -59,10 +60,12 @@
           <g id="outfield"></g>
         </svg>
         <canvas class="swing" data-swing="hero" aria-hidden="true"></canvas>
+        </div>
         <figcaption class="stage-cap">
           <span><i class="dot dot-lime"></i>Front leg</span>
           <span><i class="dot dot-white"></i>Tracked body</span>
-          <span class="muted">Real swing, sample clip. Pitch arc drawn for illustration.</span>
+          <span><i class="dot dot-ring"></i>Heel down</span>
+          <span class="muted">Illustration of how Gapper reads a swing. A real tracked swing is further down.</span>
         </figcaption>
       </figure>
     </div>

@@ -94,9 +94,10 @@ bat, record dot). No stock icon sets, no emoji.
 What a new visitor sees at getgapper.com: static `index.html`, `site.css`, `site.js`, Chivo in `fonts/`, the
 softball icon, and `assets/pose.json` (Gapper's tracked body points for a sample swing). Brief: `docs/site/BRIEF.md`.
 - Hero: **STOP GUESSING. START HITTING.** / **BUILT FOR SLOWPITCH.** / the supporting copy / **ANALYZE YOUR SWING**
-  and **SEE HOW IT WORKS**. Beside it, Gapper's tracked view of a real swing playing over the four-block outfield, the
-  pitch dropping in on a high arc and the ball leaving through the left-center gap (arc and flight labelled as
-  illustration). Under it, who it's for: USSSA, USA Softball, independent leagues, rec leagues, tournament teams.
+  and **SEE HOW IT WORKS**. Beside it, an illustrated slow-pitch hitter in Gapper's tracked style (helmet, composite
+  bat, front leg in lime) swings over the four-block outfield on real slow-pitch timing: the pitch arcs in from the
+  pitcher's side, the front heel plants about 0.25 s before contact, the barrel meets it out front and the line drive
+  leaves through the left-center gap. Labelled as an illustration; the real tracked swing is in the sample read. Under it, who it's for: USSSA, USA Softball, independent leagues, rec leagues, tournament teams.
 - "Slow pitch is its own swing": 6–12 ft arc, 0.2 s heel-to-contact, four outfielders and three gaps.
 - Record. Analyze. Improve.: setup, the real sample read (score 72 and its categories, 6 frames heel to contact), the
   one fix and its drill, the Hitting Profile and the report.
