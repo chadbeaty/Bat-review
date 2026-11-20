@@ -1,4 +1,4 @@
-import { clamp, dist, frameHasBody, hands, hipCenter, median, torso, type P2 } from "./geometry";
+import { L, clamp, dist, frameHasBody, hands, hipCenter, median, px, torso, vis, type P2 } from "./geometry";
 import type { FrameGeometry, PoseFrame } from "./types";
 
 /**
@@ -6,7 +6,9 @@ import type { FrameGeometry, PoseFrame } from "./types";
  *
  * It follows the grip (midpoint of both wrists) and measures its speed in torso lengths per second, a unit that
  * doesn't change with how far the phone is from the hitter. A swing is a short burst of very fast hands that travel a
- * long way sideways while the hitter stays in the box. Waggles, bat taps, stretching and walking don't qualify.
+ * long way sideways while the hitter stays in the box. Waggles, bat taps, stretching and walking don't qualify, and
+ * neither does swinging your arms from a chair or the couch: when the legs are clearly in view, the hitter has to be
+ * standing. (It never sees the bat, so a standing dry swing still counts. That's a real drill.)
  */
 
 export type DetectorConfig = {
@@ -24,6 +26,11 @@ export type DetectorConfig = {
   minHorizontalTravel: number;
   /** Hips moving more than this (torso lengths) during the burst means walking, not swinging. */
   maxHipTravel: number;
+  /**
+   * Hip-to-ankle height (torso lengths) a standing hitter clears. Real hitters measure 1.35–1.5 (feet together or in a
+   * wide stance); seated, the shins hang straight down and the hips sit near knee height, about 0.9.
+   */
+  minStandingLegs: number;
   /** Time kept after the fast part ends, for the follow-through. */
   postRollMs: number;
   /** Time kept before launch, for stance and load. */
@@ -43,6 +50,7 @@ export const DEFAULT_DETECTOR: DetectorConfig = {
   minTravel: 1.1,
   minHorizontalTravel: 0.6,
   maxHipTravel: 1.2,
+  minStandingLegs: 1.15,
   postRollMs: 550,
   preRollMs: 1700,
   cooldownMs: 1000,
@@ -75,7 +83,12 @@ export type DetectorTick = {
   rejected?: string;
 };
 
-type Sample = { t: number; p: P2; hip: P2; speed: number; scale: number };
+/** legs: hip-to-ankle height in torso lengths, only when the knees and ankles are clearly tracked (else null). */
+type Sample = { t: number; p: P2; hip: P2; speed: number; scale: number; legs: number | null };
+
+/** Knees and ankles must be this clearly tracked to judge standing vs sitting. Out of frame, the tracker guesses them. */
+const LEGS_VISIBLE = 0.7;
+const LEG_JOINTS = [L.leftKnee, L.rightKnee, L.leftAnkle, L.rightAnkle] as const;
 
 export class SwingDetector {
   private cfg: DetectorConfig;
@@ -146,7 +159,9 @@ export class SwingDetector {
       const dt = (t - last.t) / 1000;
       if (dt > 0) speed = dist(ps, lastSmoothed) / scale / dt;
     }
-    this.samples.push({ t, p, hip, speed, scale });
+    const ankleY = (px(lm[L.leftAnkle], this.geom).y + px(lm[L.rightAnkle], this.geom).y) / 2;
+    const legs = vis(lm, LEG_JOINTS) >= LEGS_VISIBLE ? (ankleY - hip.y) / scale : null;
+    this.samples.push({ t, p, hip, speed, scale, legs });
     // Keep enough history for the pre-roll plus the longest swing.
     const keep = this.cfg.preRollMs + this.cfg.maxDurationMs + this.cfg.postRollMs + 500;
     while (this.samples.length && t - this.samples[0].t > keep) this.samples.shift();
@@ -248,6 +263,10 @@ export class SwingDetector {
     if (travel < c.minTravel) return `short path (${travel.toFixed(2)})`;
     if (horizontal < c.minHorizontalTravel) return "no sideways motion";
     if (hipTravel > c.maxHipTravel) return "body moving (walking?)";
+    // Sitting: judged from the stance and the swing, and only when the legs were clearly in view for most of it.
+    const around = this.samples.filter((s) => s.t >= start - 1200 && s.t <= end);
+    const legs = around.map((s) => s.legs).filter((v): v is number => v !== null);
+    if (legs.length >= 5 && legs.length >= around.length * 0.6 && median(legs) < c.minStandingLegs) return "sitting";
     return {
       launch: start,
       peak: this.peak.t,

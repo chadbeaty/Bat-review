@@ -131,6 +131,17 @@ const PLAYBOOK: Record<string, Omit<Coaching, "issueId" | "fix">> = {
 export function coachingFor(cue: Cue, metrics: Metrics, score: number | null): Coaching {
   const p = PLAYBOOK[cue.id.replace(/-better$/, "")];
   if (cue.tone === "fix" && p) return { issueId: cue.id, fix: cue.text, ...p };
+  const wholeBody: Challenge = { goal: "Ten clean swings with your whole body in view", metric: "strideTiming", test: (m) => v(m, "strideTiming") !== null };
+  if (cue.id === "noLegs") {
+    return {
+      issueId: "noLegs",
+      title: "Get your legs in the picture",
+      why: "Gapper reads the swing from the ground up: when your front foot lands, how your front leg firms up, where your weight goes. Without your legs and shoes in view there's nothing to grade, so it won't guess.",
+      fix: cue.text,
+      drill: { name: "Frame check", how: "Before you swing, step back until your shoes are in the picture with a little room below them. Phone about waist high, 10 to 15 feet away, facing your chest." },
+      challenge: wholeBody,
+    };
+  }
   return {
     issueId: "repeat",
     title: cue.tone === "praise" ? "Keep it" : "Build a baseline",

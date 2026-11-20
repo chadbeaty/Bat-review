@@ -35,6 +35,43 @@ describe("swing detector on real footage", () => {
   });
 });
 
+describe("swing detector: standing hitters only", () => {
+  // Real batters filmed head to toe, standing: every swing still counts.
+  for (const name of ["pose-fullbody-front-30fps.json", "pose-fullbody-front-30fps-lite.json", "pose-fullbody-handheld-30fps.json"]) {
+    it(`counts a real standing swing (${name})`, () => {
+      const fx = load(name);
+      const { swings, rejected } = detectSwings(fx.frames, { width: fx.width, height: fx.height });
+      expect(swings).toHaveLength(1);
+      expect(rejected).not.toContain("sitting");
+    });
+  }
+
+  it("doesn't count arms swung from the couch", () => {
+    for (const o of [{}, { fps: 60 }, { fps: 30, jitterPx: 3 }, { fps: 60, speed: 1.3 }]) {
+      const { frames } = synthSwing({ ...o, sitting: true });
+      const { swings, rejected } = detectSwings(frames, GEOM);
+      expect(swings).toHaveLength(0);
+      expect(rejected).toContain("sitting");
+    }
+  });
+
+  it("the same arm motion counts without the standing rule: it's the legs that give it away", () => {
+    const { frames } = synthSwing({ sitting: true });
+    expect(detectSwings(frames, GEOM, { minStandingLegs: 0 }).swings).toHaveLength(1);
+  });
+
+  it("doesn't guess sitting when the legs aren't in view (the analyzer then gives no grade)", () => {
+    const { frames } = synthSwing({ sitting: true, hideFeet: true });
+    expect(detectSwings(frames, GEOM).swings).toHaveLength(1);
+  });
+
+  it("still counts a standing swing from behind and with a wide stride", () => {
+    expect(detectSwings(synthSwing({ strideIn: 16 }).frames, GEOM).swings).toHaveLength(1);
+    expect(detectSwings(synthSwing({ heightIn: 62 }).frames, GEOM).swings).toHaveLength(1);
+    expect(detectSwings(synthSwing({ heightIn: 78 }).frames, GEOM).swings).toHaveLength(1);
+  });
+});
+
 describe("swing detector on synthetic motion", () => {
   it("detects a normal swing", () => {
     const { frames } = synthSwing();

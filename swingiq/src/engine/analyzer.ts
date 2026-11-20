@@ -25,6 +25,7 @@ import { analyzeLowerBody } from "./lowerbody";
 import { scoreSwing } from "./scoring";
 import type {
   CameraView,
+  Cue,
   FrameGeometry,
   Handedness,
   Landmark,
@@ -510,15 +511,29 @@ export function analyzeSwing(frames: PoseFrame[], win: SwingWindow, ctx: Analyze
     m.contact = unavailable("contact", "Mic is off. Turn on “Listen for contact” in the session settings.");
   }
 
-  const score = scoreSwing(m, ctx.view);
+  const scored = scoreSwing(m, ctx.view);
+  // No legs, no grade: the legs and feet drive the swing (and are coached first), so a score without them would be a
+  // grade of the arms alone. Arms swung from the couch with the legs out of the picture land here too. The checks
+  // that were measured stay listed.
+  const score = quality.feetVisible ? scored : { ...scored, overall: null };
   const observations = buildCues(m, { view: ctx.view, micOn: ctx.micOn, previous: ctx.previous?.[0], headFwdIn, headDownIn, legIn, lateFoot: lb.lateFoot,
     widthRatio: lb.stanceWidthLegs && lb.plantWidthLegs ? lb.plantWidthLegs / lb.stanceWidthLegs : null });
+  if (!quality.feetVisible) observations.unshift(NO_LEGS_CUE);
   const handPath = rows
     .filter((r) => r.t >= (loadStart ?? launch - 400) && r.t <= finish)
     .map((r) => ({ t: r.t, x: r.hands.x / g.width, y: r.hands.y / g.height }));
 
   return { phases, metrics: m, score, cue: observations[0], observations, quality, handPath };
 }
+
+/** The swing's primary note when the legs weren't in the picture (so there's no grade). */
+export const NO_LEGS_CUE: Cue = {
+  id: "noLegs",
+  tone: "info",
+  text: "Couldn't see your legs, so no grade. Get your whole body in the picture, shoes too: the legs and feet drive the swing.",
+  spoken: "Can't see your feet. No grade.",
+  basedOn: [],
+};
 
 function emptyAnalysis(win: SwingWindow, ctx: AnalyzeContext, n: number): SwingAnalysis {
   const reason = "Body tracking dropped during this swing.";

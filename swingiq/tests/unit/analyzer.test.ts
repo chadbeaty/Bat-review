@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { analyzeSwing, type AnalyzeContext } from "@/engine/analyzer";
+import { coachingFor } from "@/engine/coaching";
 import { detectSwings } from "@/engine/detector";
 import type { MetricKey, PoseFrame } from "@/engine/types";
 import { GEOM, synthSwing, type SynthOptions } from "../support/synthetic";
@@ -114,6 +115,26 @@ describe("swing analyzer: honesty rules", () => {
     expect(a.quality.feetVisible).toBe(false);
   });
 
+  it("gives no grade when the legs aren't in the picture, and says why first", () => {
+    const { a } = run({ hideFeet: true, fps: 60 });
+    expect(a.score.overall).toBeNull();
+    expect(a.cue.id).toBe("noLegs");
+    expect(a.cue.text).toMatch(/Couldn't see your legs, so no grade/);
+    // What was measured is still there: the checks and any other notes.
+    expect(a.score.components.length).toBeGreaterThan(0);
+    expect(a.observations.length).toBeGreaterThan(1);
+    // The coach card says what to do about it.
+    expect(coachingFor(a.cue, a.metrics, a.score.overall).title).toBe("Get your legs in the picture");
+    // With the feet in view, the same swing is graded.
+    expect(run({ fps: 60 }).a.score.overall).not.toBeNull();
+  });
+
+  it("arms swung from the couch with the legs out of the picture: counted, but not graded", () => {
+    const { a } = run({ sitting: true, hideFeet: true, fps: 60 });
+    expect(a.score.overall).toBeNull();
+    expect(a.cue.id).toBe("noLegs");
+  });
+
   it("marks stride and weight shift unavailable from behind the plate", () => {
     const { a } = run({}, { view: "behind" });
     expect(a.metrics.strideLength?.source).toBe("unavailable");
@@ -223,5 +244,8 @@ describe("swing analyzer on real footage", () => {
     expect(a.metrics.handSpeed?.source).toBe("cv_estimated");
     expect(a.cue.text.length).toBeGreaterThan(10);
     expect(a.handPath.length).toBeGreaterThan(3);
+    // No legs in this clip, so no grade.
+    expect(a.score.overall).toBeNull();
+    expect(a.cue.id).toBe("noLegs");
   });
 });

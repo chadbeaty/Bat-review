@@ -85,9 +85,12 @@ State machine (`src/engine/detector.ts`):
    - duration between 120 ms and 900 ms,
    - hands traveled at least ~1.2 torso lengths,
    - body tracking confidence stayed good,
-   - the hips didn't travel like the player was walking out of the box.
+   - the hips didn't travel like the player was walking out of the box,
+   - the hitter is standing: when the knees and ankles are clearly tracked, hip-to-ankle height has to clear 1.15 torso lengths (real hitters measure 1.35–1.5; seated it's about 0.9). Arms swung from a chair or the couch don't count. The camera never sees the bat, so a standing dry swing still does (it's a real drill).
 4. **Accepted:** we keep recording ~0.5 s of follow-through, cut the clip (1.6 s before launch to 0.5 s after finish) from the frame buffer, run the full analysis, and play the cue.
 5. **Cooldown** of ~1.2 s so one swing never counts twice.
+
+**No legs, no grade.** When the feet weren't in view for most of the swing, the analysis keeps every check it could measure but gives no Gapper Score, and its first note says why ("Couldn't see your legs, so no grade"). The legs and feet drive the swing and are coached first; a score from the arms alone would be misleading, and it's also what an arm swing with the legs out of the picture (the couch, phone up close) would get.
 
 **Contact detection** uses the microphone. Bat-on-ball contact is a sharp broadband "crack" that stands far above cage noise for a few milliseconds. We only accept an audio onset that falls inside the swing's launch-to-finish window, so other cages' hits don't count. Only an onset close to peak hand speed counts. The sound itself is timed to a few milliseconds; lining it up with camera frames adds roughly ±20 ms of clock uncertainty, which still beats a 30 fps frame (33 ms). It also tells a swing-and-miss from contact.
 
