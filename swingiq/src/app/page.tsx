@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArcScore } from "@/components/ArcScore";
+import { SportTag } from "@/components/brand";
 import { GapMark, LockupH } from "@/components/Logo";
 import { usePlayers } from "@/components/PlayerProvider";
 import { Setup } from "@/components/Setup";
@@ -139,8 +140,11 @@ export default function Home() {
   return (
     <div className="animate-rise pb-6">
       <div className="flex items-center justify-between pt-3">
-        <span className="md:invisible">
-          <LockupH height={26} />
+        <span className="flex min-w-0 items-center gap-2.5">
+          <span className="md:hidden">
+            <LockupH height={26} />
+          </span>
+          <SportTag className="hidden min-[380px]:inline-flex md:hidden" />
         </span>
         <Link href="/profile" className="press rounded-lg border border-line-2 px-3 py-1.5 text-[13px] text-chalk-2 hover:text-chalk">
           {player.name} · {player.hand === "R" ? "Righty" : "Lefty"}

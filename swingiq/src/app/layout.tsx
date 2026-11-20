@@ -10,12 +10,12 @@ const mona = Mona_Sans({ subsets: ["latin"], axes: ["wdth"], variable: "--font-m
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
-  title: { default: `${SITE.name}: ${SITE.taglineTitle}`, template: `%s · ${SITE.name}` },
+  title: { default: `${SITE.name}: ${SITE.what}. ${SITE.taglineTitle}`, template: `%s · ${SITE.name}` },
   description: SITE.description,
   applicationName: SITE.name,
   alternates: { canonical: "/" },
-  openGraph: { type: "website", siteName: SITE.name, url: SITE.url, title: `${SITE.name}. ${SITE.taglineTitle}`, description: SITE.description },
-  twitter: { card: "summary_large_image", title: `${SITE.name}. ${SITE.taglineTitle}`, description: SITE.description },
+  openGraph: { type: "website", siteName: SITE.name, url: SITE.url, title: `${SITE.name}: ${SITE.what}`, description: SITE.description },
+  twitter: { card: "summary_large_image", title: `${SITE.name}: ${SITE.what}`, description: SITE.description },
   appleWebApp: { capable: true, title: SITE.name, statusBarStyle: "black-translucent" },
   formatDetection: { telephone: false },
 };

@@ -16,7 +16,16 @@ export const SITE = {
     (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "https://getgapper.com"),
   tagline: "OWN THE GAP.",
   taglineTitle: "Own the gap.",
+  /**
+   * Who it's for. Gapper is strictly slow-pitch softball: not a baseball app with a softball setting, not fastpitch.
+   * Never say baseball is coming, and never frame it as "baseball and softball".
+   */
+  sport: "slow-pitch softball",
+  /** Page titles and link previews: what it is, in a few words. */
+  what: "Slow-pitch swing analysis",
+  /** The selling point, said plainly. */
+  positioning: "Built for slow pitch. Not baseball. Not fastpitch.",
   lines: ["Know your swing.", "Own your game.", "Every swing has a story.", "Turn data into distance."],
   description:
-    "Gapper is a hitting lab on your phone. It catches every swing, scores your mechanics legs and feet first, tells you the one thing to fix, and measures exit velo and bat speed from slo-mo video.",
+    "Gapper is the swing app built for slow-pitch softball, not a baseball app with a softball setting. It catches every swing, times your front foot to the arc, scores your mechanics legs and feet first, tells you the one thing to fix, and measures exit velo and bat speed from slo-mo video.",
 } as const;

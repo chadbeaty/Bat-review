@@ -357,7 +357,7 @@ export function LiveSession() {
             <Link href="/guide" className="rounded-lg px-2 py-2 text-[15px] text-optic">Setup guide</Link>
           </div>
           <h1 className="display mt-3 text-[2.1rem] leading-[1.05]">Live session</h1>
-          <p className="mt-2 text-[15px] text-chalk-2">Put the phone on a tripod, pick the view, and step in. Every swing gets caught and scored on its own.</p>
+          <p className="mt-2 text-[15px] text-chalk-2">Put the phone on a tripod, pick the view, and step in. Every swing gets caught and scored on its own, timed to the slow-pitch arc.</p>
 
           {!player ? (
             <Panel className="mt-6 p-5">

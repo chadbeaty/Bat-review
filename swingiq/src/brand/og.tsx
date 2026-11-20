@@ -6,7 +6,7 @@ import { SITE } from "./site";
 import { BRAND, artSvg, dataUri } from "./svg";
 
 export const OG_SIZE = { width: 1200, height: 630 };
-export const OG_ALT = `${SITE.name}. ${SITE.taglineTitle} Hitting analytics on your phone.`;
+export const OG_ALT = `${SITE.name}. ${SITE.taglineTitle} ${SITE.what}: ${SITE.positioning}`;
 
 const CREST = artSvg(crest(), "dark", "Gapper");
 const [, , cw, ch] = (CREST.match(/viewBox="([^"]+)"/)?.[1] ?? "0 0 1 1").split(" ").map(Number);
@@ -38,9 +38,9 @@ export function ogImage() {
             <div style={{ display: "flex", fontFamily: "Mona Expanded", fontSize: 104, letterSpacing: -3, lineHeight: 0.9, transform: "skewX(-8deg)" }}>
               THE GAP<span style={{ color: BRAND.lime }}>.</span>
             </div>
-            <div style={{ marginTop: 30, fontFamily: "Mona Semi", fontSize: 36 }}>Know your swing. Own your game.</div>
+            <div style={{ marginTop: 30, fontFamily: "Mona Semi", fontSize: 36 }}>Built for slow-pitch softball.</div>
             <div style={{ marginTop: 14, fontFamily: "Mona", fontSize: 25, lineHeight: 1.35, color: "#c3cad5", maxWidth: 600 }}>
-              The hitting lab in your pocket: every swing scored, legs and feet first. Exit velo and bat speed from slo-mo.
+              Not baseball. Not fastpitch. Every swing scored legs and feet first, timed to the arc. Exit velo and bat speed from slo-mo.
             </div>
           </div>
         </div>

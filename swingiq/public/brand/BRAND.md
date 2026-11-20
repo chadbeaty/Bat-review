@@ -61,6 +61,14 @@ Inter; both are on this repo's list of overused "default AI" fonts, so Mona Sans
 - **Jumbotron numbers**: the score and big stats, wide and heavy, counting up on load.
 - **Broadcast crawl**: the things Gapper measures, scrolling like a ticker on the landing page.
 
+## Who it's for
+Slow-pitch softball, and only slow pitch. The selling point: there's no app built just for slow-pitch hitters; it's
+always baseball apps that bolt on softball, and their softball usually means fastpitch. Say it plainly: **Built for
+slow pitch. Not baseball. Not fastpitch.** Never say baseball is coming, never frame Gapper as "baseball and softball",
+and back the claim with what's actually different (timed to the arc, slow-pitch faults, softball speeds, slow-pitch
+bats, positions and levels). The ball in the art is an optic-yellow slow-pitch softball with red stitches, never a
+white baseball. `SITE.sport`, `SITE.what` and `SITE.positioning` in `src/brand/site.ts` hold the lines.
+
 ## Voice
 Primary: **Own the gap.** Secondary: Know your swing. / Own your game. / Every swing has a story. / Turn data into
 distance. Confident and plain. Never claim an accuracy that hasn't been checked; every estimate shows how sure it is.
