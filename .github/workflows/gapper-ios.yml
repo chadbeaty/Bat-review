@@ -1,0 +1,52 @@
+name: "Gapper iOS: build"
+
+# Builds the Gapper iPhone app (the getgapper.com shell + the native 240 fps camera) on a GitHub-hosted Mac, so the
+# Swift code is compiled and checked without anyone needing their own Mac. This build is unsigned: it proves the code
+# compiles. Installing on phones (TestFlight) is a separate, signed step added once the Apple Developer account exists.
+on:
+  push:
+    paths: ["swingiq/native-ios/**", ".github/workflows/gapper-ios.yml"]
+  pull_request:
+    paths: ["swingiq/native-ios/**", ".github/workflows/gapper-ios.yml"]
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: swingiq/native-ios
+
+jobs:
+  build:
+    name: Compile the iPhone app (unsigned)
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: swingiq/native-ios/package-lock.json
+      - name: Show Xcode version
+        run: xcodebuild -version
+      - run: npm ci
+      - name: Copy the web shell and native config into the Xcode project
+        run: npx cap sync ios
+      - name: Build for iPhone (arm64, no code signing)
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Debug \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            build 2>&1 | tee xcodebuild.log | grep -E "error:|warning: .*Capture/|\*\* BUILD" || true
+          grep -q "\*\* BUILD SUCCEEDED \*\*" xcodebuild.log
+      - name: Keep the build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-log
+          path: swingiq/native-ios/xcodebuild.log
+          if-no-files-found: ignore
