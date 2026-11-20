@@ -35,7 +35,7 @@ export function drawSwingFrame(
   const ctx = c.getContext("2d")!;
   if (o.bitmap) ctx.drawImage(o.bitmap, 0, 0, c.width, c.height);
   else {
-    ctx.fillStyle = "#141d2d";
+    ctx.fillStyle = "#0b0c0e";
     ctx.fillRect(0, 0, c.width, c.height);
   }
   const k = c.width / 400;
@@ -85,10 +85,10 @@ export function drawSwingFrame(
     const ly = kn.y - 8 * k;
     ctx.fillStyle = "rgba(8,8,9,0.85)";
     ctx.fillRect(lx - 4 * k, ly - 13 * k, tw + 8 * k, 18 * k);
-    ctx.fillStyle = "#B7F34A";
+    ctx.fillStyle = "#C4F135";
     ctx.fillText(label, lx, ly);
   }
-  ctx.fillStyle = "#B7F34A";
+  ctx.fillStyle = "#C4F135";
   const gx = ((lm[L.leftWrist].x + lm[L.rightWrist].x) / 2) * c.width;
   const gy = ((lm[L.leftWrist].y + lm[L.rightWrist].y) / 2) * c.height;
   ctx.beginPath();

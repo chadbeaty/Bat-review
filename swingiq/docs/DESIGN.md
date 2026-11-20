@@ -1,82 +1,102 @@
 # Gapper design system
 
 Brand kit (logo files, print files, colors, rules): `public/brand/BRAND.md`. Logo geometry: `src/brand/emblem.ts`
-(Gap Mark, crest, patch, lockup) and `src/brand/geometry.ts` (the drawn letters). Name, domain and taglines:
-`src/brand/site.ts` (use these instead of typing the name in copy).
+(Gap Mark, bag tag, patch, lockups) and `src/brand/geometry.ts` (the drawn GAPPER letters, plus Chivo Black Italic
+baked into shapes by `scripts/bake-brand-type.py` → `src/brand/type.ts`). Name, domain and lines: `src/brand/site.ts`
+(use these instead of typing the name or taglines in copy).
 
-## Concept: night game, fresh-cut outfield
-A gapper splits two outfielders and runs to the wall. Gapper looks like the outfield under the lights: midnight navy,
-the diagonal mowing stripes of fresh-cut grass ("turf"), chalk lines, and one electric lime ball that marks what
-matters. The Gap Mark (the field from above, split by the gap, the ball streaking out) is the logo, the app icon,
-the center action and a watermark on player cards. Hero moments get the turf, jersey-style slanted headlines,
-jumbotron numbers that count up, and the "gap cut" (top-right corner taken off key panels and main buttons). Section
-headings end in the ball. The landing page is a full-width brand page with the crest, a broadcast crawl of what
-Gapper measures, the tracked-skeleton illustration and the ball-flight diagram.
+## Brand
+- **GAPPER.** Primary tagline **OWN THE GAPS.** Secondary **BUILT FOR SLOWPITCH.**
+- The three words: **RECORD. ANALYZE. IMPROVE.** They are the product loop and the navigation (Record is the lime
+  button; Analyze is your swings; Improve is progress, Bat DNA and your Hitting Profile).
+- For adult slow-pitch softball only: USSSA, USA Softball, independent and rec leagues, tournament teams. Never
+  baseball, never fastpitch, no youth styling.
+- Personality: competitive, modern, confident, athletic, premium, technology-driven, community-minded. A sports
+  performance company, not an AI startup.
 
-History: v1 "lights-out lab" (blue-black, optic yellow, Archivo/Atkinson) and v2 "championship night" (onyx and
-gold, Instrument Sans/Michroma, SwingIQ name) were replaced by this rebrand.
+## Concept: four outfielders, three gaps, carbon and alloy
+Slow pitch plays ten fielders, four in the outfield, so there are three gaps, not two. That's the whole idea: the
+Gap Mark is the outfield seen from home, four heavy blocks with three gaps, and the 12-inch ball breaking out
+through the left-center gap with the wall splintering behind it. The world around it is the composite slow-pitch
+bat: near-black carbon with a fine twill, graphite panels, a brushed-alloy hairline (like the taper ring on a
+barrel), crisp white numbers, and one electric lime for the ball. Headlines are black italic capitals; reading text is
+plain.
+
+Retired looks (don't bring back): v1 "lights-out lab" (Archivo, Atkinson, optic yellow), v2 "championship night"
+(Instrument Sans, Michroma, onyx and gold), v3 "night game, fresh-cut outfield" (Mona Sans, midnight navy, turf
+mowing stripes, the corner "gap cut", the home-plate crest, the fan-shaped field mark).
 
 ## Tokens (`src/app/globals.css`)
-Token names are kept from earlier versions so every screen follows: `optic` = lime accent, `clay` = comparison tone,
-`stitch` = the one fix.
-- Surfaces: `night` #101827 (Midnight Navy), `night-2` #1A2537 (panels), `night-3` #202D40 (Deep Slate: inputs,
-  controls), `night-4` #2B3A52 (tracks).
-- Lines: `line` #253247, `line-2` #34445D.
-- Text: `chalk` #FFFFFF, `chalk-2` #C3CAD5, `chalk-3` #8995A6 (Steel Gray). Sentence case; no small uppercase eyebrows.
-- Lime: `optic` #B7F34A, `optic-2` #CBF779 (hover), `optic-ink` #101827 (text on lime), `optic-wash`.
-  Use it for key metrics, primary buttons, active nav, progress and improvements. Section links and labels stay
-  white/steel.
-- Comparison: `clay` #A9BCD6. Fix: `stitch` #F25C5C. Caution: `amber` #F5B84A.
-- Radii: `lg` 10px, `xl` 14px, `2xl` 18px.
+Token names are kept from earlier versions so every screen follows: `night` = carbon/graphite, `chalk` = white text,
+`optic` = lime accent, `clay` = alloy (comparison), `stitch` = the one fix.
+- Surfaces: `night` #0B0C0E (Carbon), `night-2` #141619 (Graphite panels), `night-3` #1B1E22 (inputs, controls),
+  `night-4` #262A2F (tracks).
+- Lines: `line` #212429, `line-2` #30353B.
+- Text: `chalk` #FFFFFF, `chalk-2` #C6CACE, `chalk-3` #8D939A (Steel).
+- Lime: `optic` #C4F135, `optic-2` #D3F76A (hover), `optic-ink` #0B0C0E (text on lime), `optic-wash`. Key numbers,
+  primary buttons, active nav, progress, improvements, the ball. Never body text.
+- Alloy: `clay` #B9BFC5 (comparison marks, sensor readings) plus the `.alloy` / `.alloy-text` / `.alloy-rule`
+  gradients for metallic accents. Sparingly.
+- Fix: `stitch` #EF4B47. Caution: `amber` #F2B544.
+- Radii are tight, like hardware: `lg` 8px, `xl` 10px, `2xl` 12px.
 
 ## Type
-Mona Sans only (variable width and weight, loaded with `next/font`):
-- `.display`: 118% width, 760 weight, tight tracking. Page titles and hero lines.
-- `.head`: 108% width, 650 weight. Section and card heads.
-- `.num`: 112% width, 680 weight, tabular numerals. Every metric.
-- Body: normal width, 400–500.
+Chivo only (variable weight, upright and italic; `next/font` in the app, self-hosted woff2 on the landing page):
+- `.display`: 900 italic capitals, tight tracking. Page titles, player names, hero lines.
+- `.brandline`: the same voice for taglines and big button-like labels.
+- `.btn-label`: 800 italic capitals, tracked a touch. Primary buttons.
+- `.head`: 700 upright, sentence case. Section and card heads.
+- `.num` (800, tabular) and `.jumbo` (900 italic, tabular): every metric.
+- `.label`: 11px bold tracked capitals for dense readouts. Chivo, never a monospace.
+- Body: 400–500.
 
-## Utilities
-`.surface` (slate panel, hairline edge), `.boxed` (key panels: lime catches the top-left edge), `.turf` (mowing
-stripes + light, hero moments only), `.cut` / `.cut-sm` (the gap cut), `.jumbo` (jumbotron numerals), `.slant`
-(forward lean for headlines), `.brandline` (wide uppercase tagline type), `.crawl` (ticker), `.streak` / `.land`
-(the ball leaving the bat), `.grow-y`, `.hatch` ("not measured", never a fake zero), `.skel`, `.press`, `.draw` /
-`.grow`.
+## Signatures
+- **Carbon** (`.carbon`): twill weave with light from the top. Hero moments only (landing, player card, the score,
+  the desktop rail).
+- **Alloy edge** (`.boxed`): key panels get a brushed-metal hairline across the top.
+- **Outfield gauge** (`ArcScore`): the Gapper Score is the logo's outfield, four blocks lighting up lime to the
+  score, the ball at the leading edge, an alloy tick for the previous score.
+- **Gap rule** (`GapRule`, used by `SectionTitle`): four hairlines with three gaps, the ball in the first one.
+- **Pillar strip** (`PillarStrip`): RECORD — ANALYZE — IMPROVE over page titles, with the current step lit.
+- **Measured vs estimated** (`SourceLegend`, `SourceTag`, metric badges): solid dot = measured, ring = estimated from
+  body tracking, lime dot = slo-mo video (± range), alloy dot = your own sensor or radar, dashed = not measured.
+  Shown wherever numbers are.
 
 ## Components
-Logos: `GapMark`, `LockupH`, `Crest`, `Patch`, `Wordmark`, `Lockup` in `src/components/Logo.tsx`. Brand pieces in
-`src/components/brand.tsx`: `useCountUp` / `CountUp`, `Crawl`, `Streak`, `SwingFigure`, `FlightDiagram` (illustrations
-only, no numbers). Landing page: `src/components/Landing.tsx` (shown at `/` until a hitter is set up; no app chrome). UI kit in `src/components/ui.tsx`: `Button`
-(primary = lime, ghost, quiet, danger), `PageTitle`, `SectionTitle`, `Panel` (`boxed`), `Segmented`, `Toggle`,
-`Stat`, `Meter`, `InfoTip`, `Sheet`, `Chip`, `Skeleton`, `Empty`.
+Logos: `GapMark`, `LockupH`, `Crest` (the bag tag), `Patch`, `Wordmark`, `Lockup` in `src/components/Logo.tsx`. UI kit
+in `src/components/ui.tsx`: `Button` (primary = lime italic capitals, ghost, quiet, danger), `PageTitle` (with
+`pillar`), `PillarStrip`, `SectionTitle`, `GapRule`, `Panel` (`boxed`), `Segmented`, `Toggle`, `Stat`, `Meter`,
+`InfoTip`, `Sheet`, `Chip`, `SourceLegend`, `SourceTag`, `Skeleton`, `Empty` (the mark in graphite).
+Icons are drawn for Gapper in `AppShell.tsx` (plate, analyze frame, rising outfield blocks, batting helmet, composite
+bat, record dot). No stock icon sets, no emoji.
 
-## Live scoreboard
-Scoreboard mode (`src/components/live/Scoreboard.tsx`) is the after-swing readout for a phone on a tripod 10–15 ft
-away. One turf panel with the gap cut fills the space between the live top bar and the buttons. The gap timer is the
-headline in `.jumbo` sized off the viewport (about 31vw in portrait, 16vw in landscape), then a plain verdict line, a
-reference bar (the 0.14–0.38 s window in steel, a white tick at 0.20 s, this swing as the lime ball), then the score
-in `.jumbo` and the spoken cue. White on navy for contrast; lime only on the heading ball, the marker and an
-in-window verdict. Portrait stacks gap over score; landscape puts them side by side. The fine print (± one frame,
-source, confidence) stays small: it's for reading up close, not from the plate. No ball or bat speeds here.
+## Screens
+- **Navigation.** Phone: a carbon bar with Home, Analyze, the lime **Record** button, Improve, Profile. Desktop: a
+  carbon rail with the lockup, "Built for slowpitch", a lime Record button and the sections.
+- **Home.** Player card (name in black italic, bats/height/level, outfield gauge, front foot on time, repeatability,
+  recent form), Hit live / Upload a video, Power (slo-mo speeds with their labels), the one thing to work on with a
+  link to your drills, Field Print, recent swings, personal records. A new hitter gets a rookie card.
+- **Swing report** (`/swings/[id]`): Analyze step, the clip, the outfield gauge with the cue, speeds, load-to-contact
+  timing, score breakdown, the coach (one fix, drill, 10-swing challenge), every number with its source label, and
+  hit tagging (line drive, grounder…; pull, middle, oppo) that feeds tendencies.
+- **My Hitting Profile** (`/profile`, `src/components/HittingProfile.tsx`, data in `src/lib/profile.ts`): the player
+  card, the season line (swings, sessions, average, best, front foot on time, repeatability, line-drive rate, top exit
+  velo), score history by session, strengths and what to work on, tendencies (pull side, middle, opposite field),
+  personal drills from the faults that keep showing up, and **Share player report**: a 1080 x 1350 image drawn on a
+  canvas (`src/lib/report.ts`) with the Web Share sheet or a download. Settings sit below.
+- **Live scoreboard**: unchanged layout (see `src/components/live/Scoreboard.tsx`), now on carbon.
 
-## Signature visuals (real data only)
-Gapper Score dial (`ArcScore`), Field Print, swing timeline (`PhaseLine`), speed range bars, trend chart with
-session bands, spark bars, spray chart, bat profile drawn to length.
-
-## Navigation
-Phone: floating bar; the lime button in the middle carries the Gap Mark and opens New swing (Record or upload / Live
-cage session). Active tab = lime icon and dot. Desktop: navy rail with the horizontal lockup, a lime New swing button
-and the sections. Dashboard hero = player card (name in slanted jersey type, bats/height/level, score dial, recent
-form); a new hitter gets a "rookie card".
-
-## Icons and sharing
-`src/app/icon.svg`, `apple-icon.tsx`, `icon-192.png` / `icon-512.png` routes (maskable) and the link preview
-(`opengraph-image.tsx` / `twitter-image.tsx` via `src/brand/og.tsx`) are all drawn from the brand geometry.
-
-## The scroll site (`public/site/`)
-
-What a new visitor sees at getgapper.com. A static page on the scroll-craft engine (`scrollcraft.js`/`.css`, copied unedited) plus `site.js`, which draws Gapper's side and runs the signature move. Brief, feeling curve and asset recipe: `docs/site/BRIEF.md`.
-
-- Split stage: **What you see** (left, real footage graded toward navy, narrow upright Mona Sans) against **What Gapper sees** (right, navy, the tracked skeleton, wide italic Mona Sans). The chalk line between them is the only navigation: Gap Mark, both labels, the swing's phase ticks, one "Start swinging".
-- Signature: the heel catch. The scrubbed swing holds on the front heel strike, a lime ring hits the heel on both sides, and your scroll steps frame by frame to contact while the counter counts frames and the divider fills "the gap". The gap stays stamped on the line to the end, where the line runs to the edge and Gapper's side takes the screen.
-- Every number on it is Gapper's real output on the stock test clip and is labelled that way. Frames, not seconds, because the clip's slow-motion factor is unknown.
+## The landing page (`public/site/`)
+What a new visitor sees at getgapper.com: static `index.html`, `site.css`, `site.js`, Chivo in `fonts/`, the
+softball icon, and `assets/pose.json` (Gapper's tracked body points for a sample swing). Brief: `docs/site/BRIEF.md`.
+- Hero: **STOP GUESSING. START HITTING.** / **BUILT FOR SLOWPITCH.** / the supporting copy / **ANALYZE YOUR SWING**
+  and **SEE HOW IT WORKS**. Beside it, Gapper's tracked view of a real swing playing over the four-block outfield, the
+  pitch dropping in on a high arc and the ball leaving through the left-center gap (arc and flight labelled as
+  illustration). Under it, who it's for: USSSA, USA Softball, independent leagues, rec leagues, tournament teams.
+- "Slow pitch is its own swing": 6–12 ft arc, 0.2 s heel-to-contact, four outfielders and three gaps.
+- Record. Analyze. Improve.: setup, the real sample read (score 72 and its categories, 6 frames heel to contact), the
+  one fix and its drill, the Hitting Profile and the report.
+- "What Gapper measures, and how sure it is": a table with a measured / estimated / slo-mo label on every row.
+- Close: the bag tag and OWN THE GAPS.
+- No baseball footage or stock photography. The old site used a stock clip of a baseball player; only the tracked
+  skeleton from it remains.

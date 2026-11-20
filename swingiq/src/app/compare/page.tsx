@@ -172,14 +172,14 @@ function CompareInner() {
   if (!player)
     return (
       <>
-        <PageTitle title="Compare swings" />
+        <PageTitle title="Compare swings" pillar="analyze" />
         <Empty title="No hitter yet">Set one up on the Home screen first.</Empty>
       </>
     );
   if (all && all.length < 2)
     return (
       <>
-        <PageTitle title="Compare swings" />
+        <PageTitle title="Compare swings" pillar="analyze" />
         <Empty title="Record two swings to compare">
           <p>Comparison lines two of your swings up side by side, in sync and in slow motion.</p>
           <Link href="/record" className="mt-4 inline-block text-optic">Record a swing</Link>
@@ -195,7 +195,7 @@ function CompareInner() {
 
   return (
     <div className="animate-rise pb-10">
-      <PageTitle title="Compare swings" sub="Two swings, lined up and played together." />
+      <PageTitle title="Compare swings" pillar="analyze" sub="Two swings, lined up and played together." />
 
       <div className="grid grid-cols-2 gap-3">
         {(["a", "b"] as const).map((w) => {
@@ -244,7 +244,7 @@ function CompareInner() {
             if (!playing && rel >= range[1] - 1) setRel(range[0]);
             setPlaying((p) => !p);
           }}
-          className="press grid h-12 w-16 place-items-center rounded-xl bg-optic text-optic-ink shadow-[0_10px_28px_-14px_rgb(183_243_74/0.22)]"
+          className="press grid h-12 w-16 place-items-center rounded-xl bg-optic text-optic-ink shadow-[0_10px_28px_-14px_rgb(196_241_53/0.22)]"
           aria-label={playing ? "Pause" : "Play both"}
         >
           {playing ? (

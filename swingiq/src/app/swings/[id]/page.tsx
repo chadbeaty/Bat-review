@@ -10,7 +10,7 @@ import { SpeedCard } from "@/components/SpeedCard";
 import { PhaseLine } from "@/components/viz/PhaseLine";
 import { speedOf } from "@/lib/insights";
 import { usePlayers } from "@/components/PlayerProvider";
-import { Button, InfoTip, PageSkeleton, Panel, Segmented, SectionTitle, fmtDate, fmtTime } from "@/components/ui";
+import { Button, InfoTip, PageSkeleton, Panel, PillarStrip, Segmented, SectionTitle, SourceLegend, fmtDate, fmtTime } from "@/components/ui";
 import { METRICS } from "@/engine/catalog";
 import { coachingFor } from "@/engine/coaching";
 import { EXTERNAL_LIMITS, applyExternal, validExternal, type ExternalKey } from "@/engine/external";
@@ -20,7 +20,7 @@ import type { Bat, ClipRecord, SwingRecord } from "@/lib/store/types";
 
 const TYPES: { value: HitType; label: string }[] = [
   { value: "grounder", label: "Grounder" },
-  { value: "liner", label: "Liner" },
+  { value: "liner", label: "Line drive" },
   { value: "fly", label: "Fly ball" },
   { value: "popup", label: "Pop-up" },
   { value: "foul", label: "Foul" },
@@ -155,14 +155,15 @@ export default function SwingDetail() {
       </div>
       <div className="mt-2 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-[13px] text-chalk-3">Swing report</p>
-          <h1 className="display text-[2.2rem] leading-none">Swing {swing.n}</h1>
+          <PillarStrip active="analyze" className="mb-3" />
+          <p className="label">Swing report</p>
+          <h1 className="display mt-1 text-[2.4rem] md:text-[2.9rem]">Swing {swing.n}</h1>
         </div>
         <button
           type="button"
           onClick={togglePb}
           aria-pressed={!!swing.pb}
-          className={`press min-h-10 rounded-xl border px-3 text-sm ${swing.pb ? "border-optic bg-optic font-bold text-optic-ink" : "border-line-2 text-chalk-2 hover:text-chalk"}`}
+          className={`press min-h-10 rounded-lg border px-3 text-sm ${swing.pb ? "border-optic bg-optic font-bold text-optic-ink" : "border-line-2 text-chalk-2 hover:text-chalk"}`}
         >
           {swing.pb ? "★ Personal best" : "☆ Mark as personal best"}
         </button>
@@ -183,7 +184,7 @@ export default function SwingDetail() {
           )}
         </div>
         <div>
-          <Panel className="turf cut mt-6 p-4 md:mt-0">
+          <Panel boxed className="carbon mt-6 p-4 md:mt-0">
             <div className="flex items-center gap-4">
               <ArcScore score={a.score.overall} size={150} />
               <div className="min-w-0 flex-1">
@@ -203,9 +204,9 @@ export default function SwingDetail() {
           </div>
           <Panel className="mt-4 p-4">
             <div className="mb-1 flex items-center justify-between">
-              <h2 className="head text-[15px]">Swing timeline</h2>
-              <InfoTip label="the swing timeline">
-                Each move in time, with contact at the right. Slow-pitch hitters who time the arc well land the front foot about 0.14 to 0.38 seconds before contact (the shaded window).
+              <h2 className="head text-[15px]">Load-to-contact timing</h2>
+              <InfoTip label="load-to-contact timing">
+                Each move in time, from load to contact at the right. Slow-pitch hitters who time the arc well land the front foot about 0.14 to 0.38 seconds before contact (the shaded window).
               </InfoTip>
             </div>
             <PhaseLine phases={a.phases} />
@@ -222,7 +223,7 @@ export default function SwingDetail() {
           action={
             <Link
               href={`/live?challenge=${encodeURIComponent(coachingFor(a.cue, a.metrics, a.score.overall).issueId)}${a.score.overall !== null ? `&target=${Math.max(0, a.score.overall - 5)}` : ""}`}
-              className="cut cut-sm press inline-flex min-h-11 items-center rounded-xl bg-optic px-4 text-[15px] font-bold text-optic-ink"
+              className="btn-label press inline-flex min-h-11 items-center rounded-lg bg-optic px-4 text-[14px] text-optic-ink hover:bg-optic-2"
             >
               Take the challenge live
             </Link>
@@ -253,11 +254,12 @@ export default function SwingDetail() {
       )}
 
       <SectionTitle>Numbers</SectionTitle>
-      <p className="-mt-1 mb-2 text-[13px] text-chalk-3">Tap any row for what it means and exactly how it was measured.</p>
+      <p className="-mt-1 mb-2 text-[13px] text-chalk-3">Tap any row for what it means and exactly how it was measured. Every number says where it came from:</p>
+      <div className="mb-3"><SourceLegend kinds={["measured", "estimate", "slomo", "sensor", "none"]} /></div>
       <GroupedMetrics metrics={metrics} averages={averages} />
 
-      <SectionTitle>How did it go?</SectionTitle>
-      <p className="-mt-1 mb-3 text-[13px] text-chalk-3">Tag the result. It feeds your spray chart.</p>
+      <SectionTitle>Tag the hit</SectionTitle>
+      <p className="-mt-1 mb-3 text-[13px] text-chalk-3">Line drive, grounder, fly ball? Pull side, middle or opposite field? Your tags build your line-drive rate and hitting tendencies (a cage net stops the ball, so Gapper can&apos;t see where it lands).</p>
       <div className="space-y-3">
         <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="Result">
           {TYPES.map((t) => (

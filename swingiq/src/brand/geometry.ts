@@ -1,158 +1,170 @@
 /**
- * Gapper logo geometry: the one source for every logo, icon and lockup.
+ * Gapper logo geometry: the drawn letters of the GAPPER wordmark, and Chivo Black Italic set as shapes for taglines.
  *
- * Everything is drawn on a 100-unit cap height. Letters are built from circles and straight strokes so the wordmark
- * is ours, not a typeface. The G is the symbol: an outfield arc with its opening up and to the right (the gap) and the
- * ball sitting in it. Each letter is a list of filled shapes (separate paths, so overlaps never cancel out).
+ * The wordmark is ours, not a typeface: heavy squared letters with chamfered corners (like the cut edges of a carbon
+ * bat graphic), leaning forward at 10 degrees. The G is left open at the top right: that opening is the gap.
+ * Everything is drawn on a 100-unit cap height, caps from y = 0 to the baseline at y = 100, using straight lines
+ * only, so the lean is an exact shear and the files print cleanly at any size.
  */
+import { CHIVO_BLACK_ITALIC, CHIVO_SPACE } from "./type";
 
-export type Glyph = { w: number; paths: string[]; ball?: { cx: number; cy: number; r: number } };
+export type Pt = [number, number];
+export type Glyph = { w: number; paths: string[] };
 
 const f = (n: number) => Math.round(n * 100) / 100;
-const rad = (d: number) => (d * Math.PI) / 180;
 
-/** Annulus arc from a1 to a2 degrees, clockwise on screen (0 = 3 o'clock, 90 = 6 o'clock). */
-function ringArc(cx: number, cy: number, R: number, r: number, a1: number, a2: number): string {
-  const p = (rr: number, a: number) => `${f(cx + rr * Math.cos(rad(a)))} ${f(cy + rr * Math.sin(rad(a)))}`;
-  const large = a2 - a1 > 180 ? 1 : 0;
-  if (a2 - a1 >= 360) {
-    // Full ring: two half arcs each way.
-    return `M${p(R, 0)}A${R} ${R} 0 1 1 ${p(R, 180)}A${R} ${R} 0 1 1 ${p(R, 0)}ZM${p(r, 0)}A${r} ${r} 0 1 0 ${p(r, 180)}A${r} ${r} 0 1 0 ${p(r, 0)}Z`;
+/** Stroke weight and corner chamfer of the wordmark letters (units of the 100-unit cap height). */
+export const STROKE = 22;
+export const CHAMFER = 20;
+/** Forward lean of the wordmark: tan(10 degrees). */
+export const LEAN = 0.1763;
+
+/** Inner chamfer that keeps the stroke even around a cut corner. */
+const inner = (c = CHAMFER, t = STROKE) => Math.max(4, c - t * 0.4142);
+
+/** Signed area on screen (y down): positive = clockwise as you look at it. */
+function area(pts: Pt[]) {
+  let a = 0;
+  for (let i = 0; i < pts.length; i++) {
+    const [x1, y1] = pts[i];
+    const [x2, y2] = pts[(i + 1) % pts.length];
+    a += x1 * y2 - x2 * y1;
   }
-  return `M${p(R, a1)}A${R} ${R} 0 ${large} 1 ${p(R, a2)}L${p(r, a2)}A${r} ${r} 0 ${large} 0 ${p(r, a1)}Z`;
+  return a / 2;
 }
-const rect = (x: number, y: number, w: number, h: number) => `M${f(x)} ${f(y)}H${f(x + w)}V${f(y + h)}H${f(x)}Z`;
-const poly = (pts: [number, number][]) => `M${pts.map(([x, y]) => `${f(x)} ${f(y)}`).join("L")}Z`;
+/** Every outer contour winds clockwise and every counter (hole) counter-clockwise, so overlaps fill solid. */
+const orient = (pts: Pt[], hole = false): Pt[] => ((area(pts) > 0) !== hole ? pts : [...pts].reverse());
+const lean = ([x, y]: Pt): Pt => [x + (100 - y) * LEAN, y];
+const path = (pts: Pt[], hole = false) => `M${orient(pts, hole).map(lean).map(([x, y]) => `${f(x)} ${f(y)}`).join("L")}Z`;
 
-/** The gap: the G opens from GAP_FROM to 360 degrees (upper right), and the ball sits in the middle of it. */
-export const GAP_FROM = 299;
-
-/** G: the symbol. Arc + bar; the opening is the gap and `ball` sits in it. */
-export function G(T: number, withBall = true): Glyph {
-  const R = 52;
-  const r = R - T;
-  const cx = 52;
-  const cy = 50;
-  const paths = [ringArc(cx, cy, R, r, 0, GAP_FROM), rect(cx - 2, cy, R + 2, T)];
-  const mid = (R + r) / 2;
-  const a = (GAP_FROM + 360) / 2;
+/** G: a chamfered ring left open at the top right (the gap), with a crossbar coming in from the right. */
+export function G(): Glyph {
+  const W = 96;
+  const T = STROKE;
+  const c = CHAMFER;
+  const ci = inner();
+  const barTop = 40;
+  const barBot = barTop + T;
+  const topEnd = 64; // where the top bar stops: the gap runs from here to the right edge
   return {
-    w: 104,
-    paths,
-    ball: withBall ? { cx: f(cx + mid * Math.cos(rad(a))), cy: f(cy + mid * Math.sin(rad(a))), r: f(T * 0.55) } : undefined,
+    w: W,
+    paths: [
+      path([
+        [topEnd, 0], [c, 0], [0, c], [0, 100 - c], [c, 100], [W - c, 100], [W, 100 - c], [W, barTop], [W / 2 + 2, barTop],
+        [W / 2 + 2, barBot], [W - T, barBot], [W - T, Math.max(barBot, 100 - T - ci)], [W - T - ci, 100 - T], [T + ci, 100 - T],
+        [T, 100 - T - ci], [T, T + ci], [T + ci, T], [topEnd, T],
+      ]),
+    ],
   };
 }
 
-/** A with no crossbar and a flat apex: the open letter. */
-export function A(T: number, W = 92): Glyph {
-  const apex = T * 1.15;
-  const ax1 = (W - apex) / 2;
-  const ax2 = (W + apex) / 2;
-  const k = ax1 / 100; // horizontal run per unit of height
-  const tx = T / Math.cos(Math.atan(k));
-  const yi = 100 - (W / 2 - tx) / k;
-  return { w: W, paths: [poly([[0, 100], [ax1, 0], [ax2, 0], [W, 100], [W - tx, 100], [W / 2, yi], [tx, 100]])] };
-}
-
-/** P: stem and a half-round bowl. */
-export function P(T: number): Glyph {
-  const Ro = 32;
-  const cx = 30;
+/** A: chamfered shoulders, a full crossbar, a squared counter. */
+export function A(): Glyph {
+  const W = 92;
+  const T = STROKE;
+  const c = CHAMFER;
+  const ci = inner();
+  const barTop = 50;
   return {
-    w: cx + Ro,
-    paths: [rect(0, 0, T, 100), rect(T - 1, 0, cx - T + 1, T), rect(T - 1, 2 * Ro - T, cx - T + 1, T), ringArc(cx, Ro, Ro, Ro - T, 270, 450)],
+    w: W,
+    paths: [
+      path([[0, 100], [0, c], [c, 0], [W - c, 0], [W, c], [W, 100], [W - T, 100], [W - T, barTop + T], [T, barTop + T], [T, 100]]),
+      path([[T, barTop], [T, T + ci], [T + ci, T], [W - T - ci, T], [W - T, T + ci], [W - T, barTop]], true),
+    ],
   };
 }
 
-/** R: P with a diagonal leg kicked out from under the bowl. */
-export function R(T: number): Glyph {
-  const p = P(T);
-  const top = 2 * 32 - T;
-  const x0 = 24;
-  const run = 18;
-  const tx = T / Math.cos(Math.atan(run / (100 - top)));
-  return { w: x0 + run + tx, paths: [...p.paths, poly([[x0, top], [x0 + tx, top], [x0 + run + tx, 100], [x0 + run, 100]])] };
+/** P: a stem and a squared bowl with its two right corners cut. */
+export function P(): Glyph {
+  const W = 80;
+  const T = STROKE;
+  const c = CHAMFER;
+  const ci = inner();
+  const bowl = 68; // bottom of the bowl
+  return {
+    w: W,
+    paths: [
+      path([[0, 100], [0, 0], [W - c, 0], [W, c], [W, bowl - c], [W - c, bowl], [T, bowl], [T, 100]]),
+      path([[T, T], [W - T - ci, T], [W - T, T + ci], [W - T, bowl - T - ci], [W - T - ci, bowl - T], [T, bowl - T]], true),
+    ],
+  };
 }
 
-export function E(T: number): Glyph {
-  return { w: 56, paths: [rect(0, 0, T, 100), rect(T - 1, 0, 57 - T, T), rect(T - 1, 50 - T / 2, 51 - T, T), rect(T - 1, 100 - T, 57 - T, T)] };
+/** R: the P with a leg kicked out from under the bowl. */
+export function R(): Glyph {
+  const p = P();
+  const T = STROKE;
+  const W = 86;
+  const legW = T * 1.18;
+  const x0 = 34;
+  return { w: W, paths: [...p.paths, path([[x0, 60], [x0 + legW, 60], [W, 100], [W - legW, 100]])] };
 }
-export function O(T: number): Glyph {
-  return { w: 104, paths: [ringArc(52, 50, 52, 52 - T, 0, 360)] };
-}
-export function T_(T: number): Glyph {
-  return { w: 64, paths: [rect(0, 0, 64, T), rect(32 - T / 2, 0, T, 100)] };
-}
-export function H(T: number): Glyph {
-  return { w: 70, paths: [rect(0, 0, T, 100), rect(70 - T, 0, T, 100), rect(T - 1, 50 - T / 2, 72 - 2 * T, T)] };
-}
-export function N(T: number): Glyph {
-  const W = 72;
-  return { w: W, paths: [rect(0, 0, T, 100), rect(W - T, 0, T, 100), poly([[0, 0], [T * 1.25, 0], [W, 100], [W - T * 1.25, 100]])] };
-}
-export function W_(T: number): Glyph {
-  // Two V's (flat-bottomed, like the A turned over) overlapping into one W.
-  const v = (x: number, w: number): string => {
-    const foot = T * 1.15;
-    const bx1 = x + (w - foot) / 2;
-    const bx2 = x + (w + foot) / 2;
-    const k = (w - foot) / 2 / 100;
-    const tx = T / Math.cos(Math.atan(k));
-    const yi = (w / 2 - tx) / k;
-    return poly([[x, 0], [x + tx, 0], [x + w / 2, yi], [x + w - tx, 0], [x + w, 0], [bx2, 100], [bx1, 100]]);
+
+/** E: a stem and three arms; the outer left corners are cut. */
+export function E(): Glyph {
+  const W = 62;
+  const T = STROKE;
+  const c = CHAMFER;
+  const mid = 50 - T / 2;
+  return {
+    w: W,
+    paths: [
+      path([
+        [0, c], [c, 0], [W, 0], [W, T], [T, T], [T, mid], [W - 6, mid], [W - 6, mid + T], [T, mid + T], [T, 100 - T], [W, 100 - T],
+        [W, 100], [c, 100], [0, 100 - c],
+      ]),
+    ],
   };
-  const w = 70;
-  const off = w - T * 1.15 - 2;
-  return { w: off + w, paths: [v(0, w), v(off, w)] };
 }
-export function dot(T: number): Glyph {
-  return { w: T * 1.2, paths: [], ball: { cx: T * 0.6, cy: 100 - T * 0.6, r: T * 0.6 } };
-}
+
 export const space = (w: number): Glyph => ({ w, paths: [] });
 
-/** Lays glyphs out left to right with per-pair spacing; returns paths translated into place. */
-export function setLine(glyphs: Glyph[], gaps: number[]): { w: number; paths: string[]; balls: { cx: number; cy: number; r: number }[] } {
+/** Lays glyphs out left to right with per-pair spacing; returns the paths moved into place. */
+export function setLine(glyphs: Glyph[], gaps: number[]): { w: number; paths: string[] } {
   let x = 0;
   const paths: string[] = [];
-  const balls: { cx: number; cy: number; r: number }[] = [];
   glyphs.forEach((g, i) => {
     for (const p of g.paths) paths.push(translate(p, x, 0));
-    if (g.ball) balls.push({ cx: f(g.ball.cx + x), cy: g.ball.cy, r: g.ball.r });
     x += g.w + (i < gaps.length ? gaps[i] : 0);
   });
-  return { w: f(x), paths, balls };
+  return { w: f(x), paths };
 }
 
-/** Shifts every coordinate pair in a path made only of M/L/H/V/A/Z commands. */
-function translate(d: string, dx: number, dy: number): string {
+/** Shifts every point in a path of absolute M/L/H/V/Q/A/Z commands. */
+export function translate(d: string, dx: number, dy: number): string {
   if (!dx && !dy) return d;
-  return d.replace(/([MLHVAZ])([^MLHVAZ]*)/g, (_, cmd: string, args: string) => {
+  return d.replace(/([MLHVQAZ])([^MLHVQAZ]*)/g, (_, cmd: string, args: string) => {
     const n = args.trim() ? args.trim().split(/[\s,]+/).map(Number) : [];
     if (cmd === "H") return `H${f(n[0] + dx)}`;
     if (cmd === "V") return `V${f(n[0] + dy)}`;
     if (cmd === "A") return `A${n[0]} ${n[1]} ${n[2]} ${n[3]} ${n[4]} ${f(n[5] + dx)} ${f(n[6] + dy)}`;
     if (cmd === "Z") return "Z";
-    return `${cmd}${f(n[0] + dx)} ${f(n[1] + dy)}`;
+    const out: string[] = [];
+    for (let i = 0; i < n.length; i += 2) out.push(`${f(n[i] + dx)} ${f(n[i + 1] + dy)}`);
+    return `${cmd}${out.join(" ")}`;
   });
 }
 
-/** All shapes as one path: every shape winds clockwise, so overlaps fill solid with no anti-aliasing seams. */
-export const joined = (paths: string[]) => paths.join("");
-
-/** The main wordmark weight and the lighter tagline weight. */
-export const WORD_T = 19;
-export const TAG_T = 16;
-
+/** The GAPPER wordmark: drawn letters, optically spaced (the open G and the A's shoulders sit tighter). */
 export function wordmark() {
-  return setLine([G(WORD_T), A(WORD_T), P(WORD_T), P(WORD_T), E(WORD_T), R(WORD_T)], [4, 12, 16, 16, 15]);
+  return setLine([G(), A(), P(), P(), E(), R()], [7, 11, 13, 13, 12]);
 }
-export function tagline() {
-  const t = TAG_T;
-  return setLine(
-    [O(t), W_(t), N(t), space(64), T_(t), H(t), E(t), space(64), G(t, false), A(t), P(t), dot(t)],
-    [26, 24, 0, 0, 24, 26, 0, 0, 20, 26, 18],
-  );
+
+/** Chivo Black Italic glyphs for a line of capitals, as Glyphs on the 100-unit cap height. `track` adds space. */
+export function chivo(text: string, track = 0): Glyph[] {
+  return [...text.toUpperCase()].map((ch) => {
+    if (ch === " ") return space(CHIVO_SPACE + track);
+    const g = CHIVO_BLACK_ITALIC[ch];
+    if (!g) throw new Error(`No baked glyph for "${ch}": add it to scripts/bake-brand-type.py`);
+    return { w: g.w + track, paths: [g.d] };
+  });
 }
-export function mark() {
-  return G(WORD_T);
+
+/** A line of Chivo Black Italic capitals as one laid-out line. */
+export function chivoLine(text: string, track = 0) {
+  const gs = chivo(text, track);
+  return setLine(gs, gs.map(() => 0));
 }
+
+export const TAGLINE = "OWN THE GAPS";
+export const SECONDARY = "BUILT FOR SLOWPITCH";

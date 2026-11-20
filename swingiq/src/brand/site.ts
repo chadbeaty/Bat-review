@@ -8,26 +8,39 @@ export const SITE = {
   canonical: "https://getgapper.com",
   /**
    * Where the site is actually served right now, for link previews and canonical tags. Vercel sets
-   * VERCEL_PROJECT_PRODUCTION_URL to the production domain, so once getgapper.com is connected to the project this
-   * becomes https://getgapper.com with no code change. NEXT_PUBLIC_SITE_URL overrides it.
+   * VERCEL_PROJECT_PRODUCTION_URL to the production domain, so this follows getgapper.com with no code change.
+   * NEXT_PUBLIC_SITE_URL overrides it.
    */
   url:
     process.env.NEXT_PUBLIC_SITE_URL ??
     (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "https://getgapper.com"),
-  tagline: "OWN THE GAP.",
-  taglineTitle: "Own the gap.",
+  /** Primary tagline. Slow pitch plays four outfielders, so there are three gaps, not two. */
+  tagline: "OWN THE GAPS.",
+  taglineTitle: "Own the gaps.",
+  /** Secondary tagline: who it's for, in one line. */
+  secondary: "BUILT FOR SLOWPITCH.",
+  secondaryTitle: "Built for slowpitch.",
+  /** The three brand words: the whole product loop. */
+  pillars: ["Record", "Analyze", "Improve"] as const,
+  /** Homepage hero. */
+  hero: "STOP GUESSING. START HITTING.",
+  heroSub:
+    "The next generation of slow-pitch softball swing analytics. Understand your mechanics, measure your progress and build a more consistent swing.",
+  cta: "Analyze your swing",
+  ctaSecondary: "See how it works",
   /**
-   * Who it's for. Gapper is strictly slow-pitch softball: not a baseball app with a softball setting, not fastpitch.
-   * Never say baseball is coming, and never frame it as "baseball and softball".
+   * Who it's for. Gapper is strictly adult slow-pitch softball: not a baseball app with a softball setting, not
+   * fastpitch. Never say baseball is coming, and never frame it as "baseball and softball".
    */
   sport: "slow-pitch softball",
   /** Page titles and link previews: what it is, in a few words. */
-  what: "Slow-pitch swing analysis",
-  /** The selling point, said plainly. The lead is set in the lime wherever it's shown (see <Positioning>). */
-  positioning: "Built for slow pitch. Not baseball. Not fastpitch.",
-  positioningLead: "Built for slow pitch.",
+  what: "Slow-pitch swing analytics",
+  /** The selling point, said plainly. */
+  positioning: "Built for slowpitch. Not baseball. Not fastpitch.",
+  positioningLead: "Built for slowpitch.",
   positioningRest: "Not baseball. Not fastpitch.",
-  lines: ["Know your swing.", "Own your game.", "Every swing has a story.", "Turn data into distance."],
+  /** Who's swinging: the players the brand talks to. */
+  audience: ["USSSA", "USA Softball", "Independent leagues", "Rec league", "Tournament teams"],
   description:
-    "Gapper is the swing app built for slow-pitch softball, not a baseball app with a softball setting. It catches every swing, times your front foot to the arc, scores your mechanics legs and feet first, tells you the one thing to fix, and measures exit velo and bat speed from slo-mo video.",
+    "Gapper is swing analytics built for adult slow-pitch softball. Record a swing on your phone, see your load-to-contact timing, front-foot landing, bat path and rotation, get the one fix and the drill for it, and track your progress. Exit velo and bat speed come only from slo-mo video, always with a ± range.",
 } as const;

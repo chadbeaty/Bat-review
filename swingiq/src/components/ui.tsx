@@ -1,24 +1,24 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
+import { GapMark } from "./Logo";
 
 type BtnProps = React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "ghost" | "danger" | "quiet"; size?: "md" | "lg" };
 
 const variants = {
-  primary:
-    "cut cut-sm bg-optic text-optic-ink font-bold hover:bg-optic-2",
-  ghost: "border border-line-2 text-chalk hover:border-chalk-3 hover:bg-night-3",
+  primary: "btn-label bg-optic text-optic-ink hover:bg-optic-2 shadow-[0_10px_24px_-14px_rgb(196_241_53/0.55)]",
+  ghost: "border border-line-2 text-chalk hover:border-clay/60 hover:bg-night-3",
   danger: "border border-stitch/50 text-stitch hover:bg-stitch-wash",
   quiet: "text-chalk-2 hover:text-chalk hover:bg-night-3",
 };
 
-const sizes = { md: "min-h-11 px-4 text-[15px]", lg: "min-h-14 px-6 text-[17px]" };
+const sizes = { md: "min-h-11 px-4 text-[14px]", lg: "min-h-14 px-6 text-[16px]" };
 
 export function Button({ variant = "primary", size = "md", className = "", ...rest }: BtnProps) {
   return (
     <button
       {...rest}
-      className={`press inline-flex items-center justify-center gap-2 rounded-xl disabled:cursor-not-allowed disabled:opacity-40 ${sizes[size]} ${variants[variant]} ${className}`}
+      className={`press inline-flex items-center justify-center gap-2 rounded-lg disabled:cursor-not-allowed disabled:opacity-40 ${sizes[size]} ${variants[variant]} ${className}`}
     />
   );
 }
@@ -32,21 +32,49 @@ export function ButtonLink({
   ...rest
 }: { href: string; variant?: "primary" | "ghost" | "quiet"; size?: "md" | "lg"; className?: string; children: React.ReactNode } & Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, "href">) {
   return (
-    <Link href={href} {...rest} className={`press inline-flex items-center justify-center gap-2 rounded-xl ${sizes[size]} ${variants[variant]} ${className}`}>
+    <Link href={href} {...rest} className={`press inline-flex items-center justify-center gap-2 rounded-lg ${sizes[size]} ${variants[variant]} ${className}`}>
       {children}
     </Link>
   );
 }
 
-/** Page header: a big wide title, an optional line of context, an optional action. */
-export function PageTitle({ title, sub, right, context }: { title: string; sub?: React.ReactNode; right?: React.ReactNode; context?: React.ReactNode }) {
+export type Pillar = "record" | "analyze" | "improve";
+const PILLARS: { key: Pillar; label: string }[] = [
+  { key: "record", label: "Record" },
+  { key: "analyze", label: "Analyze" },
+  { key: "improve", label: "Improve" },
+];
+
+/**
+ * Record. Analyze. Improve. The brand's three words, shown over a page title with the step this page belongs to lit.
+ * The lime ball marks where you are in the loop.
+ */
+export function PillarStrip({ active, className = "" }: { active?: Pillar; className?: string }) {
+  return (
+    <ol className={`flex items-center gap-2 text-[12px] font-extrabold italic uppercase tracking-[0.06em] ${className}`} aria-label="Record, analyze, improve">
+      {PILLARS.map((p, i) => (
+        <li key={p.key} className="flex items-center gap-2" aria-current={active === p.key ? "step" : undefined}>
+          {i > 0 && <span className="h-px w-3 bg-line-2" aria-hidden="true" />}
+          <span className={`flex items-center gap-1.5 ${active === p.key ? "text-chalk" : "text-chalk-3/70"}`}>
+            {active === p.key && <span className="h-2 w-2 rounded-full bg-optic" aria-hidden="true" />}
+            {p.label}
+          </span>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+/** Page header: black italic capitals, an optional line of context, an optional action, and which step it is. */
+export function PageTitle({ title, sub, right, context, pillar }: { title: string; sub?: React.ReactNode; right?: React.ReactNode; context?: React.ReactNode; pillar?: Pillar }) {
   return (
     <header className="mb-7 pt-3">
+      {pillar && <PillarStrip active={pillar} className="mb-3" />}
       {context && <div className="mb-2 text-[13px] text-chalk-3">{context}</div>}
       <div className="flex items-end justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="display slant text-[2.15rem] leading-[1.02] text-chalk md:text-[2.6rem]">{title}</h1>
-          {sub && <p className="mt-2 max-w-prose text-[15px] leading-relaxed text-chalk-2">{sub}</p>}
+          <h1 className="display text-[2.1rem] text-chalk md:text-[2.75rem]">{title}</h1>
+          {sub && <p className="mt-2.5 max-w-prose text-[15px] leading-relaxed text-chalk-2">{sub}</p>}
         </div>
         {right && <div className="shrink-0">{right}</div>}
       </div>
@@ -54,19 +82,32 @@ export function PageTitle({ title, sub, right, context }: { title: string; sub?:
   );
 }
 
-/** Section divider: title, a chalk line running out to the edge, optional action at the end. */
+/**
+ * Section divider: the title, then the gap rule (four bars, three gaps, like the outfield in the logo) running out to
+ * the edge, and an optional action at the end.
+ */
 export function SectionTitle({ children, right, id }: { children: React.ReactNode; right?: React.ReactNode; id?: string }) {
   return (
     <div className="mb-3 mt-10 flex items-center gap-3">
       <h2 id={id} className="head shrink-0 text-[17px] text-chalk">
         {children}
       </h2>
-      <span className="flex flex-1 items-center" aria-hidden="true">
-        <span className="h-px flex-1 bg-line-2/70" />
-        <span className="ml-1 h-1.5 w-1.5 rounded-full bg-optic/70" />
-      </span>
+      <GapRule className="flex-1" />
       {right && <div className="shrink-0">{right}</div>}
     </div>
+  );
+}
+
+/** Four hairline bars with three gaps; the first gap holds the ball. A divider that says "outfield" quietly. */
+export function GapRule({ className = "", ball = true }: { className?: string; ball?: boolean }) {
+  return (
+    <span className={`flex items-center gap-[5px] ${className}`} aria-hidden="true">
+      <span className="h-px flex-[0.6] bg-line-2" />
+      {ball ? <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-optic/80" /> : null}
+      <span className="h-px flex-1 bg-line-2/80" />
+      <span className="h-px flex-1 bg-line-2/60" />
+      <span className="h-px flex-[1.4] bg-gradient-to-r from-line-2/40 to-transparent" />
+    </span>
   );
 }
 
@@ -118,17 +159,11 @@ export function Panel({ children, className = "", boxed = false, as: Tag = "div"
   );
 }
 
-/** Empty state: a little chalk drawing of the field, what goes here, and how to fill it. */
+/** Empty state: the Gap Mark in graphite with the lime ball, what goes here, and how to fill it. */
 export function Empty({ title, children }: { title: string; children?: React.ReactNode }) {
   return (
     <div className="boxed relative overflow-hidden rounded-2xl border border-line bg-night-2/60 px-5 pb-8 pt-6 text-center">
-      <svg viewBox="0 0 200 70" className="mx-auto mb-4 h-14 w-auto" aria-hidden="true">
-        <path d="M100 66 L40 18 M100 66 L160 18" stroke="var(--color-line-2)" strokeWidth="1.2" />
-        <path d="M40 18 Q100 -14 160 18" fill="none" stroke="var(--color-line-2)" strokeWidth="1.2" strokeDasharray="2 4" />
-        <path d="M100 66 L118 50 L100 34 L82 50 Z" fill="none" stroke="var(--color-chalk-3)" strokeWidth="1.2" />
-        <path d="M20 56 Q60 -6 98 56" fill="none" stroke="var(--color-optic)" strokeWidth="1.4" strokeDasharray="1 5" strokeLinecap="round" />
-        <circle cx="98" cy="56" r="3.2" fill="var(--color-optic)" />
-      </svg>
+      <GapMark size={92} ink="var(--color-night-4)" accent="var(--color-optic)" className="mx-auto mb-4" />
       <p className="head text-[18px] text-chalk">{title}</p>
       {children && <div className="mx-auto mt-2 max-w-sm text-[15px] leading-relaxed text-chalk-2">{children}</div>}
     </div>
@@ -154,13 +189,27 @@ export function PageSkeleton() {
 
 export type SourceKind = "measured" | "estimate" | "slomo" | "sensor" | "none";
 
-const SOURCE_DOT: Record<SourceKind, { cls: string; label: string }> = {
-  measured: { cls: "bg-chalk", label: "Measured" },
-  estimate: { cls: "border border-chalk-2", label: "Camera estimate" },
-  slomo: { cls: "bg-optic", label: "From slo-mo video" },
-  sensor: { cls: "bg-clay", label: "From your sensor or radar" },
-  none: { cls: "border border-line-2", label: "Not measured" },
+/**
+ * Where a number came from, always shown with it. Solid = measured directly; hollow ring = estimated from body
+ * tracking. Lime = measured from slo-mo video (with a ± range); alloy = typed in from the player's own radar or sensor.
+ */
+export const SOURCE_DOT: Record<SourceKind, { cls: string; label: string; short: string }> = {
+  measured: { cls: "bg-chalk", label: "Measured", short: "Measured" },
+  estimate: { cls: "border border-chalk-2", label: "Estimated from body tracking", short: "Estimated" },
+  slomo: { cls: "bg-optic", label: "Measured from slo-mo video", short: "Slo-mo" },
+  sensor: { cls: "bg-clay", label: "From your sensor or radar", short: "Sensor" },
+  none: { cls: "border border-dashed border-line-2", label: "Not measured", short: "Not measured" },
 };
+
+/** A small labelled chip saying where a number came from. */
+export function SourceTag({ kind, className = "" }: { kind: SourceKind; className?: string }) {
+  return (
+    <span className={`inline-flex items-center gap-1.5 rounded-md border border-line px-1.5 py-0.5 text-[11px] font-semibold text-chalk-3 ${className}`} title={SOURCE_DOT[kind].label}>
+      <span className={`inline-block h-1.5 w-1.5 shrink-0 rounded-full ${SOURCE_DOT[kind].cls}`} aria-hidden="true" />
+      {SOURCE_DOT[kind].short}
+    </span>
+  );
+}
 
 /** A headline number with its unit, ± range and where it came from. */
 export function Stat({

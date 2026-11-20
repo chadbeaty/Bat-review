@@ -1,9 +1,9 @@
-import { crest, gapMark, lockupH, patch, type Art } from "@/brand/emblem";
+import { MARK_BOX, crest, gapMark, lockupH, patch, type Art } from "@/brand/emblem";
 import { wordmarkArt, wordmarkTaglineArt } from "@/brand/svg";
 
 /*
   Gapper logos for the app, drawn from the same geometry as the files in public/brand/ (src/brand/emblem.ts).
-  Colors are CSS values per role: ink (field, letters), accent (the ball and its streak), ground (badge background).
+  Colors are CSS values per role: ink (outfield, letters), accent (the ball and its streak), ground (badge background).
 */
 
 const ART = {
@@ -32,10 +32,12 @@ function ArtSvg({ art, width, height, ink = "var(--color-chalk)", accent = "var(
   );
 }
 
-/** The Gap Mark: a ballfield from above, the outfield split by the gap, the ball streaking out past the wall. */
+const [MX, MY, MW, MH] = MARK_BOX;
+
+/** The Gap Mark: four outfield blocks, three gaps, and the ball breaking out through the left-center gap. */
 export function GapMark({ size = 32, ...p }: Props & { size?: number }) {
-  // Cropped to the drawing (the 200-unit box has air above the ball), so it centers where it's placed.
-  return <ArtSvg art={ART.mark} width={size} box={[-2, 23, 204, 169]} {...p} />;
+  // Cropped to the drawing, so it centers where it's placed. `size` is the width.
+  return <ArtSvg art={ART.mark} width={size} box={[MX - 2, MY - 2, MW + 4, MH + 4]} {...p} />;
 }
 
 /** Mark + GAPPER side by side: headers and the desktop rail. `height` is the overall height in px. */
@@ -43,14 +45,14 @@ export function LockupH({ height = 28, ...p }: Props & { height?: number }) {
   return <ArtSvg art={ART.lockup} height={height} title="Gapper" {...p} />;
 }
 
-/** The home-plate crest: the printable badge. */
+/** The bag tag: the printable badge. */
 export function Crest({ width = 160, ...p }: Props & { width?: number }) {
-  return <ArtSvg art={ART.crest} width={width} title="Gapper. Own the gap." {...p} />;
+  return <ArtSvg art={ART.crest} width={width} title="Gapper. Own the gaps. Built for slowpitch." {...p} />;
 }
 
 /** The round patch. */
 export function Patch({ width = 160, ...p }: Props & { width?: number }) {
-  return <ArtSvg art={ART.patch} width={width} title="Gapper. Own the gap." {...p} />;
+  return <ArtSvg art={ART.patch} width={width} title="Gapper. Built for slowpitch." {...p} />;
 }
 
 /** The GAPPER wordmark on its own. `height` is the cap height in px. */
@@ -58,9 +60,9 @@ export function Wordmark({ height = 20, ...p }: Props & { height?: number }) {
   return <ArtSvg art={ART.wordmark} height={height * 1.04} title="Gapper" {...p} />;
 }
 
-/** Wordmark over OWN THE GAP. */
+/** Wordmark over OWN THE GAPS. */
 export function Lockup({ width = 200, ...p }: Props & { width?: number }) {
-  return <ArtSvg art={ART.wordmarkTagline} width={width} title="Gapper. Own the gap." ink={p.ink} {...p} />;
+  return <ArtSvg art={ART.wordmarkTagline} width={width} title="Gapper. Own the gaps." {...p} />;
 }
 
 /** Back-compat name: the symbol. */

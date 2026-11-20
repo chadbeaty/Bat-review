@@ -71,7 +71,7 @@ export default function BatsPage() {
   if (!player)
     return (
       <>
-        <PageTitle title="Bat DNA" />
+        <PageTitle title="Bat DNA" pillar="improve" />
         <Empty title="No hitter yet">Set one up on the Home screen first.</Empty>
       </>
     );
@@ -83,6 +83,7 @@ export default function BatsPage() {
     <div className="animate-rise pb-10">
       <PageTitle
         title="Bat DNA"
+        pillar="improve"
         sub="How you actually swing each bat, from your recorded swings."
         right={<Button variant="ghost" onClick={() => setAdding((a) => !a)}>{adding ? "Cancel" : "Add bat"}</Button>}
       />
@@ -209,9 +210,9 @@ function BatProfile({ bat }: { bat: Bat }) {
     <svg viewBox={`0 0 ${w} 52`} className="mt-3 w-full" aria-hidden="true">
       <defs>
         <linearGradient id={`bat-${bat.id}`} x1="0" x2="0" y1="0" y2="1">
-          <stop offset="0" stopColor="#4a5b74" />
-          <stop offset="0.35" stopColor="#2e3d55" />
-          <stop offset="1" stopColor="#18233a" />
+          <stop offset="0" stopColor="#5a6168" />
+          <stop offset="0.35" stopColor="#2c3035" />
+          <stop offset="1" stopColor="#16181b" />
         </linearGradient>
       </defs>
       <path d={path} fill={`url(#bat-${bat.id})`} stroke="var(--color-line-2)" strokeWidth="1" />

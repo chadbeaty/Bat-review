@@ -20,7 +20,7 @@ export function Scoreboard({ n, score, gap, cue, onClose }: { n: number; score: 
       role="region"
       aria-label="Scoreboard"
       onClick={onClose}
-      className="turf cut animate-slide-up mx-3 flex min-h-0 flex-1 cursor-pointer flex-col justify-center gap-[2.2vh] overflow-hidden rounded-2xl border border-white/10 px-[5vw] py-[2.5vh] landscape:grid landscape:grid-cols-[1.25fr_1fr] landscape:items-center landscape:gap-x-[4vw] landscape:gap-y-0 landscape:px-[4vw] landscape:py-[3vh]"
+      className="carbon animate-slide-up mx-3 flex min-h-0 flex-1 cursor-pointer flex-col justify-center gap-[2.2vh] overflow-hidden rounded-2xl border border-white/10 px-[5vw] py-[2.5vh] landscape:grid landscape:grid-cols-[1.25fr_1fr] landscape:items-center landscape:gap-x-[4vw] landscape:gap-y-0 landscape:px-[4vw] landscape:py-[3vh]"
     >
       <p className="sr-only" aria-live="polite">{label}</p>
 

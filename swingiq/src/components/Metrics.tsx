@@ -32,12 +32,16 @@ function SourceBadge({ mv }: { mv: MetricValue }) {
     mv.source === "unavailable"
       ? "border-line text-chalk-3"
       : mv.source === "sensor"
-        ? "border-optic/50 text-optic"
+        ? "border-clay/50 text-clay"
         : mv.source === "measured"
           ? "border-chalk-3 text-chalk"
           : "border-line text-chalk-2";
+  // Solid dot = measured directly; ring = estimated from body tracking; alloy = your own sensor; dashed = not measured.
+  const dot =
+    mv.source === "measured" ? "bg-chalk" : mv.source === "sensor" ? "bg-clay" : mv.source === "cv_estimated" ? "border border-chalk-2" : "border border-dashed border-line-2";
   return (
-    <span className={`rounded-md border px-1.5 py-0.5 text-[11px] ${tone}`}>
+    <span className={`inline-flex items-center gap-1.5 rounded-md border px-1.5 py-0.5 text-[11px] ${tone}`}>
+      <span className={`inline-block h-1.5 w-1.5 shrink-0 rounded-full ${dot}`} aria-hidden="true" />
       {SOURCE_LABEL[mv.source]}
       {mv.source === "cv_estimated" && ` · ${confidenceLabel(mv.confidence)} confidence`}
     </span>

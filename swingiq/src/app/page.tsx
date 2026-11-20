@@ -2,12 +2,11 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArcScore } from "@/components/ArcScore";
-import { SportTag } from "@/components/brand";
 import { GapMark, LockupH } from "@/components/Logo";
 import { usePlayers } from "@/components/PlayerProvider";
 import { Setup } from "@/components/Setup";
 import { Softball } from "@/components/Softball";
-import { Chip, InfoTip, Meter, PageSkeleton, Panel, SectionTitle, Skeleton, Stat, fmtDate } from "@/components/ui";
+import { Chip, InfoTip, Meter, PageSkeleton, Panel, PillarStrip, SectionTitle, Skeleton, Stat, fmtDate } from "@/components/ui";
 import { FieldPrint } from "@/components/viz/FieldPrint";
 import { db } from "@/lib/store/db";
 import { FOOT_DOWN_WINDOW, categoryAverages, consistency, metricValues, recentVsBefore, speedOf } from "@/lib/insights";
@@ -30,25 +29,25 @@ function CageDiagram() {
   );
 }
 
-/** The two ways to hit, named by what you do, each with the one line that tells them apart. */
+/** The two ways to record, named by what you do, each with the one line that tells them apart. */
 function SwingActions() {
   return (
     <div className="mt-3 grid gap-3 sm:grid-cols-2">
-      <Link href="/live" className="cut cut-sm press flex min-h-[4.5rem] items-center gap-3 rounded-xl bg-optic px-4 py-3 text-optic-ink hover:bg-optic-2">
-        <Softball size={24} />
+      <Link href="/live" className="press group relative flex min-h-[5rem] items-center gap-3.5 overflow-hidden rounded-xl bg-optic px-4 py-3 text-optic-ink shadow-[0_16px_30px_-18px_rgb(196_241_53/0.6)] hover:bg-optic-2">
+        <Softball size={30} />
         <span className="min-w-0">
-          <span className="block font-bold leading-tight">Hit live</span>
+          <span className="brandline block text-[19px] leading-tight">Hit live</span>
           <span className="block text-[13px] font-semibold leading-snug opacity-75">Prop up your phone. Feedback after every swing.</span>
         </span>
       </Link>
-      <Link href="/record" className="press flex min-h-[4.5rem] items-center gap-3 rounded-xl border border-line-2 bg-night-2 px-4 py-3 hover:border-chalk-3">
-        <svg width="24" height="24" viewBox="0 0 30 30" aria-hidden="true" className="shrink-0 text-chalk">
-          <path d="M15 20V5M9 11l6-6 6 6" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M4 19v5a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-5" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" />
+      <Link href="/record" className="press flex min-h-[5rem] items-center gap-3.5 rounded-xl border border-line-2 bg-night-2 px-4 py-3 hover:border-clay/60">
+        <svg width="28" height="28" viewBox="0 0 30 30" aria-hidden="true" className="shrink-0 text-chalk">
+          <path d="M15 20V5M9 11l6-6 6 6" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="square" />
+          <path d="M4 19v7h22v-7" fill="none" stroke="currentColor" strokeWidth="2.6" />
         </svg>
         <span className="min-w-0">
-          <span className="block font-bold leading-tight text-chalk">Upload a video</span>
-          <span className="block text-[13px] leading-snug text-chalk-3">Or film one now. Slo-mo clips get exit velo and bat speed.</span>
+          <span className="brandline block text-[19px] leading-tight text-chalk">Upload a video</span>
+          <span className="block text-[13px] leading-snug text-chalk-3">Or film one now. Slo-mo clips measure exit velo and bat speed.</span>
         </span>
       </Link>
     </div>
@@ -66,12 +65,12 @@ function RecentForm({ swings }: { swings: SwingRecord[] }) {
   return (
     <div className="relative mt-5 border-t border-white/[0.07] pt-4">
       <div className="mb-2 flex items-baseline justify-between text-[12px] text-chalk-3">
-        <span>Recent form</span>
+        <span className="label">Recent form</span>
         <span>last {xs.length} swings</span>
       </div>
       <div className="flex h-12 items-end gap-1.5" role="img" aria-label={`Recent scores, oldest to newest: ${xs.join(", ")}`}>
         {xs.map((v, i) => (
-          <div key={i} className="grow-y max-w-7 flex-1 rounded-t-sm" style={{ height: `${Math.max(8, v)}%`, background: i === xs.length - 1 ? "var(--color-optic)" : "rgb(255 255 255 / 0.22)", animationDelay: `${i * 40}ms` }} />
+          <div key={i} className="grow-y max-w-7 flex-1 rounded-t-sm" style={{ height: `${Math.max(8, v)}%`, background: i === xs.length - 1 ? "var(--color-optic)" : "rgb(214 220 226 / 0.28)", animationDelay: `${i * 40}ms` }} />
         ))}
       </div>
     </div>
@@ -144,7 +143,7 @@ export default function Home() {
           <span className="md:hidden">
             <LockupH height={26} />
           </span>
-          <SportTag className="hidden min-[380px]:inline-flex md:hidden" />
+          <span className="hidden md:block"><PillarStrip /></span>
         </span>
         <Link href="/profile" className="press rounded-lg border border-line-2 px-3 py-1.5 text-[13px] text-chalk-2 hover:text-chalk">
           {player.name} · {player.hand === "R" ? "Righty" : "Lefty"}
@@ -160,17 +159,18 @@ export default function Home() {
       ) : all.length > 0 ? (
         <div className="lg:grid lg:grid-cols-[1.1fr_1fr] lg:items-start lg:gap-x-6">
           <div>
-          <section aria-label="Your Gapper Score" className="turf cut relative mt-5 overflow-hidden rounded-2xl border border-white/[0.08] p-5 shadow-[0_30px_60px_-36px_rgb(3_6_12/0.9)]">
-            <GapMark size={320} ink="#ffffff" accent="#ffffff" className="pointer-events-none absolute -right-20 -top-4 opacity-[0.045]" />
+          <section aria-label="Your Gapper Score" className="carbon boxed relative mt-5 overflow-hidden rounded-2xl p-5 shadow-[0_30px_60px_-36px_rgb(0_0_0/0.9)]">
+            <GapMark size={340} ink="#ffffff" accent="#ffffff" className="pointer-events-none absolute -right-24 -top-6 opacity-[0.035]" />
             <div className="relative flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <h2 className="brandline slant max-w-full truncate pr-2 text-[2.35rem] leading-[0.92]">{player.name}</h2>
-                <p className="mt-1.5 text-[13px] text-chalk-2">
+                <p className="label">Player card</p>
+                <h2 className="display mt-1.5 max-w-full truncate pr-2 text-[2.5rem]">{player.name}</h2>
+                <p className="mt-2 text-[13px] text-chalk-2">
                   Bats {player.hand === "R" ? "right" : "left"} · {Math.floor(player.heightIn / 12)}′{player.heightIn % 12}″{player.level ? ` · ${LEVEL_LABEL[player.level]}` : ""}
                 </p>
               </div>
-              <Link href="/progress" className="shrink-0 pt-1 text-[13px] text-chalk-2 hover:text-chalk">
-                Progress
+              <Link href="/profile" className="shrink-0 rounded-md border border-line-2 px-2.5 py-1 text-[12px] font-semibold text-chalk-2 hover:text-chalk">
+                Hitting Profile
               </Link>
             </div>
             <div className="relative mt-4 grid grid-cols-[auto_1fr] items-center gap-5">
@@ -182,10 +182,10 @@ export default function Home() {
                   <Stat label="Swings logged" value={all.length} size="sm" note={`${sessions.length} ${sessions.length === 1 ? "session" : "sessions"}`} />
                 )}
                 <div>
-                  <Stat label="Foot down on time" value={onTime === null ? "—" : `${onTime}%`} size="sm" />
-                  {onTime !== null && <div className="mt-1.5"><Meter value={onTime} label="Foot down on time" /></div>}
+                  <Stat label="Front foot on time" value={onTime === null ? "—" : `${onTime}%`} size="sm" source={onTime === null ? undefined : "estimate"} />
+                  {onTime !== null && <div className="mt-1.5"><Meter value={onTime} label="Front foot on time" /></div>}
                 </div>
-                <Stat label="Consistency" value={steady ?? "—"} size="sm" note={steady === null ? "After 3 swings" : undefined} />
+                <Stat label="Repeatability" value={steady ?? "—"} size="sm" note={steady === null ? "After 3 swings" : undefined} />
               </div>
             </div>
             <RecentForm swings={all} />
@@ -196,7 +196,7 @@ export default function Home() {
 
           {(topEv || topBat) && (
             <>
-              <SectionTitle right={<InfoTip label="these speeds">Measured from slo-mo video by tracking the ball (or typed in from your radar or sensor). Bat speed is worked out from exit velo and pitch speed, assuming a sweet-spot hit.</InfoTip>}>Speed lab</SectionTitle>
+              <SectionTitle right={<InfoTip label="these speeds">Measured from slo-mo video by tracking the ball (or typed in from your radar or sensor). Bat speed is worked out from exit velo and pitch speed, assuming a sweet-spot hit.</InfoTip>}>Power</SectionTitle>
               <Panel className="grid grid-cols-3 divide-x divide-line">
                 {topEv ? (
                   <Link href={`/swings/${topEv.id}`} className="press p-4 hover:bg-night-3">
@@ -210,7 +210,7 @@ export default function Home() {
                 </div>
                 {topBat ? (
                   <Link href={`/swings/${topBat.id}`} className="press p-4 hover:bg-night-3">
-                    <Stat align label="Top bat speed" value={Math.round(topBat.v)} unit="mph" source={topBat.source} size="md" note="estimate" />
+                    <Stat align label="Top bat speed" value={Math.round(topBat.v)} unit="mph" source={topBat.source === "sensor" ? "sensor" : "estimate"} size="md" note="estimate, sweet-spot hit" />
                   </Link>
                 ) : (
                   <div className="p-4"><Stat align label="Bat speed" value="—" tone="muted" /></div>
@@ -223,10 +223,11 @@ export default function Home() {
             <>
               <SectionTitle right={<Link href={`/swings?session=${last.id}`} className="text-[13px] text-chalk-2 hover:text-chalk">Review</Link>}>Work on this next</SectionTitle>
               <Panel className="relative overflow-hidden p-4 pl-5">
-                <span className="absolute inset-y-0 left-0 w-1 bg-stitch" aria-hidden="true" />
-                <p className="text-[15px] leading-snug text-chalk">{focus.text}</p>
-                <p className="mt-2 text-[12px] text-chalk-3">
-                  Came up on {focus.n} of {lastSwings.length} swings · {fmtDate(last.startedAt)}
+                <span className="absolute inset-y-3 left-0 w-[3px] rounded-r bg-stitch" aria-hidden="true" />
+                <p className="text-[15px] font-semibold leading-snug text-chalk">{focus.text}</p>
+                <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-chalk-3">
+                  <span>Came up on {focus.n} of {lastSwings.length} swings · {fmtDate(last.startedAt)}</span>
+                  <Link href="/profile#drills" className="font-semibold text-optic">Your drills →</Link>
                 </p>
               </Panel>
             </>
@@ -235,7 +236,7 @@ export default function Home() {
           <div className="lg:-mt-5">
           <SectionTitle right={<Link href="/progress" className="text-[13px] text-chalk-2 hover:text-chalk">Details</Link>}>Field Print</SectionTitle>
           <Panel className="p-4">
-            <FieldPrint now={categoryAverages(recent)} before={before.length ? categoryAverages(before) : null} caption={before.length ? "Last 20 swings. Silver lines: the 20 before. Tap a wedge." : "Your six skill areas over your recent swings. Tap a wedge."} />
+            <FieldPrint now={categoryAverages(recent)} before={before.length ? categoryAverages(before) : null} caption={before.length ? "Last 20 swings. Alloy lines: the 20 before. Tap a wedge." : "Your six skill areas over your recent swings. Tap a wedge."} />
           </Panel>
 
           <SectionTitle right={<Link href="/swings" className="text-[13px] text-chalk-2 hover:text-chalk">All swings</Link>}>Recent swings</SectionTitle>
@@ -288,15 +289,16 @@ export default function Home() {
         </div>
       ) : (
         <>
-          <section aria-label="Welcome" className="turf cut relative mt-5 overflow-hidden rounded-2xl border border-white/[0.08] p-5">
-            <GapMark size={300} ink="#ffffff" accent="#ffffff" className="pointer-events-none absolute -right-20 -top-6 opacity-[0.045]" />
-            <p className="relative text-[13px] text-chalk-3">Rookie card</p>
-            <h2 className="brandline slant relative mt-1 max-w-full truncate pr-2 text-[2.35rem] leading-[0.92]">{player.name}</h2>
+          <section aria-label="Welcome" className="carbon boxed relative mt-5 overflow-hidden rounded-2xl p-5">
+            <GapMark size={320} ink="#ffffff" accent="#ffffff" className="pointer-events-none absolute -right-20 -top-6 opacity-[0.035]" />
+            <p className="label relative">Rookie card</p>
+            <h2 className="display relative mt-1.5 max-w-full truncate pr-2 text-[2.5rem]">{player.name}</h2>
             <p className="relative mt-1.5 text-[13px] text-chalk-2">
               Bats {player.hand === "R" ? "right" : "left"} · {Math.floor(player.heightIn / 12)}′{player.heightIn % 12}″ · your Gapper Score shows up after your first swing
             </p>
           </section>
           <Panel boxed className="mt-4 p-5">
+            <PillarStrip active="record" className="mb-3" />
             <h2 className="head text-[19px]">Your first swing</h2>
             <p className="mt-1 text-[14px] text-chalk-2">Set the phone up like this, whole body in the picture, shoes included.</p>
             <div className="mt-4">

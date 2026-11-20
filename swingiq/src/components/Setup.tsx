@@ -2,15 +2,16 @@
 import Link from "next/link";
 import type { Player } from "@/lib/store/types";
 import { Positioning, SportTag } from "./brand";
+import { PillarStrip } from "./ui";
 import { LockupH } from "./Logo";
 import { PlayerForm } from "./PlayerForm";
 
-/** First-run setup: the only screen between the scroll site and the app. No app chrome; it owns the viewport. */
+/** First-run setup: the only screen between the landing page and the app. No app chrome; it owns the viewport. */
 export function Setup({ onSave, storageOk }: { onSave: (p: Player) => Promise<void> | void; storageOk: boolean }) {
   return (
-    <div className="turf min-h-dvh overflow-x-clip">
+    <div className="carbon min-h-dvh overflow-x-clip">
       <div className="mx-auto flex w-full max-w-[64rem] items-center justify-between px-5 pt-[max(1rem,env(safe-area-inset-top))] md:px-10">
-        {/* A full page load on purpose: "/" is the scroll site for visitors without a hitter (a rewrite), not a client route. */}
+        {/* A full page load on purpose: "/" is the landing page for visitors without a hitter (a rewrite), not a client route. */}
         {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a href="/" aria-label="Gapper home" className="flex items-center gap-3">
           <LockupH height={28} />
@@ -20,7 +21,8 @@ export function Setup({ onSave, storageOk }: { onSave: (p: Player) => Promise<vo
       </div>
       <div className="mx-auto grid w-full max-w-[64rem] gap-10 px-5 py-12 md:grid-cols-[1fr_1.1fr] md:items-start md:px-10 md:py-20">
         <div>
-          <h1 className="display slant text-[2.6rem] leading-[0.95] md:text-[3.6rem]">
+          <PillarStrip active="record" className="mb-4" />
+          <h1 className="display text-[3rem] md:text-[4.4rem]">
             Step in<span className="text-optic">.</span>
           </h1>
           <p className="mt-4 max-w-sm text-[16px] leading-relaxed text-chalk-2">
@@ -30,13 +32,13 @@ export function Setup({ onSave, storageOk }: { onSave: (p: Player) => Promise<vo
             <Positioning />
           </p>
           <p className="mt-2 max-w-sm text-[13px] leading-relaxed text-chalk-3">
-            Timed to the arc, coached for the slow-pitch swing: land the front foot about 0.2 s before contact, stay back, let it travel. Camera estimates show how sure they are.{" "}
+            Timed to the arc, coached for the slow-pitch swing: land the front heel about 0.2 s before contact, stay back, let it travel. Every number says whether it was measured or estimated.{" "}
             <Link href="/how-it-works" className="text-chalk-2 underline">
               Here&apos;s the honest version.
             </Link>
           </p>
         </div>
-        <div className="surface boxed cut rounded-2xl p-5 md:p-6">
+        <div className="surface boxed rounded-2xl p-5 md:p-6">
           {!storageOk && (
             <p className="mb-4 rounded-xl border border-amber/40 bg-amber-wash px-4 py-3 text-sm text-chalk">
               This browser is blocking storage (private mode?). Swings won&apos;t be saved.

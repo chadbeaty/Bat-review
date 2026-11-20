@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { G, GAP_FROM, mark, wordmark } from "@/brand/geometry";
+import { LEAN, chivoLine, wordmark } from "@/brand/geometry";
 import { brandFiles } from "@/brand/svg";
 
 const DIR = join(__dirname, "../../public/brand");
@@ -20,52 +20,52 @@ describe("Gapper brand assets", () => {
     }
   });
 
-  it("the ball sits inside the gap, clear of both ends of the arc", () => {
-    const g = G(19);
-    const b = g.ball!;
-    const ang = (Math.atan2(b.cy - 50, b.cx - 52) * 180) / Math.PI + 360;
-    expect(ang).toBeGreaterThan(GAP_FROM);
-    expect(ang).toBeLessThan(360);
-    // Clearance to the top end of the arc and to the bar, in units of the 100-unit cap height.
-    const mid = Math.hypot(b.cx - 52, b.cy - 50);
-    const toTop = mid * Math.sin(((ang - GAP_FROM) * Math.PI) / 180) - b.r;
-    const toBar = 50 - b.cy - b.r;
-    expect(toTop).toBeGreaterThan(6);
-    expect(toBar).toBeGreaterThan(6);
+  it("the wordmark is six drawn letters leaning forward, straight lines only", () => {
+    const w = wordmark();
+    expect(w.w).toBeGreaterThan(450);
+    expect(LEAN).toBeGreaterThan(0.1);
+    // Polygons only: the lean is an exact shear, so no arcs or curves may sneak in.
+    expect(w.paths.join("")).toMatch(/^[ML0-9.\s-Z]+$/);
   });
 
-  it("wordmark has six letters and one ball", () => {
-    const w = wordmark();
-    expect(w.balls).toHaveLength(1);
-    expect(w.w).toBeGreaterThan(400);
-    expect(mark().paths.length).toBe(2);
+  it("taglines are baked Chivo outlines, not live text", () => {
+    const t = chivoLine("OWN THE GAPS");
+    expect(t.w).toBeGreaterThan(600);
+    expect(t.paths.join("")).toMatch(/^[MLQZ0-9.\s-]+$/); // path commands only, no live text
+    expect(() => chivoLine("é")).toThrow();
   });
 });
 
 describe("Gapper emblem", () => {
-  it("the Gap Mark has the field in ink and the ball + streak in the accent, ball out past the wall in the gap", async () => {
-    const { gapMark, MARK_GEOM } = await import("@/brand/emblem");
+  it("the Gap Mark is four outfield blocks with three gaps, the ball out past the wall through the wide one", async () => {
+    const { gapMark, gapAngles, MARK_GEOM } = await import("@/brand/emblem");
     const m = gapMark();
     expect(m.shapes.map((s) => s.role)).toEqual(["ink", "accent", "accent"]);
+    const ink = m.shapes[0].d;
+    // Four blocks (each with an outer and an inner arc) plus two splinters.
+    expect((ink.match(/A/g) ?? []).length).toBe(8);
+    expect(gapAngles()).toHaveLength(3);
     const g = MARK_GEOM;
     expect(g.ballAt - g.ballR).toBeGreaterThan(g.rOut); // the ball clears the wall
-    expect(g.gapAt).toBeGreaterThan(225 + 10); // the gap is inside fair territory, left of center
-    expect(g.gapAt).toBeLessThan(270);
-    expect(g.gapW).toBeGreaterThan(g.ballR * 0.8); // wide enough to read as a gap at small sizes
+    expect(g.breakW).toBeGreaterThan(g.gapW * 2); // the gap it broke through reads wider than the other two
+    expect(g.breakW).toBeGreaterThan(g.ballR * 1.2);
+    // Everything fits the 200-unit box.
+    const nums = [...m.shapes.map((s) => s.d).join(" ").matchAll(/(-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?)/g)].map((x) => [Number(x[1]), Number(x[2])]);
+    for (const [x, y] of nums) {
+      expect(x).toBeGreaterThanOrEqual(-1);
+      expect(x).toBeLessThanOrEqual(201);
+      expect(y).toBeGreaterThanOrEqual(0);
+      expect(y).toBeLessThanOrEqual(200);
+    }
   });
 
-  it("the crest is a badge (ground, keyline, art) and the ball breaks out through its rim", async () => {
+  it("the bag tag is a badge (ground, keyline, art) with a grommet hole punched through it", async () => {
     const { crest } = await import("@/brand/emblem");
     const c = crest();
     const roles = new Set(c.shapes.map((s) => s.role));
     expect([...roles].sort()).toEqual(["accent", "ground", "ink"]);
-    // Circles are drawn as "M x cy A r r ...": the topmost accent circle's top must clear the shield's flat top (y = 20).
-    const tops = c.shapes
-      .filter((s) => s.role === "accent")
-      .map((s) => s.d.match(/^M([\d.-]+) ([\d.-]+)A([\d.-]+)/))
-      .filter((m): m is RegExpMatchArray => m !== null)
-      .map((m) => Number(m[2]) - Number(m[3]));
-    expect(Math.min(...tops)).toBeLessThan(20);
+    const ground = c.shapes.find((s) => s.role === "ground")!.d;
+    expect((ground.match(/M/g) ?? []).length).toBe(2); // the tag and the hole
   });
 
   it("every colorway renders, and one-color badges knock the art out with masks", async () => {
@@ -73,8 +73,8 @@ describe("Gapper emblem", () => {
     const { crest, patch } = await import("@/brand/emblem");
     for (const art of [crest(), patch()]) {
       expect(artSvg(art, "black", "x")).toContain("<mask");
-      expect(artSvg(art, "white", "x")).not.toContain("#101827");
-      expect(artSvg(art, "dark", "x")).toContain("#B7F34A");
+      expect(artSvg(art, "white", "x")).not.toContain("#0B0C0E");
+      expect(artSvg(art, "dark", "x")).toContain("#C4F135");
     }
   });
 });

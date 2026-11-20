@@ -65,46 +65,48 @@ const swatch = (hex, name, use, dark = true) =>
 const sheet = `<!doctype html><html><head><meta charset="utf-8"><style>
 @page{size:8.5in 11in;margin:0}
 *{box-sizing:border-box}
-body{margin:0;width:8.5in;height:11in;font-family:Helvetica,Arial,sans-serif;color:#101827;background:#fff}
-.top{background:#101827;color:#fff;padding:.45in .5in .4in;display:flex;gap:.45in;align-items:center;height:4.1in}
+body{margin:0;width:8.5in;height:11in;font-family:Helvetica,Arial,sans-serif;color:#0B0C0E;background:#fff}
+.top{background:#0B0C0E;color:#fff;padding:.45in .5in .4in;display:flex;gap:.45in;align-items:center;height:4.1in}
 .top .crest svg{height:3.25in;width:auto;display:block}
 .top .patch svg{height:2.35in;width:auto;display:block}
 .top .copy{flex:1}
 .top h1{margin:0;font-size:30px;letter-spacing:.5px}
-.top p{margin:.08in 0 0;color:#8995A6;font-size:12px;line-height:1.45}
+.top p{margin:.08in 0 0;color:#8D939A;font-size:12px;line-height:1.45}
 .row{display:flex;gap:.3in;align-items:center;padding:.22in .5in;border-bottom:1px solid #e6e9ef}
 .cell{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:9px;color:#5b6676}
 .cell svg{display:block}
-.dark{background:#101827;padding:10px;border-radius:6px}
+.dark{background:#0B0C0E;padding:10px;border-radius:6px}
 .sws{display:flex;gap:.18in;padding:.22in .5in}
-.sw{display:flex;flex-direction:column;font-size:9px;gap:2px;width:1.3in}
+.sw{display:flex;flex-direction:column;font-size:9px;gap:2px;width:1in}
 .sw .chip{height:.45in;border-radius:6px;margin-bottom:4px}
-.sw span{color:#5b6676}.sw em{color:#8995A6;font-style:normal}
+.sw span{color:#5b6676}.sw em{color:#8D939A;font-style:normal}
 .rules{padding:.05in .5in;font-size:9.5px;color:#3b4554;line-height:1.5;columns:2;column-gap:.4in}
-h2{font-size:11px;letter-spacing:1px;margin:.18in .5in 0;color:#101827}
+h2{font-size:11px;letter-spacing:1px;margin:.18in .5in 0;color:#0B0C0E}
+.pillars svg{width:100%;height:auto;display:block;margin-top:.16in}
+.top .copy{min-width:0}
 </style></head><body>
 <div class="top"><div class="crest">${s("gapper-crest")}</div><div class="patch">${s("gapper-patch")}</div>
-<div class="copy"><h1>GAPPER</h1><p>Own the gap.<br>Brand sheet. Files: public/brand/ (SVG) and public/brand/print/ (PDF, 3000 px PNG).</p></div></div>
+<div class="copy"><h1>GAPPER</h1><p>Own the gaps. Built for slowpitch.<br>Brand sheet. Files: public/brand/ (SVG) and public/brand/print/ (PDF, 3000 px PNG).</p><div class="pillars">${s("gapper-pillars")}</div></div></div>
 <h2>MARKS</h2>
 <div class="row">
 <div class="cell"><div class="dark">${s("gapper-mark").replace("<svg", '<svg style="height:.9in;width:auto"')}</div>Mark · dark</div>
 <div class="cell">${s("gapper-mark-light").replace("<svg", '<svg style="height:.9in;width:auto"')}Mark · light</div>
 <div class="cell">${s("gapper-mark-black").replace("<svg", '<svg style="height:.9in;width:auto"')}One color</div>
-<div class="cell">${s("gapper-crest-black").replace("<svg", '<svg style="height:1.1in;width:auto"')}Crest · one color</div>
+<div class="cell">${s("gapper-crest-black").replace("<svg", '<svg style="height:1.1in;width:auto"')}Bag tag · one color</div>
 <div class="cell">${s("gapper-patch-black").replace("<svg", '<svg style="height:1in;width:auto"')}Patch · one color</div>
-<div class="cell"><div class="dark">${s("gapper-crest-white").replace("<svg", '<svg style="height:.9in;width:auto"')}</div>Crest · white ink</div>
+<div class="cell"><div class="dark">${s("gapper-crest-white").replace("<svg", '<svg style="height:.9in;width:auto"')}</div>Bag tag · white ink</div>
 </div>
 <h2>LOCKUPS</h2>
 <div class="row">
-<div class="cell"><div class="dark">${s("gapper-lockup").replace("<svg", '<svg style="height:.5in;width:auto"')}</div>Horizontal · dark</div>
-<div class="cell">${s("gapper-lockup-light").replace("<svg", '<svg style="height:.5in;width:auto"')}Horizontal · light</div>
-<div class="cell">${s("gapper-wordmark-tagline-light").replace("<svg", '<svg style="height:.55in;width:auto"')}Wordmark + tagline</div>
+<div class="cell"><div class="dark">${s("gapper-lockup").replace("<svg", '<svg style="height:.4in;width:auto"')}</div>Horizontal · dark</div>
+<div class="cell">${s("gapper-lockup-light").replace("<svg", '<svg style="height:.4in;width:auto"')}Horizontal · light</div>
+<div class="cell">${s("gapper-wordmark-tagline-light").replace("<svg", '<svg style="height:.5in;width:auto"')}Wordmark + tagline</div>
 <div class="cell">${s("gapper-app-icon").replace("<svg", '<svg style="height:.6in;width:auto"')}App icon</div>
 </div>
 <h2>COLOR</h2>
-<div class="sws">${swatch("#101827", "Midnight Navy", "Backgrounds, badge")}${swatch("#202D40", "Deep Slate", "Panels")}${swatch("#B7F34A", "Electric Lime", "The ball. Sparingly", false)}${swatch("#FFFFFF", "White", "Field, letters", false)}${swatch("#8995A6", "Steel Gray", "Secondary text")}</div>
+<div class="sws">${swatch("#0B0C0E", "Carbon", "Backgrounds, badge")}${swatch("#1A1D21", "Graphite", "Panels")}${swatch("#C4F135", "Electric Lime", "The ball. Sparingly", false)}${swatch("#FFFFFF", "White", "Outfield, letters", false)}${swatch("#B9BFC5", "Alloy", "Metallic accents", false)}${swatch("#8D939A", "Steel", "Secondary text")}</div>
 <h2>RULES</h2>
-<div class="rules">Keep clear space around every logo of at least the ball's diameter. Minimum sizes: mark 16 px / 0.25 in, crest 0.75 in, patch 1 in, horizontal lockup 1.25 in wide. The lime ball is the only lime in a logo; never recolor the field or letters lime. On light backgrounds use the light or one-color version; on dark garments print the white-ink version and let the shirt be the badge. Don't stretch, outline, add shadows or rearrange the parts. In sentences write Gapper; capitals are for the logo. Type: Mona Sans (Google Fonts). Embroidery: use the one-color crest or patch; the smallest letters need about 0.25 in cap height.</div>
+<div class="rules">Keep clear space around every logo of at least the ball's diameter. Minimum sizes: mark 16 px / 0.25 in, bag tag 0.75 in, patch 1 in, horizontal lockup 1.25 in wide. The lime ball is the only lime in a logo; never recolor the outfield or letters lime. On light backgrounds use the light or one-color version; on dark garments print the white-ink version and let the shirt be the badge. Don't stretch, outline, add shadows or rearrange the parts. In sentences write Gapper; capitals are for the logo. Type: Chivo (Google Fonts): Black Italic capitals for headlines, Regular for text. Embroidery: use the one-color bag tag or patch; the smallest letters need about 0.25 in cap height.</div>
 </body></html>`;
 await page.setViewportSize({ width: 816, height: 1056 });
 await page.setContent(sheet);

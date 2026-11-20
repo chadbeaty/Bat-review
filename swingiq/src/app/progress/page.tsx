@@ -98,7 +98,7 @@ export default function ProgressPage() {
   if (!player)
     return (
       <>
-        <PageTitle title="Progress" />
+        <PageTitle title="Progress" pillar="improve" />
         <Empty title="No hitter yet">Set one up on the Home screen first.</Empty>
       </>
     );
@@ -107,7 +107,7 @@ export default function ProgressPage() {
   const info = METRICS[metric];
   return (
     <div className="animate-rise">
-      <PageTitle title="Progress" sub={`${player.name}'s swing over time. Every number here comes from your own recorded swings.`} />
+      <PageTitle title="Progress" pillar="improve" sub={`${player.name}'s swing over time. Every number here comes from your own recorded swings.`} />
       <Segmented label="Time range" value={range} onChange={setRange} options={[{ value: "30d", label: "30 days" }, { value: "season", label: "This season" }, { value: "all", label: "All time" }]} />
 
       {inRange.length === 0 ? (
