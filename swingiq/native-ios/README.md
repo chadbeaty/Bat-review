@@ -19,8 +19,9 @@ app updates whenever the site does. Only the camera code needs an app update.
 5. On the phone: Settings › General › VPN & Device Management › trust your developer account (first time only).
 6. In the app: Record › **Record at 240 fps**. Allow camera, microphone and motion when asked.
 
-The Swift code was written without a Mac available, so the first build may stop on a small compile error. If it
-does, copy the red error text from Xcode into a Claude session and ask for the fix.
+No Mac? You don't need one to check the code: GitHub builds the app on its own Macs every time the app code changes
+(`.github/workflows/gapper-ios.yml`). It compiled cleanly there on 2026-11-20. It hasn't run on a real iPhone yet.
+Putting it on phones without a Mac goes through TestFlight, which needs an Apple Developer account first.
 
 ## How it fits together
 - `capacitor.config.json` loads `https://getgapper.com/start` in the app. If the phone is offline, `www/index.html`
