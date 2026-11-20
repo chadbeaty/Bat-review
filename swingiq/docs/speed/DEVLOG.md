@@ -46,6 +46,7 @@ keypoint error) with a regression gate. No model is trained yet: there's no labe
 radar/sensor readings; `scripts/validation-report.mjs` produces the full report and refuses to call a target with
 fewer than 50 paired swings. `tests/unit/speed-benchmark.test.ts` is a CI regression gate on rendered clips.
 
-**Not verified in this session (no Mac, no iPhone in the build environment):** the Swift code has not been compiled or
-run. First build on a Mac will likely surface small compile fixes. Real-world accuracy of both engines is unknown until
+**Not verified in this session (no iPhone in the build environment):** the Swift code hasn't run on a phone yet.
+Update the same day: a GitHub Actions macOS runner (`gapper-ios.yml`) compiled it cleanly on the first try (unsigned,
+arm64), so compile errors are caught in CI from now on. Real-world accuracy of both engines is unknown until
 a radar/sensor session.
