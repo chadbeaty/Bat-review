@@ -45,7 +45,8 @@ function fitText(ctx: CanvasRenderingContext2D, text: string, font: (px: number)
   return px;
 }
 
-export async function drawReport(player: Player, p: HittingProfile): Promise<HTMLCanvasElement> {
+/** A blank 1080 x 1350 Gapper card: carbon twill, light from the top left, the alloy edge, fonts loaded. */
+export async function startCard() {
   const fam = family();
   if (document.fonts?.load) {
     await Promise.all([document.fonts.load(`italic 900 80px ${fam}`), document.fonts.load(`700 40px ${fam}`), document.fonts.load(`400 30px ${fam}`)]).catch(() => {});
@@ -57,8 +58,6 @@ export async function drawReport(player: Player, p: HittingProfile): Promise<HTM
   const black = (px: number) => `italic 900 ${px}px ${fam}`;
   const bold = (px: number) => `700 ${px}px ${fam}`;
   const reg = (px: number) => `400 ${px}px ${fam}`;
-
-  // Carbon: near-black with a fine twill and light from the top left.
   ctx.fillStyle = "#0b0c0e";
   ctx.fillRect(0, 0, W, H);
   ctx.save();
@@ -84,6 +83,32 @@ export async function drawReport(player: Player, p: HittingProfile): Promise<HTM
   alloy.addColorStop(1, "rgba(125,132,139,0)");
   ctx.fillStyle = alloy;
   ctx.fillRect(0, 0, W, 5);
+  return { c, ctx, black, bold, reg };
+}
+
+/** The card's footer line: OWN THE GAPS. BUILT FOR SLOWPITCH. and the domain. */
+export function cardFooter(ctx: CanvasRenderingContext2D, black: (px: number) => string, bold: (px: number) => string) {
+  const M = 72;
+  ctx.fillStyle = LINE;
+  ctx.fillRect(M, H - 118, W - M * 2, 2);
+  ctx.font = black(30);
+  ctx.fillStyle = WHITE;
+  ctx.textAlign = "left";
+  ctx.fillText("OWN THE GAPS.", M, H - 66);
+  const ow = ctx.measureText("OWN THE GAPS.  ").width;
+  ctx.fillStyle = LIME;
+  ctx.fillText("BUILT FOR SLOWPITCH.", M + ow, H - 66);
+  ctx.textAlign = "right";
+  ctx.font = bold(26);
+  ctx.fillStyle = TEXT2;
+  ctx.fillText("getgapper.com", W - M, H - 66);
+  ctx.textAlign = "left";
+}
+
+export { drawLockup, fitText, W as CARD_W, H as CARD_H };
+
+export async function drawReport(player: Player, p: HittingProfile): Promise<HTMLCanvasElement> {
+  const { c, ctx, black, bold, reg } = await startCard();
 
   const M = 72;
   // Header: the lockup and the date.

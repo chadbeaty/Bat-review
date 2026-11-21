@@ -76,7 +76,7 @@ export default function ProfilePage() {
 
       <h2 className="display mb-1 mt-14 text-[1.7rem] text-chalk md:text-[2rem]">Settings</h2>
       <SectionTitle right={<button type="button" onClick={() => setEditing("new")} className="text-sm text-optic">Add hitter</button>}>Hitters</SectionTitle>
-      <p className="-mt-1 mb-3 text-[13px] text-chalk-3">Coaches and parents can keep several hitters on one phone.</p>
+      <p className="-mt-1 mb-3 text-[13px] text-chalk-3">Share a phone with a teammate or your hitting partner? Each of you gets your own hitter, swings and stats.</p>
       {editing === "new" && (
         <Panel className="mb-3 p-4">
           <PlayerForm

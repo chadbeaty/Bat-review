@@ -152,3 +152,15 @@ export const DEFAULT_SETTINGS: Settings = {
   keepClips: true,
   cameraFacing: {},
 };
+
+/** A swing goal: hit `target` swings between `startAt` and `endAt` (ms). Every recorded swing counts: live or video. */
+export type SwingGoal = {
+  id: string;
+  playerId: string;
+  target: number;
+  period: GoalPeriod;
+  startAt: number;
+  endAt: number;
+  createdAt: number;
+};
+export type GoalPeriod = "today" | "weekend" | "week" | "next7";
