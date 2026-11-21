@@ -20,6 +20,7 @@ export function HittingProfile({ player }: { player: Player }) {
   const [data, setData] = useState<{ swings: SwingRecord[]; sessions: Session[] } | null>(null);
   const [report, setReport] = useState<{ url: string; blob: Blob } | null>(null);
   const [busy, setBusy] = useState(false);
+  const [reportErr, setReportErr] = useState<string | null>(null);
 
   useEffect(() => {
     let live = true;
@@ -47,9 +48,12 @@ export function HittingProfile({ player }: { player: Player }) {
   async function makeReport() {
     if (!profile) return;
     setBusy(true);
+    setReportErr(null);
     try {
       const blob = await reportBlob(player, profile);
       setReport({ blob, url: URL.createObjectURL(blob) });
+    } catch {
+      setReportErr("Couldn't draw the report on this browser. Try again, or update your phone's browser.");
     } finally {
       setBusy(false);
     }
@@ -104,6 +108,7 @@ export function HittingProfile({ player }: { player: Player }) {
             {busy ? "Drawing…" : "Share player report"}
           </Button>
           <span className="text-[12px] text-chalk-3">{profile && profile.swings === 0 ? "Record a swing first. The report is built from your own numbers." : "One image with your numbers, ready to text to a coach or your team."}</span>
+          {reportErr && <p role="alert" className="w-full text-[13px] text-stitch">{reportErr}</p>}
         </div>
       </div>
 
@@ -229,6 +234,7 @@ export function HittingProfile({ player }: { player: Player }) {
               <Button onClick={share}>Share</Button>
               <Button variant="ghost" onClick={download}>Save image</Button>
             </div>
+            <p className="mt-3 text-[12px] text-chalk-3">On iPhone you can also press and hold the picture, then tap Save to Photos.</p>
           </div>
         )}
       </Sheet>

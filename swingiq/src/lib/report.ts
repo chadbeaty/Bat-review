@@ -1,7 +1,7 @@
 // The shareable player report: one 1080 x 1350 image (a phone-friendly portrait card) drawn on a canvas from the
 // player's Hitting Profile. Every number on it is one the app shows; anything not measured prints as "—".
 import { lockupH } from "@/brand/emblem";
-import { artSvg, dataUri } from "@/brand/svg";
+import { BRAND } from "@/brand/svg";
 import { LEVEL_LABEL, type Player } from "./store/types";
 import type { HittingProfile } from "./profile";
 
@@ -13,13 +13,21 @@ const TEXT2 = "#c6cace";
 const STEEL = "#8d939a";
 const LINE = "#262a2f";
 
-function loadImage(src: string): Promise<HTMLImageElement> {
-  return new Promise((res, rej) => {
-    const im = new Image();
-    im.onload = () => res(im);
-    im.onerror = rej;
-    im.src = src;
-  });
+/**
+ * Draws the lockup straight from the logo geometry with Path2D. (Drawing it as an SVG image would "taint" the canvas
+ * in Safari on iPhone, and then the report can't be saved as a picture.)
+ */
+function drawLockup(ctx: CanvasRenderingContext2D, x: number, y: number, height: number) {
+  const art = lockupH();
+  const k = height / art.h;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(k, k);
+  for (const s of art.shapes) {
+    ctx.fillStyle = s.role === "accent" ? BRAND.lime : s.role === "ink" ? BRAND.white : BRAND.carbon;
+    ctx.fill(new Path2D(s.d));
+  }
+  ctx.restore();
 }
 
 /** The brand face as the page loaded it (next/font gives it a generated family name). */
@@ -79,9 +87,7 @@ export async function drawReport(player: Player, p: HittingProfile): Promise<HTM
 
   const M = 72;
   // Header: the lockup and the date.
-  const lock = await loadImage(dataUri(artSvg(lockupH(), "dark", "Gapper")));
-  const lh = 62;
-  ctx.drawImage(lock, M, 64, (lock.width / lock.height) * lh, lh);
+  drawLockup(ctx, M, 64, 62);
   ctx.textAlign = "right";
   ctx.fillStyle = STEEL;
   ctx.font = bold(24);
