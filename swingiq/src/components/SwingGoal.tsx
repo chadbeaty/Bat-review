@@ -92,7 +92,7 @@ export function SwingGoal({ player }: { player: Player }) {
       {!goal || editing ? (
         <Panel className="p-4">
           <form onSubmit={save} className="space-y-3">
-            <p className="text-[14px] text-chalk-2">Set a number of swings. Every swing Gapper logs counts toward it, live or from video. When you&apos;re done, share the work report as proof of the reps.</p>
+            <p className="text-[14px] text-chalk-2">Hold yourself to a number: 500 cuts this week, or the 100 your team coach asked for before Sunday. Every swing Gapper logs counts, live or from video. When you&apos;re done, share the work report as proof of the reps.</p>
             <label className="flex items-center gap-3">
               <input aria-label="Number of swings" inputMode="numeric" className={input} value={target} onChange={(e) => setTarget(e.target.value)} />
               <span className="text-[15px] text-chalk">swings</span>
