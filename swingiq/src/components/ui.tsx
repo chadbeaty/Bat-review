@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { GapMark } from "./Logo";
 
 type BtnProps = React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "ghost" | "danger" | "quiet"; size?: "md" | "lg" };
@@ -331,13 +332,15 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
       prev?.focus?.();
     };
   }, [open, onClose]);
-  if (!open) return null;
-  return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center md:items-center" role="dialog" aria-modal="true" aria-labelledby={id}>
+  if (!open || typeof document === "undefined") return null;
+  // Rendered straight into <body>: a page's fade-in animation makes it the frame for "fixed" children in Safari, which
+  // would pin the sheet to the bottom of a long page, off screen. In <body> it always sits on the screen, above the nav.
+  return createPortal(
+    <div className="fixed inset-0 z-[60] flex items-end justify-center md:items-center" role="dialog" aria-modal="true" aria-labelledby={id}>
       <button type="button" aria-label="Close" className="animate-fade absolute inset-0 bg-black/60" onClick={onClose} />
       <div
         ref={panel}
-        className="animate-sheet relative w-full max-w-[34rem] rounded-t-2xl border border-line-2 bg-night-2 px-4 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-3 shadow-[0_-20px_60px_-20px_rgb(0_0_0/0.9)] md:rounded-2xl md:pb-5"
+        className="animate-sheet relative max-h-[92dvh] w-full max-w-[34rem] overflow-y-auto rounded-t-2xl border border-line-2 bg-night-2 px-4 pb-[calc(1.25rem+env(safe-area-inset-bottom))] pt-3 shadow-[0_-20px_60px_-20px_rgb(0_0_0/0.9)] md:rounded-2xl md:pb-5"
       >
         <div className="mx-auto mb-3 h-1 w-10 rounded-full bg-line-2 md:hidden" aria-hidden="true" />
         <div className="mb-3 flex items-center justify-between">
@@ -348,7 +351,8 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
         </div>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 

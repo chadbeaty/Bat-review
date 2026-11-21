@@ -127,6 +127,8 @@ test("record a swing from a video: analyzed, coached, saved, comparable", async 
   await page.getByRole("button", { name: "Share player report" }).click();
   const sheet = page.getByRole("dialog");
   await expect(sheet.getByRole("img", { name: /player report/ })).toBeVisible();
+  // The sheet sits on the screen, not at the bottom of the long profile page.
+  await expect(sheet.getByRole("img", { name: /player report/ })).toBeInViewport();
   await expect(sheet.getByRole("button", { name: "Save image" })).toBeVisible();
   expect(errors).toEqual([]);
 });
