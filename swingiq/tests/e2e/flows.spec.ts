@@ -120,6 +120,15 @@ test("record a swing from a video: analyzed, coached, saved, comparable", async 
   await expect(page.getByRole("heading", { name: "Recent swings" })).toBeVisible();
   await expect(page.getByText("Personal best swing")).toBeVisible();
 
+  // A swing goal counts the swings already logged this weekend/week, and the work report is proof of the reps.
+  await page.getByLabel("Number of swings").fill("100");
+  await page.getByRole("radio", { name: "Today" }).click();
+  await page.getByRole("button", { name: "Start goal" }).click();
+  await expect(page.getByLabel("2 of 100 swings")).toBeVisible();
+  await page.getByRole("button", { name: "Share work report" }).click();
+  await expect(page.getByRole("dialog").getByRole("img", { name: /work report/ })).toBeInViewport();
+  await page.keyboard.press("Escape");
+
   // My Hitting Profile sums it up and draws a shareable player report.
   await page.goto("/profile");
   await expect(page.getByRole("heading", { level: 1, name: /My Hitting Profile/i })).toBeVisible();

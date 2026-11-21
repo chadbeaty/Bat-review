@@ -35,6 +35,11 @@ test("first run: the landing page, then setup, then home shows the live session 
   await expect(page.getByRole("link", { name: /Upload a video/ })).toBeVisible();
   await expect(page.getByRole("link", { name: /Hit live/ })).toBeVisible();
   await expect(page.getByText("Chad · Lefty")).toBeVisible();
+  // Swing goal: "500 cuts this week".
+  await page.getByLabel("Number of swings").fill("500");
+  await page.getByRole("radio", { name: "This week", exact: true }).click();
+  await page.getByRole("button", { name: "Start goal" }).click();
+  await expect(page.getByLabel("0 of 500 swings")).toBeVisible();
   await noSideScroll(page);
   // Once a hitter exists, "/" is the app on every visit.
   await page.goto("/");

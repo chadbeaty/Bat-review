@@ -1,4 +1,4 @@
-import { DEFAULT_SETTINGS, type Bat, type ClipRecord, type Player, type Session, type Settings, type SwingRecord } from "./types";
+import { DEFAULT_SETTINGS, type Bat, type ClipRecord, type Player, type Session, type Settings, type SwingGoal, type SwingRecord } from "./types";
 
 /**
  * On-device storage (IndexedDB). Everything a player records lives here first and works with no account.
@@ -99,6 +99,10 @@ export const db = {
   clip: (swingId: string) => get<ClipRecord>("clips", swingId),
   saveClip: (c: ClipRecord) => put("clips", c),
   deleteClip: (swingId: string) => del("clips", swingId),
+
+  // Swing goals ("500 swings this week"), one list per hitter, kept in the key-value store.
+  goals: (playerId: string) => get<SwingGoal[]>("kv", `goals:${playerId}`).then((g) => g ?? []).catch(() => [] as SwingGoal[]),
+  saveGoals: (playerId: string, goals: SwingGoal[]) => tx("kv", "readwrite", (s) => s.put(goals, `goals:${playerId}`)),
 
   // Settings
   async settings(): Promise<Settings> {

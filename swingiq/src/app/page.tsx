@@ -5,6 +5,7 @@ import { ArcScore } from "@/components/ArcScore";
 import { GapMark, LockupH } from "@/components/Logo";
 import { usePlayers } from "@/components/PlayerProvider";
 import { Setup } from "@/components/Setup";
+import { SwingGoal } from "@/components/SwingGoal";
 import { Softball } from "@/components/Softball";
 import { Chip, InfoTip, Meter, PageSkeleton, Panel, PillarStrip, SectionTitle, Skeleton, Stat, fmtDate } from "@/components/ui";
 import { FieldPrint } from "@/components/viz/FieldPrint";
@@ -194,6 +195,8 @@ export default function Home() {
 
           <SwingActions />
 
+          <SwingGoal player={player} />
+
           {(topEv || topBat) && (
             <>
               <SectionTitle right={<InfoTip label="these speeds">Exit velo from tracking the ball, bat speed from tracking the bat, both from high-speed video (or typed in from your radar or sensor).</InfoTip>}>Power</SectionTitle>
@@ -306,6 +309,7 @@ export default function Home() {
             </div>
           </Panel>
           <SwingActions />
+          <SwingGoal player={player} />
           <Link href="/guide" className="mt-4 inline-block text-[15px] text-optic">
             Full camera setup guide →
           </Link>
