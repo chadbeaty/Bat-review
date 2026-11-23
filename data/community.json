@@ -1,5 +1,79 @@
 {
-  "generatedAt": null,
-  "sources": {},
-  "families": {}
+  "generatedAt": "2026-11-23T21:33:44.545Z",
+  "sources": {
+    "Matched posts": "5 from SoftballFans",
+    "Last run scanned": "reddit: 0 posts, 0 comments; rss: 20 items; youtube: 1 skipped; imports: 0 files, 0 entries; reviews: 0 articles"
+  },
+  "families": {
+    "ls-genesis": {
+      "mentions": 4,
+      "recent90": 4,
+      "positive": 1,
+      "mixed": 3,
+      "negative": 0,
+      "score": 58,
+      "topics": {
+        "durability": {
+          "n": 1,
+          "net": 1
+        }
+      },
+      "sources": {
+        "SoftballFans": 4
+      },
+      "quotes": [
+        {
+          "text": "(Not pictured) Same as above but 30oz $70. SOLD Louisville Slugger SB34 Genesis. Webbed with small paint chips but no cracks. $100.",
+          "tone": "good",
+          "source": "SoftballFans",
+          "url": "http://forums.softballfans.com/index.php?threads/price-drops-old-school-and-older-school.1465510/",
+          "date": "2026-11-18T04:38:26.000Z"
+        },
+        {
+          "text": "Monsta, Louisville, and Anarchy Bats. FS: Monsta SB-2s, Louisville Genesis Ironman & Anarchy Memento Mori. Selling a few bats that aren't getting used. All prices are OBO.",
+          "tone": "mixed",
+          "source": "SoftballFans",
+          "url": "http://forums.softballfans.com/index.php?threads/monsta-louisville-and-anarchy-bats.1465546/",
+          "date": "2026-11-21T13:04:26.000Z"
+        },
+        {
+          "text": "Monsta, Louisville, and Anarchy Bats. FS: Monsta SB-2s, Louisville Genesis Ironman & Anarchy Memento Mori. Selling a few bats that aren't getting used. All prices are OBO.",
+          "tone": "mixed",
+          "source": "SoftballFans",
+          "url": "http://forums.softballfans.com/index.php?threads/monsta-louisville-and-anarchy-bats.1465545/",
+          "date": "2026-11-21T12:59:38.000Z"
+        },
+        {
+          "text": "Monsta, Louisville, and Anarchy Bats. FS: Monsta SB-2s, Louisville Genesis Ironman & Anarchy Memento Mori. Selling a few bats that aren't getting used. All prices are OBO.",
+          "tone": "mixed",
+          "source": "SoftballFans",
+          "url": "http://forums.softballfans.com/index.php?threads/monsta-louisville-and-anarchy-bats.1465544/",
+          "date": "2026-11-21T03:38:12.000Z"
+        }
+      ],
+      "lastSeen": "2026-11-21T13:04:26.000Z"
+    },
+    "suncoast-melee": {
+      "mentions": 1,
+      "recent90": 1,
+      "positive": 0,
+      "mixed": 1,
+      "negative": 0,
+      "score": 50,
+      "topics": {},
+      "sources": {
+        "SoftballFans": 1
+      },
+      "quotes": [
+        {
+          "text": "Reebok Melee Legend Senior Slow Pitch Softball Bat (-7) 27 oz 34. We wanted to reach out again regarding our previous post. We're excited to offer for sale my Reebok Melee Legend 27oz IE-FTC-V50770 bat, which is in excellent condition and has been stored with care.",
+          "tone": "mixed",
+          "source": "SoftballFans",
+          "url": "http://forums.softballfans.com/index.php?threads/reebok-melee-legend-senior-slow-pitch-softball-bat-7-27-oz-34.1465540/",
+          "date": "2026-11-16T13:37:54.000Z"
+        }
+      ],
+      "lastSeen": "2026-11-16T13:37:54.000Z"
+    }
+  }
 }
