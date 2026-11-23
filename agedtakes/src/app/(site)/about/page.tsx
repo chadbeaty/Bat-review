@@ -38,7 +38,7 @@ export default function AboutPage() {
         <p>Being listed on this site is not an accusation. A profile means we track what someone says publicly. Many of the predictions we record turn out to be right, and we report those too.</p>
 
         <h2>How we work</h2>
-        <p>Every case goes through research, evidence gathering, drafting, a legal checklist, editorial approval and an explicit publishing step. We use AI tools to help with research, but nothing reaches the public without a human editor checking the sources. Read the full <Link href="/methodology">methodology</Link> and our <Link href="/corrections">corrections log</Link>.</p>
+        <p>Every case goes through research, evidence gathering, drafting, a legal checklist, editorial approval and an explicit publishing step. We use AI tools to help with research. Most cases are approved by an editor; some drafts from our research agent are published automatically after a review window and strict automatic checks, and are labeled as AI-drafted. Read the full <Link href="/methodology">methodology</Link> and our <Link href="/corrections">corrections log</Link>.</p>
 
         <h2 id="demo">About demonstration content</h2>
         <p>While the archive is being built, the site may include records marked <strong>“Demo only — fictional”</strong>. These people, quotes, sources and numbers are invented to demonstrate how the archive works. Their links point to the reserved example.com domain. They are not investigations and are not indexed by search engines.</p>

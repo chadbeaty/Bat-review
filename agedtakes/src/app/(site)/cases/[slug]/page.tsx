@@ -76,6 +76,7 @@ export default async function CasePage({ params }: { params: Params }) {
             <span>Published <time dateTime={c.published_at}>{formatDate(c.published_at)}</time></span>
             <span>Last updated <time dateTime={c.last_updated_at}>{formatDateTime(c.last_updated_at)}</time></span>
             {c.methodology_version && <Link href="/methodology" className="link">Methodology v{c.methodology_version}</Link>}
+            {c.ai_generated && <Link href="/methodology#ai" className="link">Researched and drafted with AI</Link>}
           </div>
           {c.is_sponsored && (
             <p className="mx-auto mt-4 max-w-xl border border-amber px-3 py-2 font-mono text-xs text-amber">

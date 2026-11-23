@@ -3,6 +3,7 @@
   "crons": [
     { "path": "/api/cron/monitor", "schedule": "17 6 * * *" },
     { "path": "/api/cron/research", "schedule": "41 7 * * *" },
-    { "path": "/api/cron/resolve-predictions", "schedule": "23 8 * * *" }
+    { "path": "/api/cron/resolve-predictions", "schedule": "23 8 * * *" },
+    { "path": "/api/cron/auto-publish", "schedule": "7 11 * * *" }
   ]
 }
