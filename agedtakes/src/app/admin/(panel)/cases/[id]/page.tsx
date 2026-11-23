@@ -30,7 +30,7 @@ type Notes = {
   distribution?: { language_flags?: string[]; suggested_related?: string[] };
   prompt_version?: string;
   // Written by the scheduled research agent (agent_submit_research).
-  agent?: string; notes?: string; flags?: string[];
+  agent?: string; notes?: string; flags?: string[]; auto_publish?: string; auto_publish_skipped?: string;
   suggestions?: { legal?: Record<string, { ok?: boolean; reason?: string }>; confidence?: { level?: string; reason?: string } };
 };
 
@@ -54,6 +54,19 @@ export default async function CaseReview({ params, searchParams }: { params: Pro
     db.from("statements").select("id, exact_quote").eq("person_id", c.person_id).order("published_at", { ascending: false }).limit(200),
     db.from("predictions").select("id, prediction_text").eq("person_id", c.person_id).limit(200),
   ]);
+  const { data: autoSettings } = await db.from("site_settings").select("key, value, updated_at").in("key", ["auto_publish_enabled", "auto_publish_delay_hours"]);
+  const autoOn = autoSettings?.find((r) => r.key === "auto_publish_enabled")?.value === true;
+  const autoHours = Number(autoSettings?.find((r) => r.key === "auto_publish_delay_hours")?.value ?? 24);
+  // The auto-publish job runs daily at 11:07 UTC (vercel.json): the first run after the review window ends.
+  const autoAt = (() => {
+    // The window starts when the draft was created or when auto-publish was switched on, whichever is later.
+    const since = autoSettings?.find((r) => r.key === "auto_publish_enabled")?.updated_at as string | undefined;
+    const start = Math.max(new Date(c.created_at).getTime(), since ? new Date(since).getTime() : 0);
+    const t = new Date(start + autoHours * 3600_000);
+    const run = new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate(), 11, 7));
+    if (run < t) run.setUTCDate(run.getUTCDate() + 1);
+    return run.toISOString();
+  })();
   const statement = statementRes.data as (Record<string, unknown> & { exact_quote: string; source: { id: string; title: string; canonical_url: string | null; archive_url: string | null; publisher: string | null } | null }) | null;
   const evidence = (evidenceRes.data ?? []) as (Record<string, unknown> & { evidence_source_id: string; evidence_role: string; source: Record<string, string | boolean | null> })[];
   const notes = (c.ai_notes ?? {}) as Notes;
@@ -85,6 +98,15 @@ export default async function CaseReview({ params, searchParams }: { params: Pro
       </AdminHeader>
       <Flash flash={readFlash(sp)} />
       <div className="mb-6"><Pipeline status={status} /></div>
+      {autoOn && c.origin === "ai" && status === "needs_review" && !c.is_demo && (
+        <p className="mb-6 border-2 border-red bg-paper px-4 py-3">
+          {notes.auto_publish === "hold"
+            ? <><strong>Auto-publish is on hold for this case.</strong> It will wait for you to approve or reject it.</>
+            : notes.auto_publish_skipped
+              ? <><strong>This case will not publish itself:</strong> {notes.auto_publish_skipped} Review it and approve or reject it yourself.</>
+              : <><strong>Publishes automatically on {formatDateTime(autoAt)}</strong> if every automatic check passes. To stop it, scroll to <strong>Workflow</strong> and choose <strong>Rejected</strong> or <strong>Needs more evidence</strong>.</>}
+        </p>
+      )}
       {c.ai_generated && !published && (
         <p className="mb-6 border border-amber bg-amber-wash px-4 py-3 text-amber">
           This case was created or drafted by the AI research engine. It cannot be published until an editor has checked every source, completed the legal checklist, approved it and confirmed publication.

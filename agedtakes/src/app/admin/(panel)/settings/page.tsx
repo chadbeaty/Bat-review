@@ -23,7 +23,8 @@ export default async function Settings({ searchParams }: { searchParams: SearchP
         <Panel title="Publication settings">
           <form action={saveSettings} className="space-y-3">
             <Return to="/admin/settings" />
-            {["show_demo_content", "staff_mfa_required", "ai_research_enabled", "newsletter_enabled", "submissions_enabled"].map((k) => <Check key={k} label={k.replace(/_/g, " ")} name={k} defaultChecked={s[k] === true} help={desc[k] ?? undefined} />)}
+            {["show_demo_content", "staff_mfa_required", "ai_research_enabled", "auto_publish_enabled", "newsletter_enabled", "submissions_enabled"].map((k) => <Check key={k} label={k.replace(/_/g, " ")} name={k} defaultChecked={s[k] === true} help={desc[k] ?? undefined} />)}
+            <Field label="Auto-publish review window (hours)" name="auto_publish_delay_hours" defaultValue={String(s.auto_publish_delay_hours ?? 24)} help="How long a research-agent draft waits for you before it publishes itself (when auto publish is on)." />
             <Field label="AI daily budget (USD, estimated)" name="ai_daily_budget_usd" defaultValue={String(s.ai_daily_budget_usd ?? 5)} />
             <Field label="Current methodology version" name="methodology_version" defaultValue={String(s.methodology_version ?? "1.0")} />
             <Submit small>Save settings</Submit>

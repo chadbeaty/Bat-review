@@ -81,17 +81,24 @@ export async function updateSubscriber(form: FormData) {
 }
 
 // --------------------------------------------------------------------------------------------- Settings
-const BOOLEAN_SETTINGS = ["show_demo_content", "staff_mfa_required", "ai_research_enabled", "newsletter_enabled", "submissions_enabled"];
+const BOOLEAN_SETTINGS = ["show_demo_content", "staff_mfa_required", "ai_research_enabled", "auto_publish_enabled", "newsletter_enabled", "submissions_enabled"];
 
 export async function saveSettings(form: FormData) {
   await runAction("admin", form, "/admin/settings", async ({ db, user }) => {
+    // Only write settings that changed: the auto-publish review window counts from when that switch last changed.
+    const { data: current } = await db.from("site_settings").select("key, value").in("key", BOOLEAN_SETTINGS);
     for (const key of BOOLEAN_SETTINGS) {
-      const { error } = await db.from("site_settings").update({ value: form.get(key) === "on", updated_by: user.id }).eq("key", key);
+      const value = form.get(key) === "on";
+      if (current?.find((r) => r.key === key)?.value === value) continue;
+      const { error } = await db.from("site_settings").update({ value, updated_by: user.id }).eq("key", key);
       if (error) throw new InputError(error.message);
     }
     const budget = Number(str(form, "ai_daily_budget_usd"));
     if (!Number.isFinite(budget) || budget < 0 || budget > 1000) throw new InputError("Daily AI budget must be between 0 and 1000.");
     await db.from("site_settings").update({ value: budget, updated_by: user.id }).eq("key", "ai_daily_budget_usd");
+    const delay = Number(str(form, "auto_publish_delay_hours"));
+    if (!Number.isFinite(delay) || delay < 12 || delay > 720) throw new InputError("The auto-publish review window must be between 12 and 720 hours.");
+    await db.from("site_settings").update({ value: delay, updated_by: user.id }).eq("key", "auto_publish_delay_hours");
     const version = str(form, "methodology_version");
     if (version) await db.from("site_settings").update({ value: version, updated_by: user.id }).eq("key", "methodology_version");
     refreshPublic();
