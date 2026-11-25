@@ -137,7 +137,7 @@ export function ClipPlayer({
   const pct = (t: number) => `${((t - t0) / Math.max(1, t1 - t0)) * 100}%`;
   const thumbBox = useMemo(() => stripBox(pose, marks.map((m) => m.t), frameSize, 0.78), [pose, marks, frameSize]);
   const thumbs = useMemo(() => marks.map((m) => poseAt(pose, m.t)), [pose, marks]);
-  const iconBtn = "press grid h-12 w-12 place-items-center rounded-xl border border-line-2 text-chalk hover:bg-white/[0.04]";
+  const iconBtn = "press grid h-12 w-11 place-items-center rounded-xl border border-line-2 text-chalk hover:bg-white/[0.04] min-[380px]:w-12";
 
   return (
     <div>
@@ -191,7 +191,7 @@ export function ClipPlayer({
       </div>
 
       {/* Controls: frame back, play, frame forward; speed and skeleton on the right. */}
-      <div className="mt-3 flex items-center justify-between gap-2">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <button type="button" onClick={() => step(-1)} className={iconBtn} aria-label="Previous frame">
             <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M12 4 6 10l6 6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="square" /></svg>
@@ -202,7 +202,7 @@ export function ClipPlayer({
               if (!playing && idx >= timeline.length - 1) setIdx(0);
               setPlaying((p) => !p);
             }}
-            className="press grid h-12 w-[4.5rem] place-items-center rounded-xl bg-optic text-optic-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.45)] hover:bg-optic-2"
+            className="press grid h-12 w-16 place-items-center rounded-xl bg-optic min-[380px]:w-[4.5rem] text-optic-ink shadow-[inset_0_1px_0_rgb(255_255_255/0.45)] hover:bg-optic-2"
             aria-label={playing ? "Pause" : "Play"}
           >
             {playing ? (

@@ -149,7 +149,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 <Link
                   href={t.href}
                   aria-current={active(t.href) ? "page" : undefined}
-                  className={`relative flex min-w-[3.9rem] flex-col items-center gap-1 px-1.5 pb-2.5 pt-3 text-[11px] font-semibold transition ${active(t.href) ? "text-chalk" : "text-chalk-3 hover:text-chalk-2"}`}
+                  className={`relative flex min-w-[3.3rem] flex-col items-center gap-1 px-1 pb-2.5 pt-3 text-[11px] min-[360px]:min-w-[3.9rem] min-[360px]:px-1.5 font-semibold transition ${active(t.href) ? "text-chalk" : "text-chalk-3 hover:text-chalk-2"}`}
                 >
                   {active(t.href) && <span className="absolute top-0 h-[3px] w-7 rounded-b bg-optic" aria-hidden="true" />}
                   <span className={active(t.href) ? "text-optic" : undefined}>{t.icon}</span>

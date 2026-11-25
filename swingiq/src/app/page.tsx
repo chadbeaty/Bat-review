@@ -177,8 +177,10 @@ export default function Home() {
                 Hitting Profile →
               </Link>
             </div>
-            <div className="relative mt-5 grid grid-cols-[auto_1fr] items-center gap-5">
-              <ArcScore score={overall} size={172} label="Gapper Score" previous={prevOverall} />
+            <div className="relative mt-5 grid grid-cols-1 items-center gap-5 min-[360px]:grid-cols-[auto_1fr]">
+              <div className="flex justify-center">
+                <ArcScore score={overall} size={172} label="Gapper Score" previous={prevOverall} />
+              </div>
               <div className="space-y-4">
                 {trend !== null ? (
                   <Stat label="vs last week" value={`${trend >= 0 ? "+" : "−"}${Math.abs(trend)}`} tone={trend >= 0 ? "optic" : "chalk"} size="sm" />

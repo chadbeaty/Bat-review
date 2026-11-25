@@ -90,7 +90,7 @@ export function PageTitle({ title, sub, right, context, pillar }: { title: strin
 export function SectionTitle({ children, right, id }: { children: React.ReactNode; right?: React.ReactNode; id?: string }) {
   return (
     <div className="mb-4 mt-12 flex items-center gap-3">
-      <h2 id={id} className="title shrink-0 text-chalk">
+      <h2 id={id} className="title min-w-0 text-chalk">
         {children}
       </h2>
       <GapRule className="flex-1" />
@@ -102,7 +102,7 @@ export function SectionTitle({ children, right, id }: { children: React.ReactNod
 /** Four hairline bars with three gaps; the first gap holds the ball. A divider that says "outfield" quietly. */
 export function GapRule({ className = "", ball = true }: { className?: string; ball?: boolean }) {
   return (
-    <span className={`flex items-center gap-[5px] ${className}`} aria-hidden="true">
+    <span className={`flex min-w-6 items-center gap-[5px] ${className}`} aria-hidden="true">
       <span className="h-px flex-[0.6] bg-line-2" />
       {ball ? <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-optic/80" /> : null}
       <span className="h-px flex-1 bg-line-2/80" />
