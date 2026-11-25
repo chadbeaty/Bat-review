@@ -188,7 +188,7 @@ export default function SwingDetail() {
           {clip === undefined ? (
             <div className="skel rounded-2xl" style={{ aspectRatio: `${swing.frameSize.width} / ${swing.frameSize.height}`, maxHeight: "68dvh" }} />
           ) : (
-            <ClipPlayer key={`${swing.id}-${clip ? "v" : "p"}`} pose={swing.pose} frames={clip?.frames ?? null} phases={a.phases} frameSize={swing.frameSize} handPath={a.handPath} batPath={a.batPath} hand={swing.hand} />
+            <ClipPlayer key={`${swing.id}-${clip ? "v" : "p"}`} pose={swing.pose} frames={clip?.frames ?? null} phases={a.phases} frameSize={swing.frameSize} handPath={a.handPath} batPath={a.batPath} hand={swing.hand} noVideoNote={swing.fromCloud ? "Synced from another device. The video stays on the phone that recorded it; this is the tracked swing." : undefined} />
           )}
         </div>
         <div>

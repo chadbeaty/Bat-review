@@ -50,12 +50,28 @@ npm run build && npm run test:e2e
 - **Database tests** build a throwaway Postgres from the migrations and check that users only ever see their own data (needs Postgres: `TEST_DATABASE_URL`, default `postgres://postgres@localhost:54329/postgres?host=/tmp`; skipped when none is running).
 - **End-to-end tests** run every page on phone and desktop sizes. The live test feeds a real batter's swing to Chromium as a fake webcam and checks that the app finds the swing with no taps, scores it, saves the clip and plays it back. Get the clip once with `scripts/fetch-test-video.sh` (Mixkit free license; not stored in the repo).
 
-## Turn on accounts (optional)
+## Accounts and sync across devices
 
-1. Create a Supabase project (the free plan allows two active projects; this org already has two, so either upgrade or pause one).
-2. Apply `supabase/migrations/*.sql` to it.
-3. In Vercel → project → Settings → Environment Variables add `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, and `SUPABASE_SERVICE_ROLE_KEY` (server only, used for account deletion). Redeploy.
-4. In Supabase → Authentication → URL configuration, set the site URL to the live domain.
+Sign-in is optional; everything works on the phone with no account. Signing in syncs a player's hitters, bats,
+sessions and swings (full records plus the tracked body points) both ways, so the same history shows on every device
+they sign in on. Video never leaves the phone that recorded it; other devices replay the tracked skeleton.
+
+- **Database:** Supabase project `gapper` (`jqhkpqevdpfkfswwlzxj`, us-east-1, free plan). Schema and security rules in
+  `supabase/migrations/` (applied to the live project as well as committed). Database tests: `tests/db/`.
+- **Website:** `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` (the publishable key, public by design)
+  are set in Vercel for production, preview and development. No server secret is used: "Delete account" calls the
+  `delete_my_account()` database function.
+- **How sync works:** `src/lib/sync.ts` (push changed records and delete tombstones, then pull everything changed since
+  the last sync, one cursor per table). `src/components/SyncProvider.tsx` runs it on sign-in, on opening the app,
+  when it comes back to the front or online, and a few seconds after any save or delete (never during a live
+  session). `src/lib/store/db.ts` marks every app save as changed and leaves a tombstone for every delete.
+- **Emails** (confirm sign-up, reset password) go through Supabase Auth. Supabase's built-in mailer only delivers to
+  the project's own team, so public sign-ups need custom SMTP: Resend's free plan, sending from getgapper.com
+  (Supabase → Authentication → Emails → SMTP). Site URL and allowed redirect URLs are set under Authentication →
+  URL Configuration (`https://getgapper.com`, `https://getgapper.com/**`, `https://swingiq-live.vercel.app/**`,
+  `https://*-ai-toolbox2.vercel.app/**`, `http://localhost:3000/**`).
+- **Local development:** put the two `NEXT_PUBLIC_` values in `.env.local` (git-ignored). Without them the app runs
+  with sign-in switched off, which is how CI runs.
 
 ## Field tuning
 
@@ -63,4 +79,5 @@ During a session, `window.__swingiq` in the browser console shows frames process
 
 ## Design
 
-"Night league under the lights": charcoal night field with a faint cage-net mesh, chalk-white type, one optic softball yellow for whatever is live, stitch red only for the one thing to fix. Archivo (wide) for numbers and headings so they read from 8 feet away; Atkinson Hyperlegible Next for everything else. The score is drawn as a slow-pitch arc landing on the plate.
+Brand kit: `public/brand/BRAND.md`. Design system and screens: `docs/DESIGN.md` (v4 "carbon and alloy" with the v5
+"Strobe" layer). Audit and directions behind the current look: `docs/design/REDESIGN-2026-11.md`.

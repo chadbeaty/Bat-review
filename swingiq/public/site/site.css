@@ -132,6 +132,9 @@ h1, h2, h3, p { margin: 0; }
 @media (max-width: 520px) { .ctas .btn { flex: 1 1 100%; } }
 .not { margin-top: 18px; font-size: 13px; color: var(--steel); max-width: 52ch; }
 .not b { color: var(--text-2); font-weight: 700; }
+.signin { margin-top: 10px; font-size: 14px; color: var(--text-2); }
+.signin a { color: var(--lime); font-weight: 700; text-decoration: none; }
+.signin a:hover { text-decoration: underline; }
 
 .stage {
   position: relative; margin: 0; width: 100%;

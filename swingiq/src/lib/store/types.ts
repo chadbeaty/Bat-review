@@ -36,6 +36,8 @@ export type Player = {
   goals?: HittingGoal[];
   /** Supabase player_profiles.id once synced. */
   remoteId?: string | null;
+  /** When this hitter was last uploaded; null or missing means it changed since (sync uploads it). */
+  syncedAt?: number | null;
 };
 
 export type Bat = {
@@ -51,6 +53,8 @@ export type Bat = {
   /** The player's own photo of this bat (shrunk JPEG), kept on the device only. */
   photo?: Blob | null;
   createdAt: number;
+  remoteId?: string | null;
+  syncedAt?: number | null;
 };
 
 export type BatBalance = "balanced" | "half-end" | "end-loaded" | "unknown";
@@ -76,6 +80,7 @@ export type Session = {
   poseFps: number;
   batId: string | null;
   notes: string;
+  remoteId?: string | null;
   syncedAt?: number | null;
 };
 
@@ -104,8 +109,14 @@ export type SwingRecord = {
   tag?: ManualHitTag;
   note?: string;
   external?: ExternalMeasurement[];
+  remoteId?: string | null;
   syncedAt?: number | null;
+  /** Downloaded from the cloud: the video stays on the device that recorded it. */
+  fromCloud?: boolean;
 };
+
+/** A delete that hasn't reached the cloud yet, so other devices hear about it on their next sync. */
+export type Tombstone = { kind: "player" | "bat" | "session" | "swing"; id: string; at: number };
 
 /** JPEG frames of one swing clip, stored separately so lists stay fast. */
 export type ClipRecord = { swingId: string; frames: { t: number; blob: Blob }[] };

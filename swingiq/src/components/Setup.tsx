@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { cloudEnabled } from "@/lib/supabase/client";
 import type { Player } from "@/lib/store/types";
 import { Positioning, SportTag } from "./brand";
 import { PillarStrip } from "./ui";
@@ -26,7 +27,7 @@ export function Setup({ onSave, storageOk }: { onSave: (p: Player) => Promise<vo
             Step in<span className="text-optic">.</span>
           </h1>
           <p className="mt-4 max-w-sm text-[16px] leading-relaxed text-chalk-2">
-            Gapper is the performance analytics platform for the slow-pitch softball community. Set up your hitter and record your first swing. Takes a minute. Everything stays on this phone; no account, no sign-up.
+            Gapper is the performance analytics platform for the slow-pitch softball community. Set up your hitter and record your first swing. Takes a minute. No account needed; sign in any time to use it on your other devices too.
           </p>
           <p className="mt-6 max-w-sm text-[15px] font-semibold leading-snug text-chalk">
             <Positioning />
@@ -47,6 +48,14 @@ export function Setup({ onSave, storageOk }: { onSave: (p: Player) => Promise<vo
           <h2 className="head text-[19px]">Set up your hitter</h2>
           <p className="mb-5 mt-1 text-[14px] text-chalk-3">Name, which side you hit from, and your height (it turns pixels into inches).</p>
           <PlayerForm onSave={onSave} submitLabel="Let's hit" />
+          {cloudEnabled && (
+            <p className="mt-5 border-t border-line pt-4 text-[14px] text-chalk-2">
+              Already use Gapper on another device?{" "}
+              <Link href="/sign-in" className="font-semibold text-optic">
+                Sign in to bring your swings
+              </Link>
+            </p>
+          )}
         </div>
       </div>
     </div>
