@@ -74,6 +74,9 @@ test("catches a real swing from the camera with no taps", async ({ page }) => {
   // The clip's frames were saved on the device.
   await expect(page.getByText("Video not saved for this swing")).toHaveCount(0);
   await expect(page.getByText(/Not available/).first()).toBeVisible();
-  await expect(page.getByRole("button", { name: "Foot down", exact: true })).toBeVisible();
+  // The Foot down phase only exists when the live read caught the front foot landing. If it's missing, say how well the
+  // session tracked (frame rates, feet in view) so a failure can be told apart from a slow test machine.
+  const quality = (await page.getByText(/^Tracking \d+ fps/).textContent({ timeout: 3000 }).catch(() => null)) ?? "no tracking line";
+  await expect(page.getByRole("button", { name: "Foot down", exact: true }), `No foot-down mark on the saved live swing (${quality})`).toBeVisible();
   expect(errors).toEqual([]);
 });
