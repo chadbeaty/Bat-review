@@ -40,7 +40,7 @@
         <p class="sport"><img src="/site/softball.svg" alt="" width="22" height="22"> Adult slow-pitch softball</p>
         <h1 id="hero-title" class="hero-h1">
           <span class="l1">Stop guessing.</span>
-          <span class="l2">Start hitting<b class="ball" aria-hidden="true"></b></span>
+          <span class="l2">Start <span class="nw">hitting<b class="ball" aria-hidden="true"></b></span></span>
         </h1>
         <p class="hero-sub lime">Built for slowpitch.</p>
         <p class="hero-p">The next generation of slow-pitch softball swing analytics. Understand your mechanics, measure your progress and build a more consistent swing.</p>
@@ -51,19 +51,27 @@
         <p class="not"><b>The performance analytics platform for the slow-pitch community.</b> Not baseball. Not fastpitch. No account needed. Your swings stay on your phone.</p>
       </div>
 
-      <figure class="stage" aria-label="Gapper's tracked view of a real swing: the hitter's body as tracked points, the front leg in lime, a ring when the front heel lands.">
+      <figure class="stage" aria-label="A real swing, tracked by Gapper, shown as a strobe: ghosted frames from load to contact, the hands' path as a lime light trail, the front leg in lime and a ring when the front heel lands.">
         <div class="stage-art">
-        <svg class="field" viewBox="0 0 400 230" aria-hidden="true">
-          <defs>
-            <linearGradient id="blk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2e33"/><stop offset="1" stop-color="#16181b"/></linearGradient>
-          </defs>
-          <g id="outfield"></g>
-        </svg>
-        <canvas class="swing" data-swing="hero" aria-hidden="true"></canvas>
+          <svg class="field" viewBox="0 0 400 230" aria-hidden="true">
+            <defs>
+              <linearGradient id="blk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#25292e"/><stop offset="1" stop-color="#121417"/></linearGradient>
+            </defs>
+            <g id="outfield"></g>
+          </svg>
+          <canvas class="swing" data-swing="hero" aria-hidden="true"></canvas>
+          <div class="hud" aria-hidden="true">
+            <span class="hud-phase"><i class="dot dot-white" data-hud-dot></i><b data-hud-phase>Load</b></span>
+            <span class="hud-ms" data-hud-ms>&minus;52 fr</span>
+          </div>
+          <div class="hud-read" aria-hidden="true">
+            <span class="hud-k">Front heel down</span>
+            <span class="hud-v"><b>6</b> frames to contact</span>
+          </div>
         </div>
         <figcaption class="stage-cap">
+          <span><i class="dot dot-lime"></i>Hands&rsquo; path</span>
           <span><i class="dot dot-lime"></i>Front leg</span>
-          <span><i class="dot dot-white"></i>Tracked body</span>
           <span><i class="dot dot-ring"></i>Heel down</span>
           <span class="muted">A real swing, tracked by Gapper (sample clip). Its full read is further down.</span>
         </figcaption>
@@ -80,19 +88,23 @@
 
   <!-- Slow pitch is its own swing. -->
   <section class="own wrap" aria-labelledby="own-title">
+    <p class="vs" aria-hidden="true"><span>Not baseball.</span><span>Not fastpitch.</span></p>
     <h2 id="own-title" class="h2">Built for one game.</h2>
     <p class="lede">General swing apps are built for every hitter, so slow pitch gets treated like baseball with a bigger ball. Gapper is the performance analytics platform for the slow-pitch softball community: the 12-inch ball, the arc and the four-outfielder defense, measured on their own terms. <span class="lime">Built for slowpitch.</span> Nothing else.</p>
     <ol class="ledger">
       <li class="reveal">
         <span class="big">6–12<small>ft</small></span>
+        <svg class="fact-art" viewBox="0 0 220 90" aria-hidden="true"><path d="M8 80 Q96 -30 186 64" fill="none" stroke="#c4f135" stroke-width="1.6" stroke-dasharray="1.5 5" stroke-linecap="round"/><circle cx="186" cy="64" r="5.5" fill="#c4f135"/><path d="M196 70h14v6l-7 5-7-5z" fill="#c6cace"/><path d="M8 86h204" stroke="#30353b"/><text x="70" y="14" fill="#8d939a" font-size="10">6–12 ft above the ground</text></svg>
         <div><h3>The pitch drops in.</h3><p>A high arc, not a fastball. Your timing is about the drop, so Gapper times your load and stride against it.</p></div>
       </li>
       <li class="reveal">
         <span class="big">0.2<small>s</small></span>
+        <svg class="fact-art" viewBox="0 0 220 90" aria-hidden="true"><path d="M10 46h196" stroke="#30353b" stroke-width="2"/><rect x="104" y="36" width="70" height="20" rx="4" fill="#c4f135" fill-opacity="0.1" stroke="#c4f135" stroke-opacity="0.35" stroke-dasharray="2 3"/><path d="M134 46h62" stroke="#c4f135" stroke-width="3" stroke-linecap="round"/><circle cx="134" cy="46" r="6" fill="none" stroke="#c4f135" stroke-width="1.8"/><circle cx="196" cy="46" r="6" fill="#c4f135"/><text x="112" y="76" fill="#c6cace" font-size="10">heel down</text><text x="178" y="76" fill="#c4f135" font-size="10" font-weight="700">contact</text><text x="106" y="26" fill="#8d939a" font-size="9.5">the slow-pitch window</text></svg>
         <div><h3>Land the front heel, then swing.</h3><p>Skilled slow-pitch hitters plant the front heel about 0.2 seconds before contact. Gapper grades your front-foot landing on that slow-pitch window, not baseball&rsquo;s &ldquo;get your foot down early.&rdquo;</p></div>
       </li>
       <li class="reveal">
         <span class="big">3<small>gaps</small></span>
+        <svg class="fact-art" viewBox="0 0 220 90" aria-hidden="true" data-mini-field></svg>
         <div><h3>Four outfielders. Three gaps.</h3><p>Ten fielders, four of them in the outfield. Line drives into the gaps win games, so Gapper tracks your line-drive rate and where you hit it: pull side, middle, opposite field.</p></div>
       </li>
     </ol>
@@ -139,7 +151,7 @@
               <p class="read-k">Sample read</p>
               <p class="read-note">A stock clip of a real hitter, run through Gapper. Real output.</p>
             </div>
-            <div class="score"><span class="jumbo" data-count="72">72</span><span>Gapper<br>Score</span></div>
+            <div class="score"><svg class="gauge" viewBox="0 0 200 120" aria-hidden="true" data-gauge="72"></svg><span class="jumbo" data-count="72">72</span><span class="score-k">Gapper Score</span></div>
           </div>
           <div class="read-grid">
             <canvas class="swing swing-sm" data-swing="read" aria-hidden="true"></canvas>
@@ -165,8 +177,10 @@
         <p class="pillar-lead">One fix, not ten tips. Then the drill for it, a 10-swing challenge, and your Hitting Profile to show it&rsquo;s working.</p>
         <div class="fix">
           <p class="fix-k"><i class="dot dot-red"></i>The one fix for that swing</p>
+          <p class="fix-h">Hands dropping in the load</p>
           <p class="fix-t">Your hands dropped during the load. Keep them at shoulder height as you start the swing.</p>
           <p class="fix-d"><b>Drill: Hands-at-the-shoulder holds.</b> Take your stance, load, and freeze for two seconds at launch with your hands still at shoulder height. Ten reps, then swing for real.</p>
+          <p class="fix-c"><span>10-swing challenge</span><b>Hand drop under 3 inches</b></p>
         </div>
         <ul class="ticks">
           <li><b>My Hitting Profile.</b> Your score, timing, front-foot landing and repeatability over every session, with your pull-side and opposite-field tendencies.</li>

@@ -72,6 +72,8 @@ taglines; Regular for reading. Not Mona Sans (the retired look), and none of the
 - **Gap rule**: four hairlines, three gaps, the ball in one. Section dividers.
 - **Record. Analyze. Improve.**: the three words over page titles with the current step lit.
 - **Measured vs estimated**: solid dot = measured, ring = estimated, lime = slo-mo video, alloy = your own sensor.
+- **Strobe**: the hitter's own tracked swing as a multi-exposure, the hands' path as a lime light trail. Gapper's
+  stand-in for photography (real tracking, never a stock photo or a generated picture of a player).
 
 ## Imagery
 Real adult slow-pitch only: composite bats, 12-inch optic-yellow softballs with red stitches, slow-pitch stances,

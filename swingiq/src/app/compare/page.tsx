@@ -213,7 +213,7 @@ function CompareInner() {
         })}
       </div>
 
-      <div className={`mt-4 grid gap-3 ${portrait ? "grid-cols-2" : "grid-cols-1"}`}>
+      <div className={`mt-4 grid gap-3 ${portrait ? "grid-cols-2" : "grid-cols-1 lg:grid-cols-2"}`}>
         <Panel loaded={la} rel={rel} anchor={anchor} showSkeleton={showSkeleton} label={`A · ${label(A)}`} />
         <Panel loaded={lb} rel={rel} anchor={anchor} showSkeleton={showSkeleton} label={`B · ${label(B)}`} />
       </div>

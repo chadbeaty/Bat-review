@@ -44,6 +44,17 @@ stands out.
    Slo-mo ± range / Your tags). Bat path is said to be read from the hand path; barrel tracking isn't claimed.
 6. **Close**: the bag tag, OWN THE GAPS., one CTA.
 
+## v5 "Strobe" update (2026-11-25)
+- Hero: "STOP GUESSING." set as an outline (the ghost) over a solid "START HITTING." The figure is the real tracked swing
+  building up as a strobe: a ghost flashes on at frames 72, 86, 98 and 108 (heel down), the hands' path burns in as a
+  lime light trail, the heel ring lands, and the live skeleton plays over it. A HUD shows the phase (Loading, Heel
+  down, Contact, Finish) and the distance from contact **in frames** (the clip is slow motion of unknown speed), and a
+  callout reads "Front heel down · 6 frames to contact" (the analyzer's own count).
+- "Built for one game" opens with "Not baseball. Not fastpitch." struck through in red, and each slow-pitch fact has a
+  small drawing: the arc, the heel-to-contact window, the four-block outfield with the ball through left-center.
+- The sample read carries the outfield gauge for its score (72); the Improve step shows the one fix as the app does,
+  with its 10-swing challenge (the app's coaching output for that cue).
+
 ## Evidence versus assumption
 - Real: every number on the page is Gapper's output on the sample clip (the same clip the browser tests use). The
   clip is slow motion of unknown speed, so heel-to-contact is counted in frames, not seconds.

@@ -27,23 +27,32 @@ export function displayValue(mv: MetricValue): string {
   return formatMetric(mv.key, mv.value);
 }
 
+/** Speeds and angles from tracking the ball in a slo-mo clip: a measurement with a ± range (lime dot). */
+const BALL_TRACKED = new Set<MetricKey>(["exitVelocity", "launchAngle", "pitchSpeed", "descentAngle"]);
+
+/** Where a number came from, in the same dots as everywhere else in Gapper. Confidence shows as three pips. */
 function SourceBadge({ mv }: { mv: MetricValue }) {
-  const tone =
-    mv.source === "unavailable"
-      ? "border-line text-chalk-3"
-      : mv.source === "sensor"
-        ? "border-clay/50 text-clay"
-        : mv.source === "measured"
-          ? "border-chalk-3 text-chalk"
-          : "border-line text-chalk-2";
-  // Solid dot = measured directly; ring = estimated from body tracking; alloy = your own sensor; dashed = not measured.
-  const dot =
-    mv.source === "measured" ? "bg-chalk" : mv.source === "sensor" ? "bg-clay" : mv.source === "cv_estimated" ? "border border-chalk-2" : "border border-dashed border-line-2";
+  const slomo = mv.source === "cv_estimated" && mv.plusMinus !== undefined && BALL_TRACKED.has(mv.key);
+  const slomoEstimate = mv.source === "cv_estimated" && mv.plusMinus !== undefined && !slomo;
+  const kind = mv.source === "unavailable" ? "none" : mv.source === "sensor" ? "sensor" : mv.source === "measured" ? "measured" : slomo ? "slomo" : "estimate";
+  const dot = { measured: "bg-chalk", sensor: "bg-clay", slomo: "bg-optic", estimate: "border border-chalk-2", none: "border border-dashed border-line-2" }[kind];
+  const text = slomo ? "Slo-mo video · ± range" : slomoEstimate ? "Slo-mo estimate · ± range" : SOURCE_LABEL[mv.source] === "Camera estimate" ? "Estimate" : SOURCE_LABEL[mv.source];
+  const level = confidenceLabel(mv.confidence);
+  const pips = level === "High" ? 3 : level === "Medium" ? 2 : 1;
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-md border px-1.5 py-0.5 text-[11px] ${tone}`}>
+    <span className={`inline-flex items-center gap-1.5 text-[12px] ${kind === "none" ? "text-chalk-3" : kind === "slomo" ? "text-optic" : kind === "sensor" ? "text-clay" : "text-chalk-2"}`}>
       <span className={`inline-block h-1.5 w-1.5 shrink-0 rounded-full ${dot}`} aria-hidden="true" />
-      {SOURCE_LABEL[mv.source]}
-      {mv.source === "cv_estimated" && ` · ${confidenceLabel(mv.confidence)} confidence`}
+      {text}
+      {kind === "estimate" && (
+        <>
+          <span className="ml-0.5 inline-flex items-end gap-[2px]" aria-hidden="true" title={`${level} confidence`}>
+            {[0, 1, 2].map((i) => (
+              <span key={i} className={`w-[3px] rounded-[1px] ${i < pips ? "bg-chalk-2" : "bg-line-2"}`} style={{ height: 4 + i * 2 }} />
+            ))}
+          </span>
+          <span className="sr-only">, {level} confidence</span>
+        </>
+      )}
     </span>
   );
 }
@@ -70,10 +79,10 @@ export function MetricRow({ mv, avg }: { mv: MetricValue; avg?: number }) {
   const na = mv.source === "unavailable";
   return (
     <li className="border-b border-line last:border-0">
-      <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="flex w-full items-start justify-between gap-3 py-3.5 text-left">
+      <button type="button" onClick={() => setOpen((o) => !o)} aria-expanded={open} className="flex min-h-14 w-full items-start justify-between gap-3 py-3 text-left">
         <span className="min-w-0">
           <span className="block text-[15px] text-chalk">{info.label}</span>
-          <span className="mt-1 flex flex-wrap items-center gap-2">
+          <span className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
             <SourceBadge mv={mv} />
             {!na && <Compare k={mv.key} value={mv.value} avg={avg} />}
           </span>
@@ -134,7 +143,7 @@ export function GroupedMetrics({ metrics, averages }: { metrics: Partial<Record<
         if (!g.keys.some((k) => metrics[k])) return null;
         return (
           <section key={g.title} aria-label={g.title}>
-            <h3 className="head mb-1 flex items-center gap-2 text-[14px] text-chalk"><span className="h-3 w-0.5 rounded-full bg-optic" aria-hidden="true" />{g.title}</h3>
+            <h3 className="label mb-1 flex items-center gap-2 !text-chalk-2"><span className="h-3 w-0.5 rounded-full bg-optic" aria-hidden="true" />{g.title}</h3>
             <MetricList metrics={metrics} keys={g.keys} averages={averages} />
           </section>
         );

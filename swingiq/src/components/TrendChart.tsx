@@ -91,7 +91,7 @@ export function TrendChart({
         )}
       </figcaption>
       <div className="relative">
-        <svg viewBox={`0 0 ${W} ${H}`} className="w-full touch-none select-none" onPointerMove={onMove} onPointerDown={onMove} onPointerLeave={() => setHover(null)} aria-hidden="true">
+        <svg viewBox={`0 0 ${W} ${H}`} className="mx-auto w-full max-w-[44rem] touch-none select-none" onPointerMove={onMove} onPointerDown={onMove} onPointerLeave={() => setHover(null)} aria-hidden="true">
           <defs>
             <linearGradient id={`${id}-a`} x1="0" x2="0" y1="0" y2="1">
               <stop offset="0" stopColor={color} stopOpacity="0.16" />

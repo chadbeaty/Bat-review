@@ -86,7 +86,7 @@ export function HittingProfile({ player }: { player: Player }) {
   return (
     <section aria-labelledby="hp-title">
       {/* The card */}
-      <div className="carbon boxed relative overflow-hidden rounded-2xl p-5 md:p-6">
+      <div className="stage relative overflow-hidden rounded-2xl p-5 md:p-6">
         <GapMark size={360} ink="#ffffff" accent="#ffffff" className="pointer-events-none absolute -right-24 -top-8 opacity-[0.035]" />
         <div className="relative flex flex-wrap items-end justify-between gap-5">
           <div className="min-w-0">

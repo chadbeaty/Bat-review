@@ -39,7 +39,7 @@ export function ArcScore({ score, size = 220, label = "Gapper Score", previous =
   const ball = at === null ? null : pt((rIn + rOut) / 2, at);
   return (
     <div style={{ width: size }} className="relative" role="img" aria-label={score === null ? `${label}: not enough data` : `${label}: ${score} out of 100`}>
-      <svg viewBox="0 6 200 150" className="block w-full overflow-visible">
+      <svg viewBox="0 2 200 154" className="block w-full overflow-visible">
         <defs>
           <linearGradient id={`${id}-blk`} x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#2b2f35" />
@@ -63,10 +63,29 @@ export function ArcScore({ score, size = 220, label = "Gapper Score", previous =
             <path key={i} d={block(b.from, b.to)} fill="var(--color-optic)" />
           ))}
         </g>
+        {/* Ticks every 5 points around the outside, lit up to the score (the scoreboard ring). */}
+        {Array.from({ length: 21 }, (_, i) => i * 5).map((n) => {
+          const a = ang(n);
+          const major = n % 25 === 0;
+          const o = pt(rOut + (major ? 9 : 7), a);
+          const i0 = pt(rOut + 4, a);
+          return (
+            <line
+              key={n}
+              x1={f(i0[0])}
+              y1={f(i0[1])}
+              x2={f(o[0])}
+              y2={f(o[1])}
+              stroke={v !== null && n <= v ? "var(--color-optic)" : "rgb(255 255 255 / 0.18)"}
+              strokeOpacity={v !== null && n <= v ? 0.75 : 1}
+              strokeWidth={major ? 1.4 : 0.9}
+            />
+          );
+        })}
         {/* Scale: 0 and 100 under the two ends */}
         {[
-          { n: 0, p: pt(rOut + 2, a0) },
-          { n: 100, p: pt(rOut + 2, a1) },
+          { n: 0, p: pt(rOut + 6, a0) },
+          { n: 100, p: pt(rOut + 6, a1) },
         ].map(({ n, p }) => (
           <text key={n} x={p[0]} y={p[1] + 12} textAnchor="middle" fontSize="8" fill="var(--color-chalk-3)" style={{ fontFamily: "var(--font-num)" }}>
             {n}

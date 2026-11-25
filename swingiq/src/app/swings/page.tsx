@@ -8,6 +8,7 @@ import { SparkBars } from "@/components/viz/SparkBars";
 import { speedOf } from "@/lib/insights";
 import { db } from "@/lib/store/db";
 import type { Session, SwingRecord } from "@/lib/store/types";
+import { PoseThumb, poseAt, stripBox } from "@/components/viz/SwingFigures";
 
 const VIEW_LABEL = { side: "Side view", behind: "Behind view", front: "Front view" } as const;
 
@@ -98,8 +99,11 @@ function SwingsInner() {
                 const ev = speedOf(s, "exitVelocity");
                 return (
                   <li key={s.id}>
-                    <Link href={`/swings/${s.id}`} className="press flex items-center gap-4 px-4 py-3.5 hover:bg-night-3">
-                      <span className={`num w-14 shrink-0 text-[1.5rem] leading-none ${best ? "text-optic" : "text-chalk"}`}>{s.analysis.score.overall ?? "—"}</span>
+                    <Link href={`/swings/${s.id}`} className="press flex items-center gap-3.5 px-3 py-3 hover:bg-white/[0.03]">
+                      <span className="h-12 w-10 shrink-0 overflow-hidden rounded-md border border-line bg-night">
+                        <PoseThumb lm={poseAt(s.pose, s.analysis.phases.contact)} box={stripBox(s.pose, [s.analysis.phases.contact], s.frameSize, 0.8)} size={s.frameSize} hand={s.hand} active />
+                      </span>
+                      <span className={`num w-12 shrink-0 text-[1.5rem] leading-none ${best ? "text-optic" : "text-chalk"}`}>{s.analysis.score.overall ?? "—"}</span>
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-[14px] text-chalk">{s.analysis.cue.spoken}</span>
                         <span className="mt-1.5 flex flex-wrap items-center gap-1">

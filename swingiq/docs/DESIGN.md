@@ -30,6 +30,36 @@ Retired looks (don't bring back): v1 "lights-out lab" (Archivo, Atkinson, optic 
 (Instrument Sans, Michroma, onyx and gold), v3 "night game, fresh-cut outfield" (Mona Sans, midnight navy, turf
 mowing stripes, the corner "gap cut", the home-plate crest, the fan-shaped field mark).
 
+## v5 "Strobe" (2026-11-25, Chad's premium brief; audit and the three directions in `docs/design/REDESIGN-2026-11.md`)
+The brand stays; the presentation got a single visual idea: a stroboscopic sports photo. The hitter's own tracked swing
+is drawn as a multi-exposure (ghost frames from load to contact, the contact frame in white with the front leg in
+lime) with the hands' path burned in as a lime light trail. It's real tracking data, it's athletic, and it stands in
+for photography until there are real slow-pitch photos. Rules:
+- **Surfaces have jobs.** `stage` (carbon, light from the top left, alloy hairline on top) for hero moments only: the
+  replay, the player card, the score, the one fix, empty/error states. `frame` (hairline box, no fill) for charts and
+  drawings of the swing. `rows` (hairline-divided list, no card) for reading lists. `surface` is the plain graphite
+  panel, now flat (no soft drop shadow). `Panel variant="stage" | "frame" | "surface"`.
+- **Type scale.** `.display` + `.t-xl` / `.t-l` / `.t-m` (black italic capitals; page titles are `t-l`), `.title`
+  (19 px, 750, sentence case: section and card heads), body 15–16 px, `.small`, `.label` (one size, one tracking).
+- **Motion.** `.flash` (strobe frames flash on in order), `.draw-slow` (a light trail draws itself), count-ups, the
+  upload `.scan` line. All off with reduced motion.
+- **No fake degrees.** One camera can't measure hip or shoulder turn, so Rotation is drawn as the front leg at foot down
+  vs. contact and the hips-vs-hands order, never as turn angles.
+
+Pictures of the swing (`src/components/viz/SwingFigures.tsx`, all from saved tracking, nothing invented):
+`Strobe` (multi-exposure + light trail + heel ring: player card, upload results, landing hero), `PoseThumb` (one
+moment cropped to the hitter: the phase strip, swing lists), `BalanceTrace` (head and hip-center path over the feet at
+landing), `FrontLegBlock` (front leg at foot down, dashed, and at contact, lime), `PathTrail` (hands' path as a light
+trail with launch and contact marked; tracked barrel in alloy on high-speed clips).
+
+`src/components/SwingRead.tsx` lays out Timing, Balance, Rotation and Bat path as four frames, each with its category
+score, the estimated tag and the checks behind it. `ErrorState` and `Empty` (with an `action`) cover failure and empty
+screens; `src/app/error.tsx` catches a crashed screen.
+
+Number labels in the swing report's list follow the same dots everywhere: ball-tracked speeds and angles from slo-mo
+are "Slo-mo video · ± range" (lime), bat speed from slo-mo is "Slo-mo estimate · ± range" (ring), body-tracking reads
+are "Estimate" with three confidence pips.
+
 ## Tokens (`src/app/globals.css`)
 Token names are kept from earlier versions so every screen follows: `night` = carbon/graphite, `chalk` = white text,
 `optic` = lime accent, `clay` = alloy (comparison), `stitch` = the one fix.
@@ -77,12 +107,15 @@ bat, record dot). No stock icon sets, no emoji.
 ## Screens
 - **Navigation.** Phone: a carbon bar with Home, Analyze, the lime **Record** button, Improve, Profile. Desktop: a
   carbon rail with the lockup, "Built for slowpitch", a lime Record button and the sections.
-- **Home.** Player card (name in black italic, bats/height/level, outfield gauge, front foot on time, repeatability,
-  recent form), Hit live / Upload a video, Power (slo-mo speeds with their labels), the one thing to work on with a
+- **Home.** Player card on a stage with the latest swing as a strobe in the corner (name in black italic,
+  bats/height/level, outfield gauge, front foot on time, repeatability, recent form), Hit live / Upload a video, Power (slo-mo speeds with their labels), the one thing to work on with a
   link to your drills, Field Print, recent swings, personal records. A new hitter gets a rookie card.
-- **Swing report** (`/swings/[id]`): Analyze step, the clip, the outfield gauge with the cue, speeds, load-to-contact
-  timing, score breakdown, the coach (one fix, drill, 10-swing challenge), every number with its source label, and
-  hit tagging (line drive, grounder…; pull, middle, oppo) that feeds tendencies.
+- **Swing report** (`/swings/[id]`): built around the replay. The clip on a stage with the phase and the time from
+  contact on top, a scrubber with the phases marked, frame controls, and the phase strip (a tracked pose per phase,
+  tap to jump). Beside it (below on a phone) the score stage: outfield gauge, the headline cue, other observations and
+  the score breakdown in one block; then speeds. Then **The one fix** on its own stage (fix, why, drill, 10-swing
+  challenge with Take the challenge live), the four read frames (timing, balance, rotation, bat path), compare links,
+  every number with its source label, and hit tagging that feeds tendencies.
 - **My Hitting Profile** (`/profile`, `src/components/HittingProfile.tsx`, data in `src/lib/profile.ts`): the player
   card, the season line (swings, sessions, average, best, front foot on time, repeatability, line-drive rate, top exit
   velo), score history by session, strengths and what to work on, tendencies (pull side, middle, opposite field),
