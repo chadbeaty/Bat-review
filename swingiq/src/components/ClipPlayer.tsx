@@ -43,7 +43,9 @@ export function ClipPlayer({
   handPath,
   batPath,
   hand = "R",
+  noVideoNote = "Video not saved for this swing. Showing tracking only.",
 }: {
+  noVideoNote?: string;
   pose: PoseFrame[];
   frames: { t: number; blob: Blob }[] | null;
   phases: SwingPhases;
@@ -164,7 +166,7 @@ export function ClipPlayer({
           {idx + 1}/{timeline.length}
         </span>
         {!frames?.length && (
-          <div className="absolute inset-x-0 bottom-3 text-center text-xs text-chalk-3">Video not saved for this swing. Showing tracking only.</div>
+          <div className="absolute inset-x-0 bottom-3 px-4 text-center text-xs text-chalk-3">{noVideoNote}</div>
         )}
       </div>
 

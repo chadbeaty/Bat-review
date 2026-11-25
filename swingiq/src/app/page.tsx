@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ArcScore } from "@/components/ArcScore";
 import { GapMark, LockupH } from "@/components/Logo";
 import { usePlayers } from "@/components/PlayerProvider";
+import { useSync } from "@/components/SyncProvider";
 import { Setup } from "@/components/Setup";
 import { SwingGoal } from "@/components/SwingGoal";
 import { Softball } from "@/components/Softball";
@@ -76,6 +77,20 @@ function RecentForm({ swings }: { swings: SwingRecord[] }) {
         ))}
       </div>
     </div>
+  );
+}
+
+/** One quiet line for a signed-out hitter: sign in to see these swings on every device. */
+function SyncPrompt() {
+  const { status } = useSync();
+  if (status !== "signed-out") return null;
+  return (
+    <Link href="/sign-in" className="press mt-3 flex items-center justify-between gap-3 rounded-xl border border-line px-4 py-3 text-[14px] text-chalk-2 hover:border-line-2 hover:text-chalk">
+      <span>
+        <span className="font-semibold text-chalk">Use Gapper on all your devices.</span> Sign in to sync your swings.
+      </span>
+      <span className="text-optic" aria-hidden="true">→</span>
+    </Link>
   );
 }
 
@@ -199,6 +214,7 @@ export default function Home() {
           </section>
 
           <SwingActions />
+          <SyncPrompt />
 
           <SwingGoal player={player} />
 

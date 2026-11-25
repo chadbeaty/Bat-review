@@ -1,9 +1,22 @@
-import { DEFAULT_SETTINGS, type Bat, type ClipRecord, type Player, type Session, type Settings, type SwingGoal, type SwingRecord } from "./types";
+import { DEFAULT_SETTINGS, type Bat, type ClipRecord, type Player, type Session, type Settings, type SwingGoal, type SwingRecord, type Tombstone } from "./types";
 
 /**
  * On-device storage (IndexedDB). Everything a player records lives here first and works with no account.
- * When the player signs in, summaries sync to Supabase (see lib/sync.ts); clips stay on the phone unless backed up.
+ * When the player signs in, it syncs both ways with their account (see lib/sync.ts); video stays on the phone.
+ *
+ * Every save from the app marks the record as changed (syncedAt: null) and fires CHANGED so a signed-in device uploads
+ * it soon after; every delete leaves a tombstone so the delete reaches the player's other devices. Writes made by the
+ * sync itself pass { fromSync: true } and do neither.
  */
+export const CHANGED = "gapper:changed";
+type Opts = { fromSync?: boolean };
+
+function changed(o?: Opts) {
+  if (!o?.fromSync && typeof window !== "undefined") window.dispatchEvent(new Event(CHANGED));
+}
+function dirty<T extends { syncedAt?: number | null }>(x: T, o?: Opts): T {
+  return o?.fromSync ? x : { ...x, syncedAt: null };
+}
 const DB_NAME = "swingiq";
 const VERSION = 1;
 
@@ -56,6 +69,9 @@ const get = <T>(store: StoreName, key: string) => tx<T | undefined>(store, "read
 const put = <T>(store: StoreName, value: T) => tx<IDBValidKey>(store, "readwrite", (s) => s.put(value));
 const del = (store: StoreName, key: string) => tx<undefined>(store, "readwrite", (s) => s.delete(key));
 
+const kvGet = <T>(key: string) => tx<T | undefined>("kv", "readonly", (s) => s.get(key) as IDBRequest<T | undefined>);
+const kvSet = (key: string, value: unknown) => tx("kv", "readwrite", (s) => s.put(value, key));
+
 export function uid(): string {
   return crypto.randomUUID();
 }
@@ -64,36 +80,74 @@ export const db = {
   // Players
   players: () => getAll<Player>("players").then((ps) => ps.sort((a, b) => a.createdAt - b.createdAt)),
   player: (id: string) => get<Player>("players", id),
-  savePlayer: (p: Player) => put("players", p),
-  async deletePlayer(id: string) {
-    for (const s of await this.sessions(id)) await this.deleteSession(s.id);
+  async savePlayer(p: Player, o?: Opts) {
+    await put("players", dirty(p, o));
+    changed(o);
+  },
+  async deletePlayer(id: string, o?: Opts) {
+    // One tombstone for the hitter covers everything under it.
+    for (const s of await this.sessions(id)) await this.deleteSession(s.id, { fromSync: true });
     for (const b of await byIndex<Bat>("bats", "playerId", id)) await del("bats", b.id);
     await del("players", id);
+    await tx("kv", "readwrite", (s) => s.delete(`goals:${id}`));
+    await this.bury("player", id, o);
   },
 
   // Bats
   bats: (playerId: string) => byIndex<Bat>("bats", "playerId", playerId).then((bs) => bs.sort((a, b) => a.createdAt - b.createdAt)),
-  saveBat: (b: Bat) => put("bats", b),
-  deleteBat: (id: string) => del("bats", id),
+  bat: (id: string) => get<Bat>("bats", id),
+  async saveBat(b: Bat, o?: Opts) {
+    await put("bats", dirty(b, o));
+    changed(o);
+  },
+  async deleteBat(id: string, o?: Opts) {
+    await del("bats", id);
+    await this.bury("bat", id, o);
+  },
 
   // Sessions
   sessions: (playerId: string) => byIndex<Session>("sessions", "playerId", playerId).then((ss) => ss.sort((a, b) => b.startedAt - a.startedAt)),
   session: (id: string) => get<Session>("sessions", id),
-  saveSession: (s: Session) => put("sessions", s),
-  async deleteSession(id: string) {
-    for (const sw of await this.swingsInSession(id)) await this.deleteSwing(sw.id);
+  async saveSession(s: Session, o?: Opts) {
+    await put("sessions", dirty(s, o));
+    changed(o);
+  },
+  async deleteSession(id: string, o?: Opts) {
+    for (const sw of await this.swingsInSession(id)) await this.deleteSwing(sw.id, { fromSync: true });
     await del("sessions", id);
+    await this.bury("session", id, o);
   },
 
   // Swings
   swingsInSession: (sessionId: string) => byIndex<SwingRecord>("swings", "sessionId", sessionId).then((xs) => xs.sort((a, b) => a.n - b.n)),
   swingsForPlayer: (playerId: string) => byIndex<SwingRecord>("swings", "playerId", playerId).then((xs) => xs.sort((a, b) => b.at - a.at)),
   swing: (id: string) => get<SwingRecord>("swings", id),
-  saveSwing: (s: SwingRecord) => put("swings", s),
-  async deleteSwing(id: string) {
+  async saveSwing(s: SwingRecord, o?: Opts) {
+    await put("swings", dirty(s, o));
+    changed(o);
+  },
+  async deleteSwing(id: string, o?: Opts) {
     await del("clips", id);
     await del("swings", id);
+    await this.bury("swing", id, o);
   },
+
+  // Deletes waiting to reach the cloud.
+  tombstones: () => kvGet<Tombstone[]>("tombstones").then((t) => t ?? []),
+  async bury(kind: Tombstone["kind"], id: string, o?: Opts) {
+    if (o?.fromSync) return;
+    const t = await this.tombstones();
+    await kvSet("tombstones", [...t.filter((x) => x.id !== id), { kind, id, at: Date.now() }]);
+    changed(o);
+  },
+  async clearTombstones(ids: string[]) {
+    const done = new Set(ids);
+    await kvSet("tombstones", (await this.tombstones()).filter((t) => !done.has(t.id)));
+  },
+
+  // Small values for the sync (cursors, which account this device syncs with).
+  kvGet: <T>(key: string) => kvGet<T>(key),
+  kvSet: (key: string, value: unknown) => kvSet(key, value),
 
   // Clips
   clip: (swingId: string) => get<ClipRecord>("clips", swingId),
@@ -101,8 +155,14 @@ export const db = {
   deleteClip: (swingId: string) => del("clips", swingId),
 
   // Swing goals ("500 swings this week"), one list per hitter, kept in the key-value store.
+  // Goals sync as part of their hitter, so saving them marks the hitter changed.
   goals: (playerId: string) => get<SwingGoal[]>("kv", `goals:${playerId}`).then((g) => g ?? []).catch(() => [] as SwingGoal[]),
-  saveGoals: (playerId: string, goals: SwingGoal[]) => tx("kv", "readwrite", (s) => s.put(goals, `goals:${playerId}`)),
+  async saveGoals(playerId: string, goals: SwingGoal[], o?: Opts) {
+    await tx("kv", "readwrite", (s) => s.put(goals, `goals:${playerId}`));
+    if (o?.fromSync) return;
+    const p = await this.player(playerId);
+    if (p) await this.savePlayer(p);
+  },
 
   // Settings
   async settings(): Promise<Settings> {

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Chivo } from "next/font/google";
 import { AppShell } from "@/components/AppShell";
 import { PlayerProvider } from "@/components/PlayerProvider";
+import { SyncProvider } from "@/components/SyncProvider";
 import { SITE } from "@/brand/site";
 import "./globals.css";
 
@@ -32,7 +33,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={chivo.variable}>
       <body>
         <PlayerProvider>
-          <AppShell>{children}</AppShell>
+          <SyncProvider>
+            <AppShell>{children}</AppShell>
+          </SyncProvider>
         </PlayerProvider>
       </body>
     </html>

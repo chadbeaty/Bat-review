@@ -121,6 +121,11 @@ bat, record dot). No stock icon sets, no emoji.
   velo), score history by session, strengths and what to work on, tendencies (pull side, middle, opposite field),
   personal drills from the faults that keep showing up, and **Share player report**: a 1080 x 1350 image drawn on a
   canvas (`src/lib/report.ts`) with the Web Share sheet or a download. Settings sit below.
+- **Sign in / create account** (`/sign-in`, `/sign-up`, `/forgot`, `/auth/reset`, `src/components/AuthForm.tsx`): one
+  stage panel with the mark, the display title, one line on what signing in adds (sync across devices; video stays on
+  the phone). After signing in it pulls the account's swings, then opens the app. The account panel on Profile shows
+  who's signed in, when it last synced (lime dot; amber when a sync didn't finish), Sync now, Sign out and Delete
+  account. Signed-out hitters see one quiet line on Home; Setup and the landing page link to Sign in.
 - **Live scoreboard**: unchanged layout (see `src/components/live/Scoreboard.tsx`), now on carbon.
 
 ## The landing page (`public/site/`)
