@@ -168,7 +168,12 @@ export function AuthForm({ mode }: { mode: Mode }) {
           {mode === "sign-in" && (
             <>
               <p><Link href="/forgot" className="underline">Forgot password?</Link></p>
-              <p>New to Gapper? <Link href="/sign-up" className="text-optic">Create an account</Link></p>
+              <div className="border-t border-line pt-4">
+                <p className="mb-2 text-chalk">New to Gapper?</p>
+                <Link href="/sign-up" className="press flex min-h-12 w-full items-center justify-center rounded-lg border border-line-2 text-[15px] font-semibold text-chalk hover:bg-white/[0.03]">
+                  Create a free account
+                </Link>
+              </div>
             </>
           )}
           {mode === "sign-up" && <p>Have an account? <Link href="/sign-in" className="text-optic">Sign in</Link></p>}
