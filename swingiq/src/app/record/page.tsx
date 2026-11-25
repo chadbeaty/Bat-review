@@ -7,6 +7,7 @@ import { usePlayers } from "@/components/PlayerProvider";
 import { Button, PageTitle, Panel, SectionTitle, Segmented } from "@/components/ui";
 import { ViewPicker, viewNote } from "@/components/live/ViewPicker";
 import { NativeCapture } from "@/components/NativeCapture";
+import { Strobe } from "@/components/viz/SwingFigures";
 import { SOFTBALL_11, SOFTBALL_12 } from "@/engine/ballflight";
 import type { CameraView } from "@/engine/types";
 import { analyzeVideo, MAX_VIDEO_SECONDS, VideoFormatError, type VideoAnalysisResult } from "@/live/videoAnalyzer";
@@ -318,27 +319,45 @@ export default function RecordPage() {
       )}
 
       <div className={stage === "processing" ? "" : "hidden"}>
-        <div className="surface boxed overflow-hidden rounded-2xl">
-          <video ref={videoRef} className="max-h-[52dvh] w-full object-contain" muted playsInline aria-label="Your video, playing slowed down while it's analyzed" />
+        <div className="stage relative overflow-hidden rounded-2xl">
+          <video ref={videoRef} className="relative max-h-[52dvh] w-full object-contain" muted playsInline aria-label="Your video, playing slowed down while it's analyzed" />
+          {/* A scan line sweeping the clip while frames are tracked. */}
+          <span className="pointer-events-none absolute inset-x-0 top-0 h-full overflow-hidden motion-reduce:hidden" aria-hidden="true">
+            <span className="scan absolute inset-x-0 h-16 bg-gradient-to-b from-transparent via-optic/10 to-transparent" />
+          </span>
+          <span className="absolute left-3 top-3 flex items-center gap-2 rounded-md bg-night/75 px-2.5 py-1 text-[12px] font-bold text-chalk backdrop-blur-sm">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-optic" aria-hidden="true" />
+            Analyzing
+          </span>
         </div>
-        <div className="mt-4" role="status" aria-live="polite">
-          <div className="flex items-baseline justify-between gap-3">
-            <p className="text-[15px] text-chalk">{progress.stage}</p>
-            <span className="num text-[15px] text-optic">{Math.round(progress.f * 100)}%</span>
+        <div className="mt-5" role="status" aria-live="polite">
+          <div className="flex items-end justify-between gap-4">
+            <div className="min-w-0">
+              <p className="label">Reading every frame</p>
+              <p className="mt-1 text-[15px] text-chalk">{progress.stage}</p>
+            </div>
+            <span className="jumbo text-[2.8rem] text-optic">
+              {Math.round(progress.f * 100)}
+              <span className="text-[1.2rem] text-chalk-3">%</span>
+            </span>
           </div>
-          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-night-4" aria-hidden="true">
-            <div className="h-full bg-optic transition-[width] duration-200" style={{ width: `${Math.round(progress.f * 100)}%` }} />
+          <div className="mt-3 h-1 overflow-hidden rounded-full bg-night-4" aria-hidden="true">
+            <div className="h-full rounded-full bg-optic transition-[width] duration-200" style={{ width: `${Math.round(progress.f * 100)}%` }} />
           </div>
-          <p className="mt-2 text-[13px] text-chalk-3">Plays slowed down so every frame gets tracked. Keep this screen open.</p>
+          <p className="mt-3 text-[13px] text-chalk-3">Plays slowed down so every frame gets tracked. Keep this screen open.</p>
         </div>
-        <Button variant="ghost" className="mt-4" onClick={() => abortRef.current?.abort()}>Cancel</Button>
+        <Button variant="ghost" className="mt-5" onClick={() => abortRef.current?.abort()}>Cancel</Button>
       </div>
 
       {stage === "done" && saved && (
         <div>
           {saved.swings.length > 0 ? (
             <>
-              <h2 className="display text-2xl">
+              <p className="label flex items-center gap-2 text-optic">
+                <span className="h-2 w-2 rounded-full bg-optic" aria-hidden="true" />
+                Done
+              </p>
+              <h2 className="display t-m mt-1">
                 {saved.swings.length} {saved.swings.length === 1 ? "swing" : "swings"} analyzed
               </h2>
               {note && <p className="mt-1 text-[13px] text-optic">{note}</p>}
@@ -346,11 +365,17 @@ export default function RecordPage() {
                 Processed from video at {Math.round(saved.result.fps)} fps ({Math.round(saved.result.coverage * 100)}% of frames tracked)
                 {saved.result.heardAudio ? ", contact from the video's sound" : ""}.{saved.result.truncated ? ` Only the first ${MAX_VIDEO_SECONDS} s were analyzed.` : ""}
               </p>
-              <ol className="surface mt-4 divide-y divide-line overflow-hidden rounded-2xl">
+              <ol className="mt-5 space-y-3">
                 {saved.swings.map((s) => (
                   <li key={s.id}>
-                    <Link href={`/swings/${s.id}`} className="press flex items-center gap-4 px-4 py-4 hover:bg-night-3">
-                      <span className="num w-12 text-3xl text-chalk">{s.analysis.score.overall ?? "—"}</span>
+                    <Link href={`/swings/${s.id}`} className="stage press flex items-center gap-4 overflow-hidden rounded-2xl py-3 pl-3 pr-4 hover:border-line-2">
+                      <span className="h-24 w-[4.8rem] shrink-0">
+                        <Strobe pose={s.pose} phases={s.analysis.phases} size={s.frameSize} hand={s.hand} handPath={s.analysis.handPath} className="h-full w-full" />
+                      </span>
+                      <span className="w-14 shrink-0">
+                        <span className="jumbo block text-[2.6rem] text-chalk">{s.analysis.score.overall ?? "—"}</span>
+                        <span className="mt-1 block text-[10px] font-bold uppercase tracking-[0.08em] text-chalk-3">Score</span>
+                      </span>
                       <span className="min-w-0 flex-1">
                         <CueLine cue={s.analysis.cue} />
                         <SpeedLine m={s.analysis.metrics} />
@@ -362,8 +387,10 @@ export default function RecordPage() {
               </ol>
             </>
           ) : (
-            <Panel className="p-5">
-              <h2 className="head text-lg">No swing found in that video</h2>
+            <Panel variant="stage" className="relative overflow-hidden p-5">
+              <span className="absolute inset-y-5 left-0 w-[3px] rounded-r bg-amber" aria-hidden="true" />
+              <p className="label text-amber">No swing found</p>
+              <h2 className="title mt-1.5">No swing found in that video</h2>
               <ul className="mt-2 space-y-1.5 text-[14px] text-chalk-2">
                 <li>Make sure your whole body, including your shoes, stays in the picture.</li>
                 <li>If it was filmed in slow motion, pick 4× or 8× and try again.</li>
@@ -384,11 +411,13 @@ export default function RecordPage() {
       )}
 
       {stage === "error" && (
-        <Panel className="p-5">
-          <h2 className="head text-lg">Couldn&apos;t analyze that video</h2>
-          <p role="alert" className="mt-2 text-[14px] text-chalk-2">{error}</p>
-          <Button className="mt-4" onClick={() => setStage("choose")}>Try another video</Button>
-        </Panel>
+        <div role="alert" className="stage relative overflow-hidden rounded-2xl px-5 pb-6 pt-5">
+          <span className="absolute inset-y-5 left-0 w-[3px] rounded-r bg-stitch" aria-hidden="true" />
+          <p className="label text-stitch">Hold up</p>
+          <h2 className="title mt-1.5">Couldn&apos;t analyze that video</h2>
+          <p className="mt-2 max-w-prose text-[14px] leading-relaxed text-chalk-2">{error}</p>
+          <Button className="mt-5" onClick={() => setStage("choose")}>Try another video</Button>
+        </div>
       )}
     </div>
   );

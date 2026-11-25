@@ -1,6 +1,7 @@
 /* Gapper landing page. Draws the outfield behind the hero and plays Gapper's tracked view of a real swing (the 33
-   body points from the analyzer, run on the sample clip; assets/pose.json) in the hero and again in the sample read,
-   where the page shows what Gapper concluded about that same swing. Sections fade in. */
+   body points from the analyzer, run on the sample clip; assets/pose.json). In the hero it builds up as a strobe:
+   a ghost flashes on at each moment of the swing and the hands' path burns in as a lime light trail. The sample
+   read plays the same swing next to what Gapper concluded about it. Sections fade in. */
 (function () {
   'use strict';
   document.documentElement.classList.remove('no-js');
@@ -84,6 +85,33 @@
       '<path d="M' + HOME[0] + ' ' + HOME[1] + ' L' + fmt(onCircle(R_OUT + 30, 225)) + ' M' + HOME[0] + ' ' + HOME[1] + ' L' + fmt(onCircle(R_OUT + 30, 315)) + '" stroke="#ffffff" stroke-opacity="0.07" stroke-width="1"/>';
   }
 
+  // The small outfield in the "three gaps" fact: the same four blocks, the ball out through left-center.
+  var mini = document.querySelector('[data-mini-field]');
+  if (mini && field) {
+    var ball = onCircle((R_IN + R_OUT) / 2, RAYS[0]);
+    mini.setAttribute('viewBox', '-30 150 460 200');
+    mini.innerHTML = '<path d="' + field.querySelector('path').getAttribute('d') + '" fill="#202328" stroke="#ffffff" stroke-opacity="0.08"/>' +
+      '<path d="M' + HOME[0] + ' ' + (HOME[1] - 120) + ' L' + fmt(ball) + '" stroke="#c4f135" stroke-width="3" stroke-dasharray="2 8" stroke-linecap="round"/>' +
+      '<circle cx="' + ball[0].toFixed(1) + '" cy="' + ball[1].toFixed(1) + '" r="13" fill="#c4f135"/>';
+  }
+
+  // The Gapper Score gauge in the sample read: the logo's outfield as four blocks, lit lime up to the score.
+  [].slice.call(document.querySelectorAll('svg[data-gauge]')).forEach(function (g) {
+    var v = Number(g.getAttribute('data-gauge')), cx = 100, cy = 110, rI = 62, rO = 88, a0 = 198, a1 = 342, gap = 4;
+    var span = (a1 - a0 - gap * 3) / 4, at = a0 + (a1 - a0) * v / 100;
+    var P = function (r, d) { return (cx + r * Math.cos(rad(d))).toFixed(1) + ' ' + (cy + r * Math.sin(rad(d))).toFixed(1); };
+    var blk = function (f, t) { return 'M' + P(rO, f) + 'A' + rO + ' ' + rO + ' 0 0 1 ' + P(rO, t) + 'L' + P(rI, t) + 'A' + rI + ' ' + rI + ' 0 0 0 ' + P(rI, f) + 'Z'; };
+    var out = '';
+    for (var i = 0; i < 4; i++) {
+      var f0 = a0 + i * (span + gap), t0 = f0 + span;
+      out += '<path d="' + blk(f0, t0) + '" fill="#23262b"/>';
+      if (at > f0) out += '<path d="' + blk(f0, Math.min(t0, at)) + '" fill="#c4f135"/>';
+    }
+    var b = P((rI + rO) / 2, at).split(' ');
+    out += '<circle cx="' + b[0] + '" cy="' + b[1] + '" r="7" fill="#c4f135" stroke="#0b0c0e" stroke-width="3"/>';
+    g.innerHTML = out;
+  });
+
   // ---------------------------------------------------------------- the tracked swing
   var FRONT = { 23: 1, 25: 1, 27: 1, 29: 1, 31: 1 }; // right-handed hitter: the left leg leads
   var BONES = [[11, 12], [11, 23], [12, 24], [23, 24], [11, 13], [13, 15], [12, 14], [14, 16], [15, 17], [15, 19], [17, 19],
@@ -102,8 +130,9 @@
 
   // Where the real tracked hitter stands on the small read canvas: pose units (0..1 of a 4:5 frame) to pixels.
   function mapper(c) {
-    var s = c.h / 0.62;
-    return function (p) { return [c.w / 2 + (p[0] - 0.51) * 0.8 * s, c.h * 0.94 + (p[1] - 0.87) * s]; };
+    // The hero shows the whole hitter with room around them; the small read canvas fills its frame.
+    var hero = c.kind === 'hero', s = c.h / (hero ? 0.8 : 0.62), floor = hero ? 0.86 : 0.94;
+    return function (p) { return [c.w / 2 + (p[0] - 0.51) * 0.8 * s, c.h * floor + (p[1] - 0.87) * s]; };
   }
 
   function lerpFrame(t) {
@@ -123,12 +152,68 @@
     return CONTACT + (s - beforeContact - HOLD) * FPS;
   }
 
+  // The strobe: a ghost flashes on at each of these frames as the swing passes it (the last is the heel landing).
+  var GHOSTS = [72, 86, 98, FOOT];
+  function bones(ctx, fr, m, L, color, width) {
+    ctx.strokeStyle = color; ctx.lineWidth = width;
+    BONES.forEach(function (bn) {
+      var a = fr[bn[0]], b = fr[bn[1]];
+      if (!a || !b || a[2] < 0.3 || b[2] < 0.3) return;
+      var pa = m(a), pb = m(b);
+      ctx.beginPath(); ctx.moveTo(pa[0], pa[1]); ctx.lineTo(pb[0], pb[1]); ctx.stroke();
+    });
+    var nose = fr[0];
+    if (nose && nose[2] > 0.3) { var pn = m(nose); ctx.beginPath(); ctx.arc(pn[0], pn[1], L * 6, 0, Math.PI * 2); ctx.stroke(); }
+  }
+  function grip(fr) {
+    var a = fr[15], b = fr[16];
+    return a && b && a[2] > 0.3 && b[2] > 0.3 ? [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2] : null;
+  }
+  function strobe(c, f, m, L) {
+    var ctx = c.ctx;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    GHOSTS.forEach(function (g, i) {
+      if (f < g || !POSE.frames[g]) return;
+      var age = Math.min(1, (f - g) / 3);
+      var a = (0.14 + 0.1 * i) + (1 - age) * 0.5; // flash bright, then settle as a ghost
+      bones(ctx, POSE.frames[g], m, L, 'rgba(214,220,226,' + a.toFixed(3) + ')', L * 1.4);
+    });
+    // The hands' path, from the start of the loop to now (up to just past contact), as a lime light trail.
+    var end = Math.min(f, CONTACT + 8), pts = [];
+    for (var k = F0; k <= end; k++) { var q = POSE.frames[k] && grip(POSE.frames[k]); if (q) pts.push(m(q)); }
+    if (pts.length > 1) {
+      ctx.save();
+      ctx.shadowColor = 'rgba(196,241,53,0.7)'; ctx.shadowBlur = L * 5;
+      ctx.strokeStyle = LIME; ctx.lineWidth = L * 2.2;
+      ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+      for (var n = 1; n < pts.length; n++) ctx.lineTo(pts[n][0], pts[n][1]);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+
+  // The HUD over the hero: where the swing is, counted in frames from contact (the clip is slow motion of unknown
+  // speed, so frames, not seconds).
+  var hudPhase = document.querySelector('[data-hud-phase]'), hudMs = document.querySelector('[data-hud-ms]'), hudDot = document.querySelector('[data-hud-dot]');
+  var lastHud = '';
+  function hud(f) {
+    if (!hudPhase) return;
+    var phase = f < FOOT ? 'Loading' : f < CONTACT ? 'Heel down' : f < CONTACT + 3 ? 'Contact' : 'Finish';
+    var d = Math.round(f - CONTACT), txt = phase + '|' + d;
+    if (txt === lastHud) return;
+    lastHud = txt;
+    hudPhase.textContent = phase;
+    hudMs.textContent = (d > 0 ? '+' : d < 0 ? '\u2212' : '') + Math.abs(d) + ' fr';
+    hudDot.className = 'dot ' + (phase === 'Contact' || phase === 'Heel down' ? 'dot-lime' : 'dot-white');
+  }
+
   function draw(c, f) {
     var ctx = c.ctx, fr = lerpFrame(f);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     ctx.clearRect(0, 0, c.w, c.h);
     if (!fr) return;
     var m = mapper(c), L = Math.max(1.4, Math.min(c.w, c.h) / 140);
+    if (c.kind === 'hero') { strobe(c, f, m, L); hud(f); }
     var P = function (j) { var p = fr[j]; return p && p[2] > 0.3 ? m(p) : null; };
 
     // Bones: white body, lime front leg.
@@ -138,7 +223,7 @@
       if (!a || !b) return;
       var front = FRONT[bn[0]] && FRONT[bn[1]];
       ctx.strokeStyle = front ? LIME : 'rgba(255,255,255,0.92)';
-      ctx.lineWidth = front ? L * 2.3 : L * 1.6;
+      ctx.lineWidth = (front ? L * 2.3 : L * 1.6) * (c.kind === 'hero' ? 0.8 : 1);
       ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke();
     });
     // Head as a ring around the nose and ears.
@@ -163,7 +248,7 @@
     ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1;
     var foot = m([0.5, 0.875]);
     ctx.beginPath(); ctx.moveTo(8, foot[1]); ctx.lineTo(c.w - 8, foot[1]); ctx.stroke();
-    label(c, f);
+    if (c.kind !== 'hero') label(c, f);
   }
 
 

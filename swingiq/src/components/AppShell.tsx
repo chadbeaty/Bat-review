@@ -120,7 +120,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   if (path === "/start" || (path === "/" && ready && !player)) return <main>{children}</main>;
 
   return (
-    <div className="mx-auto min-h-dvh max-w-[34rem] pb-[calc(7.5rem+env(safe-area-inset-bottom))] md:max-w-[70rem] md:pb-14 md:pl-64">
+    <div className="mx-auto min-h-dvh max-w-[34rem] pb-[calc(7.5rem+env(safe-area-inset-bottom))] md:max-w-[84rem] md:pb-14 md:pl-64">
       <main className="px-4 pt-[max(0.75rem,env(safe-area-inset-top))] md:px-10 md:pt-10">{children}</main>
 
       {/* Phone: a carbon bar under the thumb; the lime Record button in the middle is the one action. */}

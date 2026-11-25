@@ -38,7 +38,7 @@ export function Setup({ onSave, storageOk }: { onSave: (p: Player) => Promise<vo
             </Link>
           </p>
         </div>
-        <div className="surface boxed rounded-2xl p-5 md:p-6">
+        <div className="stage rounded-2xl p-5 md:p-6">
           {!storageOk && (
             <p className="mb-4 rounded-xl border border-amber/40 bg-amber-wash px-4 py-3 text-sm text-chalk">
               This browser is blocking storage (private mode?). Swings won&apos;t be saved.

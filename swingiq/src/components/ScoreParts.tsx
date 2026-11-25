@@ -17,28 +17,28 @@ export function ScoreCategories({ analysis, view }: { analysis: SwingAnalysis; v
   const comps = analysis.score.components;
   return (
     <div>
-      <div className="mb-3 flex items-baseline justify-between gap-3">
-        <h2 className="head text-[15px]">Score breakdown</h2>
-        <span className="text-[12px] text-chalk-3">Tap a row for what went into it</span>
+      <div className="mb-2 flex items-baseline justify-between gap-3">
+        <h2 className="title shrink-0 whitespace-nowrap text-[16px]">Score breakdown</h2>
+        <span className="text-right text-[12px] text-chalk-3">Tap a row for details</span>
       </div>
-      <ul className="space-y-1" aria-label="Score breakdown">
+      <ul className="space-y-0.5" aria-label="Score breakdown">
         {cats.map((c) => (
           <li key={c.key}>
             <button
               type="button"
               onClick={() => setOpen((o) => (o === c.key ? null : c.key))}
               aria-expanded={open === c.key}
-              className="press flex w-full items-center gap-3 rounded-lg px-1 py-2 text-left text-[14px] hover:bg-night-3"
+              className="press flex min-h-11 w-full items-center gap-3 rounded-lg px-1 py-2 text-left text-[14px] hover:bg-white/[0.03]"
             >
               <span className="w-28 shrink-0 text-chalk">{c.label}</span>
               {c.score === null ? (
-                <span className="hatch h-2 flex-1 rounded-full bg-night-3" title="Not measured" />
+                <span className="hatch h-1.5 flex-1 rounded-full bg-night-3" title="Not measured" />
               ) : (
-                <span className="h-2 flex-1 overflow-hidden rounded-full bg-night-4">
+                <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-night-4">
                   <span className={`grow block h-full rounded-full ${barColor(c.score)}`} style={{ width: `${Math.max(3, c.score)}%` }} />
                 </span>
               )}
-              <span className={`num w-9 text-right ${c.score === null ? "text-chalk-3" : "text-chalk"}`}>{c.score ?? "—"}</span>
+              <span className={`num w-9 text-right text-[15px] ${c.score === null ? "text-chalk-3" : c.score >= 85 ? "text-optic" : c.score < 50 ? "text-stitch" : "text-chalk"}`}>{c.score ?? "—"}</span>
               <span className={`text-chalk-3 transition ${open === c.key ? "rotate-90" : ""}`} aria-hidden="true">›</span>
             </button>
             {open === c.key && (
@@ -66,34 +66,40 @@ export function ScoreCategories({ analysis, view }: { analysis: SwingAnalysis; v
   );
 }
 
-/** Coach card: biggest issue, why it matters, the fix, a drill and a 10-swing challenge. */
+/**
+ * The one fix: the single thing to work on from this swing, why it matters, the drill for it and a 10-swing challenge.
+ * One fix, not ten tips. It gets its own stage because it's the most useful thing Gapper says.
+ */
 export function CoachCard({ analysis, action }: { analysis: SwingAnalysis; action?: React.ReactNode }) {
   const c = coachingFor(analysis.cue, analysis.metrics, analysis.score.overall);
   return (
-    <section aria-label="Coach" className="surface relative overflow-hidden rounded-2xl">
-      <div className="border-b border-line px-4 py-3 md:px-5">
-        <p className="text-[12px] font-semibold text-optic">Coach</p>
-        <h3 className="display mt-1 text-[1.35rem] leading-tight">{c.title}</h3>
+    <section aria-label="Coach" className="stage relative overflow-hidden rounded-2xl">
+      <span className="absolute inset-y-6 left-0 w-[3px] rounded-r bg-stitch" aria-hidden="true" />
+      <div className="px-5 pb-5 pt-5 md:px-7 md:pt-6">
+        <p className="flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.08em] text-chalk-3">
+          <span className="h-2 w-2 rounded-full bg-stitch" aria-hidden="true" />
+          The one fix
+        </p>
+        <h3 className="display t-m mt-2 leading-[1.02]">{c.title}</h3>
+        <p className="mt-3 max-w-[46ch] text-[18px] font-semibold leading-snug text-chalk md:text-[20px]">{c.fix}</p>
       </div>
-      <dl className="grid gap-px bg-line text-[14px] leading-relaxed md:grid-cols-2">
-        <div className="bg-night-2 px-4 py-3 md:px-5">
-          <dt className="text-[12px] text-chalk-3">Why it matters</dt>
-          <dd className="mt-0.5 text-chalk-2">{c.why}</dd>
+      <dl className="grid border-t border-line text-[14px] leading-relaxed md:grid-cols-2">
+        <div className="px-5 py-4 md:px-7">
+          <dt className="label">Why it matters</dt>
+          <dd className="mt-1.5 text-chalk-2">{c.why}</dd>
         </div>
-        <div className="bg-night-2 px-4 py-3 md:px-5">
-          <dt className="text-[12px] text-chalk-3">The fix</dt>
-          <dd className="mt-0.5 text-chalk">{c.fix}</dd>
-        </div>
-        <div className="bg-night-2 px-4 py-3 md:px-5">
-          <dt className="text-[12px] text-chalk-3">Drill: {c.drill.name}</dt>
-          <dd className="mt-0.5 text-chalk-2">{c.drill.how}</dd>
-        </div>
-        <div className="bg-optic-wash px-4 py-3 md:px-5">
-          <dt className="text-[12px] text-optic">10-swing challenge</dt>
-          <dd className="mt-0.5 font-bold text-chalk">{c.challenge.goal}</dd>
+        <div className="border-t border-line px-5 py-4 md:border-l md:border-t-0 md:px-7">
+          <dt className="text-[13px] font-bold text-chalk">Drill: {c.drill.name}</dt>
+          <dd className="mt-1.5 text-chalk-2">{c.drill.how}</dd>
         </div>
       </dl>
-      {action && <div className="border-t border-line px-4 py-3 md:px-5">{action}</div>}
+      <div className="flex flex-wrap items-center justify-between gap-4 border-t border-optic/20 bg-optic-wash/70 px-5 py-4 md:px-7">
+        <dl>
+          <dt className="text-[12px] font-bold uppercase tracking-[0.08em] text-optic">10-swing challenge</dt>
+          <dd className="mt-1 text-[16px] font-bold text-chalk">{c.challenge.goal}</dd>
+        </dl>
+        {action}
+      </div>
     </section>
   );
 }

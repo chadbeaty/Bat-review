@@ -7,8 +7,8 @@ import { GapMark } from "./Logo";
 type BtnProps = React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: "primary" | "ghost" | "danger" | "quiet"; size?: "md" | "lg" };
 
 const variants = {
-  primary: "btn-label bg-optic text-optic-ink hover:bg-optic-2 shadow-[0_10px_24px_-14px_rgb(196_241_53/0.55)]",
-  ghost: "border border-line-2 text-chalk hover:border-clay/60 hover:bg-night-3",
+  primary: "btn-label bg-optic text-optic-ink hover:bg-optic-2 shadow-[inset_0_1px_0_rgb(255_255_255/0.45)]",
+  ghost: "border border-line-2 text-chalk hover:border-clay/60 hover:bg-white/[0.03]",
   danger: "border border-stitch/50 text-stitch hover:bg-stitch-wash",
   quiet: "text-chalk-2 hover:text-chalk hover:bg-night-3",
 };
@@ -69,13 +69,13 @@ export function PillarStrip({ active, className = "" }: { active?: Pillar; class
 /** Page header: black italic capitals, an optional line of context, an optional action, and which step it is. */
 export function PageTitle({ title, sub, right, context, pillar }: { title: string; sub?: React.ReactNode; right?: React.ReactNode; context?: React.ReactNode; pillar?: Pillar }) {
   return (
-    <header className="mb-7 pt-3">
-      {pillar && <PillarStrip active={pillar} className="mb-3" />}
+    <header className="mb-8 pt-3 md:mb-10">
+      {pillar && <PillarStrip active={pillar} className="mb-4" />}
       {context && <div className="mb-2 text-[13px] text-chalk-3">{context}</div>}
       <div className="flex items-end justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="display text-[2.1rem] text-chalk md:text-[2.75rem]">{title}</h1>
-          {sub && <p className="mt-2.5 max-w-prose text-[15px] leading-relaxed text-chalk-2">{sub}</p>}
+          <h1 className="display t-l text-chalk">{title}</h1>
+          {sub && <p className="mt-3 max-w-[60ch] text-[15px] leading-relaxed text-chalk-2 md:text-[16px]">{sub}</p>}
         </div>
         {right && <div className="shrink-0">{right}</div>}
       </div>
@@ -89,8 +89,8 @@ export function PageTitle({ title, sub, right, context, pillar }: { title: strin
  */
 export function SectionTitle({ children, right, id }: { children: React.ReactNode; right?: React.ReactNode; id?: string }) {
   return (
-    <div className="mb-3 mt-10 flex items-center gap-3">
-      <h2 id={id} className="head shrink-0 text-[17px] text-chalk">
+    <div className="mb-4 mt-12 flex items-center gap-3">
+      <h2 id={id} className="title shrink-0 text-chalk">
         {children}
       </h2>
       <GapRule className="flex-1" />
@@ -151,22 +151,46 @@ export function Segmented<T extends string>({ value, options, onChange, label }:
   );
 }
 
-/** A raised surface. `boxed` adds batter's-box corner ticks for modules that carry a headline number. */
-export function Panel({ children, className = "", boxed = false, as: Tag = "div", ...rest }: { children?: React.ReactNode; className?: string; boxed?: boolean; as?: "div" | "section" } & React.HTMLAttributes<HTMLElement>) {
+/**
+ * A surface. `surface` is the graphite panel; `frame` is a hairline box for a chart or a picture of the swing; `stage`
+ * is carbon with the alloy edge, for hero moments only. `boxed` adds the brushed-alloy top edge to a surface.
+ */
+export function Panel({
+  children,
+  className = "",
+  boxed = false,
+  variant = "surface",
+  as: Tag = "div",
+  ...rest
+}: { children?: React.ReactNode; className?: string; boxed?: boolean; variant?: "surface" | "frame" | "stage"; as?: "div" | "section" } & React.HTMLAttributes<HTMLElement>) {
   return (
-    <Tag {...rest} className={`surface rounded-2xl ${boxed ? "boxed" : ""} ${className}`}>
+    <Tag {...rest} className={`${variant} rounded-2xl ${boxed && variant === "surface" ? "boxed" : ""} ${className}`}>
       {children}
     </Tag>
   );
 }
 
 /** Empty state: the Gap Mark in graphite with the lime ball, what goes here, and how to fill it. */
-export function Empty({ title, children }: { title: string; children?: React.ReactNode }) {
+export function Empty({ title, children, action }: { title: string; children?: React.ReactNode; action?: React.ReactNode }) {
   return (
-    <div className="boxed relative overflow-hidden rounded-2xl border border-line bg-night-2/60 px-5 pb-8 pt-6 text-center">
-      <GapMark size={92} ink="var(--color-night-4)" accent="var(--color-optic)" className="mx-auto mb-4" />
-      <p className="head text-[18px] text-chalk">{title}</p>
+    <div className="stage relative overflow-hidden rounded-2xl px-5 pb-8 pt-7 text-center">
+      <GapMark size={96} ink="var(--color-night-4)" accent="var(--color-optic)" className="mx-auto mb-5" />
+      <p className="title text-chalk">{title}</p>
       {children && <div className="mx-auto mt-2 max-w-sm text-[15px] leading-relaxed text-chalk-2">{children}</div>}
+      {action && <div className="mt-5 flex flex-wrap justify-center gap-3">{action}</div>}
+    </div>
+  );
+}
+
+/** Something went wrong: says what happened in plain words and offers the way out. */
+export function ErrorState({ title = "Something went wrong", children, action }: { title?: string; children?: React.ReactNode; action?: React.ReactNode }) {
+  return (
+    <div role="alert" className="stage relative overflow-hidden rounded-2xl px-5 pb-7 pt-6">
+      <span className="absolute inset-y-5 left-0 w-[3px] rounded-r bg-stitch" aria-hidden="true" />
+      <p className="label text-stitch">Hold up</p>
+      <p className="title mt-1.5 text-chalk">{title}</p>
+      {children && <div className="mt-2 max-w-prose text-[15px] leading-relaxed text-chalk-2">{children}</div>}
+      {action && <div className="mt-5 flex flex-wrap gap-3">{action}</div>}
     </div>
   );
 }
@@ -179,11 +203,15 @@ export function Skeleton({ className = "" }: { className?: string }) {
 export function PageSkeleton() {
   return (
     <div className="pt-3" role="status" aria-label="Loading">
-      <Skeleton className="h-10 w-48" />
-      <Skeleton className="mt-3 h-4 w-64" />
-      <Skeleton className="mt-8 h-44 w-full rounded-2xl" />
-      <Skeleton className="mt-4 h-20 w-full rounded-2xl" />
-      <Skeleton className="mt-4 h-20 w-full rounded-2xl" />
+      <Skeleton className="h-3 w-40 rounded-md" />
+      <Skeleton className="mt-4 h-11 w-56 rounded-lg" />
+      <Skeleton className="mt-3 h-4 w-72 max-w-full rounded-md" />
+      <Skeleton className="mt-8 h-56 w-full rounded-2xl" />
+      <div className="mt-6 space-y-3">
+        <Skeleton className="h-14 w-full rounded-xl" />
+        <Skeleton className="h-14 w-full rounded-xl" />
+      </div>
+      <span className="sr-only">Loading</span>
     </div>
   );
 }
@@ -290,7 +318,7 @@ export function InfoTip({ label, children }: { label: string; children: React.Re
         aria-controls={id}
         aria-label={`What is ${label}?`}
         onClick={() => setOpen((o) => !o)}
-        className="grid h-5 w-5 place-items-center rounded-full border border-line-2 text-[11px] text-chalk-3 hover:border-chalk-3 hover:text-chalk"
+        className="hit grid h-5 w-5 place-items-center rounded-full border border-line-2 text-[11px] text-chalk-3 hover:border-chalk-3 hover:text-chalk"
       >
         ?
       </button>

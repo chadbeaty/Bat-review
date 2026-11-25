@@ -9,6 +9,7 @@ import { SwingGoal } from "@/components/SwingGoal";
 import { Softball } from "@/components/Softball";
 import { Chip, InfoTip, Meter, PageSkeleton, Panel, PillarStrip, SectionTitle, Skeleton, Stat, fmtDate } from "@/components/ui";
 import { FieldPrint } from "@/components/viz/FieldPrint";
+import { PoseThumb, Strobe, poseAt, stripBox } from "@/components/viz/SwingFigures";
 import { db } from "@/lib/store/db";
 import { FOOT_DOWN_WINDOW, categoryAverages, consistency, metricValues, recentVsBefore, speedOf } from "@/lib/insights";
 import { LEVEL_LABEL, type Session, type SwingRecord } from "@/lib/store/types";
@@ -160,21 +161,23 @@ export default function Home() {
       ) : all.length > 0 ? (
         <div className="lg:grid lg:grid-cols-[1.1fr_1fr] lg:items-start lg:gap-x-6">
           <div>
-          <section aria-label="Your Gapper Score" className="carbon boxed relative mt-5 overflow-hidden rounded-2xl p-5 shadow-[0_30px_60px_-36px_rgb(0_0_0/0.9)]">
-            <GapMark size={340} ink="#ffffff" accent="#ffffff" className="pointer-events-none absolute -right-24 -top-6 opacity-[0.035]" />
-            <div className="relative flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <p className="label">Player card</p>
-                <h2 className="display mt-1.5 max-w-full truncate pr-2 text-[2.5rem]">{player.name}</h2>
-                <p className="mt-2 text-[13px] text-chalk-2">
-                  Bats {player.hand === "R" ? "right" : "left"} · {Math.floor(player.heightIn / 12)}′{player.heightIn % 12}″{player.level ? ` · ${LEVEL_LABEL[player.level]}` : ""}
-                </p>
-              </div>
-              <Link href="/profile" className="shrink-0 rounded-md border border-line-2 px-2.5 py-1 text-[12px] font-semibold text-chalk-2 hover:text-chalk">
-                Hitting Profile
+          <section aria-label="Your Gapper Score" className="stage relative mt-5 overflow-hidden rounded-2xl p-5">
+            <GapMark size={340} ink="#ffffff" accent="#ffffff" className="pointer-events-none absolute -right-24 -top-6 opacity-[0.03]" />
+            {/* The latest swing as a strobe: the hitter's own tracked swing is the card's photo. */}
+            <Link href={`/swings/${all[0].id}`} aria-label="Your latest swing" className="absolute right-3 top-3 h-[9.5rem] w-[7.6rem] sm:h-[11rem] sm:w-[8.8rem]">
+              <Strobe pose={all[0].pose} phases={all[0].analysis.phases} size={all[0].frameSize} hand={all[0].hand} handPath={all[0].analysis.handPath} className="h-full w-full" label="Your latest swing as a strobe, the hands' path in lime." />
+            </Link>
+            <div className="relative max-w-[calc(100%-8rem)] sm:max-w-[calc(100%-9.5rem)]">
+              <p className="label">Player card</p>
+              <h2 className="display t-l mt-1.5 max-w-full truncate pr-2">{player.name}</h2>
+              <p className="mt-2 text-[13px] text-chalk-2">
+                Bats {player.hand === "R" ? "right" : "left"} · {Math.floor(player.heightIn / 12)}′{player.heightIn % 12}″{player.level ? ` · ${LEVEL_LABEL[player.level]}` : ""}
+              </p>
+              <Link href="/profile" className="mt-3 inline-flex min-h-8 items-center rounded-md border border-line-2 px-2.5 text-[12px] font-semibold text-chalk-2 hover:text-chalk">
+                Hitting Profile →
               </Link>
             </div>
-            <div className="relative mt-4 grid grid-cols-[auto_1fr] items-center gap-5">
+            <div className="relative mt-5 grid grid-cols-[auto_1fr] items-center gap-5">
               <ArcScore score={overall} size={172} label="Gapper Score" previous={prevOverall} />
               <div className="space-y-4">
                 {trend !== null ? (
@@ -249,7 +252,10 @@ export default function Home() {
               const score = s.analysis.score.overall;
               return (
                 <li key={s.id}>
-                  <Link href={`/swings/${s.id}`} className="press flex items-center gap-4 px-4 py-3.5 hover:bg-night-3">
+                  <Link href={`/swings/${s.id}`} className="press flex items-center gap-3.5 px-3 py-3 hover:bg-white/[0.03]">
+                    <span className="h-12 w-10 shrink-0 overflow-hidden rounded-md border border-line bg-night">
+                      <PoseThumb lm={poseAt(s.pose, s.analysis.phases.contact)} box={stripBox(s.pose, [s.analysis.phases.contact], s.frameSize, 0.8)} size={s.frameSize} hand={s.hand} active />
+                    </span>
                     <span className="w-11 shrink-0">
                       <span className={`num block text-[1.6rem] leading-none ${score === best?.analysis.score.overall ? "text-optic" : "text-chalk"}`}>{score ?? "—"}</span>
                       <span className="mt-1.5 block h-1 overflow-hidden rounded-full bg-night-4">
@@ -292,17 +298,17 @@ export default function Home() {
         </div>
       ) : (
         <>
-          <section aria-label="Welcome" className="carbon boxed relative mt-5 overflow-hidden rounded-2xl p-5">
+          <section aria-label="Welcome" className="stage relative mt-5 overflow-hidden rounded-2xl p-5">
             <GapMark size={320} ink="#ffffff" accent="#ffffff" className="pointer-events-none absolute -right-20 -top-6 opacity-[0.035]" />
             <p className="label relative">Rookie card</p>
-            <h2 className="display relative mt-1.5 max-w-full truncate pr-2 text-[2.5rem]">{player.name}</h2>
+            <h2 className="display t-l relative mt-1.5 max-w-full truncate pr-2">{player.name}</h2>
             <p className="relative mt-1.5 text-[13px] text-chalk-2">
               Bats {player.hand === "R" ? "right" : "left"} · {Math.floor(player.heightIn / 12)}′{player.heightIn % 12}″ · your Gapper Score shows up after your first swing
             </p>
           </section>
           <Panel boxed className="mt-4 p-5">
             <PillarStrip active="record" className="mb-3" />
-            <h2 className="head text-[19px]">Your first swing</h2>
+            <h2 className="title">Your first swing</h2>
             <p className="mt-1 text-[14px] text-chalk-2">Set the phone up like this, whole body in the picture, shoes included.</p>
             <div className="mt-4">
               <CageDiagram />

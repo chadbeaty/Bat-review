@@ -7,10 +7,10 @@ import { ClipPlayer } from "@/components/ClipPlayer";
 import { CueLine, GroupedMetrics, averageMetrics } from "@/components/Metrics";
 import { CoachCard, CompareLink, ScoreCategories, SourceBadge } from "@/components/ScoreParts";
 import { SpeedCard } from "@/components/SpeedCard";
-import { PhaseLine } from "@/components/viz/PhaseLine";
+import { SwingRead } from "@/components/SwingRead";
 import { speedOf } from "@/lib/insights";
 import { usePlayers } from "@/components/PlayerProvider";
-import { Button, InfoTip, PageSkeleton, Panel, PillarStrip, Segmented, SectionTitle, SourceLegend, fmtDate, fmtTime } from "@/components/ui";
+import { Button, ErrorState, PageSkeleton, Panel, PillarStrip, Segmented, SectionTitle, SourceLegend, fmtDate, fmtTime } from "@/components/ui";
 import { METRICS } from "@/engine/catalog";
 import { coachingFor } from "@/engine/coaching";
 import { EXTERNAL_LIMITS, applyExternal, validExternal, type ExternalKey } from "@/engine/external";
@@ -136,9 +136,17 @@ export default function SwingDetail() {
   if (swing === undefined) return <PageSkeleton />;
   if (swing === null)
     return (
-      <div className="pt-10 text-center">
-        <p className="head text-lg">Swing not found</p>
-        <Link href="/swings" className="mt-3 inline-block text-optic">Back to My Swings</Link>
+      <div className="pt-8">
+        <ErrorState
+          title="Swing not found"
+          action={
+            <Link href="/swings" className="btn-label press inline-flex min-h-11 items-center rounded-lg bg-optic px-4 text-[14px] text-optic-ink hover:bg-optic-2">
+              Back to my swings
+            </Link>
+          }
+        >
+          It may have been deleted, or it was saved on another phone. Swings live on the device they were recorded on.
+        </ErrorState>
       </div>
     );
 
@@ -153,11 +161,11 @@ export default function SwingDetail() {
           {fmtDate(swing.at)} · {fmtTime(swing.at)}
         </span>
       </div>
-      <div className="mt-2 flex flex-wrap items-end justify-between gap-3">
+      <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <PillarStrip active="analyze" className="mb-3" />
+          <PillarStrip active="analyze" className="mb-4" />
           <p className="label">Swing report</p>
-          <h1 className="display mt-1 text-[2.4rem] md:text-[2.9rem]">Swing {swing.n}</h1>
+          <h1 className="display t-l mt-1">Swing {swing.n}</h1>
         </div>
         <button
           type="button"
@@ -175,8 +183,8 @@ export default function SwingDetail() {
         {player && swing.playerId !== player.id && <span className="text-xs text-chalk-3">Another hitter&apos;s swing</span>}
       </div>
 
-      <div className="mt-5 md:grid md:grid-cols-[1.1fr_1fr] md:items-start md:gap-8">
-        <div className="md:sticky md:top-6">
+      <div className="mt-6 lg:grid lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-start lg:gap-8">
+        <div className="lg:sticky lg:top-6">
           {clip === undefined ? (
             <div className="skel rounded-2xl" style={{ aspectRatio: `${swing.frameSize.width} / ${swing.frameSize.height}`, maxHeight: "68dvh" }} />
           ) : (
@@ -184,11 +192,13 @@ export default function SwingDetail() {
           )}
         </div>
         <div>
-          <Panel boxed className="carbon mt-6 p-4 md:mt-0">
-            <div className="flex items-center gap-4">
-              <ArcScore score={a.score.overall} size={150} />
+          {/* The score: the outfield gauge, the headline cue, and the six categories behind it, in one stage. */}
+          <Panel variant="stage" className="@container mt-6 p-4 md:p-5 lg:mt-0">
+            <div className="flex flex-col items-center gap-4 @[33rem]:flex-row @[33rem]:items-center">
+              <ArcScore score={a.score.overall} size={190} />
               <div className="min-w-0 flex-1">
-                <CueLine cue={a.cue} />
+                <p className="label mb-2">The read</p>
+                <CueLine cue={a.cue} large />
               </div>
             </div>
             {a.observations.length > 1 && (
@@ -198,26 +208,17 @@ export default function SwingDetail() {
                 ))}
               </div>
             )}
+            <div className="mt-4 border-t border-line pt-4">
+              <ScoreCategories analysis={a} view={swing.view} />
+            </div>
           </Panel>
           <div className="mt-4">
             <SpeedCard metrics={a.metrics} source={swing.source} history={hist} />
           </div>
-          <Panel className="mt-4 p-4">
-            <div className="mb-1 flex items-center justify-between">
-              <h2 className="head text-[15px]">Load-to-contact timing</h2>
-              <InfoTip label="load-to-contact timing">
-                Each move in time, from load to contact at the right. Slow-pitch hitters who time the arc well land the front foot about 0.14 to 0.38 seconds before contact (the shaded window).
-              </InfoTip>
-            </div>
-            <PhaseLine phases={a.phases} />
-          </Panel>
-          <Panel className="mt-4 p-4">
-            <ScoreCategories analysis={a} view={swing.view} />
-          </Panel>
         </div>
       </div>
 
-      <div className="mt-6">
+      <div className="mt-8">
         <CoachCard
           analysis={a}
           action={
@@ -231,7 +232,10 @@ export default function SwingDetail() {
         />
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-3">
+      <SectionTitle>Timing, balance, rotation, bat path</SectionTitle>
+      <SwingRead analysis={a} pose={swing.pose} size={swing.frameSize} hand={swing.hand} view={swing.view} />
+
+      <div className="mt-6 flex flex-wrap gap-3">
         {prevId && <CompareLink a={swing.id} b={prevId}>Compare with previous swing</CompareLink>}
         {pbId && pbId !== swing.id && <CompareLink a={swing.id} b={pbId}>Compare with my best</CompareLink>}
       </div>
