@@ -54,6 +54,9 @@ export function Setup({ onSave, storageOk }: { onSave: (p: Player) => Promise<vo
               <Link href="/sign-in" className="font-semibold text-optic">
                 Sign in to bring your swings
               </Link>
+              <span className="mt-1 block text-[13px] text-chalk-3">
+                Want to use it on more than one device? <Link href="/sign-up" className="underline">Create a free account</Link> any time.
+              </span>
             </p>
           )}
         </div>

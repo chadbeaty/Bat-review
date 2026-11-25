@@ -85,12 +85,15 @@ function SyncPrompt() {
   const { status } = useSync();
   if (status !== "signed-out") return null;
   return (
-    <Link href="/sign-in" className="press mt-3 flex items-center justify-between gap-3 rounded-xl border border-line px-4 py-3 text-[14px] text-chalk-2 hover:border-line-2 hover:text-chalk">
-      <span>
-        <span className="font-semibold text-chalk">Use Gapper on all your devices.</span> Sign in to sync your swings.
-      </span>
-      <span className="text-optic" aria-hidden="true">→</span>
-    </Link>
+    <div className="mt-3 rounded-xl border border-line px-4 py-3 text-[14px] text-chalk-2">
+      <p>
+        <span className="font-semibold text-chalk">Use Gapper on all your devices.</span> A free account syncs your swings to every phone, tablet and computer.
+      </p>
+      <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 font-semibold">
+        <Link href="/sign-up" className="text-optic">Create a free account →</Link>
+        <Link href="/sign-in" className="text-chalk-2 hover:text-chalk">Sign in</Link>
+      </p>
+    </div>
   );
 }
 
