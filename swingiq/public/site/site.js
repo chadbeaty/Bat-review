@@ -130,8 +130,9 @@
 
   // Where the real tracked hitter stands on the small read canvas: pose units (0..1 of a 4:5 frame) to pixels.
   function mapper(c) {
-    // The hero shows the whole hitter with room around them; the small read canvas fills its frame.
-    var hero = c.kind === 'hero', s = c.h / (hero ? 0.8 : 0.62), floor = hero ? 0.86 : 0.94;
+    // The hero shows the whole hitter with room around them. On the small read canvas the hitter stands in the
+    // illustrated batter's box (feet on the box, home plate in front of him at lower left, the way he faces).
+    var hero = c.kind === 'hero', s = c.h / (hero ? 0.8 : 0.8), floor = hero ? 0.86 : 0.72;
     return function (p) { return [c.w / 2 + (p[0] - 0.51) * 0.8 * s, c.h * floor + (p[1] - 0.87) * s]; };
   }
 
