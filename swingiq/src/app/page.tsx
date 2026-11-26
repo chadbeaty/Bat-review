@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArcScore } from "@/components/ArcScore";
-import { GapMark, LockupH } from "@/components/Logo";
+import { GapMark } from "@/components/Logo";
 import { usePlayers } from "@/components/PlayerProvider";
 import { useSync } from "@/components/SyncProvider";
 import { Setup } from "@/components/Setup";
@@ -158,12 +158,10 @@ export default function Home() {
 
   return (
     <div className="animate-rise pb-6">
-      <div className="flex items-center justify-between pt-3">
-        <span className="flex min-w-0 items-center gap-2.5">
-          <span className="md:hidden">
-            <LockupH height={26} />
-          </span>
-          <span className="hidden md:block"><PillarStrip /></span>
+      <div className="flex items-center justify-end pt-1 md:justify-between">
+        {/* The app's top bar carries the logo on phones. */}
+        <span className="hidden min-w-0 items-center gap-2.5 md:flex">
+          <PillarStrip />
         </span>
         <Link href="/profile" className="press rounded-lg border border-line-2 px-3 py-1.5 text-[13px] text-chalk-2 hover:text-chalk">
           {player.name} · {player.hand === "R" ? "Righty" : "Lefty"}

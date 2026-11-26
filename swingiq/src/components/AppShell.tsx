@@ -4,7 +4,9 @@ import { usePathname } from "next/navigation";
 import { useCallback, useState } from "react";
 import { GapMark, LockupH, Wordmark } from "./Logo";
 import { Softball } from "./Softball";
+import { cloudEnabled } from "@/lib/supabase/client";
 import { usePlayers } from "./PlayerProvider";
+import { useSync } from "./SyncProvider";
 import { Sheet } from "./ui";
 
 export { Wordmark };
@@ -107,6 +109,51 @@ function NewSwingSheet({ open, onClose }: { open: boolean; onClose: () => void }
   );
 }
 
+/**
+  Top bar: the lockup on phones (the desktop rail already carries it) and the account controls top right, where people
+  look for them: Sign in and Create account when signed out, an Account chip when signed in. Sign-in stays optional.
+*/
+function TopBar({ path }: { path: string }) {
+  const { user } = useSync();
+  const onAuthPage = path === "/sign-in" || path === "/sign-up" || path === "/forgot" || path.startsWith("/auth");
+  const initial = (user?.email ?? "?").trim().charAt(0).toUpperCase();
+  return (
+    <header className="flex min-h-12 items-center justify-between gap-3 px-4 pt-[max(0.75rem,env(safe-area-inset-top))] md:justify-end md:px-10 md:pt-6">
+      <Link href="/" className="md:hidden" aria-label="Gapper home">
+        <LockupH height={24} />
+      </Link>
+      {cloudEnabled && !onAuthPage && user !== undefined && (
+        <div className="flex items-center gap-3">
+          {user ? (
+            <Link
+              href="/profile#account"
+              aria-label="Your account"
+              className="press flex items-center gap-2 rounded-full border border-line-2 py-1 pl-1 pr-3 text-[13px] font-semibold text-chalk hover:border-clay/60"
+            >
+              <span className="grid h-7 w-7 place-items-center rounded-full bg-optic text-[13px] font-extrabold italic text-optic-ink" aria-hidden="true">
+                {initial}
+              </span>
+              Account
+            </Link>
+          ) : (
+            <>
+              <Link href="/sign-in" className="whitespace-nowrap text-[14px] font-bold text-chalk hover:text-optic">
+                Sign in
+              </Link>
+              <Link
+                href="/sign-up"
+                className="btn-label press inline-flex min-h-9 items-center whitespace-nowrap rounded-lg border border-line-2 px-3 text-[12px] text-chalk hover:border-clay/60 hover:bg-white/[0.03] min-[380px]:text-[13px]"
+              >
+                Create account
+              </Link>
+            </>
+          )}
+        </div>
+      )}
+    </header>
+  );
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   const [sheet, setSheet] = useState(false);
@@ -121,7 +168,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="mx-auto min-h-dvh max-w-[34rem] pb-[calc(7.5rem+env(safe-area-inset-bottom))] md:max-w-[84rem] md:pb-14 md:pl-64">
-      <main className="px-4 pt-[max(0.75rem,env(safe-area-inset-top))] md:px-10 md:pt-10">{children}</main>
+      <TopBar path={path} />
+      <main className="px-4 pt-3 md:px-10 md:pt-4">{children}</main>
 
       {/* Phone: a carbon bar under the thumb; the lime Record button in the middle is the one action. */}
       <nav

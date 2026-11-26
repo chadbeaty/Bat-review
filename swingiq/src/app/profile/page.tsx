@@ -201,8 +201,10 @@ export default function ProfilePage() {
         </div>
       </Panel>
 
-      <SectionTitle>Account</SectionTitle>
-      <AccountPanel />
+      <div id="account" className="scroll-mt-4">
+        <SectionTitle>Account</SectionTitle>
+        <AccountPanel />
+      </div>
 
       <SectionTitle>Your data</SectionTitle>
       <Panel className="space-y-4 p-4">
