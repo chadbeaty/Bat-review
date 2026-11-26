@@ -30,9 +30,10 @@ Putting it on phones without a Mac goes through TestFlight, which needs an Apple
   `../docs/speed/NATIVE-BRIDGE.md`.
 - Video stays on the phone. The web app reads it from the app's temp folder.
 
-## Before the App Store
-- App icon and splash (Assets.xcassets) in the Gapper brand.
-- Privacy labels: camera, microphone and motion are used on device only; nothing is uploaded unless the player backs
-  up clips.
-- Apple rejects apps that are "just a website": the native 240 fps camera, setup assistant and on-device speed
-  measurement are the native value. Say so in the review notes.
+## TestFlight and the App Store
+Step-by-step guide, store listing, privacy answers and reviewer notes: [APP-STORE.md](APP-STORE.md). The upload runs on
+GitHub's Macs (`.github/workflows/gapper-testflight.yml`, started by hand) once the Apple Developer account and its
+API key secrets exist, so no Mac is needed for that either.
+
+Apple rejects apps that are "just a website": the native 240 fps camera, setup checks and on-device speed measurement
+are the native value. The reviewer notes in APP-STORE.md say so.
