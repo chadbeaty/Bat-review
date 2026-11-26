@@ -38,9 +38,9 @@ stands out.
 4. **Record. Analyze. Improve.** (`#how`, the SEE HOW IT WORKS target): Record (phone setup, live/upload/slo-mo, the
    cage diagram); Analyze (the real sample read: Gapper Score 72, Balance 100, Follow-through 97, Rotation 89, Timing
    46, Bat path 30, Contact n/a with the reason, and 6 frames from heel down to contact, labelled "A stock clip of a
-   real hitter, run through Gapper ... Background illustrated."; the tracked swing plays over an illustrated empty
-   batter's box at a night rec park, `assets/batters-box.webp`, owner's call 2026-11-26: only the background may be
-   illustrated, never the hitter or the numbers; swap in a real field photo when one exists); Improve (the real one fix and drill for that swing, then Hitting Profile,
+   real hitter, run through Gapper ... Background illustrated."; the tracked swing plays over an illustrated night field
+   drawn in code (`scene()` in `site.js`) from the clip's real camera, out in front of the hitter looking back at the
+   plate; owner's call 2026-11-26: only the background may be illustrated, never the hitter or the numbers); Improve (the real one fix and drill for that swing, then Hitting Profile,
    personal drills, the shareable report).
 5. **What Gapper measures, and how sure it is** (`#measures`): a table, one label per row (Measured / Estimated /
    Slo-mo ± range / Your tags). Bat path is said to be read from the hand path; barrel tracking isn't claimed.
