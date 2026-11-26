@@ -219,7 +219,11 @@ h1, h2, h3, p { margin: 0; }
 .jumbo.sm { font-size: clamp(2.6rem, 2rem + 2vw, 3.6rem); color: var(--lime); }
 .read-grid { display: grid; gap: 18px; margin-top: 18px; }
 @media (min-width: 640px) { .read-grid { grid-template-columns: minmax(150px, 0.7fr) 1.3fr; align-items: start; } }
-.swing-sm { width: 100%; aspect-ratio: 4 / 5; border-radius: 10px; background: #0d0e10; border: 1px solid var(--line); }
+/* The sample read plays the real tracked swing over an illustrated empty batter's box (night rec park, pitcher off
+   the left edge to match the way the tracked hitter faces). Only the background is illustrated; say so in the note. */
+.swing-sm { width: 100%; aspect-ratio: 4 / 5; border-radius: 10px; border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(11, 12, 14, 0.55) 0%, rgba(11, 12, 14, 0.25) 55%, rgba(11, 12, 14, 0.45) 100%),
+    url(assets/batters-box.webp) center bottom / cover no-repeat, #0d0e10; }
 .gapline { display: flex; align-items: center; gap: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
 .gapline > span:last-child { font-size: 15px; font-weight: 700; }
 .gapline em { display: block; font-style: normal; font-weight: 400; font-size: 12.5px; color: var(--steel); margin-top: 3px; }
