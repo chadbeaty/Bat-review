@@ -1,0 +1,123 @@
+name: "Gapper iOS: send to TestFlight"
+
+# Builds the Gapper iPhone app on a GitHub-hosted Mac, signs it with Apple's cloud signing and uploads it to App Store
+# Connect, where it shows up in TestFlight about 15-30 minutes later. Started by hand: Actions tab > this workflow >
+# "Run workflow". Only needed when the native app code changes; the rest of Gapper updates through getgapper.com.
+#
+# Needs four repository secrets (Settings > Secrets and variables > Actions), set up once the Apple Developer account
+# exists. See swingiq/native-ios/APP-STORE.md for the click-by-click steps.
+#   APPLE_TEAM_ID   10-character Team ID (developer.apple.com > Account > Membership details)
+#   ASC_KEY_ID      App Store Connect API key ID (Users and Access > Integrations > App Store Connect API)
+#   ASC_ISSUER_ID   Issuer ID shown above the key list on that page
+#   ASC_KEY_P8      Full text of the downloaded AuthKey_XXXX.p8 file (key access: Admin, needed for cloud signing)
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: gapper-testflight
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: swingiq/native-ios
+
+jobs:
+  upload:
+    name: Build, sign and upload to TestFlight
+    runs-on: macos-15
+    timeout-minutes: 60
+    env:
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+      # Every upload needs a higher build number than the last; the run number always goes up.
+      BUILD_NUMBER: ${{ github.run_number }}
+    steps:
+      - name: Check the Apple secrets are set
+        run: |
+          missing=""
+          for v in APPLE_TEAM_ID ASC_KEY_ID ASC_ISSUER_ID ASC_KEY_P8; do
+            [ -n "${!v}" ] || missing="$missing $v"
+          done
+          if [ -n "$missing" ]; then
+            echo "::error::Missing repository secrets:$missing. See swingiq/native-ios/APP-STORE.md (step 3)."
+            exit 1
+          fi
+        working-directory: .
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: swingiq/native-ios/package-lock.json
+      - name: Show Xcode version
+        run: xcodebuild -version
+      - run: npm ci
+      - name: Copy the web shell and native config into the Xcode project
+        run: npx cap sync ios
+      - name: Save the App Store Connect key for this run
+        run: |
+          mkdir -p "$RUNNER_TEMP/asc"
+          printf '%s\n' "$ASC_KEY_P8" > "$RUNNER_TEMP/asc/AuthKey_${ASC_KEY_ID}.p8"
+          echo "ASC_KEY_PATH=$RUNNER_TEMP/asc/AuthKey_${ASC_KEY_ID}.p8" >> "$GITHUB_ENV"
+      - name: Build the release archive
+        # Built unsigned; the export step below signs it with an Apple-managed (cloud) distribution certificate, so no
+        # certificate files or Mac keychain are needed and no new certificate piles up on every run.
+        run: |
+          set -o pipefail
+          xcodebuild archive \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/Gapper.xcarchive" \
+            -derivedDataPath build \
+            DEVELOPMENT_TEAM="$APPLE_TEAM_ID" \
+            CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            2>&1 | tee archive.log | grep -E "error:|\*\* ARCHIVE" || true
+          grep -q "\*\* ARCHIVE SUCCEEDED \*\*" archive.log
+      - name: Sign and upload to App Store Connect
+        run: |
+          set -o pipefail
+          cat > "$RUNNER_TEMP/ExportOptions.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>destination</key><string>upload</string>
+            <key>teamID</key><string>${APPLE_TEAM_ID}</string>
+            <key>signingStyle</key><string>automatic</string>
+            <key>manageAppVersionAndBuildNumber</key><false/>
+            <key>uploadSymbols</key><true/>
+          </dict>
+          </plist>
+          EOF
+          xcodebuild -exportArchive \
+            -archivePath "$RUNNER_TEMP/Gapper.xcarchive" \
+            -exportOptionsPlist "$RUNNER_TEMP/ExportOptions.plist" \
+            -exportPath "$RUNNER_TEMP/export" \
+            -allowProvisioningUpdates \
+            -authenticationKeyPath "$ASC_KEY_PATH" \
+            -authenticationKeyID "$ASC_KEY_ID" \
+            -authenticationKeyIssuerID "$ASC_ISSUER_ID" \
+            2>&1 | tee export.log | grep -E "error:|Upload|EXPORT" || true
+          grep -qE "\*\* EXPORT SUCCEEDED \*\*|Upload succeeded|Uploaded" export.log
+      - name: Say where to find it
+        run: |
+          echo "### Uploaded build $BUILD_NUMBER" >> "$GITHUB_STEP_SUMMARY"
+          echo "It appears in App Store Connect > Gapper > TestFlight in about 15-30 minutes, then in the TestFlight app on your iPhone." >> "$GITHUB_STEP_SUMMARY"
+      - name: Remove the key file
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/asc"
+      - name: Keep the build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: testflight-logs
+          path: |
+            swingiq/native-ios/archive.log
+            swingiq/native-ios/export.log
+          if-no-files-found: ignore
