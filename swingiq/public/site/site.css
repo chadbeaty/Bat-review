@@ -106,9 +106,16 @@ h1, h2, h3, p { margin: 0; }
 .bar-nav { display: none; gap: 24px; margin-left: auto; font-size: 14px; color: var(--text-2); }
 .bar-nav a { text-decoration: none; }
 .bar-nav a:hover { color: var(--white); }
-.bar .btn { margin-left: auto; }
-@media (min-width: 860px) { .bar-nav { display: flex; } .bar .btn { margin-left: 8px; } }
-@media (max-width: 380px) { .bar .btn { font-size: 12px; padding: 0 10px; } .bar-logo img { height: 26px; } }
+/* Account links sit top right on every screen size; the Analyze button joins them from tablet width up (the hero
+   carries it on phones). */
+.bar-acct { display: flex; align-items: center; gap: 14px; margin-left: auto; }
+.bar-signin { font-size: 14px; font-weight: 700; color: var(--white); text-decoration: none; white-space: nowrap; }
+.bar-signin:hover { color: var(--lime); }
+.bar-acct .btn { white-space: nowrap; }
+.bar-cta { display: none; }
+@media (min-width: 640px) { .bar-cta { display: inline-flex; } }
+@media (min-width: 860px) { .bar-nav { display: flex; } .bar-acct { margin-left: 8px; } }
+@media (max-width: 380px) { .bar { gap: 10px; } .bar-acct { gap: 10px; } .bar-acct .btn { font-size: 12px; padding: 0 10px; } .bar-signin { font-size: 13px; } .bar-logo img { height: 24px; } }
 
 /* ------------------------------------------------------------ hero */
 .hero { position: relative; padding: 28px 0 0; overflow: hidden; }
