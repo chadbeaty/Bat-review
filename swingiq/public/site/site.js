@@ -1,4 +1,4 @@
-/* Gapper landing page. Draws the outfield behind the hero and plays Gapper's tracked view of a real swing (the 33
+/* Gapper landing page. Draws the outfield blocks (the three-gaps fact; hidden behind the hero, which uses the batter's box) and plays Gapper's tracked view of a real swing (the 33
    body points from the analyzer, run on the sample clip; assets/pose.json). In the hero it builds up as a strobe:
    a ghost flashes on at each moment of the swing and the hands' path burns in as a lime light trail. The sample
    read plays the same swing next to what Gapper concluded about it. Sections fade in. */
@@ -130,9 +130,9 @@
 
   // Where the real tracked hitter stands on the small read canvas: pose units (0..1 of a 4:5 frame) to pixels.
   function mapper(c) {
-    // The hero shows the whole hitter with room around them. On the small read canvas the hitter stands in the
-    // illustrated batter's box (feet on the box, home plate in front of him at lower left, the way he faces).
-    var hero = c.kind === 'hero', s = c.h / (hero ? 0.8 : 0.8), floor = hero ? 0.86 : 0.72;
+    // On both canvases the hitter stands in the illustrated batter's box: feet in the box, home plate in front of him
+    // at lower left, the way he faces. Placement only; the tracked points are drawn as measured.
+    var s = c.h / 0.8, floor = 0.72;
     return function (p) { return [c.w / 2 + (p[0] - 0.51) * 0.8 * s, c.h * floor + (p[1] - 0.87) * s]; };
   }
 

@@ -146,12 +146,17 @@ h1, h2, h3, p { margin: 0; }
   border: 1px solid rgb(255 255 255 / 0.07);
 }
 .stage::before { content: ""; position: absolute; inset: 0 0 auto; height: 1px; background: linear-gradient(90deg, rgb(214 220 226 / 0.05), rgb(230 234 238 / 0.6) 30%, rgb(214 220 226 / 0.1) 70%, transparent); z-index: 3; }
-.stage-art { position: relative; width: 100%; aspect-ratio: 400 / 440; max-height: 74vh; overflow: hidden; }
+/* The hero swing stands in the same illustrated night batter's box as the sample read (home plate at lower left,
+   where the tracked hitter faces). Only the background is illustrated; the caption says so. */
+.stage-art { position: relative; width: 100%; aspect-ratio: 400 / 440; max-height: 74vh; overflow: hidden;
+  background: linear-gradient(180deg, rgba(11, 12, 14, 0.6) 0%, rgba(11, 12, 14, 0.25) 55%, rgba(11, 12, 14, 0.45) 100%),
+    url(assets/batters-box.webp) center 62% / cover no-repeat, #0d0e10; }
+.stage-art .field { display: none; }
 .hud { position: absolute; inset: 12px 12px auto; display: flex; justify-content: space-between; align-items: center; z-index: 2; }
 .hud-phase, .hud-ms { display: inline-flex; align-items: center; gap: 8px; padding: 5px 10px; border-radius: 6px; background: rgb(11 12 14 / 0.72); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
 .hud-phase b { font-weight: 900; font-style: italic; text-transform: uppercase; font-size: 14px; letter-spacing: 0.01em; line-height: 1; }
 .hud-ms { font-weight: 800; font-variant-numeric: tabular-nums; font-size: 14px; line-height: 1; }
-.hud-read { position: absolute; left: 12px; bottom: 12px; z-index: 2; display: grid; gap: 2px; padding: 8px 12px; border-radius: 8px; background: rgb(11 12 14 / 0.72); border: 1px solid rgb(196 241 53 / 0.25); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.hud-read { position: absolute; right: 12px; bottom: 12px; z-index: 2; display: grid; gap: 2px; padding: 8px 12px; border-radius: 8px; background: rgb(11 12 14 / 0.72); border: 1px solid rgb(196 241 53 / 0.25); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
 .hud-k { font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--steel); }
 .hud-v { font-size: 14px; font-weight: 700; color: var(--white); }
 .hud-v b { font-weight: 900; font-style: italic; font-size: 20px; color: var(--lime); margin-right: 3px; }
