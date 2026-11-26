@@ -1,4 +1,4 @@
-/* Gapper landing page. Draws the outfield blocks (the three-gaps fact; hidden behind the hero, which uses the batter's box) and plays Gapper's tracked view of a real swing (the 33
+/* Gapper landing page. Draws the outfield blocks (the three-gaps fact; hidden behind the hero, which draws a night field from the clip's camera) and plays Gapper's tracked view of a real swing (the 33
    body points from the analyzer, run on the sample clip; assets/pose.json). In the hero it builds up as a strobe:
    a ghost flashes on at each moment of the swing and the hands' path burns in as a lime light trail. The sample
    read plays the same swing next to what Gapper concluded about it. Sections fade in. */
@@ -126,12 +126,85 @@
     var r = c.el.getBoundingClientRect();
     c.w = r.width; c.h = r.height;
     c.el.width = Math.max(1, Math.round(r.width * DPR)); c.el.height = Math.max(1, Math.round(r.height * DPR));
+    scene(c);
+  }
+
+  // ---------------------------------------------------------------- the illustrated field behind the swing
+  // The sample clip was filmed from out in front of the hitter, low, looking back at home plate (roughly the pitcher's
+  // view). So the field is drawn from that same camera: the hitter in the right-handed batter's box, home plate just to
+  // his left, the foul lines opening toward the viewer (fair territory is where he swings), the backstop behind him.
+  // Only this background is illustrated; the hitter and every number are Gapper's real output.
+  // Ground plan in feet: X across (+ toward third base, the hitter's side), D away from the camera, H up.
+  var CAM = { d: 20, h: 2.47, horizon: 0.62, ftY: 0.083, ftX: 0.104, xh: 1.4 }; // hitter stands 20 ft from the camera; ground at his feet (pose y ~0.825)
+  var PLATE = { x: -1.9, d: 20 };
+  function scene(c) {
+    var bg = c.bg || (c.bg = document.createElement('canvas'));
+    bg.width = c.el.width; bg.height = c.el.height;
+    var g = bg.getContext('2d'), m = mapper(c), L = Math.max(1.4, Math.min(c.w, c.h) / 140);
+    g.setTransform(DPR, 0, 0, DPR, 0, 0);
+    var cx = 0.515 - CAM.xh * CAM.ftX;
+    function pt(X, D, H) {
+      var k = CAM.d / D;
+      return m([cx + X * CAM.ftX * k, CAM.horizon - ((H || 0) - CAM.h) * CAM.ftY * k]);
+    }
+    function poly(pts, fill, stroke, w) {
+      g.beginPath(); pts.forEach(function (q, i) { var p = pt(q[0], q[1], q[2]); if (i) g.lineTo(p[0], p[1]); else g.moveTo(p[0], p[1]); });
+      if (fill) { g.closePath(); g.fillStyle = fill; g.fill(); }
+      if (stroke) { g.strokeStyle = stroke; g.lineWidth = w; g.stroke(); }
+    }
+    var hz = pt(0, 1e6, CAM.h)[1];
+    // Night sky and the glow of the field lights.
+    var sky = g.createLinearGradient(0, 0, 0, hz);
+    sky.addColorStop(0, '#07080a'); sky.addColorStop(1, '#15181c');
+    g.fillStyle = sky; g.fillRect(0, 0, c.w, hz + 1);
+    [[0.12, 0.07], [0.88, 0.05]].forEach(function (l) {
+      var x = c.w * l[0], y = c.h * l[1], r = c.h * 0.32, rg = g.createRadialGradient(x, y, 0, x, y, r);
+      rg.addColorStop(0, 'rgba(255,236,200,0.22)'); rg.addColorStop(1, 'rgba(255,236,200,0)');
+      g.fillStyle = rg; g.fillRect(0, 0, c.w, c.h);
+    });
+    // Grass, then the dirt circle around home plate.
+    g.fillStyle = '#0e1712'; g.fillRect(0, hz, c.w, c.h - hz);
+    var dirt = [];
+    for (var a = 0; a <= 64; a++) { var t = a / 64 * Math.PI * 2; dirt.push([PLATE.x + 13 * Math.cos(t), PLATE.d + 1.1 + 13 * Math.sin(t)]); }
+    var pc = pt(PLATE.x, PLATE.d), dg = g.createRadialGradient(pc[0], pc[1], 0, pc[0], pc[1], c.w * 0.9);
+    dg.addColorStop(0, '#3b2c23'); dg.addColorStop(1, '#1f1814');
+    poly(dirt, dg);
+    // Backstop: posts, mesh and rails, 25 ft behind the plate, with dark stands behind it.
+    var BD = PLATE.d + 25;
+    poly([[-60, BD + 30, 0], [60, BD + 30, 0], [60, BD + 30, 16], [-60, BD + 30, 16]], '#0b0d10');
+    poly([[-60, BD, 0], [60, BD, 0], [60, BD, 9], [-60, BD, 9]], 'rgba(20,24,28,0.55)');
+    g.save();
+    var tl = pt(-60, BD, 9), br = pt(60, BD, 0);
+    g.beginPath(); g.rect(tl[0], tl[1], br[0] - tl[0], br[1] - tl[1]); g.clip();
+    g.strokeStyle = 'rgba(185,191,197,0.10)'; g.lineWidth = 1;
+    var step = Math.max(5, L * 3.2), span = br[1] - tl[1];
+    for (var x = tl[0] - span; x < br[0] + span; x += step) {
+      g.beginPath(); g.moveTo(x, tl[1]); g.lineTo(x + span, br[1]); g.stroke();
+      g.beginPath(); g.moveTo(x + span, tl[1]); g.lineTo(x, br[1]); g.stroke();
+    }
+    g.restore();
+    for (var px = -60; px <= 60; px += 10) poly([[px, BD, 0], [px, BD, 9.6]], null, 'rgba(185,191,197,0.32)', L * 0.9);
+    poly([[-60, BD, 9], [60, BD, 9]], null, 'rgba(185,191,197,0.32)', L * 0.9);
+    poly([[-60, BD, 0], [60, BD, 0]], null, 'rgba(185,191,197,0.18)', L * 0.7);
+    // Chalk: both batter's boxes, the catcher's box and the foul lines running out toward the viewer.
+    var chalk = 'rgba(236,239,241,0.62)', cw = L * 0.95;
+    poly([[-0.69, 16.5], [2.31, 16.5], [2.31, 23.5], [-0.69, 23.5], [-0.69, 16.5]], null, chalk, cw);
+    poly([[-3.11, 16.5], [-6.11, 16.5], [-6.11, 23.5], [-3.11, 23.5], [-3.11, 16.5]], null, chalk, cw);
+    poly([[-0.69, 23.5], [-0.69, 29], [-3.11, 29], [-3.11, 23.5]], null, chalk, cw);
+    poly([[PLATE.x + 4.3, PLATE.d + 1.1 - 4.3], [PLATE.x + 16, PLATE.d + 1.1 - 16]], null, chalk, cw);
+    poly([[PLATE.x - 4.3, PLATE.d + 1.1 - 4.3], [PLATE.x - 16, PLATE.d + 1.1 - 16]], null, chalk, cw);
+    // Home plate: flat edge toward the pitcher (the camera), point toward the catcher.
+    poly([[PLATE.x - 0.71, PLATE.d - 0.6], [PLATE.x + 0.71, PLATE.d - 0.6], [PLATE.x + 0.71, PLATE.d + 0.1], [PLATE.x, PLATE.d + 1.1], [PLATE.x - 0.71, PLATE.d + 0.1]], 'rgba(226,229,232,0.9)');
+    // Keep the swing the brightest thing in the frame.
+    var vg = g.createLinearGradient(0, 0, 0, c.h);
+    vg.addColorStop(0, 'rgba(11,12,14,0.25)'); vg.addColorStop(0.6, 'rgba(11,12,14,0)'); vg.addColorStop(1, 'rgba(11,12,14,0.35)');
+    g.fillStyle = vg; g.fillRect(0, 0, c.w, c.h);
   }
 
   // Where the real tracked hitter stands on the small read canvas: pose units (0..1 of a 4:5 frame) to pixels.
   function mapper(c) {
-    // On both canvases the hitter stands in the illustrated batter's box: feet in the box, home plate in front of him
-    // at lower left, the way he faces. Placement only; the tracked points are drawn as measured.
+    // On both canvases the hitter stands in the illustrated right-handed batter's box (see scene()). Placement only;
+    // the tracked points are drawn as measured.
     var s = c.h / 0.8, floor = 0.72;
     return function (p) { return [c.w / 2 + (p[0] - 0.51) * 0.8 * s, c.h * floor + (p[1] - 0.87) * s]; };
   }
@@ -212,6 +285,7 @@
     var ctx = c.ctx, fr = lerpFrame(f);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     ctx.clearRect(0, 0, c.w, c.h);
+    if (c.bg) ctx.drawImage(c.bg, 0, 0, c.w, c.h);
     if (!fr) return;
     var m = mapper(c), L = Math.max(1.4, Math.min(c.w, c.h) / 140);
     if (c.kind === 'hero') { strobe(c, f, m, L); hud(f); }
@@ -245,10 +319,6 @@
       ctx.strokeStyle = 'rgba(196,241,53,' + (0.9 - age * 0.4) + ')'; ctx.lineWidth = L * 1.4;
       ctx.beginPath(); ctx.arc(heel[0], heel[1], L * (5 + age * 5), 0, Math.PI * 2); ctx.stroke();
     }
-    // Ground line.
-    ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1;
-    var foot = m([0.5, 0.875]);
-    ctx.beginPath(); ctx.moveTo(8, foot[1]); ctx.lineTo(c.w - 8, foot[1]); ctx.stroke();
     if (c.kind !== 'hero') label(c, f);
   }
 
